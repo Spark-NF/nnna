@@ -195,7 +195,7 @@ namespace NNNA
 			piste = sons.GetCue("sonmenu");
 			piste.Play();
             engine.Update();
-			musicCategory = engine.GetCategory("Default");
+			musicCategory = engine.GetCategory("Music");
             musicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
 
             base.Initialize();
