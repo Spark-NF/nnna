@@ -34,16 +34,16 @@ namespace NNNA
 		public string Name(int ere)
 		{ return m_names[ere - 1]; }
 
-		private uint m_count;
-		public uint Count
+		private int m_count;
+		public int Count
 		{ get { return m_count; } }
 		
-		public void Remove(uint v)
+		public void Remove(int v)
 		{ m_count -= v; }
-		public void Add(uint v)
+		public void Add(int v)
 		{ m_count += v; }
 
-		public Resource(string id, string[] names, uint count = 0)
+		public Resource(string id, string[] names, int count = 0)
 		{
 			m_id = id;
 			m_names = names;

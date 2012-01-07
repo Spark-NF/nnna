@@ -15,26 +15,14 @@ namespace NNNA
 {
 	class Guerrier : LandUnit
 	{
-		public Guerrier(int x, int y, ContentManager content, Joueur joueur)
+		public Guerrier(int x, int y, ContentManager content, Joueur joueur, bool remove_resources = true)
 			: base(x, y)
 		{
 			m_joueur = joueur;
 			joueur.Population += 1;
 			type = "guerrier";
-			joueur.Resource("Nourriture").Remove(60);
-			m_attaque = 8;
-			m_life = 50;
-			m_portee = 1;
-			m_regeneration = 1;
-			m_speed = 0.05f;
-			SetTextures(content, "guerrier", 45);
-		}
-		public Guerrier(int x, int y, ContentManager content, Joueur joueur, string sans_ressources)
-			: base(x, y)
-		{
-			m_joueur = joueur;
-			joueur.Population += 1;
-			type = "guerrier";
+			if (remove_resources)
+			{ joueur.Resource("Nourriture").Remove(60); }
 			m_attaque = 8;
 			m_life = 50;
 			m_portee = 1;

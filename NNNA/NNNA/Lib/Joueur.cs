@@ -72,6 +72,25 @@ namespace NNNA
 			return NNNA.Resource.Empty;
 		}
 
+		public bool Has(Dictionary<string, int> price)
+		{
+			bool ok = true;
+			foreach (KeyValuePair<string, int> pair in price)
+			{
+				if (Resource(pair.Key).Count < pair.Value)
+				{ ok = false; }
+			}
+			return ok;
+		}
+		public bool Pay(Dictionary<string, int> price)
+		{
+			if (!Has(price))
+			{ return false; }
+			foreach (KeyValuePair<string, int> pair in price)
+			{ Resource(pair.Key).Remove(pair.Value); }
+			return true;
+		}
+
 		public List<Resource> Resources(int ere = 1)
 		{
 			List<Resource> r = new List<Resource>();

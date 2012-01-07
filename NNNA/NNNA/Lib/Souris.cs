@@ -40,6 +40,7 @@ namespace NNNA
 		private Rectangle _selection;
 		public int X { get { return _newState.X; } }
 		public int Y { get { return _newState.Y; } }
+		public Point Position { get { return new Point(X, Y); } }
 		public Rectangle Selection { get { return _selection; } }
 
 		/// <summary>

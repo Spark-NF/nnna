@@ -176,7 +176,7 @@ namespace NNNA
             {
                 if (create_hutte_chasseurs == false)
                 {
-                    curseur.Texture = content.Load<Texture2D>(@"Batiments/hutte_des_chasseurs");
+                    curseur.Texture = content.Load<Texture2D>("Batiments/hutte_des_chasseurs");
                     create_hutte_chasseurs = true;
                 }
                 if (Souris.Get().Clicked(MouseButton.Right))

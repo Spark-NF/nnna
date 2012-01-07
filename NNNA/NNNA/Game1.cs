@@ -28,19 +28,21 @@ namespace NNNA
 
 		private Texture2D m_background_light, m_background_dark, m_fog, m_light, m_menu, m_submenu, m_pointer, m_night, m_console;
 		private Texture2D[] m_backgrounds = new Texture2D[2];
+		private Dictionary<string, Texture2D> m_actions = new Dictionary<string, Texture2D>();
 		private SpriteFont m_font_menu, m_font_small, m_font_credits;
 		private Screen m_currentScreen = Screen.Title;
 		private int m_konami = 0, m_konamiStatus = 0;
+		private string m_currentAction = "";
+		private double m_elapsed;
 
-		// Settings
 		private Vector2 m_screen = new Vector2(1680, 1050);
 		private bool m_fullScreen = true, m_shadows = true, m_smart_hud = false, m_health_hover = false, m_showConsole = false;
 		private float m_sound_general = 10, m_sound_sfx = 10, m_sound_music = 10;
 		private int m_textures = 2, m_sound = 2, m_theme = 0;
 
-		// Vars
 		private MapType m_quick_type = MapType.Island;
 		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0;
+		List<string> m_currentActions = new List<string>();
 
 		// Map
 		Sprite h, e, p, t, s, i, curseur;
@@ -98,9 +100,6 @@ namespace NNNA
 			graphics.IsFullScreen = m_fullScreen;
 
 			Content.RootDirectory = "Content";
-
-            // son 
-            AudioCategory musicCategory;
 		}
 
 		/// <summary>
@@ -299,6 +298,12 @@ namespace NNNA
 			m_font_small = Content.Load<SpriteFont>("font_small");
 			m_font_credits = Content.Load<SpriteFont>("font_credits");
 
+			// Actions
+			m_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
+			m_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
+			m_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
+			m_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
+
 			// Shaders
 			gaussianBlur = Content.Load<Effect>("Shaders/GaussianBlur");
 			gaussianBlur.CurrentTechnique = gaussianBlur.Techniques["Blur"];
@@ -450,6 +455,7 @@ namespace NNNA
                     map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
                     hud.LoadContent(Content, "HUD/hud2");
                     minimap.LoadContent(map);
+					m_elapsed = gameTime.TotalGameTime.TotalMilliseconds;
 
 					// Spawn
 					List<float> heights = new List<float>();
@@ -468,13 +474,13 @@ namespace NNNA
 					joueur.Reset();
 					joueur.LoadResources(Content);
 					units.Clear();
-					units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 100, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, "sans_ressources"));
-					units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 0, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, "sans_ressources"));
-					units.Add(new Peon((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 50, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, "sans_ressources"));
+					units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 100, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
+					units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 0, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
+					units.Add(new Peon((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 50, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
 
 					//Batiments du Debut
 					buildings.Clear();
-					buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(mx-1, my-1)).X, (int)matrice2xy(new Vector2(mx-1, my-1)).Y, Content, joueur, "sans_ressources"));
+					buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(mx - 1, my - 1)).X, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y, Content, joueur));
 					camera.Position = matrice2xy(new Vector2(mx-1, my-1)) - m_screen / 2;
 
 					//Decor
@@ -633,14 +639,50 @@ namespace NNNA
 		{
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{ m_currentScreen = Screen.GameMenu; }
+
 			compt = (compt + gameTime.ElapsedGameTime.Milliseconds * 0.1f) % 100;
 			curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			camera.Update(curseur, graphics);
 
 			// Rectangle de séléction
 			if (Souris.Get().Clicked(MouseButton.Left))
-			{ m_selection = new Rectangle(Souris.Get().X + (int)camera.Position.X, Souris.Get().Y + (int)camera.Position.Y, 0, 0); }
-			else if (Souris.Get().Hold(MouseButton.Left))
+			{
+				Batiment b;
+				switch (m_currentAction)
+				{
+					case "build_hutte":
+						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
+						if (joueur.Pay(b.Prix))
+						{
+							buildings.Add(b);
+							MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
+							m_pointer = Content.Load<Texture2D>("pointer");
+							m_currentAction = "";
+						}
+						else
+						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+						break;
+
+					case "build_hutteDesChasseurs":
+						b = new Hutte_des_chasseurs((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
+						if (joueur.Pay(b.Prix))
+						{
+							buildings.Add(b);
+							MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
+							m_pointer = Content.Load<Texture2D>("pointer");
+							m_currentAction = "";
+						}
+						else
+						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+						break;
+
+					default:
+						m_selection = new Rectangle(Souris.Get().X + (int)camera.Position.X, Souris.Get().Y + (int)camera.Position.Y, 0, 0);
+						m_currentAction = "select";
+						break;
+				}
+			}
+			else if (Souris.Get().Hold(MouseButton.Left) && m_currentAction == "select")
 			{
 				m_selection.Width = Souris.Get().X + (int)camera.Position.X - m_selection.X;
 				m_selection.Height = Souris.Get().Y + (int)camera.Position.Y - m_selection.Y;
@@ -648,10 +690,10 @@ namespace NNNA
 			else if (Souris.Get().Hold(MouseButton.Left, ButtonState.Released))
 			{ m_selection = Rectangle.Empty; }
 
-			// SelectMovible n'a rien à faire dans la classe Sprite, sa place est cependant idéale ici (même si c'est un gros pavé :D). D'ailleurs la classe Sprite est complètement foireuse. Un Sprite n'a pas de vie, ni d'attaque ou autre. C'est une classe Unit qu'il faut utiliser pour faire ça.
 			bool change;
-			if (!m_selection.IsEmpty && Souris.Get().Released(MouseButton.Left) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5))
+			if (!m_selection.IsEmpty && Souris.Get().Released(MouseButton.Left) && (curseur.Position.Y <= hud.Position.Y + 20 || m_selection.Y - camera.Position.Y <= hud.Position.Y + 20))
 			{
+				// On met à jour les unités séléctionées
 				change = false;
 				if (!Keyboard.GetState().IsKeyDown(Keys.LeftControl) && !Keyboard.GetState().IsKeyDown(Keys.RightControl))
 				{
@@ -675,6 +717,90 @@ namespace NNNA
 					{ sprite.Selected = false; }
 					selectedList.Clear();
 				}
+
+				// On met à jour les actions
+				m_currentActions.Clear();
+				if (selectedList.Count > 0)
+				{
+					bool all_same = true;
+					string type = "";
+					m_currentActions.Add("attack");
+					foreach (Movible_Sprite sprite in selectedList)
+					{
+						if (sprite.Type != type)
+						{
+							if (type != "")
+							{ all_same = false; }
+							type = sprite.Type;
+							if (sprite.Type == "peon" && !m_currentActions.Contains("build"))
+							{ m_currentActions.Add("build"); }
+						}
+					}
+					if (!all_same)
+					{
+						m_currentActions.Clear();
+						m_currentActions.Add("attack");
+					}
+				}
+				m_currentAction = "";
+			}
+
+				// Actions
+			if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= hud.Position.X + 20 && Souris.Get().Y >= hud.Position.Y + 20)
+			{
+				int x = Souris.Get().X - hud.Position.X - 20, y = Souris.Get().Y - hud.Position.Y - 20;
+				if (x % 40 < 32 && y % 40 < 32)
+				{
+					x /= 40;
+					y /= 40;
+					int pos = x + 6 * y;
+					if (pos < m_currentActions.Count)
+					{
+						Debug(m_currentActions[pos]);
+						Dictionary<string, int> cost;
+						bool ok = true;
+						switch (m_currentActions[pos])
+						{
+							case "build":
+								m_currentActions.Clear();
+								m_currentActions.Add("build_hutte");
+								m_currentActions.Add("build_hutteDesChasseurs");
+								break;
+
+							case "build_hutte":
+								cost = new Hutte().Prix;
+								foreach (KeyValuePair<string, int> pair in cost)
+								{
+									if (joueur.Resource(pair.Key).Count < pair.Value)
+									{ ok = false; }
+								}
+								if (ok)
+								{
+									m_pointer = Content.Load<Texture2D>("Batiments/hutte2");
+									m_currentAction = "build_hutte";
+								}
+								else
+								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+								break;
+
+							case "build_hutteDesChasseurs":
+								cost = new Hutte_des_chasseurs().Prix;
+								foreach (KeyValuePair<string, int> pair in cost)
+								{
+									if (joueur.Resource(pair.Key).Count < pair.Value)
+									{ ok = false; }
+								}
+								if (ok)
+								{
+									m_pointer = Content.Load<Texture2D>("Batiments/hutte_des_chasseurs");
+									m_currentAction = "build_hutteDesChasseurs";
+								}
+								else
+								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+								break;
+						}
+					}
+				}
 			}
 
             foreach (Movible_Sprite sprite in selectedList)
@@ -697,11 +823,8 @@ namespace NNNA
                     { sprite.Create_Hutte_Chasseurs(curseur, buildings, Content, joueur, camera); }
                 }
             }
-
 			foreach (Movible_Sprite sprite in units)
-			{
-				sprite.ClickMouvement(curseur, gameTime, camera, hud, units, buildings, matrice);
-			}
+			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, units, buildings, matrice); }
 
 			units.Sort(Sprite.CompareByY);
 			buildings.Sort(Sprite.CompareByY);
@@ -793,8 +916,8 @@ namespace NNNA
 			{
 				List<ConsoleMessage> msgs = Console.GetLast(10);
 				spriteBatch.Draw(m_console, new Rectangle(0, 0, (int)m_screen.X, 26 * msgs.Count), Color.White);
-				for (int i = msgs.Count - 1; i >= 0; i++)
-				{ spriteBatch.DrawString(m_font_small, msgs[i].Message, new Vector2(5, 2 + 26 * i), Color.White); }
+				for (int i = msgs.Count; i > 0; i--)
+				{ spriteBatch.DrawString(m_font_small, msgs[msgs.Count - i].Message, new Vector2(5, 26 * i - 24), Color.White); }
 			}
 
 			DrawPointer(gameTime);
@@ -927,18 +1050,17 @@ namespace NNNA
 				);
 			}
 
-			// Le brouillard
-			spriteBatch.Draw(m_night, Vector2.Zero, new Color(255, 255, 255, (int)(64 - 64 * Math.Cos(m_gameTime.TotalGameTime.TotalMilliseconds / 12000))));
+			// La nuit
+			spriteBatch.Draw(m_night, Vector2.Zero, new Color(255, 255, 255, (int)(64 - 64 * Math.Cos((m_gameTime.TotalGameTime.TotalMilliseconds - m_elapsed) / 50000))));
 
 			// Le HUD
 			MessagesManager.Draw(spriteBatch, m_font_small);
 			hud.Draw(spriteBatch, minimap, joueur, m_font_small);
-
-			// Debug
-			Vector2 mouse = new Vector2(Souris.Get().X + camera.Position.X, Souris.Get().Y + camera.Position.Y);
-			Debug(3, mouse);
-			Debug(4, xy2matrice(mouse));
-			Debug(5, matrice2xy(xy2matrice(mouse)));
+			if (m_currentActions.Count > 0)
+			{
+				for (int i = 0; i < m_currentActions.Count; i++)
+				{ spriteBatch.Draw(m_actions[m_currentActions[i]], new Vector2(hud.Position.X + 20 + 40 * (i % 6), hud.Position.Y + 20 + 40 * (i / 6)), Color.White); }
+			}
 		}
 		private void DrawGameMenu(GameTime gameTime)
 		{
@@ -1023,32 +1145,23 @@ namespace NNNA
 				spriteBatch.DrawString(m_font_small, value, new Vector2(10, 10 + i * 20), Color.White);
 			#endif
 		}
-		private void Debug(int i, int value)
-		{ Debug(i, value.ToString()); }
-		private void Debug(int i, float value)
-		{ Debug(i, value.ToString()); }
-		private void Debug(int i, double value)
-		{ Debug(i, value.ToString()); }
 		private void Debug(int i, bool value)
 		{ Debug(i, (value ? "true" : "false")); }
-		private void Debug(int i, Vector2 value)
-		{ Debug(i, value.ToString()); }
-		private void Debug(int i, Rectangle value)
+		private void Debug(int i, object value)
 		{ Debug(i, value.ToString()); }
 		// Fonctions de console debug
 		private void Debug(string value)
 		{ Console.Messages.Add(new ConsoleMessage(value)); }
-		private void Debug(int value)
-		{ Debug(value.ToString()); }
-		private void Debug(float value)
-		{ Debug(value.ToString()); }
-		private void Debug(double value)
-		{ Debug(value.ToString()); }
+		private void Debug(List<string> value)
+		{
+			string deb = "List<string>("+value.Count.ToString()+") { ";
+			for (int i = 0; i < value.Count; i++)
+			{ deb += value[i] + ", "; }
+			Debug(deb.Substring(0, deb.Length - 2) + " }");
+		}
 		private void Debug(bool value)
 		{ Debug((value ? "true" : "false")); }
-		private void Debug(Vector2 value)
-		{ Debug(value.ToString()); }
-		private void Debug(Rectangle value)
+		private void Debug(object value)
 		{ Debug(value.ToString()); }
 
 		protected void makeMenu(params string[] args)
