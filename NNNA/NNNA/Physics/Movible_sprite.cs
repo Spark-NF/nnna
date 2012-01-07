@@ -161,12 +161,12 @@ namespace NNNA
 					curseur.Texture = content.Load<Texture2D>("pointer");
 					create_maison = false;
 					Static_Sprite_List.Add(new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), content, joueur));
-					ConsoleManager.Messages.Add(new ConsoleMessage("Nouvelle hutte !", Color.White, 5000));
+					MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
 				}
 			}
 			else
 			{
-				ConsoleManager.Messages.Add(new ConsoleMessage("Vous n'avez pas assez de bois.", Color.Red, 5000));
+				MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de bois.", Color.Red, 5000));
 				create_maison = false;
 			}
 		}
@@ -200,12 +200,12 @@ namespace NNNA
                     curseur.Texture = content.Load<Texture2D>("pointer");
                     create_hutte_chasseurs = false;
                     Static_Sprite_List.Add(new Hutte_des_chasseurs((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), content, joueur));
-                    ConsoleManager.Messages.Add(new ConsoleMessage("Nouvelle hutte des chasseurs !", Color.White, 5000));
+                    MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
                 }
             }
             else
             {
-                ConsoleManager.Messages.Add(new ConsoleMessage("Vous n'avez pas assez de bois.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de bois.", Color.Red, 5000));
                 create_hutte_chasseurs = false;
             }
         }

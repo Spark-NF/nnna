@@ -109,12 +109,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graphics\Camera2D.cs" />
-    <Compile Include="Graphics\ConsoleManager.cs" />
+    <Compile Include="Graphics\MessagesManager.cs" />
     <Compile Include="Graphics\HUD.cs" />
     <Compile Include="Graphics\Map.cs" />
-    <Compile Include="Graphics\ConsoleMessage.cs" />
+    <Compile Include="Graphics\Msg.cs" />
     <Compile Include="Graphics\Minimap.cs" />
     <Compile Include="Lib\Console.cs" />
+    <Compile Include="Lib\ConsoleMessage.cs" />
     <Compile Include="Lib\Joueur.cs" />
     <Compile Include="Lib\Resource.cs" />
     <Compile Include="Physics\Batiment.cs" />

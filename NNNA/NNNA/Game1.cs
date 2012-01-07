@@ -318,7 +318,7 @@ namespace NNNA
 			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, graphics);
 			minimap = new Minimap((hud.Position.Width * 7) / 8 - +hud.Position.Width / 150, hud.Position.Y + hud.Position.Height / 15, (hud.Position.Height * 9) / 10, (hud.Position.Height * 9) / 10);
 
-			ConsoleManager.X = (uint)m_screen.X - 300;
+			MessagesManager.X = (uint)m_screen.X - 300;
 		}
 
 		/// <summary>
@@ -791,8 +791,10 @@ namespace NNNA
 
 			if (m_showConsole)
 			{
-				spriteBatch.Draw(m_console, new Rectangle(0, 0, (int)m_screen.X, 26), Color.White);
-				spriteBatch.DrawString(m_font_small, "Debug lololol", new Vector2(5, 2), Color.White);
+				List<ConsoleMessage> msgs = Console.GetLast(10);
+				spriteBatch.Draw(m_console, new Rectangle(0, 0, (int)m_screen.X, 26 * msgs.Count), Color.White);
+				for (int i = msgs.Count - 1; i >= 0; i++)
+				{ spriteBatch.DrawString(m_font_small, msgs[i].Message, new Vector2(5, 2 + 26 * i), Color.White); }
 			}
 
 			DrawPointer(gameTime);
@@ -928,8 +930,8 @@ namespace NNNA
 			// Le brouillard
 			spriteBatch.Draw(m_night, Vector2.Zero, new Color(255, 255, 255, (int)(64 - 64 * Math.Cos(m_gameTime.TotalGameTime.TotalMilliseconds / 12000))));
 
-			ConsoleManager.Draw(spriteBatch, m_font_small);
-
+			// Le HUD
+			MessagesManager.Draw(spriteBatch, m_font_small);
 			hud.Draw(spriteBatch, minimap, joueur, m_font_small);
 
 			// Debug
@@ -1033,6 +1035,21 @@ namespace NNNA
 		{ Debug(i, value.ToString()); }
 		private void Debug(int i, Rectangle value)
 		{ Debug(i, value.ToString()); }
+		// Fonctions de console debug
+		private void Debug(string value)
+		{ Console.Messages.Add(new ConsoleMessage(value)); }
+		private void Debug(int value)
+		{ Debug(value.ToString()); }
+		private void Debug(float value)
+		{ Debug(value.ToString()); }
+		private void Debug(double value)
+		{ Debug(value.ToString()); }
+		private void Debug(bool value)
+		{ Debug((value ? "true" : "false")); }
+		private void Debug(Vector2 value)
+		{ Debug(value.ToString()); }
+		private void Debug(Rectangle value)
+		{ Debug(value.ToString()); }
 
 		protected void makeMenu(params string[] args)
 		{

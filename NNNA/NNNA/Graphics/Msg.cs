@@ -14,7 +14,7 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace NNNA
 {
-	class ConsoleMessage
+	class Msg
 	{
 		private string m_message;
 		public string Message
@@ -37,7 +37,7 @@ namespace NNNA
 			set { m_timeout = value; }
 		}
 
-		public ConsoleMessage(string message, Color color, int timeout)
+		public Msg(string message, Color color, int timeout)
 		{
 			m_message = message;
 			m_color = color;

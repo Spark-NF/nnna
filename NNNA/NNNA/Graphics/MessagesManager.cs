@@ -14,9 +14,9 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace NNNA
 {
-	class ConsoleManager
+	class MessagesManager
 	{
-		static public List<ConsoleMessage> Messages = new List<ConsoleMessage>();
+		static public List<Msg> Messages = new List<Msg>();
 
 		static public uint X = 0;
 
