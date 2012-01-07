@@ -114,6 +114,7 @@
     <Compile Include="Graphics\Map.cs" />
     <Compile Include="Graphics\ConsoleMessage.cs" />
     <Compile Include="Graphics\Minimap.cs" />
+    <Compile Include="Lib\Console.cs" />
     <Compile Include="Lib\Joueur.cs" />
     <Compile Include="Lib\Resource.cs" />
     <Compile Include="Physics\Batiment.cs" />

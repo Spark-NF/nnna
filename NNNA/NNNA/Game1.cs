@@ -26,7 +26,7 @@ namespace NNNA
 		private Rectangle m_selection = Rectangle.Empty;
 		private GameTime m_gameTime;
 
-		private Texture2D m_background_light, m_background_dark, m_fog, m_light, m_menu, m_submenu, m_pointer, m_night;
+		private Texture2D m_background_light, m_background_dark, m_fog, m_light, m_menu, m_submenu, m_pointer, m_night, m_console;
 		private Texture2D[] m_backgrounds = new Texture2D[2];
 		private SpriteFont m_font_menu, m_font_small, m_font_credits;
 		private Screen m_currentScreen = Screen.Title;
@@ -34,7 +34,7 @@ namespace NNNA
 
 		// Settings
 		private Vector2 m_screen = new Vector2(1680, 1050);
-		private bool m_fullScreen = true, m_shadows = true, m_smart_hud = false, m_health_hover = false;
+		private bool m_fullScreen = true, m_shadows = true, m_smart_hud = false, m_health_hover = false, m_showConsole = false;
 		private float m_sound_general = 10, m_sound_sfx = 10, m_sound_music = 10;
 		private int m_textures = 2, m_sound = 2, m_theme = 0;
 
@@ -313,6 +313,7 @@ namespace NNNA
 			m_background_light = CreateRectangle((int)(654 * (m_screen.X / 1680)), (int)m_screen.Y, Color.White);
 			m_background_dark = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0, 0, 0, 170));
 			m_night = CreateRectangle((int)m_screen.X, (int)m_screen.Y, Color.Black);
+			m_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
 			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, graphics);
 			minimap = new Minimap((hud.Position.Width * 7) / 8 - +hud.Position.Width / 150, hud.Position.Y + hud.Position.Height / 15, (hud.Position.Height * 9) / 10, (hud.Position.Height * 9) / 10);
@@ -337,13 +338,18 @@ namespace NNNA
 			Clavier.Get().Update(Keyboard.GetState());
 			Souris.Get().Update(Mouse.GetState());
 
-			if (Clavier.Get().NewPress(Keys.F5))
-			{
-				m_map = IslandGenerator.Generate(110, 70);
-				m_currentScreen = Screen.Debug;
-			}
-			if (Clavier.Get().NewPress(Keys.F6))
-			{ m_currentScreen = m_currentScreen == Screen.Debug ? Screen.Game : Screen.Debug; }
+			#if DEBUG
+				if (Clavier.Get().NewPress(Keys.F5))
+				{
+					m_map = IslandGenerator.Generate(110, 70);
+					m_currentScreen = Screen.Debug;
+				}
+				if (Clavier.Get().NewPress(Keys.F6))
+				{ m_currentScreen = m_currentScreen == Screen.Debug ? Screen.Game : Screen.Debug; }
+			#endif
+
+			if (Clavier.Get().NewPress(Keys.OemQuotes))
+			{ m_showConsole = !m_showConsole; }
 
 			// Code Konami
 			if (m_konami >= 10)
@@ -783,6 +789,14 @@ namespace NNNA
 				}*/
 			}
 
+			if (m_showConsole)
+			{
+				spriteBatch.Draw(m_console, new Rectangle(0, 0, (int)m_screen.X, 26), Color.White);
+				spriteBatch.DrawString(m_font_small, "Debug lololol", new Vector2(5, 2), Color.White);
+			}
+
+			DrawPointer(gameTime);
+
 			spriteBatch.End();
 			base.Draw(gameTime);
 		}
@@ -807,13 +821,11 @@ namespace NNNA
 		{
 			DrawCommon(gameTime);
 			makeMenu("Jouer", "Options", "Crédits", "Quitter");
-			DrawPointer(gameTime);
 		}
 		private void DrawPlay(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
 			makeMenu("Escarmouche", "Retour");
-			DrawPointer(gameTime);
 		}
 		private void DrawPlayQuick(GameTime gameTime)
 		{
@@ -828,7 +840,6 @@ namespace NNNA
 		{
 			DrawCommon(gameTime);
 			makeMenu("Jouabilité", "Graphismes", "Son", "Retour");
-			DrawPointer(gameTime);
 		}
 		private void DrawOptionsGeneral(GameTime gameTime)
 		{
@@ -920,7 +931,6 @@ namespace NNNA
 			ConsoleManager.Draw(spriteBatch, m_font_small);
 
 			hud.Draw(spriteBatch, minimap, joueur, m_font_small);
-			curseur.Draw(spriteBatch);
 
 			// Debug
 			Vector2 mouse = new Vector2(Souris.Get().X + camera.Position.X, Souris.Get().Y + camera.Position.Y);
@@ -936,7 +946,6 @@ namespace NNNA
 				DrawGame(gameTime);
 			}
 			spriteBatch.Draw(m_background_dark, Vector2.Zero, Color.White);
-			curseur.Draw(spriteBatch);
 			makePauseMenu("Quitter", "Retour");
 		}
 		
