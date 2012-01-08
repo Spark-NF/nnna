@@ -300,6 +300,7 @@ namespace NNNA
 
 			// Actions
 			m_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
+			m_actions.Add("gather", Content.Load<Texture2D>("Actions/gather"));
 			m_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
 			m_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
 			m_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
@@ -733,7 +734,10 @@ namespace NNNA
 							{ all_same = false; }
 							type = sprite.Type;
 							if (sprite.Type == "peon" && !m_currentActions.Contains("build"))
-							{ m_currentActions.Add("build"); }
+							{
+								m_currentActions.Add("gather");
+								m_currentActions.Add("build");
+							}
 						}
 					}
 					if (!all_same)
@@ -745,21 +749,26 @@ namespace NNNA
 				m_currentAction = "";
 			}
 
-				// Actions
-			if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= hud.Position.X + 20 && Souris.Get().Y >= hud.Position.Y + 20)
+			// Actions
+			if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= hud.Position.X + 20 && Souris.Get().Y >= hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
 			{
 				int x = Souris.Get().X - hud.Position.X - 20, y = Souris.Get().Y - hud.Position.Y - 20;
-				if (x % 40 < 32 && y % 40 < 32)
+				if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
 				{
 					x /= 40;
 					y /= 40;
 					int pos = x + 6 * y;
-					if (pos < m_currentActions.Count)
+					if (pos < m_currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
 					{
-						Debug(m_currentActions[pos]);
-						Dictionary<string, int> cost;
-						bool ok = true;
-						switch (m_currentActions[pos])
+						string act = "";
+						if (Clavier.Get().NewPress(Keys.C))
+						{ act = "build_hutte"; }
+						else if (Clavier.Get().NewPress(Keys.V))
+						{ act = "build_hutteDesChasseurs"; }
+						else
+						{ act = m_currentActions[pos]; }
+						Debug(act);
+						switch (act)
 						{
 							case "build":
 								m_currentActions.Clear();
@@ -768,13 +777,7 @@ namespace NNNA
 								break;
 
 							case "build_hutte":
-								cost = new Hutte().Prix;
-								foreach (KeyValuePair<string, int> pair in cost)
-								{
-									if (joueur.Resource(pair.Key).Count < pair.Value)
-									{ ok = false; }
-								}
-								if (ok)
+								if (joueur.Has(new Hutte().Prix))
 								{
 									m_pointer = Content.Load<Texture2D>("Batiments/hutte2");
 									m_currentAction = "build_hutte";
@@ -784,13 +787,7 @@ namespace NNNA
 								break;
 
 							case "build_hutteDesChasseurs":
-								cost = new Hutte_des_chasseurs().Prix;
-								foreach (KeyValuePair<string, int> pair in cost)
-								{
-									if (joueur.Resource(pair.Key).Count < pair.Value)
-									{ ok = false; }
-								}
-								if (ok)
+								if (joueur.Has(new Hutte_des_chasseurs().Prix))
 								{
 									m_pointer = Content.Load<Texture2D>("Batiments/hutte_des_chasseurs");
 									m_currentAction = "build_hutteDesChasseurs";
@@ -803,26 +800,6 @@ namespace NNNA
 				}
 			}
 
-            foreach (Movible_Sprite sprite in selectedList)
-            {
-                if (sprite.Type == "peon")
-                {
-                    if (Clavier.Get().NewPress(Keys.C))
-                    { sprite.Create_Maison(curseur, buildings, Content, joueur, camera); }
-                    else if (Clavier.Get().NewPress(Keys.V))
-                    { sprite.Create_Hutte_Chasseurs(curseur, buildings, Content, joueur, camera); }
-                }
-            }
-            foreach (Movible_Sprite sprite in units)
-            {
-                if (sprite.Type == "peon")
-                {
-                    if (sprite.Create_maison)
-                    { sprite.Create_Maison(curseur, buildings, Content, joueur, camera); }
-                    else if (sprite.Create_hutte_chasseurs)
-                    { sprite.Create_Hutte_Chasseurs(curseur, buildings, Content, joueur, camera); }
-                }
-            }
 			foreach (Movible_Sprite sprite in units)
 			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, units, buildings, matrice); }
 
