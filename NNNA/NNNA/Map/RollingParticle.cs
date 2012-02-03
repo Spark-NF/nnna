@@ -40,7 +40,7 @@ namespace NNNA
 					sourceX = (int)(r.NextDouble() * (width - 1));
 					sourceY = (int)(r.NextDouble() * (height - 1));
 				}
-					
+
 				for (int l = 0; l < length; l++)
 				{
 					sourceX += (int)(r.NextDouble() * 2.0 - 1.0);
@@ -48,10 +48,10 @@ namespace NNNA
 
 					if (sourceX < 1 || sourceX > width - 2 || sourceY < 1 || sourceY > height - 2)
 					{ break; }
-					
+
 					List<Point> hood = getNeighborhood(sourceX, sourceY);
-					
-					for (int i = 0 ; i < hood.Count(); i++)
+
+					for (int i = 0; i < hood.Count(); i++)
 					{
 						if (tiles[hood[i].X, hood[i].Y] < tiles[sourceX, sourceY])
 						{
@@ -60,7 +60,7 @@ namespace NNNA
 							break;
 						}
 					}
-						
+
 					tiles[sourceX, sourceY]++;
 				}
 			}

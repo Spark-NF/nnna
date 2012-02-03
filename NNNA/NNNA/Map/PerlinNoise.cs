@@ -8,19 +8,14 @@ namespace NNNA
 	public class PerlinNoise
 	{
 		public static int Seed { get; set; }
-
 		public static int Octaves { get; set; }
-
 		public static double Amplitude { get; set; }
-
 		public static double Persistence { get; set; }
-
 		public static double Frequency { get; set; }
 
 		static PerlinNoise()
 		{
 			Random r = new Random();
-			//LOOOL
 			PerlinNoise.Seed = r.Next(Int32.MaxValue);
 			PerlinNoise.Octaves = 8;
 			PerlinNoise.Amplitude = 1;

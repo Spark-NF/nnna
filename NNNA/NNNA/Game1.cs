@@ -444,19 +444,17 @@ namespace NNNA
 		}
 		private void UpdateTitle(GameTime gameTime)
 		{
-			m_currentScreen = testMenu(Screen.Title, Screen.Play, Screen.Options, Screen.Credits, Screen.OptionsSound);
+			m_currentScreen = testMenu(Screen.Play, Screen.Options, Screen.Credits, Screen.OptionsSound);
 			if (m_currentScreen == Screen.Credits)
 			{ m_credits = 0; }
 			if (m_currentScreen == Screen.OptionsSound)
 			{ this.Exit(); }
 		}
 		private void UpdatePlay(GameTime gameTime)
-		{
-			m_currentScreen = testMenu(Screen.Play, Screen.PlayQuick, Screen.Title);
-		}
+		{ m_currentScreen = testMenu(Screen.PlayQuick, Screen.Title); }
 		private void UpdatePlayQuick(GameTime gameTime)
 		{
-			Screen s = testSubMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.Game, Screen.Play);
+			Screen s = testMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.Game, Screen.Play);
 			if (s != Screen.PlayQuick)
 			{
 				if (s == Screen.Game)
@@ -545,16 +543,16 @@ namespace NNNA
 		}
 		private void UpdateOptions(GameTime gameTime)
 		{
-			m_currentScreen = testMenu(Screen.Options, Screen.OptionsGeneral, Screen.OptionsGraphics, Screen.OptionsSound, Screen.Title);
+			m_currentScreen = testMenu(Screen.OptionsGeneral, Screen.OptionsGraphics, Screen.OptionsSound, Screen.Title);
 			if (m_currentScreen == Screen.Title)
 			{ saveSettings(); }
 		}
 		private void UpdateOptionsGeneral(GameTime gameTime)
 		{
-			Screen s = testSubMenu(Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.Options);
+			Screen s = testMenu(Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.Options);
 			if (s != Screen.OptionsGeneral)
 			{ m_currentScreen = s; }
-			else if (Souris.Get().Clicked(MouseButton.Left))
+			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
 				int m = menu();
 				switch (m)
@@ -571,7 +569,7 @@ namespace NNNA
 		}
 		private void UpdateOptionsGraphics(GameTime gameTime)
 		{
-			Screen s = testSubMenu(Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.Options);
+			Screen s = testMenu(Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.Options);
 			if (s != Screen.OptionsGraphics)
 			{ m_currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
@@ -607,7 +605,7 @@ namespace NNNA
 		}
 		private void UpdateOptionsSound(GameTime gameTime)
 		{
-			Screen s = testSubMenu(Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.Options);
+			Screen s = testMenu(Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.Options);
 			if (s != Screen.OptionsSound)
 			{ m_currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
@@ -983,13 +981,13 @@ namespace NNNA
 		private void DrawOptionsGraphics(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
-			string[] textures = { "min", "moyenne", "max" };
-			makeMenu(m_screen.X + "x" + m_screen.Y, (m_fullScreen ? "Plein écran" : "Fenêtré"), "Textures " + textures[m_textures], (m_shadows ? "Ombres" : "Pad d'ombres"), "Retour");
+			string[] textures = { "min", "moyennes", "max" };
+			makeMenu(m_screen.X + "x" + m_screen.Y, (m_fullScreen ? "Plein écran" : "Fenêtré"), "Textures " + textures[m_textures], (m_shadows ? "Ombres" : "Pas d'ombres"), "Retour");
 		}
 		private void DrawOptionsSound(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
-			string[] sound = { "min", "moyen", "max" };
+			string[] sound = { "min", "moy", "max" };
 			makeMenu("Général : " + m_sound_general, "Musique : " + m_sound_music, "Effets : " + m_sound_sfx, "Qualité " + sound[m_sound], "Retour");
 		}
 		private void DrawCredits(GameTime gameTime)
@@ -1222,10 +1220,10 @@ namespace NNNA
 		protected void makeMenu(params string[] args)
 		{
 			for (int i = 0; i < args.Length; i++)
-			{ DrawString(spriteBatch, m_font_menu, args[i], new Vector2(0, i * 100 + 100 + (180 * (m_screen.Y / 1050))), (menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center"); }
+			{ DrawString(spriteBatch, m_font_menu, args[i], new Vector2(0, i * 100 + 200 + (180 * (m_screen.Y / 1050))), (menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center"); }
 		}
 		protected int menu()
-		{ return Souris.Get().Y > (180 * (m_screen.Y / 1050)) ? (int)((Souris.Get().Y - 100 - (180 * (m_screen.Y / 1050))) / 100) : -1; }
+		{ return Souris.Get().Y > 200 + (180 * (m_screen.Y / 1050)) && ((Souris.Get().Y - 200 - (180 * (m_screen.Y / 1050))) % 100) < m_font_menu.MeasureString("Menu").Y ? (int)((Souris.Get().Y - 200 - (180 * (m_screen.Y / 1050))) / 100) : -1; }
 
 		protected void makePauseMenu(params string[] args)
 		{
@@ -1241,33 +1239,13 @@ namespace NNNA
 		/// <param name="up">Le menu sur lequel revenir si on est déjà sur le menu cliqué.</param>
 		/// <param name="args">La liste des menus possibles.</param>
 		/// <returns>Le menu cliqué.</returns>
-		protected Screen testMenu(Screen up, params Screen[] args)
+		protected Screen testMenu(params Screen[] args)
 		{
 			if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
 				int m = menu();
 				if (m >= 0 && m < args.Length)
-				{
-					return m_currentScreen == args[m] ? up : args[m];
-				}
-			}
-			return m_currentScreen;
-		}
-
-		/// <summary>
-		/// Teste si un sous-menu est cliqué.
-		/// </summary>
-		/// <param name="args">La liste des sous-menus possibles.</param>
-		/// <returns>Le sous-menu cliqué.</returns>
-		protected Screen testSubMenu(params Screen[] args)
-		{
-			if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
-			{
-				int m = menu();
-				if (m >= 0 && m < args.Length)
-				{
-					return args[m];
-				}
+				{ return args[m]; }
 			}
 			return m_currentScreen;
 		}

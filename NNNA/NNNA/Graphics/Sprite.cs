@@ -23,6 +23,9 @@ namespace NNNA
 			{ return 1; }
 		}
 
+		public void RightClick(Vector2 coos, Camera2D camera)
+		{ }
+
 		protected bool m_crossable = true;
 		public bool Crossable
 		{
