@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Media;
 namespace NNNA
 {
 	// 1ere Ere
-	class Hutte : Batiment
+	class Hutte : Building
 	{
 		public Hutte(int x = 0, int y = 0)
 			: base(x, y)

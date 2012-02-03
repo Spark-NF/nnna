@@ -19,9 +19,9 @@ namespace NNNA
 		public Rectangle Rectangle(Camera2D cam)
 		{
 			return new Rectangle(
-				(int)(Position.X - cam.Position.X), 
+				(int)(Position.X - cam.Position.X),
 				(int)(Position.Y - cam.Position.Y),
-				Texture.Width / 4, 
+				Texture.Width / 4,
 				Texture.Height
 			);
 		}

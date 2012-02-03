@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Media;
 namespace NNNA
 {
     // 1ere Ere
-    class Hutte_des_chasseurs : Batiment
+	class Hutte_des_chasseurs : ProductionBuilding
     {
 		public Hutte_des_chasseurs(int x = 0, int y = 0)
 			: base(x, y)

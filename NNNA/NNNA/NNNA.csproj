@@ -117,8 +117,9 @@
     <Compile Include="Lib\Console.cs" />
     <Compile Include="Lib\ConsoleMessage.cs" />
     <Compile Include="Lib\Joueur.cs" />
+    <Compile Include="Lib\Point.cs" />
     <Compile Include="Lib\Resource.cs" />
-    <Compile Include="Physics\Batiment.cs" />
+    <Compile Include="Physics\Building.cs" />
     <Compile Include="Physics\Batiment\Grande_Hutte.cs" />
     <Compile Include="Physics\Batiment\Hutte.cs" />
     <Compile Include="Physics\Batiment\Hutte_des_chasseurs.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Map\PerlinNoise.cs" />
     <Compile Include="Map\RollingParticle.cs" />
     <Compile Include="Physics\Obstacle.cs" />
+    <Compile Include="Physics\ProductionBuilding.cs" />
     <Compile Include="Physics\Static_Sprite.cs" />
     <Compile Include="Physics\Unit.cs" />
     <Compile Include="Physics\Unités\LandUnit.cs" />

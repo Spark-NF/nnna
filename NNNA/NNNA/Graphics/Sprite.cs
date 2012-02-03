@@ -19,7 +19,8 @@ namespace NNNA
 		{
 			if (s1.Position.Y + s1.Texture.Height > s2.Position.Y + s2.Texture.Height)
 			{ return 0; }
-			else { return 1; }
+			else
+			{ return 1; }
 		}
 
 		protected bool m_crossable = true;

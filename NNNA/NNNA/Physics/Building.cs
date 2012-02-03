@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NNNA
 {
-	class Batiment : Static_Sprite
+	class Building : Static_Sprite
 	{
 		protected int vie;
 
@@ -13,7 +13,7 @@ namespace NNNA
 		public Dictionary<string, int> Prix
 		{ get { return m_cost; } }
 
-		public Batiment(int x, int y)
+		public Building(int x, int y)
             : base(x, y)
         { }
 	}
