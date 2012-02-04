@@ -20,7 +20,7 @@ namespace NNNA
 	{
 		private Vector2 m_destination;
 
-		public void RightClick(Vector2 coos, Camera2D camera)
+		public override void RightClick(Vector2 coos, Camera2D camera)
 		{ m_destination = coos; }
 
 		public ProductionBuilding(int x, int y)

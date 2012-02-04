@@ -28,7 +28,7 @@ namespace NNNA
 		private Rectangle m_selection = Rectangle.Empty;
 		private GameTime m_gameTime;
 
-		private Texture2D m_background_light, m_background_dark, m_fog, m_light, m_menu, m_submenu, m_pointer, m_night, m_console, m_background;
+		private Texture2D m_background_light, m_background_dark, m_fog, m_menu, m_submenu, m_pointer, m_night, m_console, m_background;
 		private Dictionary<string, Texture2D> m_actions = new Dictionary<string, Texture2D>();
 		private SpriteFont m_font_menu, m_font_menu_title, m_font_small, m_font_credits;
 		private Screen m_currentScreen = Screen.Title;
@@ -54,8 +54,8 @@ namespace NNNA
 		Camera2D camera;
 		Joueur joueur;
         List<Movible_Sprite> units = new List<Movible_Sprite>();
-        List<Movible_Sprite> selectedList = new List<Movible_Sprite>();
-		List<Static_Sprite> buildings = new List<Static_Sprite>();
+		List<Unit> selectedList = new List<Unit>();
+		List<Building> buildings = new List<Building>();
 		Static_Sprite selectedBuilding;
 		float[,] m_map;
 
@@ -293,8 +293,6 @@ namespace NNNA
 
 			// Backgrounds
 			m_fog = Content.Load<Texture2D>("fog");
-			m_light = Content.Load<Texture2D>("light");
-			m_background = Content.Load<Texture2D>("background");
 
 			// Sprites
 			m_menu = Content.Load<Texture2D>("menu");
@@ -326,6 +324,10 @@ namespace NNNA
 		/// </summary>
 		protected void LoadScreenSizeDependantContent()
 		{
+			string ratio = ((int)((10 * m_screen.X) / m_screen.Y)).ToString();
+			if (ratio != "13" && ratio != "16" && ratio != "18")
+			{ ratio = "13"; }
+			m_background = Content.Load<Texture2D>("background/" + ratio);
 			m_background_light = CreateRectangle((int)(654 * (m_screen.X / 1680)), (int)m_screen.Y, Color.White);
 			m_background_dark = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0, 0, 0, 170));
 			m_night = CreateRectangle((int)m_screen.X, (int)m_screen.Y, Color.Black);
@@ -709,7 +711,7 @@ namespace NNNA
 					{ selectedBuilding.Selected = false; }
 					selectedBuilding = null;
 				}
-				foreach (Movible_Sprite sprite in units)
+				foreach (Unit sprite in units)
 				{
 					Rectangle csel = new Rectangle((int)(m_selection.X - camera.Position.X + (m_selection.Width < 0 ? m_selection.Width : 0)), (int)(m_selection.Y - camera.Position.Y + (m_selection.Height < 0 ? m_selection.Height : 0)), (int)Math.Abs(m_selection.Width), (int)Math.Abs(m_selection.Height));
 					if (!sprite.Selected && csel.Intersects(sprite.Rectangle(camera)))
@@ -826,7 +828,7 @@ namespace NNNA
 				}
 			}
 
-			foreach (Movible_Sprite sprite in units)
+			foreach (Unit sprite in units)
 			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, units, buildings, matrice); }
 
 			units.Sort(Sprite.CompareByY);
@@ -1057,6 +1059,8 @@ namespace NNNA
 			// Le HUD
 			MessagesManager.Draw(spriteBatch, m_font_small);
 			hud.Draw(spriteBatch, minimap, joueur, m_font_small);
+			for (int i = 0; i < selectedList.Count; i++)
+			{ selectedList[i].DrawIcon(spriteBatch, new Vector2(356 + (i % 10) * 36, m_screen.Y - hud.Position.Height + 54 + (i / 10) * 36)); }
 			if (m_currentActions.Count > 0)
 			{
 				for (int i = 0; i < m_currentActions.Count; i++)

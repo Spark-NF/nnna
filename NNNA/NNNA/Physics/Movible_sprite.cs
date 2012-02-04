@@ -25,6 +25,14 @@ namespace NNNA
 				Texture.Height
 			);
 		}
+
+		protected Texture2D m_icon;
+		public Texture2D Icon
+		{
+			get { return m_icon; }
+			set { m_icon = value; }
+		}
+
 		private int dec = 90;
 		protected bool create_maison;
 		public bool Create_maison
@@ -100,7 +108,7 @@ namespace NNNA
 		public Movible_Sprite(int x, int y)
 			: base(x, y)
 		{ }
-		public void ClickMouvement(Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<Movible_Sprite> sprites, List<Static_Sprite> buildings, Sprite[,] matrice)
+		public void ClickMouvement(Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)
 		{
 			if (m_click == true || m_selected == true)
 			{
@@ -213,39 +221,39 @@ namespace NNNA
 		{
 			int tex = 0;
 
-            //MODE 8 ANGLES
-            if (dec == 45)
+			//MODE 8 ANGLES
+			if (dec == 45)
 			{
-			if (m_angle > 1 * (Math.PI / 8) && m_angle <= 3 * (Math.PI / 8))
-			{ tex = 45; }
-			else if (m_angle > 3 * (Math.PI / 8) && m_angle <= 5 * (Math.PI / 8))
-			{ tex = 90; }
-			else if (m_angle > 5 * (Math.PI / 8) && m_angle <= 7 * (Math.PI / 8))
-			{ tex = 135; }
-			else if (m_angle > 7 * (Math.PI / 8) || m_angle <= -7 * (Math.PI / 8))
-			{ tex = 180; }
-			else if (m_angle > -7 * (Math.PI / 8) && m_angle <= -5 * (Math.PI / 8))
-			{ tex = 225; }
-			else if (m_angle > -5 * (Math.PI / 8) && m_angle <= -3 * (Math.PI / 8))
-			{ tex = 270; }
-			else if (m_angle > -3 * (Math.PI / 8) && m_angle <= -1 * (Math.PI / 8))
-			{ tex = 315; }
-            }
-
-            //MODE 4 ANGLES
-			else
-			{
-            if (m_angle > 1 * (Math.PI / 4) && m_angle <= 3 * (Math.PI / 4))
-            { tex = 90; }
-            else if (m_angle > 3 * (Math.PI / 4) || m_angle <= -3 * (Math.PI / 4))
-            { tex = 180; }
-            else if (m_angle > -3 * (Math.PI / 4) && m_angle <= -1 * (Math.PI / 4))
-            { tex = 270; }
+				if (m_angle > 1 * (Math.PI / 8) && m_angle <= 3 * (Math.PI / 8))
+				{ tex = 45; }
+				else if (m_angle > 3 * (Math.PI / 8) && m_angle <= 5 * (Math.PI / 8))
+				{ tex = 90; }
+				else if (m_angle > 5 * (Math.PI / 8) && m_angle <= 7 * (Math.PI / 8))
+				{ tex = 135; }
+				else if (m_angle > 7 * (Math.PI / 8) || m_angle <= -7 * (Math.PI / 8))
+				{ tex = 180; }
+				else if (m_angle > -7 * (Math.PI / 8) && m_angle <= -5 * (Math.PI / 8))
+				{ tex = 225; }
+				else if (m_angle > -5 * (Math.PI / 8) && m_angle <= -3 * (Math.PI / 8))
+				{ tex = 270; }
+				else if (m_angle > -3 * (Math.PI / 8) && m_angle <= -1 * (Math.PI / 8))
+				{ tex = 315; }
 			}
 
-            m_texture = m_textures[tex];
-            if (Selected)
-            {
+			//MODE 4 ANGLES
+			else
+			{
+				if (m_angle > 1 * (Math.PI / 4) && m_angle <= 3 * (Math.PI / 4))
+				{ tex = 90; }
+				else if (m_angle > 3 * (Math.PI / 4) || m_angle <= -3 * (Math.PI / 4))
+				{ tex = 180; }
+				else if (m_angle > -3 * (Math.PI / 4) && m_angle <= -1 * (Math.PI / 4))
+				{ tex = 270; }
+			}
+
+			m_texture = m_textures[tex];
+			if (Selected)
+			{
 				if (Click)
 				{
 					int distance = (int)Math.Sqrt(Math.Pow((ClickPosition.X/* + m_go.Width / 2*/) - (Position.X/* + m_texture.Width / 8*/), 2) + Math.Pow((ClickPosition.Y/* + m_go.Height / 2*/) - (Position.Y/* + (m_texture.Height * 4) / 5*/), 2));
@@ -255,9 +263,11 @@ namespace NNNA
 				}
 				spriteBatch.Draw(m_texture, m_position - camera.Position, new Rectangle(m_click ? index * 32 : 0, 0, 32, 48), Color.Peru);
 			}
-            else
-            { spriteBatch.Draw(m_texture, m_position - camera.Position, new Rectangle(m_click ? index * 32 : 0, 0, 32, 48), Color.White); }
+			else
+			{ spriteBatch.Draw(m_texture, m_position - camera.Position, new Rectangle(m_click ? index * 32 : 0, 0, 32, 48), Color.White); }
 		}
+		public void DrawIcon(SpriteBatch spriteBatch, Vector2 position)
+		{ spriteBatch.Draw(m_icon, position, new Rectangle(0, 0, m_icon.Width, m_icon.Height), Color.White); }
 		public void SetTextures(ContentManager content, string name, int dec = 90)
 		{
 			this.dec = dec;
@@ -266,6 +276,7 @@ namespace NNNA
 			m_texture = m_textures[0];
 			m_go = content.Load<Texture2D>("go");
 			m_dots = content.Load<Texture2D>("dots");
+			m_icon = content.Load<Texture2D>("Units/" + name + "/" + name + "_icon");
 		}
 	}
 }
