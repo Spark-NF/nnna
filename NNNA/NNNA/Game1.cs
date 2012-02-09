@@ -196,14 +196,14 @@ namespace NNNA
 			joueur = new Joueur(Color.Red, "NNNNA", Content);
 
              // son 
-            engine = new AudioEngine("Content/sounds/son projet.xgs");
-            musique = new WaveBank(engine, "Content/sounds/Wave Bank.xwb");
-			sons = new SoundBank(engine, "Content/sounds/sound_menu.xsb");
-			piste = sons.GetCue("sonmenu");
-			piste.Play();
-            engine.Update();
-			musicCategory = engine.GetCategory("Music");
-            musicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
+            //engine = new AudioEngine("Content/sounds/son projet.xgs");
+            //musique = new WaveBank(engine, "Content/sounds/Wave Bank.xwb");
+            //sons = new SoundBank(engine, "Content/sounds/sound_menu.xsb");
+            //piste = sons.GetCue("sonmenu");
+            //piste.Play();
+            //engine.Update();
+            //musicCategory = engine.GetCategory("Music");
+            //musicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
 
             base.Initialize();
 
@@ -435,12 +435,12 @@ namespace NNNA
 			}
 
 			//son 
-			engine.Update();
-			if (!piste.IsPlaying)
-			{
-				piste = sons.GetCue("sonmenu");
-				piste.Play();
-			}
+            //engine.Update();
+            //if (!piste.IsPlaying)
+            //{
+            //    piste = sons.GetCue("sonmenu");
+            //    piste.Play();
+            //}
 
 			base.Update(gameTime);
 		}
