@@ -35,7 +35,7 @@ namespace NNNA
         }
         public Minimap(int x, int y, int width, int height)
         {
-            reduced_Map = new Rectangle(x, y, width, height);
+            reduced_Map = new Rectangle(x + width/2, y, width*3/4, height*3/4);
         }
         public void LoadContent(Map map)
         {
@@ -50,7 +50,7 @@ namespace NNNA
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, reduced_Map, Color.White);
+            spriteBatch.Draw(texture, reduced_Map, null, Color.White, (float)(Math.PI / 4), Vector2.Zero, SpriteEffects.None, 0f);
         }
     }
 }
