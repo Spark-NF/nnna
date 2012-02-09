@@ -44,7 +44,7 @@ namespace NNNA
 		private MapType m_quick_type = MapType.Island;
 		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0;
 		List<string> m_currentActions = new List<string>();
-
+        
 		// Map
 		Sprite h, e, p, t, s, i, curseur;
 		Sprite[,] matrice;
@@ -60,12 +60,13 @@ namespace NNNA
 		float[,] m_map;
 
         // Audio objects
-        private AudioEngine engine; 
-        private WaveBank musique; 
-        private SoundBank sons; 
-        private Cue piste;
-        AudioCategory musicCategory;
+        //private AudioEngine engine; 
+        //private WaveBank musique; 
+        //private SoundBank sons; 
+        //private Cue piste;
+        //AudioCategory musicCategory;
         float musicVolume = 2.0f;
+        Sons son = new Sons();
 
 		#endregion
 
@@ -196,7 +197,7 @@ namespace NNNA
 			joueur = new Joueur(Color.Red, "NNNNA", Content);
 
              // son 
-            //engine = new AudioEngine("Content/sounds/son projet.xgs");
+ //engine = new AudioEngine("Content/sounds/son projet.xgs");
             //musique = new WaveBank(engine, "Content/sounds/Wave Bank.xwb");
             //sons = new SoundBank(engine, "Content/sounds/sound_menu.xsb");
             //piste = sons.GetCue("sonmenu");
@@ -204,6 +205,7 @@ namespace NNNA
             //engine.Update();
             //musicCategory = engine.GetCategory("Music");
             //musicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
+            son.Initializesons(musicVolume, m_sound_music, m_sound_general);
 
             base.Initialize();
 
@@ -435,11 +437,11 @@ namespace NNNA
 			}
 
 			//son 
-            //engine.Update();
-            //if (!piste.IsPlaying)
+            son.Engine_menu.Update();
+			//engine.Update();
+            //if (!son.Musiquemenu.IsPlaying)
             //{
-            //    piste = sons.GetCue("sonmenu");
-            //    piste.Play();
+            //    son.Musiquemenu.Play();
             //}
 
 			base.Update(gameTime);
@@ -460,68 +462,70 @@ namespace NNNA
 			if (s != Screen.PlayQuick)
 			{
 				if (s == Screen.Game)
-				{
-					int[] sizes = { 50, 100, 200 };
-					double[] resources = { 0.05, 0.1, 0.2 };
+                {
+                    int[] sizes = { 50, 100, 200 };
+                    double[] resources = { 0.05, 0.1, 0.2 };
 
-					//Le reste
-					matrice = generateMap(m_quick_type, (int)(sizes[m_quick_size] * 0.6), sizes[m_quick_size], resources[m_quick_resources]);
+                    //Le reste
+                    matrice = generateMap(m_quick_type, (int)(sizes[m_quick_size] * 0.6), sizes[m_quick_size], resources[m_quick_resources]);
                     map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
                     hud.LoadContent(Content, "HUD/hud2");
                     minimap.LoadContent(map);
-					m_elapsed = gameTime.TotalGameTime.TotalMilliseconds;
+                    m_elapsed = gameTime.TotalGameTime.TotalMilliseconds;
 
-					// Spawn
-					List<float> heights = new List<float>();
-					for (int x = 0; x < m_map.GetLength(0); x++)
-					{
-						for (int y = 0; y < m_map.GetLength(1); y++)
-						{ heights.Add(m_map[x, y] * 255); }
-					}
-					float spawnHeight = heights.Max();
-					int my = heights.IndexOf(spawnHeight) % m_map.GetLength(0), mx = heights.IndexOf(spawnHeight) / m_map.GetLength(0);
-					//ConsoleManager.Messages.Add(new ConsoleMessage(mx.ToString() + "-" + my.ToString(), Color.Red, 100000));
-					mx = m_map.GetLength(1) / 2;
-					my = m_map.GetLength(0) / 2;
+                    // Spawn
+                    List<float> heights = new List<float>();
+                    for (int x = 0; x < m_map.GetLength(0); x++)
+                    {
+                        for (int y = 0; y < m_map.GetLength(1); y++)
+                        { heights.Add(m_map[x, y] * 255); }
+                    }
+                    float spawnHeight = heights.Max();
+                    int my = heights.IndexOf(spawnHeight) % m_map.GetLength(0), mx = heights.IndexOf(spawnHeight) / m_map.GetLength(0);
+                    //ConsoleManager.Messages.Add(new ConsoleMessage(mx.ToString() + "-" + my.ToString(), Color.Red, 100000));
+                    mx = m_map.GetLength(1) / 2;
+                    my = m_map.GetLength(0) / 2;
 
-					//Unites du Debut
-					joueur.Reset();
-					joueur.LoadResources(Content);
-					units.Clear();
-					units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 100, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
-					units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 0, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
-					units.Add(new Peon((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 50, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
+                    //Unites du Debut
+                    joueur.Reset();
+                    joueur.LoadResources(Content);
+                    units.Clear();
+                    units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 100, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
+                    units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 0, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
+                    units.Add(new Peon((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 50, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
 
-					//Batiments du Debut
-					buildings.Clear();
-					buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(mx - 1, my - 1)).X, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y, Content, joueur));
-					camera.Position = matrice2xy(new Vector2(mx-1, my-1)) - m_screen / 2;
+                    //Batiments du Debut
+                    buildings.Clear();
+                    buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(mx - 1, my - 1)).X, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y, Content, joueur));
+                    camera.Position = matrice2xy(new Vector2(mx - 1, my - 1)) - m_screen / 2;
 
-					//Decor
-					/*Random rand = new Random();
-					for (int i = 0; i < 15; i++)
-					{
-						int x = 0;
-						int y = 0;
-						x = rand.Next(-16 * (map.Map_Width),16 * map.Map_Width);
-						y = rand.Next(0,16 *map.Map_Height);
-						while ((xy2matrice(new Vector2(x, y)).X >= 0 && xy2matrice(new Vector2(x, y)).X < matrice.GetLength(0))
-							&& (xy2matrice(new Vector2(x, y)).Y >= 0 && xy2matrice(new Vector2(x, y)).Y < matrice.GetLength(1))
-							&& (!matrice[(int)xy2matrice(new Vector2(x, y)).X, (int)xy2matrice(new Vector2(x, y)).Y].Crossable))
-						{
-							x = rand.Next(-16 * map.Map_Width,16 * map.Map_Width);
-							y = rand.Next(0,16 * map.Map_Height);
-						}
-						buildings.Add(new Palmier(x, y, Content));
-					}*/
+                    //Decor
+                    /*Random rand = new Random();
+                    for (int i = 0; i < 15; i++)
+                    {
+                        int x = 0;
+                        int y = 0;
+                        x = rand.Next(-16 * (map.Map_Width),16 * map.Map_Width);
+                        y = rand.Next(0,16 *map.Map_Height);
+                        while ((xy2matrice(new Vector2(x, y)).X >= 0 && xy2matrice(new Vector2(x, y)).X < matrice.GetLength(0))
+                            && (xy2matrice(new Vector2(x, y)).Y >= 0 && xy2matrice(new Vector2(x, y)).Y < matrice.GetLength(1))
+                            && (!matrice[(int)xy2matrice(new Vector2(x, y)).X, (int)xy2matrice(new Vector2(x, y)).Y].Crossable))
+                        {
+                            x = rand.Next(-16 * map.Map_Width,16 * map.Map_Width);
+                            y = rand.Next(0,16 * map.Map_Height);
+                        }
+                        buildings.Add(new Palmier(x, y, Content));
+                    }*/
 
-					//Le reste
-					matrice = generateMap(m_quick_type, (int)(sizes[m_quick_size] * 0.6), sizes[m_quick_size], resources[m_quick_resources]);
+                    //Le reste
+                    matrice = generateMap(m_quick_type, (int)(sizes[m_quick_size] * 0.6), sizes[m_quick_size], resources[m_quick_resources]);
                     map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
                     hud.LoadContent(Content, "HUD/hud2");
                     minimap.LoadContent(map);
-					m_gameTime = gameTime;
-				}
+                    m_gameTime = gameTime;
+                    son.Musiquemenu.Pause();
+                    
+                }
 				m_currentScreen = s;
 			}
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
@@ -632,7 +636,7 @@ namespace NNNA
 						break;
 				}
 			}
-            musicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
+            son.MusicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
 
 		}
 		private void UpdateCredits(GameTime gameTime)
@@ -841,6 +845,8 @@ namespace NNNA
 			{ m_currentScreen = Screen.Game; }
 			curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			m_currentScreen = testPauseMenu(Screen.Title, Screen.Game);
+            son.Musiquemenu.Resume();
+
 		}
 		void UpdateDebug(GameTime gameTime)
 		{ }

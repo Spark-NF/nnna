@@ -119,6 +119,7 @@
     <Compile Include="Lib\Joueur.cs" />
     <Compile Include="Lib\Point.cs" />
     <Compile Include="Lib\Resource.cs" />
+    <Compile Include="Lib\Sons.cs" />
     <Compile Include="Physics\Building.cs" />
     <Compile Include="Physics\Batiment\Grande_Hutte.cs" />
     <Compile Include="Physics\Batiment\Hutte.cs" />
