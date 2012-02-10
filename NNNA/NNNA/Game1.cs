@@ -67,6 +67,8 @@ namespace NNNA
         //AudioCategory musicCategory;
         float musicVolume = 2.0f;
         Sons son = new Sons();
+        SoundEffect _debutpartie;
+        SoundEffect _finpartie;
 
 		#endregion
 
@@ -196,16 +198,10 @@ namespace NNNA
 			curseur = new Sprite(0, 0);
 			joueur = new Joueur(Color.Red, "NNNNA", Content);
 
-             // son 
- //engine = new AudioEngine("Content/sounds/son projet.xgs");
-            //musique = new WaveBank(engine, "Content/sounds/Wave Bank.xwb");
-            //sons = new SoundBank(engine, "Content/sounds/sound_menu.xsb");
-            //piste = sons.GetCue("sonmenu");
-            //piste.Play();
-            //engine.Update();
-            //musicCategory = engine.GetCategory("Music");
-            //musicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
+             // son
             son.Initializesons(musicVolume, m_sound_music, m_sound_general);
+            _debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
+            _finpartie = Content.Load<SoundEffect>("sounds/sortiedejeu");
 
             base.Initialize();
 
@@ -524,6 +520,7 @@ namespace NNNA
                     minimap.LoadContent(map);
                     m_gameTime = gameTime;
                     son.Musiquemenu.Pause();
+                    _debutpartie.Play();
                     
                 }
 				m_currentScreen = s;
