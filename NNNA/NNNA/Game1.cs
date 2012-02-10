@@ -980,7 +980,7 @@ namespace NNNA
 			if (drawText)
 			{
 				// Titre
-				DrawString(spriteBatch, m_font_menu_title, "NNNA", new Vector2((m_screen.X - m_font_menu_title.MeasureString("NNNA").X) / 2, 80), Color.Red, Color.Black, 1);
+				DrawString(spriteBatch, m_font_menu_title, "NNNA", new Vector2((m_screen.X - m_font_menu_title.MeasureString("NNNA").X) / 2, m_screen.Y / 13), Color.Red, Color.Black, 1);
 
 				// Version
 				spriteBatch.DrawString(m_font_small, this.GetType().Assembly.GetName().Version.ToString(), new Vector2((m_screen.X - m_font_small.MeasureString(this.GetType().Assembly.GetName().Version.ToString()).X) / 2, m_screen.Y - 50), Color.GhostWhite);
@@ -1224,10 +1224,10 @@ namespace NNNA
 		/// <param name="borderCol">La couleur de la bordure.</param>
 		/// <param name="border">La taille de la bordure.</param>
 		/// <param name="spec">L'alignement du text. Valeurs possibles : "Left", "Right", "Center". Laissez vide pour ne rien changer.</param>
-		protected void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border = 0, string spec = "")
+		protected void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border = 0, string spec = "", float scale = 1)
 		{
-			while (m_font_menu.MeasureString(text).X > m_screen.X * 0.36)
-			{ m_font_menu.Spacing--; }
+			while (font.MeasureString(text).X * scale > m_screen.X * 0.36)
+			{ font.Spacing--; }
 
 			switch (spec)
 			{
@@ -1236,34 +1236,34 @@ namespace NNNA
 					break;
 
 				case "Right":
-					coos.X = m_screen.X - m_font_menu.MeasureString(text).X;
+					coos.X = m_screen.X - font.MeasureString(text).X * scale;
 					break;
 
 				case "Center":
-					coos.X = (m_screen.X - m_font_menu.MeasureString(text).X) / 2;
+					coos.X = (m_screen.X - font.MeasureString(text).X * scale) / 2;
 					break;
 			}
 
 			if (border > 0)
 			{
-				spriteBatch.DrawString(font, text, coos - new Vector2(border, 0), borderCol);
-				spriteBatch.DrawString(font, text, coos + new Vector2(border, 0), borderCol);
-				spriteBatch.DrawString(font, text, coos - new Vector2(0, border), borderCol);
-				spriteBatch.DrawString(font, text, coos + new Vector2(0, border), borderCol);
+				spriteBatch.DrawString(font, text, coos - new Vector2(border, 0), borderCol, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+				spriteBatch.DrawString(font, text, coos + new Vector2(border, 0), borderCol, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+				spriteBatch.DrawString(font, text, coos - new Vector2(0, border), borderCol, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+				spriteBatch.DrawString(font, text, coos + new Vector2(0, border), borderCol, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
 			}
 
-			spriteBatch.DrawString(font, text, coos, color);
+			spriteBatch.DrawString(font, text, coos, color, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
 
-			m_font_menu.Spacing = 0;
+			font.Spacing = 0;
 		}
 
 		protected void makeMenu(params string[] args)
 		{
 			for (int i = 0; i < args.Length; i++)
-			{ DrawString(spriteBatch, m_font_menu, args[i], new Vector2(0, i * 100 + 200 + (180 * (m_screen.Y / 1050))), (menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center"); }
+			{ DrawString(spriteBatch, m_font_menu, args[i], new Vector2(0, i * (m_screen.Y / 11) + m_screen.Y / 5 + (180 * (m_screen.Y / 1050))), (menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", m_screen.Y / 1050); }
 		}
 		protected int menu()
-		{ return Souris.Get().Y > 200 + (180 * (m_screen.Y / 1050)) && ((Souris.Get().Y - 200 - (180 * (m_screen.Y / 1050))) % 100) < m_font_menu.MeasureString("Menu").Y ? (int)((Souris.Get().Y - 200 - (180 * (m_screen.Y / 1050))) / 100) : -1; }
+		{ return Souris.Get().Y > m_screen.Y / 5 + (180 * (m_screen.Y / 1050)) && ((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) % (m_screen.Y / 11)) < (m_font_menu.MeasureString("Menu").Y * m_screen.Y) / 1050 ? (int)((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) / (m_screen.Y / 11)) : -1; }
 
 		protected void makePauseMenu(params string[] args)
 		{
