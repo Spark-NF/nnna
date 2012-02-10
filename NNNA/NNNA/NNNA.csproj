@@ -120,11 +120,13 @@
     <Compile Include="Lib\Point.cs" />
     <Compile Include="Lib\Resource.cs" />
     <Compile Include="Lib\Sons.cs" />
+    <Compile Include="Physics\Batiment\Ferme.cs" />
     <Compile Include="Physics\Building.cs" />
     <Compile Include="Physics\Batiment\Grande_Hutte.cs" />
     <Compile Include="Physics\Batiment\Hutte.cs" />
     <Compile Include="Physics\Batiment\Hutte_des_chasseurs.cs" />
     <Compile Include="Physics\Decors\Palmier.cs" />
+    <Compile Include="Physics\Decors\Rock.cs" />
     <Compile Include="Physics\Movible_sprite.cs" />
     <Compile Include="Graphics\Sprite.cs" />
     <Compile Include="Lib\Clavier.cs" />

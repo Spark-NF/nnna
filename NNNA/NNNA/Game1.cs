@@ -310,6 +310,7 @@ namespace NNNA
 			m_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
 			m_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
 			m_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
+           // m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
 
 			// Shaders
 			gaussianBlur = Content.Load<Effect>("Shaders/GaussianBlur");
@@ -496,6 +497,7 @@ namespace NNNA
                     camera.Position = matrice2xy(new Vector2(mx - 1, my - 1)) - m_screen / 2;
 
                     //Decor
+
                     /*Random rand = new Random();
                     for (int i = 0; i < 15; i++)
                     {
@@ -658,6 +660,7 @@ namespace NNNA
 				Building b;
 				switch (m_currentAction)
 				{
+                        // Ere 1 
 					case "build_hutte":
 						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
 						if (joueur.Pay(b.Prix))
@@ -683,6 +686,22 @@ namespace NNNA
 						else
 						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 						break;
+                        // Fin Ere 1 
+
+                        // Ere 2 
+                    case "build_ferme":
+                        b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
+                        if (joueur.Pay(b.Prix))
+                        {
+                            buildings.Add(b);
+                            MessagesManager.Messages.Add(new Msg("Nouvelle ferme !", Color.White, 5000));
+                            m_pointer = Content.Load<Texture2D>("pointer");
+                            m_currentAction = "";
+                        }
+                        else
+                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                        break;
+                        // Fin Ere 2
 
 					default:
 						m_selection = new Rectangle(Souris.Get().X + (int)camera.Position.X, Souris.Get().Y + (int)camera.Position.Y, 0, 0);
@@ -779,22 +798,24 @@ namespace NNNA
 			}
 
 			// Actions
-			if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= hud.Position.X + 20 && Souris.Get().Y >= hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+			if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= hud.Position.X + 20 && Souris.Get().Y >= hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V) || Clavier.Get().NewPress(Keys.F))
 			{
 				int x = Souris.Get().X - hud.Position.X - 20, y = Souris.Get().Y - hud.Position.Y - 20;
-				if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+                if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V) || Clavier.Get().NewPress(Keys.F))
 				{
 					x /= 40;
 					y /= 40;
 					int pos = x + 6 * y;
-					if (pos < m_currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+                    if (pos < m_currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V) || Clavier.Get().NewPress(Keys.F))
 					{
 						string act = "";
 						if (Clavier.Get().NewPress(Keys.C))
 						{ act = "build_hutte"; }
 						else if (Clavier.Get().NewPress(Keys.V))
 						{ act = "build_hutteDesChasseurs"; }
-						else
+                        else if (Clavier.Get().NewPress(Keys.F)) 
+                        { act = "build_ferme"; }
+                        else
 						{ act = m_currentActions[pos]; }
 						Debug(act);
 						switch (act)
@@ -803,6 +824,7 @@ namespace NNNA
 								m_currentActions.Clear();
 								m_currentActions.Add("build_hutte");
 								m_currentActions.Add("build_hutteDesChasseurs");
+                                m_currentActions.Add("build_ferme"); 
 								break;
 
 							case "build_hutte":
@@ -824,6 +846,17 @@ namespace NNNA
 								else
 								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								break;
+
+                                // Ere 2 
+                            case "build_ferme":
+                                if (joueur.Has(new Hutte_des_chasseurs().Prix))
+                                {
+                                    m_pointer = Content.Load<Texture2D>("Batiments/ferme");
+                                    m_currentAction = "build_ferme";
+                                }
+                                else
+                                { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                                break;
 						}
 					}
 				}
@@ -1281,7 +1314,7 @@ namespace NNNA
 		/// <returns>La prochaine résolution dans l'ordre croissant.</returns>
 		private Vector2 getNextResolution(bool previous = false)
 		{
-			Vector2[] l = { // Megaliste ! Yay !
+			Vector2[] l = { // Megaliste ! Yay ! // MDR
 				/*new Vector2(320, 200), Les petites résolutions servent à rien
 				new Vector2(320, 240), 
 				new Vector2(640, 480), 
