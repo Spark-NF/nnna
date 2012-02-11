@@ -66,5 +66,10 @@ namespace NNNA
 				}
 			}
 		}
+
+        public void Draw(SpriteBatch spritebatch, int ere, Camera2D  camera)
+        {
+            spritebatch.Draw(m_textures[ere], position - camera.Position, Color.White);
+        }
 	}
 }

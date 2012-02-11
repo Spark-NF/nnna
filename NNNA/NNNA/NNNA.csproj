@@ -109,11 +109,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graphics\Camera2D.cs" />
+    <Compile Include="Graphics\Projectiles\Fleche.cs" />
     <Compile Include="Graphics\MessagesManager.cs" />
     <Compile Include="Graphics\HUD.cs" />
     <Compile Include="Graphics\Map.cs" />
     <Compile Include="Graphics\Msg.cs" />
     <Compile Include="Graphics\Minimap.cs" />
+    <Compile Include="Graphics\Projectile.cs" />
     <Compile Include="Lib\Console.cs" />
     <Compile Include="Lib\ConsoleMessage.cs" />
     <Compile Include="Lib\Joueur.cs" />

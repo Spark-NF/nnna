@@ -1065,6 +1065,9 @@ namespace NNNA
 			foreach (Movible_Sprite sprite in units)
 			{ sprite.Draw(spriteBatch, camera, index); }
 
+            //foreach (Resource sprite in resource)
+            //{ sprite.Draw(spriteBatch, 1, camera); }
+
 			// Rectangle de séléction
 			Vector2 coos = new Vector2(
 				m_selection.X - camera.Position.X + (m_selection.Width < 0 ? m_selection.Width : 0),
