@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Content;
 
-namespace NNNA.Physics.Decors
+namespace NNNA
 {
     class Rock : Building
     {
