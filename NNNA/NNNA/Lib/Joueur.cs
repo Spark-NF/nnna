@@ -49,9 +49,9 @@ namespace NNNA
 		public void Reset()
 		{
 			m_resources.Clear();
-			m_resources.Add(new Resource("Bois", new string[] { "Bois", "Bois", "Bois", "Bois" }, 1130));
-			m_resources.Add(new Resource("Pierre", new string[] { "Pierre", "Pierre", "Beton", "Metonite" }));
-			m_resources.Add(new Resource("Nourriture", new string[] { "Nourriture", "Nourriture", "Nourriture", "Oxygene" }, 200));
+			m_resources.Add(new Resource("Bois", new string[] { "Bois", "Bois", "Bois", "Bois" }, 500));
+			m_resources.Add(new Resource("Pierre", new string[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));
+			m_resources.Add(new Resource("Nourriture", new string[] { "Nourriture", "Nourriture", "Nourriture", "Oxygene" }, 500));
 			m_resources.Add(new Resource("Or", new string[] { "", "Or", "Or", "Cristaux" }));
 			m_resources.Add(new Resource("Fer", new string[] { "", "Fer", "Titane", "Tritonite" }));
 			m_resources.Add(new Resource("Petrole", new string[] { "", "", "Petrole", "Tritium" }));

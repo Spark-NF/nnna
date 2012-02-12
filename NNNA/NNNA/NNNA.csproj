@@ -122,7 +122,11 @@
     <Compile Include="Lib\Point.cs" />
     <Compile Include="Lib\Resource.cs" />
     <Compile Include="Lib\Sons.cs" />
+    <Compile Include="Physics\Batiment\Archerie.cs" />
+    <Compile Include="Physics\Batiment\Ecurie.cs" />
     <Compile Include="Physics\Batiment\Ferme.cs" />
+    <Compile Include="Physics\Batiment\Maison.cs" />
+    <Compile Include="Physics\Batiment\Tour.cs" />
     <Compile Include="Physics\Building.cs" />
     <Compile Include="Physics\Batiment\Grande_Hutte.cs" />
     <Compile Include="Physics\Batiment\Hutte.cs" />
