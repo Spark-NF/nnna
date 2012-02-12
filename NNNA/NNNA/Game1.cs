@@ -35,6 +35,7 @@ namespace NNNA
 		private int m_konami = 0, m_konamiStatus = 0;
 		private string m_currentAction = "";
 		private double m_elapsed;
+        List<string> last_state = new List<string>();
 
 		private Vector2 m_screen = new Vector2(1680, 1050);
 		private bool m_fullScreen = true, m_shadows = true, m_smart_hud = false, m_health_hover = false, m_showConsole = false;
@@ -318,6 +319,7 @@ namespace NNNA
             m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
             m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
             m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
+            m_actions.Add("retour", Content.Load<Texture2D>("Actions/retour"));
 
 
 			// Shaders
@@ -845,6 +847,11 @@ namespace NNNA
                     }
                 }
 				m_currentAction = "";
+                for (int i = 0; i < m_currentActions.Count; i++)
+                {
+                    last_state.Clear();
+                    last_state.Add(m_currentActions[i]);
+                }
 			}
 
 			// Actions
@@ -870,12 +877,19 @@ namespace NNNA
 						Debug(act);
 						switch (act)
 						{
+                            case "attack":
+                                break;
+
 							case "build":
 								m_currentActions.Clear();
 								m_currentActions.Add("build_hutte");
 								m_currentActions.Add("build_hutteDesChasseurs");
-                                m_currentActions.Add("build_ferme"); 
+                               // m_currentActions.Add("build_ferme"); 
+                                m_currentActions.Add("retour");
 								break;
+
+                            case "gather":
+                                break;
 
 							case "build_hutte":
 								if (joueur.Has(new Hutte().Prix))
@@ -899,6 +913,14 @@ namespace NNNA
 								else
 								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								break;
+
+                            case "retour":
+                                for (int i = 0; i < m_currentActions.Count; i++)
+                                {
+                                    m_currentActions.Clear();
+                                    m_currentActions.Add(last_state[i]);
+                                }
+                                break;
 
                             case "create_peon":
                                 if (joueur.Has(new Peon().Prix))
