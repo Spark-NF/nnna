@@ -44,6 +44,7 @@ namespace NNNA
 		private MapType m_quick_type = MapType.Island;
 		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0;
 		List<string> m_currentActions = new List<string>();
+        Random random = new Random(42);
         
 		// Map
 		Sprite h, e, p, t, s, i, curseur;
@@ -487,9 +488,9 @@ namespace NNNA
                     joueur.Reset();
                     joueur.LoadResources(Content);
                     units.Clear();
-                    units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 100, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
-                    units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 0, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
-                    units.Add(new Peon((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 50, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 100, Content, joueur, false));
+                    units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 100, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 200, Content, joueur, false));
+                    units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 0, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 200, Content, joueur, false));
+                    units.Add(new Peon((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 50, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 200, Content, joueur, false));
 
                     //Batiments du Debut
                     buildings.Clear();
@@ -662,7 +663,7 @@ namespace NNNA
 				{
                         // Ere 1 
 					case "build_hutte":
-						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
+						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur, (byte)random.Next(0,2));
 						if (joueur.Pay(b.Prix))
 						{
 							buildings.Add(b);
@@ -830,7 +831,10 @@ namespace NNNA
 							case "build_hutte":
 								if (joueur.Has(new Hutte().Prix))
 								{
-									m_pointer = Content.Load<Texture2D>("Batiments/hutte2");
+                                    if (random.Next(0, 1) == 0)
+                                        m_pointer = Content.Load<Texture2D>("Batiments/hutte1");
+                                    else
+									    m_pointer = Content.Load<Texture2D>("Batiments/hutte2");
 									m_currentAction = "build_hutte";
 								}
 								else

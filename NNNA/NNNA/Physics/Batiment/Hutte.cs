@@ -20,10 +20,13 @@ namespace NNNA
 			m_cost.Add("Bois", 50);
 		}
 
-		public Hutte(int x, int y, ContentManager content, Joueur joueur)
+		public Hutte(int x, int y, ContentManager content, Joueur joueur, byte a)
 			: base(x, y)
 		{
-			LoadContent(content, "Batiments/hutte2");
+            if (a == 0)
+			    LoadContent(content, "Batiments/hutte1");
+            else
+                LoadContent(content, "Batiments/hutte2");
 			vie = 100;
 			m_cost.Add("Bois", 50);
 

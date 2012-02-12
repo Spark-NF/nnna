@@ -42,14 +42,14 @@ namespace NNNA
 			m_color = couleur;
 			m_name = nom;
 
-			pop_Texture = content.Load<Texture2D>(@"Resources/Pop");
+			pop_Texture = content.Load<Texture2D>("Resources/Pop");
 
 			Reset();
 		}
 		public void Reset()
 		{
 			m_resources.Clear();
-			m_resources.Add(new Resource("Bois", new string[] { "Bois", "Bois", "Bois", "Bois" }, 130));
+			m_resources.Add(new Resource("Bois", new string[] { "Bois", "Bois", "Bois", "Bois" }, 1130));
 			m_resources.Add(new Resource("Pierre", new string[] { "Pierre", "Pierre", "Beton", "Metonite" }));
 			m_resources.Add(new Resource("Nourriture", new string[] { "Nourriture", "Nourriture", "Nourriture", "Oxygene" }, 200));
 			m_resources.Add(new Resource("Or", new string[] { "", "Or", "Or", "Cristaux" }));

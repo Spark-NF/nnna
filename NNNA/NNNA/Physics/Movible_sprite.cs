@@ -33,6 +33,8 @@ namespace NNNA
 			set { m_icon = value; }
 		}
 
+        private byte a = 0;
+
 		private int dec = 90;
 		protected bool create_maison;
 		public bool Create_maison
@@ -139,13 +141,22 @@ namespace NNNA
                 }
             }
         }
-		public void Create_Maison(Sprite curseur, List<Static_Sprite> Static_Sprite_List, ContentManager content, Joueur joueur, Camera2D camera)
+		public void Create_Maison(Sprite curseur, List<Static_Sprite> Static_Sprite_List, ContentManager content, Joueur joueur, Camera2D camera, Random random)
 		{
 			if (joueur.Resource("Bois").Count >= 50)
 			{
 				if (create_maison == false)
 				{
-					curseur.Texture = content.Load<Texture2D>(@"Batiments/hutte2");
+                    if (random.Next(0, 2) == 1)
+                    {
+                        curseur.Texture = content.Load<Texture2D>("Batiments/hutte1");
+                        a = 0;
+                    }
+                    else
+                    {
+                        curseur.Texture = content.Load<Texture2D>("Batiments/hutte2");
+                        a = 1;
+                    }
 					create_maison = true;
 				}
 				if (Souris.Get().Clicked(MouseButton.Right))
@@ -168,7 +179,7 @@ namespace NNNA
 			{*/
 					curseur.Texture = content.Load<Texture2D>("pointer");
 					create_maison = false;
-					Static_Sprite_List.Add(new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), content, joueur));
+					Static_Sprite_List.Add(new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), content, joueur, a));
 					MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
 				}
 			}
