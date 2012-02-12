@@ -57,7 +57,8 @@ namespace NNNA
         List<Movible_Sprite> units = new List<Movible_Sprite>();
 		List<Unit> selectedList = new List<Unit>();
 		List<Building> buildings = new List<Building>();
-		Static_Sprite selectedBuilding;
+        List<Resource> resource = new List<Resource>();
+		Building selectedBuilding;
 		float[,] m_map;
 
         // Audio objects
@@ -305,13 +306,19 @@ namespace NNNA
 			m_font_small = Content.Load<SpriteFont>("font_small");
 			m_font_credits = Content.Load<SpriteFont>("font_credits");
 
-			// Actions
+			// Actions unités
 			m_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
 			m_actions.Add("gather", Content.Load<Texture2D>("Actions/gather"));
 			m_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
 			m_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
 			m_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
-           // m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
+            // m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
+            
+            // Action Batiment
+            m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
+            m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
+            m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
+
 
 			// Shaders
 			gaussianBlur = Content.Load<Effect>("Shaders/GaussianBlur");
@@ -659,6 +666,7 @@ namespace NNNA
 			if (Souris.Get().Clicked(MouseButton.Left))
 			{
 				Building b;
+                Unit u;
 				switch (m_currentAction)
 				{
                         // Ere 1 
@@ -687,6 +695,33 @@ namespace NNNA
 						else
 						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 						break;
+
+                    case "create_peon" :
+                        u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 200, Content, joueur);
+                        if (joueur.Pay(u.Prix))
+						{
+                            selectedBuilding.Iterator++;
+							units.Add(u);
+							MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
+							m_currentAction = "";
+						}
+						else
+						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+						break;
+
+                    case "create_guerrier":
+                        u = new Guerrier((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 3), (int)selectedBuilding.Position.Y + 70, Content, joueur);
+                        if (joueur.Pay(u.Prix))
+                        {
+                            selectedBuilding.Iterator++;
+                            units.Add(u);
+                            MessagesManager.Messages.Add(new Msg("Nouveau Guerrier !", Color.White, 5000));
+                            m_currentAction = "";
+                        }
+                        else
+                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                        break;
+
                         // Fin Ere 1 
 
                         // Ere 2 
@@ -748,7 +783,7 @@ namespace NNNA
 					{ sprite.Selected = false; }
 					selectedList.Clear();
 
-					foreach (Static_Sprite sprite in buildings)
+					foreach (Building sprite in buildings)
 					{
 						Rectangle csel = new Rectangle((int)(m_selection.X - camera.Position.X + (m_selection.Width < 0 ? m_selection.Width : 0)), (int)(m_selection.Y - camera.Position.Y + (m_selection.Height < 0 ? m_selection.Height : 0)), (int)Math.Abs(m_selection.Width), (int)Math.Abs(m_selection.Height));
 						if (!sprite.Selected && csel.Intersects(sprite.Rectangle(camera)))
@@ -770,31 +805,45 @@ namespace NNNA
 
 				// On met à jour les actions
 				m_currentActions.Clear();
-				if (selectedList.Count > 0)
-				{
-					bool all_same = true;
-					string type = "";
-					m_currentActions.Add("attack");
-					foreach (Movible_Sprite sprite in selectedList)
-					{
-						if (sprite.Type != type)
-						{
-							if (type != "")
-							{ all_same = false; }
-							type = sprite.Type;
-							if (sprite.Type == "peon" && !m_currentActions.Contains("build"))
-							{
-								m_currentActions.Add("gather");
-								m_currentActions.Add("build");
-							}
-						}
-					}
-					if (!all_same)
-					{
-						m_currentActions.Clear();
-						m_currentActions.Add("attack");
-					}
-				}
+                if (selectedList.Count > 0)
+                {
+                    bool all_same = true;
+                    string type = "";
+                    m_currentActions.Add("attack");
+                    foreach (Movible_Sprite sprite in selectedList)
+                    {
+                        if (sprite.Type != type)
+                        {
+                            if (type != "")
+                            { all_same = false; }
+                            type = sprite.Type;
+                            if (sprite.Type == "peon" && !m_currentActions.Contains("build"))
+                            {
+                                m_currentActions.Add("gather");
+                                m_currentActions.Add("build");
+                            }
+                        }
+                    }
+                    if (!all_same)
+                    {
+                        m_currentActions.Clear();
+                        m_currentActions.Add("attack");
+                    }
+                }
+                else if (selectedBuilding != null)
+                {
+                    switch (selectedBuilding.Type)
+                    {
+                        case "forum" :
+                            m_currentActions.Add("create_peon");
+                            m_currentActions.Add("technologies");
+                            break;
+
+                        case "caserne" :
+                            m_currentActions.Add("create_guerrier");
+                            break;
+                    }
+                }
 				m_currentAction = "";
 			}
 
@@ -831,7 +880,7 @@ namespace NNNA
 							case "build_hutte":
 								if (joueur.Has(new Hutte().Prix))
 								{
-                                    if (random.Next(0, 1) == 0)
+                                    if (random.Next(0, 2) == 0)
                                         m_pointer = Content.Load<Texture2D>("Batiments/hutte1");
                                     else
 									    m_pointer = Content.Load<Texture2D>("Batiments/hutte2");
@@ -850,6 +899,24 @@ namespace NNNA
 								else
 								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								break;
+
+                            case "create_peon":
+                                if (joueur.Has(new Peon().Prix))
+                                {
+                                    m_currentAction = "create_peon";
+                                }
+                                else
+                                { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                                break;
+
+                            case "create_guerrier":
+                                if (joueur.Has(new Guerrier().Prix))
+                                {
+                                    m_currentAction = "create_guerrier";
+                                }
+                                else
+                                { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                                break;
 
                                 // Ere 2 
                             case "build_ferme":

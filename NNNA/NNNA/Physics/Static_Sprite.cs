@@ -30,6 +30,10 @@ namespace NNNA
 			set { m_selected = value; }
 		}
 
+        protected string type;
+        public string Type
+        { get { return type; } set { type = value; } }
+
         public Static_Sprite(int x, int y)
             : base(x, y)
 		{ }

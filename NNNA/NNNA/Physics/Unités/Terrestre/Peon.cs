@@ -15,6 +15,12 @@ namespace NNNA
 {
 	class Peon : LandUnit
 	{
+        public Peon(int x = 0, int y = 0)
+            : base(x, y)
+        {
+            m_cost.Add("Nourriture", 50);
+        }
+
 		public Peon(int x, int y, ContentManager content, Joueur joueur, bool remove_resources = true)
 			: base(x, y)
 		{
@@ -30,6 +36,7 @@ namespace NNNA
 			m_regeneration = 1;
 			m_speed = 0.06f;
 			SetTextures(content, "peon", 90);
+            m_cost.Add("Nourriture", 50);
 		}
 	}
 }

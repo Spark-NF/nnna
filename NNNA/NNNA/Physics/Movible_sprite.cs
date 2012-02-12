@@ -88,6 +88,11 @@ namespace NNNA
 			get { return m_speed; }
 			set { m_speed = value; }
 		}
+
+        protected Dictionary<string, int> m_cost = new Dictionary<string, int>();
+        public Dictionary<string, int> Prix
+        { get { return m_cost; } }
+
 		private bool m_click = false;
 		public bool Click
 		{

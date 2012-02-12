@@ -17,6 +17,7 @@ namespace NNNA
 		public Grande_Hutte(int x = 0, int y = 0)
 			: base(x, y)
 		{
+            type = "forum";
 			m_cost.Add("Bois", 1000);
 			m_cost.Add("Nourriture", 500);
 		}
@@ -24,6 +25,7 @@ namespace NNNA
 		public Grande_Hutte(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
+            type = "forum";
 			LoadContent(content, "Batiments/grande_hutte");
 			vie = 500;
 			m_cost.Add("Bois", 1000);

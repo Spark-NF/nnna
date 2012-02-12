@@ -15,6 +15,11 @@ namespace NNNA
 {
 	class Guerrier : LandUnit
 	{
+        public Guerrier(int x = 0, int y = 0)
+            : base(x, y)
+        {
+            m_cost.Add("Nourriture", 70);
+        }
 		public Guerrier(int x, int y, ContentManager content, Joueur joueur, bool remove_resources = true)
 			: base(x, y)
 		{
@@ -29,6 +34,7 @@ namespace NNNA
 			m_regeneration = 1;
 			m_speed = 0.05f;
 			SetTextures(content, "guerrier", 45);
+            m_cost.Add("Nourriture", 70);
 		}
 	}
 }
