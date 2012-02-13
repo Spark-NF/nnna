@@ -20,13 +20,13 @@ namespace NNNA
 		{
 			get { return pop_Texture; }
 		}
-		private uint m_population = 0;
+		private uint m_population;
 		public uint Population
 		{
 			get { return m_population; }
 			set { m_population = value; }
 		}
-		private uint m_population_max = 5;
+		private uint m_population_max;
 		public uint Population_Max
 		{
 			get { return m_population_max; }
@@ -48,6 +48,8 @@ namespace NNNA
 		}
 		public void Reset()
 		{
+            m_population = 0;
+            m_population_max = 5;
 			m_resources.Clear();
 			m_resources.Add(new Resource("Bois", new string[] { "Bois", "Bois", "Bois", "Bois" }, 500));
 			m_resources.Add(new Resource("Pierre", new string[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));

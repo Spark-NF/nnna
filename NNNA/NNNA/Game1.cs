@@ -307,23 +307,37 @@ namespace NNNA
 			m_font_small = Content.Load<SpriteFont>("font_small");
 			m_font_credits = Content.Load<SpriteFont>("font_credits");
 
-			// Actions unités
-			m_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
+            #region Actions
+            #region Actions Unités
+            m_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
 			m_actions.Add("gather", Content.Load<Texture2D>("Actions/gather"));
 			m_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
 			m_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
 			m_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
             // m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
-            
-            // Action Batiment
+            #endregion Actions Unités
+
+            #region Actions Batiments
             m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
             m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
             m_actions.Add("ere suivante", Content.Load<Texture2D>("Actions/evolution"));
             m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
+
+            // Technologies
+            m_actions.Add("chasse", Content.Load<Texture2D>("Actions/chasse"));
+            m_actions.Add("feu", Content.Load<Texture2D>("Actions/feu"));
+            m_actions.Add("torche", Content.Load<Texture2D>("Actions/torche"));
+            m_actions.Add("silex", Content.Load<Texture2D>("Actions/silex"));
+            m_actions.Add("pierre_polie", Content.Load<Texture2D>("Actions/pierre_polie"));
+            m_actions.Add("outils", Content.Load<Texture2D>("Actions/outils"));
+            #endregion Actions Batiments
+
+            #region Actions Communes
             m_actions.Add("retour", Content.Load<Texture2D>("Actions/retour"));
+            #endregion Actions Communes
+            #endregion Actions
 
-
-			// Shaders
+            // Shaders
 			gaussianBlur = Content.Load<Effect>("Shaders/GaussianBlur");
 			gaussianBlur.CurrentTechnique = gaussianBlur.Techniques["Blur"];
 
