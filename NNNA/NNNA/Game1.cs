@@ -318,6 +318,7 @@ namespace NNNA
             // Action Batiment
             m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
             m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
+            m_actions.Add("ere suivante", Content.Load<Texture2D>("Actions/evolution"));
             m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
             m_actions.Add("retour", Content.Load<Texture2D>("Actions/retour"));
 
@@ -339,7 +340,7 @@ namespace NNNA
 			m_background = Content.Load<Texture2D>("background/" + ratio);
 			m_background_light = CreateRectangle((int)(654 * (m_screen.X / 1680)), (int)m_screen.Y, Color.White);
 			m_background_dark = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0, 0, 0, 170));
-			m_night = CreateRectangle((int)m_screen.X, (int)m_screen.Y, Color.Black);
+			m_night = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0,0,10));
 			m_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
 			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, graphics);
@@ -445,11 +446,10 @@ namespace NNNA
 
 			//son 
             son.Engine_menu.Update();
-			//engine.Update();
-            //if (!son.Musiquemenu.IsPlaying)
-            //{
-            //    son.Musiquemenu.Play();
-            //}
+            if (!son.Musiquemenu.IsPlaying && !son.Musiquemenu.IsPaused)
+            {
+                son.Initializesons(musicVolume, m_sound_music, m_sound_general);
+            }
 
 			base.Update(gameTime);
 		}
@@ -847,9 +847,9 @@ namespace NNNA
                     }
                 }
 				m_currentAction = "";
+                last_state.Clear();
                 for (int i = 0; i < m_currentActions.Count; i++)
                 {
-                    last_state.Clear();
                     last_state.Add(m_currentActions[i]);
                 }
 			}
@@ -884,7 +884,6 @@ namespace NNNA
 								m_currentActions.Clear();
 								m_currentActions.Add("build_hutte");
 								m_currentActions.Add("build_hutteDesChasseurs");
-                               // m_currentActions.Add("build_ferme"); 
                                 m_currentActions.Add("retour");
 								break;
 
@@ -915,9 +914,9 @@ namespace NNNA
 								break;
 
                             case "retour":
-                                for (int i = 0; i < m_currentActions.Count; i++)
+                                m_currentActions.Clear();
+                                for (int i = 0; i < last_state.Count; i++)
                                 {
-                                    m_currentActions.Clear();
                                     m_currentActions.Add(last_state[i]);
                                 }
                                 break;
@@ -929,6 +928,19 @@ namespace NNNA
                                 }
                                 else
                                 { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                                break;
+
+                            case "technologies":
+                                m_currentActions.Clear();
+                                m_currentActions.Add("ere suivante");
+                                m_currentActions.Add("retour");
+                                break;
+
+                            case "ere suivante":
+                                m_currentActions.Clear();
+                                m_currentActions.Add("create_peon");
+                                m_currentActions.Add("technologies");
+                                //Changements pour la deuxieme ere à effectuer ici.
                                 break;
 
                             case "create_guerrier":
@@ -1186,7 +1198,7 @@ namespace NNNA
 			}
 
 			// La nuit
-			spriteBatch.Draw(m_night, Vector2.Zero, new Color(255, 255, 255, (int)(64 - 64 * Math.Cos((m_gameTime.TotalGameTime.TotalMilliseconds - m_elapsed) / 50000))));
+			spriteBatch.Draw(m_night, Vector2.Zero, new Color(0, 0, 255, (int)(64 - 64 * Math.Cos((m_gameTime.TotalGameTime.TotalMilliseconds - m_elapsed) / 50000))));
 
 			// Le HUD
 			MessagesManager.Draw(spriteBatch, m_font_small);
