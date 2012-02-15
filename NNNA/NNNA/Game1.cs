@@ -986,6 +986,7 @@ namespace NNNA
 
 			units.Sort(Sprite.CompareByY);
 			buildings.Sort(Sprite.CompareByY);
+            son.Musiquemenu.Pause();
 
 		}
 		void UpdateGameMenu(GameTime gameTime)
