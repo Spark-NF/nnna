@@ -484,44 +484,44 @@ namespace NNNA
 			{
 				if (s == Screen.Game)
                 {
+					// Génération
                     int[] sizes = { 50, 100, 200 };
                     double[] resources = { 0.05, 0.1, 0.2 };
-
-                    //Le reste
-                    matrice = generateMap(m_quick_type, (int)(sizes[m_quick_size] * 0.6), sizes[m_quick_size], resources[m_quick_resources]);
-                    map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
-                    hud.LoadContent(Content, "HUD/hud2");
-                    minimap.LoadContent(map);
-                    m_elapsed = gameTime.TotalGameTime.TotalMilliseconds;
+                    matrice = generateMap(m_quick_type, sizes[m_quick_size], sizes[m_quick_size], resources[m_quick_resources]);
 
                     // Spawn
-                    List<float> heights = new List<float>();
-                    for (int x = 0; x < m_map.GetLength(0); x++)
-                    {
-                        for (int y = 0; y < m_map.GetLength(1); y++)
-                        { heights.Add(m_map[x, y] * 255); }
-                    }
-                    float spawnHeight = heights.Max();
-                    int my = heights.IndexOf(spawnHeight) % m_map.GetLength(0), mx = heights.IndexOf(spawnHeight) / m_map.GetLength(0);
-                    //ConsoleManager.Messages.Add(new ConsoleMessage(mx.ToString() + "-" + my.ToString(), Color.Red, 100000));
-                    mx = m_map.GetLength(1) / 2;
-                    my = m_map.GetLength(0) / 2;
+					List<float> heights = new List<float>();
+					for (int x = 0; x < m_map.GetLength(0); x++)
+					{
+						for (int y = 0; y < m_map.GetLength(1); y++)
+						{ heights.Add(m_map[x, y] * 255); }
+					}
+					List<float> heightsOr = new List<float>(heights);
+					heights.Sort((x, y) => (y.CompareTo(x)));
+					List<Point> spawns = new List<Point>();
+					int i = 0;
+					while (spawns.Count < 2)
+					{
+						spawns.Add(new Point(heightsOr.IndexOf(heights[i]) % m_map.GetLength(1), heightsOr.IndexOf(heights[i]) / m_map.GetLength(1)));
+						i++;
+					}
+					Point playerSpawn = spawns[0];
 
                     //Unites du Debut
                     joueur.Reset();
                     joueur.LoadResources(Content);
                     units.Clear();
-                    units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 100, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 200, Content, joueur, false));
-                    units.Add(new Guerrier((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 0, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 200, Content, joueur, false));
-                    units.Add(new Peon((int)matrice2xy(new Vector2(mx - 1, my - 1)).X + 50, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y + 200, Content, joueur, false));
+					units.Add(new Guerrier((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X + 100, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y + 200, Content, joueur, false));
+					units.Add(new Guerrier((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X + 0, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y + 200, Content, joueur, false));
+					units.Add(new Peon((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X + 50, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y + 200, Content, joueur, false));
 
                     //Batiments du Debut
                     buildings.Clear();
-                    buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(mx - 1, my - 1)).X, (int)matrice2xy(new Vector2(mx - 1, my - 1)).Y, Content, joueur));
-                    camera.Position = matrice2xy(new Vector2(mx - 1, my - 1)) - m_screen / 2;
+					buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y, Content, joueur));
+					camera.Position = matrice2xy(new Vector2(playerSpawn.X + 7, playerSpawn.Y + 5)) - m_screen / 2;
 
                     //Decor
-
+					resource.Add(new Resource((int)matrice2xy(new Vector2(playerSpawn.X + 5, playerSpawn.Y + 2)).X, (int)matrice2xy(new Vector2(playerSpawn.X + 5, playerSpawn.Y + 2)).Y, Content, "pierre", new string[] { "Pierre", "Pierre", "Beton", "Metonite" }, 5000));
                     /*Random rand = new Random();
                     for (int i = 0; i < 15; i++)
                     {
@@ -539,11 +539,11 @@ namespace NNNA
                         buildings.Add(new Palmier(x, y, Content));
                     }*/
 
-                    //Le reste
-                    matrice = generateMap(m_quick_type, (int)(sizes[m_quick_size] * 0.6), sizes[m_quick_size], resources[m_quick_resources]);
-                    map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
-                    hud.LoadContent(Content, "HUD/hud2");
-                    minimap.LoadContent(map);
+					//Le reste
+					map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
+					hud.LoadContent(Content, "HUD/hud2");
+					minimap.LoadContent(map);
+					m_elapsed = gameTime.TotalGameTime.TotalMilliseconds;
                     m_gameTime = gameTime;
                     son.Musiquemenu.Pause();
                     _debutpartie.Play();
@@ -1248,8 +1248,8 @@ namespace NNNA
 				{ heights.Add(m_map[x, y] * 255); }
 			}
 			float spawnHeight = heights.Max();
-			Debug(1, heights.IndexOf(spawnHeight) % m_map.GetLength(0));
-			Debug(2, heights.IndexOf(spawnHeight) / m_map.GetLength(0));
+			Debug(1, heights.IndexOf(spawnHeight) % m_map.GetLength(1));
+			Debug(2, heights.IndexOf(spawnHeight) / m_map.GetLength(1));
 			Debug(3, spawnHeight);
 			Debug(4, heights.IndexOf(spawnHeight));
 			heights.Sort();
@@ -1319,11 +1319,21 @@ namespace NNNA
 		{ Debug(i, value.ToString()); }
 		// Console
 		private void Debug(string value)
-		{ Console.Messages.Add(new ConsoleMessage(value)); }
-		private void Debug(List<object> value)
 		{
-			string deb = "List<"+value.GetType()+">(" + value.Count.ToString() + ") { ";
+			Console.Messages.Add(new ConsoleMessage(value));
+			System.Diagnostics.Debug.WriteLine(value);
+		}
+		private void Debug(List<float> value)
+		{
+			string deb = "List<" + value.GetType().GetGenericArguments()[0].ToString() + ">(" + value.Count.ToString() + ") { ";
 			for (int i = 0; i < value.Count; i++)
+			{ deb += value[i].ToString() + ", "; }
+			Debug(deb.Substring(0, deb.Length - 2) + " }");
+		}
+		private void Debug(object[] value)
+		{
+			string deb = value.GetType() + "[" + value.Length.ToString() + "] { ";
+			for (int i = 0; i < value.Length; i++)
 			{ deb += value[i].ToString() + ", "; }
 			Debug(deb.Substring(0, deb.Length - 2) + " }");
 		}
@@ -1391,10 +1401,10 @@ namespace NNNA
 		protected void makePauseMenu(params string[] args)
 		{
 			for (int i = 0; i < args.Length; i++)
-			{ spriteBatch.DrawString(m_font_menu, args[i], new Vector2((668 * (m_screen.X / 1680)), i * 44 + (180 * (m_screen.Y / 1050))), Color.White); }
+			{ spriteBatch.DrawString(m_font_menu, args[i], new Vector2((668 * (m_screen.X / 1680)), i * 80 + (180 * (m_screen.Y / 1050))), Color.White); }
 		}
 		protected int pauseMenu()
-		{ return (Souris.Get().X > (654 * (m_screen.X / 1680)) && Souris.Get().Y > (180 * (m_screen.Y / 1050))) ? (int)((Souris.Get().Y - (180 * (m_screen.Y / 1050))) / 44) : -1; }
+		{ return (Souris.Get().X > (654 * (m_screen.X / 1680)) && Souris.Get().Y > (180 * (m_screen.Y / 1050))) ? (int)((Souris.Get().Y - (180 * (m_screen.Y / 1050))) / 80) : -1; }
 
 		/// <summary>
 		/// Teste si un menu est cliqué.
