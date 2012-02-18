@@ -1215,23 +1215,24 @@ namespace NNNA
 			// La nuit
 			spriteBatch.Draw(m_night, Vector2.Zero, new Color(0, 0, 255, (int)(64 - 64 * Math.Cos((m_gameTime.TotalGameTime.TotalMilliseconds - m_elapsed) / 50000))));
 
-			// Le HUD
+			// Affichage du HUD
 			MessagesManager.Draw(spriteBatch, m_font_small);
 			hud.Draw(spriteBatch, minimap, joueur, m_font_small);
+
+			// Unités séléctionnées
 			for (int i = 0; i < selectedList.Count; i++)
-			{ selectedList[i].DrawIcon(spriteBatch, new Vector2(356 + (i % 10) * 36, m_screen.Y - hud.Position.Height + 54 + (i / 10) * 36)); }
-			if (m_currentActions.Count > 0)
-			{
-				for (int i = 0; i < m_currentActions.Count; i++)
-				{ spriteBatch.Draw(m_actions[m_currentActions[i]], new Vector2(hud.Position.X + 20 + 40 * (i % 6), hud.Position.Y + 20 + 40 * (i / 6)), Color.White); }
-			}
+			{ selectedList[i].DrawIcon(spriteBatch, new Vector2(356 * (m_screen.X / 1680) + (i % 10) * 36, m_screen.Y - hud.Position.Height + 54 * (m_screen.Y / 1050) + (i / 10) * 36)); }
+
+			// List des actions
+			for (int i = 0; i < m_currentActions.Count; i++)
+			{ spriteBatch.Draw(m_actions[m_currentActions[i]], new Vector2(hud.Position.X + 20 + 40 * (i % 6), hud.Position.Y + 20 + 40 * (i / 6)), Color.White); }
 		}
 		private void DrawGameMenu(GameTime gameTime)
 		{
 			foreach (EffectPass pass in gaussianBlur.CurrentTechnique.Passes)
 			{
-				pass.Apply();
 				DrawGame(gameTime);
+				pass.Apply();
 			}
 			spriteBatch.Draw(m_background_dark, Vector2.Zero, Color.White);
 			makePauseMenu("Quitter", "Retour");
