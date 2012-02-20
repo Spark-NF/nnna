@@ -121,6 +121,7 @@
     <Compile Include="Lib\Joueur.cs" />
     <Compile Include="Lib\Point.cs" />
     <Compile Include="Lib\Resource.cs" />
+    <Compile Include="Lib\ResourceMine.cs" />
     <Compile Include="Lib\Sons.cs" />
     <Compile Include="Physics\Batiment\Archerie.cs" />
     <Compile Include="Physics\Batiment\Ecurie.cs" />

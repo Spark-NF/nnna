@@ -88,6 +88,7 @@ namespace NNNA
 		{
 			if (!Has(price))
 			{ return false; }
+
 			foreach (KeyValuePair<string, int> pair in price)
 			{ Resource(pair.Key).Remove(pair.Value); }
 			return true;

@@ -32,10 +32,11 @@ namespace NNNA
 		private Dictionary<string, Texture2D> m_actions = new Dictionary<string, Texture2D>();
 		private SpriteFont m_font_menu, m_font_menu_title, m_font_small, m_font_credits;
 		private Screen m_currentScreen = Screen.Title;
-		private int m_konami = 0, m_konamiStatus = 0;
-		private string m_currentAction = "";
+		private int m_konami = 0, m_konamiStatus = 0, m_foes = 1;
+		private string m_currentAction = "", m_language = "en";
 		private double m_elapsed;
-        List<string> last_state = new List<string>();
+		private List<string> last_state = new List<string>();
+		private string[] m_currentMenus;
 
 		private Vector2 m_screen = new Vector2(1680, 1050);
 		private bool m_fullScreen = true, m_shadows = true, m_smart_hud = false, m_health_hover = false, m_showConsole = false;
@@ -45,33 +46,33 @@ namespace NNNA
 		private MapType m_quick_type = MapType.Island;
 		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0;
 		List<string> m_currentActions = new List<string>();
-        Random random = new Random(42);
-        
+		Random random = new Random(42);
+		
 		// Map
 		Sprite h, e, p, t, s, i, curseur;
 		Sprite[,] matrice;
 		Map map;
-        Minimap minimap;
-        HUD hud;
+		Minimap minimap;
+		HUD hud;
 		Camera2D camera;
 		Joueur joueur;
-        List<Movible_Sprite> units = new List<Movible_Sprite>();
+		List<Movible_Sprite> units = new List<Movible_Sprite>();
 		List<Unit> selectedList = new List<Unit>();
 		List<Building> buildings = new List<Building>();
-        List<Resource> resource = new List<Resource>();
+		List<ResourceMine> resource = new List<ResourceMine>();
 		Building selectedBuilding;
 		float[,] m_map;
 
-        // Audio objects
-        //private AudioEngine engine; 
-        //private WaveBank musique; 
-        //private SoundBank sons; 
-        //private Cue piste;
-        //AudioCategory musicCategory;
-        float musicVolume = 2.0f;
-        Sons son = new Sons();
-        SoundEffect _debutpartie;
-        SoundEffect _finpartie;
+		// Audio objects
+		//private AudioEngine engine; 
+		//private WaveBank musique; 
+		//private SoundBank sons; 
+		//private Cue piste;
+		//AudioCategory musicCategory;
+		float musicVolume = 2.0f;
+		Sons son = new Sons();
+		SoundEffect _debutpartie;
+		SoundEffect _finpartie;
 
 		#endregion
 
@@ -90,8 +91,7 @@ namespace NNNA
 			OptionsGeneral,
 			Credits,
 			Game,
-			GameMenu,
-			Debug
+			GameMenu
 		};
 		public enum MapType
 		{
@@ -191,22 +191,22 @@ namespace NNNA
 		{
 			h = new Sprite('h');
 			e = new Sprite('e');
-            t = new Sprite('t');
+			t = new Sprite('t');
 			p = new Sprite('p');
-            s = new Sprite('s');
-            i = new Sprite('i');
+			s = new Sprite('s');
+			i = new Sprite('i');
 
-            map = new Map();
-            camera = new Camera2D(0, 0, 10);
+			map = new Map();
+			camera = new Camera2D(0, 0, 10);
 			curseur = new Sprite(0, 0);
 			joueur = new Joueur(Color.Red, "NNNNA", Content);
 
-             // son
-            son.Initializesons(musicVolume, m_sound_music, m_sound_general);
-            _debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
-            _finpartie = Content.Load<SoundEffect>("sounds/sortiedejeu");
+			 // son
+			son.Initializesons(musicVolume, m_sound_music, m_sound_general);
+			_debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
+			_finpartie = Content.Load<SoundEffect>("sounds/sortiedejeu");
 
-            base.Initialize();
+			base.Initialize();
 
 		}
 
@@ -307,37 +307,37 @@ namespace NNNA
 			m_font_small = Content.Load<SpriteFont>("font_small");
 			m_font_credits = Content.Load<SpriteFont>("font_credits");
 
-            #region Actions
-            #region Actions Unités
-            m_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
+			#region Actions
+			#region Actions Unités
+			m_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
 			m_actions.Add("gather", Content.Load<Texture2D>("Actions/gather"));
 			m_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
 			m_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
 			m_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
-            // m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
-            #endregion Actions Unités
+			// m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
+			#endregion Actions Unités
 
-            #region Actions Batiments
-            m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
-            m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
-            m_actions.Add("ere suivante", Content.Load<Texture2D>("Actions/evolution"));
-            m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
+			#region Actions Batiments
+			m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
+			m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
+			m_actions.Add("ere suivante", Content.Load<Texture2D>("Actions/evolution"));
+			m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
 
-            // Technologies
-            m_actions.Add("chasse", Content.Load<Texture2D>("Actions/chasse"));
-            m_actions.Add("feu", Content.Load<Texture2D>("Actions/feu"));
-            m_actions.Add("torche", Content.Load<Texture2D>("Actions/torche"));
-            m_actions.Add("silex", Content.Load<Texture2D>("Actions/silex"));
-            m_actions.Add("pierre_polie", Content.Load<Texture2D>("Actions/pierre_polie"));
-            m_actions.Add("outils", Content.Load<Texture2D>("Actions/outils"));
-            #endregion Actions Batiments
+			// Technologies
+			m_actions.Add("chasse", Content.Load<Texture2D>("Actions/chasse"));
+			m_actions.Add("feu", Content.Load<Texture2D>("Actions/feu"));
+			m_actions.Add("torche", Content.Load<Texture2D>("Actions/torche"));
+			m_actions.Add("silex", Content.Load<Texture2D>("Actions/silex"));
+			m_actions.Add("pierre_polie", Content.Load<Texture2D>("Actions/pierre_polie"));
+			m_actions.Add("outils", Content.Load<Texture2D>("Actions/outils"));
+			#endregion Actions Batiments
 
-            #region Actions Communes
-            m_actions.Add("retour", Content.Load<Texture2D>("Actions/retour"));
-            #endregion Actions Communes
-            #endregion Actions
+			#region Actions Communes
+			m_actions.Add("retour", Content.Load<Texture2D>("Actions/retour"));
+			#endregion Actions Communes
+			#endregion Actions
 
-            // Shaders
+			// Shaders
 			gaussianBlur = Content.Load<Effect>("Shaders/GaussianBlur");
 			gaussianBlur.CurrentTechnique = gaussianBlur.Techniques["Blur"];
 
@@ -357,7 +357,7 @@ namespace NNNA
 			m_night = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0,0,10));
 			m_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
-			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, graphics);
+			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, m_smart_hud, graphics);
 			minimap = new Minimap((hud.Position.Width * 7) / 8 - +hud.Position.Width / 150, hud.Position.Y + hud.Position.Height / 15, (hud.Position.Height * 9) / 10, (hud.Position.Height * 9) / 10);
 
 			MessagesManager.X = (uint)m_screen.X - 300;
@@ -376,6 +376,16 @@ namespace NNNA
 		#region Updates
 
 		/// <summary>
+		/// Fait varier une valeur entre deux autres en fonction du clic de la souris.
+		/// </summary>
+		/// <param name="from">Valeur minimale.</param>
+		/// <param name="to">Valeur maximale.</param>
+		/// <param name="current">Valeur actuelle.</param>
+		/// <returns>La valeur changée en fonction du clic de la souris.</returns>
+		private int Variate(int from, int to, int current)
+		{ return (current + (Souris.Get().Clicked(MouseButton.Right) ? -1 : 1) + to - 2 * from + 1) % (to - from + 1) + from; }
+
+		/// <summary>
 		/// Met à jour le jeu tous les 1/60 de secondes.
 		/// </summary>
 		/// <param name="gameTime">Temps courant.</param>
@@ -384,16 +394,6 @@ namespace NNNA
 			Clavier.Get().Update(Keyboard.GetState());
 			Souris.Get().Update(Mouse.GetState());
 
-			#if DEBUG
-				if (Clavier.Get().NewPress(Keys.F5))
-				{
-					m_map = IslandGenerator.Generate(110, 70);
-					m_currentScreen = Screen.Debug;
-				}
-				if (Clavier.Get().NewPress(Keys.F6))
-				{ m_currentScreen = m_currentScreen == Screen.Debug ? Screen.Game : Screen.Debug; }
-			#endif
-
 			if (Clavier.Get().NewPress(Keys.OemQuotes))
 			{ m_showConsole = !m_showConsole; }
 
@@ -401,16 +401,16 @@ namespace NNNA
 			if (m_konami >= 10)
 			{ m_konamiStatus++; }
 			if (
-				(Clavier.Get().NewPress(Keys.Up)    && m_konami == 0) ||
-				(Clavier.Get().NewPress(Keys.Up)    && m_konami == 1) ||
+				(Clavier.Get().NewPress(Keys.Up)	&& m_konami == 0) ||
+				(Clavier.Get().NewPress(Keys.Up)	&& m_konami == 1) ||
 				(Clavier.Get().NewPress(Keys.Down)  && m_konami == 2) ||
 				(Clavier.Get().NewPress(Keys.Down)  && m_konami == 3) ||
 				(Clavier.Get().NewPress(Keys.Left)  && m_konami == 4) ||
 				(Clavier.Get().NewPress(Keys.Right) && m_konami == 5) ||
 				(Clavier.Get().NewPress(Keys.Left)  && m_konami == 6) ||
 				(Clavier.Get().NewPress(Keys.Right) && m_konami == 7) ||
-				(Clavier.Get().NewPress(Keys.B)     && m_konami == 8) ||
-				(Clavier.Get().NewPress(Keys.A)     && m_konami == 9)
+				(Clavier.Get().NewPress(Keys.B)	 && m_konami == 8) ||
+				(Clavier.Get().NewPress(Keys.A)	 && m_konami == 9)
 			)
 			{ m_konami++; }
 			else if (Clavier.Get().NewPress())
@@ -446,10 +446,6 @@ namespace NNNA
 					UpdateCredits(gameTime);
 					break;
 
-				case Screen.Debug:
-					UpdateDebug(gameTime);
-					break;
-
 				case Screen.Game:
 					UpdateGame(gameTime);
 					break;
@@ -458,12 +454,10 @@ namespace NNNA
 					break;
 			}
 
-			//son 
-            son.Engine_menu.Update();
-            if (!son.Musiquemenu.IsPlaying && !son.Musiquemenu.IsPaused)
-            {
-                son.Initializesons(musicVolume, m_sound_music, m_sound_general);
-            }
+			//Son 
+			son.Engine_menu.Update();
+			if (!son.Musiquemenu.IsPlaying && !son.Musiquemenu.IsPaused)
+			{ son.Initializesons(musicVolume, m_sound_music, m_sound_general); }
 
 			base.Update(gameTime);
 		}
@@ -479,17 +473,17 @@ namespace NNNA
 		{ m_currentScreen = testMenu(Screen.PlayQuick, Screen.Title); }
 		private void UpdatePlayQuick(GameTime gameTime)
 		{
-			Screen s = testMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.Game, Screen.Play);
+			Screen s = testMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.Game, Screen.Play);
 			if (s != Screen.PlayQuick)
 			{
 				if (s == Screen.Game)
-                {
+				{
 					// Génération
-                    int[] sizes = { 50, 100, 200 };
-                    double[] resources = { 0.05, 0.1, 0.2 };
-                    matrice = generateMap(m_quick_type, sizes[m_quick_size], sizes[m_quick_size], resources[m_quick_resources]);
+					int[] sizes = { 50, 100, 200 };
+					double[] resources = { 0.05, 0.1, 0.2 };
+					matrice = generateMap(m_quick_type, sizes[m_quick_size], sizes[m_quick_size], resources[m_quick_resources]);
 
-                    // Spawn
+					// Spawns
 					List<float> heights = new List<float>();
 					for (int x = 0; x < m_map.GetLength(0); x++)
 					{
@@ -507,48 +501,48 @@ namespace NNNA
 					}
 					Point playerSpawn = spawns[0];
 
-                    //Unites du Debut
-                    joueur.Reset();
-                    joueur.LoadResources(Content);
-                    units.Clear();
+					//Unites du Debut
+					joueur.Reset();
+					joueur.LoadResources(Content);
+					units.Clear();
 					units.Add(new Guerrier((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X + 100, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y + 200, Content, joueur, false));
 					units.Add(new Guerrier((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X + 0, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y + 200, Content, joueur, false));
 					units.Add(new Peon((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X + 50, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y + 200, Content, joueur, false));
 
-                    //Batiments du Debut
-                    buildings.Clear();
+					//Batiments du Debut
+					buildings.Clear();
 					buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y, Content, joueur));
 					camera.Position = matrice2xy(new Vector2(playerSpawn.X + 7, playerSpawn.Y + 5)) - m_screen / 2;
 
-                    //Decor
-					resource.Add(new Resource((int)matrice2xy(new Vector2(playerSpawn.X + 5, playerSpawn.Y + 2)).X, (int)matrice2xy(new Vector2(playerSpawn.X + 5, playerSpawn.Y + 2)).Y, Content, "pierre", new string[] { "Pierre", "Pierre", "Beton", "Metonite" }, 5000));
-                    /*Random rand = new Random();
-                    for (int i = 0; i < 15; i++)
-                    {
-                        int x = 0;
-                        int y = 0;
-                        x = rand.Next(-16 * (map.Map_Width),16 * map.Map_Width);
-                        y = rand.Next(0,16 *map.Map_Height);
-                        while ((xy2matrice(new Vector2(x, y)).X >= 0 && xy2matrice(new Vector2(x, y)).X < matrice.GetLength(0))
-                            && (xy2matrice(new Vector2(x, y)).Y >= 0 && xy2matrice(new Vector2(x, y)).Y < matrice.GetLength(1))
-                            && (!matrice[(int)xy2matrice(new Vector2(x, y)).X, (int)xy2matrice(new Vector2(x, y)).Y].Crossable))
-                        {
-                            x = rand.Next(-16 * map.Map_Width,16 * map.Map_Width);
-                            y = rand.Next(0,16 * map.Map_Height);
-                        }
-                        buildings.Add(new Palmier(x, y, Content));
-                    }*/
+					//Decor
+					resource.Add(new ResourceMine((int)matrice2xy(new Vector2(playerSpawn.X + 10, playerSpawn.Y + 10)).X, (int)matrice2xy(new Vector2(playerSpawn.X + 5, playerSpawn.Y + 2)).Y, Content, joueur.Resource("Pierre")));
+					/*Random rand = new Random();
+					for (int i = 0; i < 15; i++)
+					{
+						int x = 0;
+						int y = 0;
+						x = rand.Next(-16 * (map.Map_Width),16 * map.Map_Width);
+						y = rand.Next(0,16 *map.Map_Height);
+						while ((xy2matrice(new Vector2(x, y)).X >= 0 && xy2matrice(new Vector2(x, y)).X < matrice.GetLength(0))
+							&& (xy2matrice(new Vector2(x, y)).Y >= 0 && xy2matrice(new Vector2(x, y)).Y < matrice.GetLength(1))
+							&& (!matrice[(int)xy2matrice(new Vector2(x, y)).X, (int)xy2matrice(new Vector2(x, y)).Y].Crossable))
+						{
+							x = rand.Next(-16 * map.Map_Width,16 * map.Map_Width);
+							y = rand.Next(0,16 * map.Map_Height);
+						}
+						buildings.Add(new Palmier(x, y, Content));
+					}*/
 
 					//Le reste
 					map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
 					hud.LoadContent(Content, "HUD/hud2");
 					minimap.LoadContent(map);
 					m_elapsed = gameTime.TotalGameTime.TotalMilliseconds;
-                    m_gameTime = gameTime;
-                    son.Musiquemenu.Pause();
-                    _debutpartie.Play();
-                    
-                }
+					m_gameTime = gameTime;
+					son.Musiquemenu.Pause();
+					_debutpartie.Play();
+					
+				}
 				m_currentScreen = s;
 			}
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
@@ -556,17 +550,10 @@ namespace NNNA
 				int m = menu();
 				switch (m)
 				{
-					case 0:
-						m_quick_type = (MapType)((((int)m_quick_type) + (Souris.Get().Clicked(MouseButton.Right) ? -1 : 1) + Enum.GetValues(typeof(MapType)).Length) % Enum.GetValues(typeof(MapType)).Length);
-						break;
-
-					case 1:
-						m_quick_size = (m_quick_size + (Souris.Get().Clicked(MouseButton.Right) ? -1 : 1) + 3) % 3;
-						break;
-
-					case 2:
-						m_quick_resources = (m_quick_resources + (Souris.Get().Clicked(MouseButton.Right) ? -1 : 1) + 3) % 3;
-						break;
+					case 0: m_quick_type = (MapType)Variate(0, Enum.GetValues(typeof(MapType)).Length - 1, (int)m_quick_type); break;
+					case 1: m_quick_size = Variate(0, 2, m_quick_size); break;
+					case 2: m_quick_resources = Variate(0, 2, m_quick_resources); break;
+					case 3: m_foes = Variate(1, 3, m_foes); break;
 				}
 			}
 		}
@@ -586,13 +573,8 @@ namespace NNNA
 				int m = menu();
 				switch (m)
 				{
-					case 0:
-						m_health_hover = !m_health_hover;
-						break;
-
-					case 1:
-						m_smart_hud = !m_smart_hud;
-						break;
+					case 0: m_health_hover = !m_health_hover; break;
+					case 1: m_smart_hud = !m_smart_hud; break;
 				}
 			}
 		}
@@ -622,13 +604,8 @@ namespace NNNA
 						graphics.ApplyChanges();
 						break;
 
-					case 2:
-						m_textures = (m_textures + (Souris.Get().Clicked(MouseButton.Right) ? -1 : 1) + 3) % 3;
-						break;
-
-					case 3:
-						m_shadows = !m_shadows;
-						break;
+					case 2: m_textures = Variate(0, 2, m_textures); break;
+					case 3: m_shadows = !m_shadows; break;
 				}
 			}
 		}
@@ -642,24 +619,13 @@ namespace NNNA
 				int m = menu();
 				switch (m)
 				{
-					case 0:
-						m_sound_general = (m_sound_general + (Souris.Get().Clicked(MouseButton.Right) ? -1 : 1) + 11) % 11;
-						break;
-
-					case 1:
-						m_sound_music = (m_sound_music + (Souris.Get().Clicked(MouseButton.Right) ? -1 : 1) + 11) % 11;
-						break;
-
-					case 2:
-						m_sound_sfx = (m_sound_sfx + (Souris.Get().Clicked(MouseButton.Right) ? -1 : 1) + 11) % 11;
-						break;
-
-					case 3:
-						m_sound = (m_sound + (Souris.Get().Clicked(MouseButton.Right) ? -1 : 1) + 3) % 3;
-						break;
+					case 0: m_sound_general = Variate(0, 10, (int)m_sound_general); break;
+					case 1: m_sound_music = Variate(0, 10, (int)m_sound_music); break;
+					case 2: m_sound_sfx = Variate(0, 10, (int)m_sound_sfx); break;
+					case 3: m_sound = Variate(0, 2, (int)m_sound); break;
 				}
 			}
-            son.MusicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
+			son.MusicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
 
 		}
 		private void UpdateCredits(GameTime gameTime)
@@ -682,10 +648,10 @@ namespace NNNA
 			if (Souris.Get().Clicked(MouseButton.Left))
 			{
 				Building b;
-                Unit u;
+				Unit u;
 				switch (m_currentAction)
 				{
-                        // Ere 1 
+						// Ere 1 
 					case "build_hutte":
 						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur, (byte)random.Next(0,2));
 						if (joueur.Pay(b.Prix))
@@ -712,11 +678,11 @@ namespace NNNA
 						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 						break;
 
-                    case "create_peon" :
-                        u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 200, Content, joueur);
-                        if (joueur.Pay(u.Prix))
+					case "create_peon" :
+						u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 200, Content, joueur);
+						if (joueur.Pay(u.Prix))
 						{
-                            selectedBuilding.Iterator++;
+							selectedBuilding.Iterator++;
 							units.Add(u);
 							MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
 							m_currentAction = "";
@@ -725,35 +691,35 @@ namespace NNNA
 						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 						break;
 
-                    case "create_guerrier":
-                        u = new Guerrier((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 3), (int)selectedBuilding.Position.Y + 70, Content, joueur);
-                        if (joueur.Pay(u.Prix))
-                        {
-                            selectedBuilding.Iterator++;
-                            units.Add(u);
-                            MessagesManager.Messages.Add(new Msg("Nouveau Guerrier !", Color.White, 5000));
-                            m_currentAction = "";
-                        }
-                        else
-                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-                        break;
+					case "create_guerrier":
+						u = new Guerrier((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 3), (int)selectedBuilding.Position.Y + 70, Content, joueur);
+						if (joueur.Pay(u.Prix))
+						{
+							selectedBuilding.Iterator++;
+							units.Add(u);
+							MessagesManager.Messages.Add(new Msg("Nouveau Guerrier !", Color.White, 5000));
+							m_currentAction = "";
+						}
+						else
+						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+						break;
 
-                        // Fin Ere 1 
+						// Fin Ere 1 
 
-                        // Ere 2 
-                    case "build_ferme":
-                        b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
-                        if (joueur.Pay(b.Prix))
-                        {
-                            buildings.Add(b);
-                            MessagesManager.Messages.Add(new Msg("Nouvelle ferme !", Color.White, 5000));
-                            m_pointer = Content.Load<Texture2D>("pointer");
-                            m_currentAction = "";
-                        }
-                        else
-                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-                        break;
-                        // Fin Ere 2
+						/* Ere 2 
+					case "build_ferme":
+						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
+						if (joueur.Pay(b.Prix))
+						{
+							buildings.Add(b);
+							MessagesManager.Messages.Add(new Msg("Nouvelle ferme !", Color.White, 5000));
+							m_pointer = Content.Load<Texture2D>("pointer");
+							m_currentAction = "";
+						}
+						else
+						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+						break;
+						 Fin Ere 2 */
 
 					default:
 						m_selection = new Rectangle(Souris.Get().X + (int)camera.Position.X, Souris.Get().Y + (int)camera.Position.Y, 0, 0);
@@ -821,96 +787,94 @@ namespace NNNA
 
 				// On met à jour les actions
 				m_currentActions.Clear();
-                if (selectedList.Count > 0)
-                {
-                    bool all_same = true;
-                    string type = "";
-                    m_currentActions.Add("attack");
-                    foreach (Movible_Sprite sprite in selectedList)
-                    {
-                        if (sprite.Type != type)
-                        {
-                            if (type != "")
-                            { all_same = false; }
-                            type = sprite.Type;
-                            if (sprite.Type == "peon" && !m_currentActions.Contains("build"))
-                            {
-                                m_currentActions.Add("gather");
-                                m_currentActions.Add("build");
-                            }
-                        }
-                    }
-                    if (!all_same)
-                    {
-                        m_currentActions.Clear();
-                        m_currentActions.Add("attack");
-                    }
-                }
-                else if (selectedBuilding != null)
-                {
-                    switch (selectedBuilding.Type)
-                    {
-                        case "forum" :
-                            m_currentActions.Add("create_peon");
-                            m_currentActions.Add("technologies");
-                            break;
+				if (selectedList.Count > 0)
+				{
+					bool all_same = true;
+					string type = "";
+					m_currentActions.Add("attack");
+					foreach (Movible_Sprite sprite in selectedList)
+					{
+						if (sprite.Type != type)
+						{
+							if (type != "")
+							{ all_same = false; }
+							type = sprite.Type;
+							if (sprite.Type == "peon" && !m_currentActions.Contains("build"))
+							{
+								m_currentActions.Add("gather");
+								m_currentActions.Add("build");
+							}
+						}
+					}
+					if (!all_same)
+					{
+						m_currentActions.Clear();
+						m_currentActions.Add("attack");
+					}
+				}
+				else if (selectedBuilding != null)
+				{
+					switch (selectedBuilding.Type)
+					{
+						case "forum" :
+							m_currentActions.Add("create_peon");
+							m_currentActions.Add("technologies");
+							break;
 
-                        case "caserne" :
-                            m_currentActions.Add("create_guerrier");
-                            break;
-                    }
-                }
+						case "caserne" :
+							m_currentActions.Add("create_guerrier");
+							break;
+					}
+				}
 				m_currentAction = "";
-                last_state.Clear();
-                for (int i = 0; i < m_currentActions.Count; i++)
-                {
-                    last_state.Add(m_currentActions[i]);
-                }
+				last_state.Clear();
+				for (int i = 0; i < m_currentActions.Count; i++)
+				{
+					last_state.Add(m_currentActions[i]);
+				}
 			}
 
 			// Actions
 			if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= hud.Position.X + 20 && Souris.Get().Y >= hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V) || Clavier.Get().NewPress(Keys.F))
 			{
 				int x = Souris.Get().X - hud.Position.X - 20, y = Souris.Get().Y - hud.Position.Y - 20;
-                if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V) || Clavier.Get().NewPress(Keys.F))
+				if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
 				{
 					x /= 40;
 					y /= 40;
 					int pos = x + 6 * y;
-                    if (pos < m_currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V) || Clavier.Get().NewPress(Keys.F))
+					if (pos < m_currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V) )
 					{
 						string act = "";
 						if (Clavier.Get().NewPress(Keys.C))
 						{ act = "build_hutte"; }
 						else if (Clavier.Get().NewPress(Keys.V))
 						{ act = "build_hutteDesChasseurs"; }
-                        else if (Clavier.Get().NewPress(Keys.F)) 
-                        { act = "build_ferme"; }
-                        else
+						else 
 						{ act = m_currentActions[pos]; }
 						Debug(act);
 						switch (act)
 						{
-                            case "attack":
-                                break;
+							case "attack":
+								break;
 
 							case "build":
 								m_currentActions.Clear();
 								m_currentActions.Add("build_hutte");
 								m_currentActions.Add("build_hutteDesChasseurs");
-                                m_currentActions.Add("retour");
+								m_currentActions.Add("retour");
 								break;
 
-                            case "gather":
-                                break;
+							case "gather":
+								break;
 
 							case "build_hutte":
 								if (joueur.Has(new Hutte().Prix))
 								{
-                                    if (random.Next(0, 2) == 0)
-                                        m_pointer = Content.Load<Texture2D>("Batiments/hutte1");
-                                    else
-									    m_pointer = Content.Load<Texture2D>("Batiments/hutte2");
+									if (random.Next(0, 2) == 0)
+										m_pointer = Content.Load<Texture2D>("Batiments/hutte1");
+									else
+										m_pointer = Content.Load<Texture2D>("Batiments/hutte2");
 									m_currentAction = "build_hutte";
 								}
 								else
@@ -927,66 +891,77 @@ namespace NNNA
 								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								break;
 
-                            case "retour":
-                                m_currentActions.Clear();
-                                for (int i = 0; i < last_state.Count; i++)
-                                {
-                                    m_currentActions.Add(last_state[i]);
-                                }
-                                break;
+							case "retour":
+								m_currentActions.Clear();
+								for (int i = 0; i < last_state.Count; i++)
+								{
+									m_currentActions.Add(last_state[i]);
+								}
+								break;
 
-                            case "create_peon":
-                                if (joueur.Has(new Peon().Prix))
-                                {
-                                    m_currentAction = "create_peon";
-                                }
-                                else
-                                { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-                                break;
+							case "create_peon":
+								Peon u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 200, Content, joueur);
+								if (joueur.Pay(u.Prix))
+								{
+									selectedBuilding.Iterator++;
+									units.Add(u);
+									MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
+									m_currentAction = "";
+								}
+								else
+								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+								break;
 
-                            case "technologies":
-                                m_currentActions.Clear();
-                                m_currentActions.Add("ere suivante");
-                                m_currentActions.Add("retour");
-                                break;
+							case "technologies":
+								m_currentActions.Clear();
+								m_currentActions.Add("ere suivante");
+								m_currentActions.Add("retour");
+								break;
 
-                            case "ere suivante":
-                                m_currentActions.Clear();
-                                m_currentActions.Add("create_peon");
-                                m_currentActions.Add("technologies");
-                                //Changements pour la deuxieme ere à effectuer ici.
-                                break;
+							case "ere suivante":
+								m_currentActions.Clear();
+								m_currentActions.Add("create_peon");
+								m_currentActions.Add("technologies");
+								//Changements pour la deuxieme ere à effectuer ici.
+								break;
 
-                            case "create_guerrier":
-                                if (joueur.Has(new Guerrier().Prix))
-                                {
-                                    m_currentAction = "create_guerrier";
-                                }
-                                else
-                                { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-                                break;
+							case "create_guerrier":
+								if (joueur.Has(new Guerrier().Prix))
+								{
+									m_currentAction = "create_guerrier";
+								}
+								else
+								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+								break;
 
-                                // Ere 2 
-                            case "build_ferme":
-                                if (joueur.Has(new Hutte_des_chasseurs().Prix))
-                                {
-                                    m_pointer = Content.Load<Texture2D>("Batiments/ferme");
-                                    m_currentAction = "build_ferme";
-                                }
-                                else
-                                { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-                                break;
+								/* Ere 2 
+							case "build_ferme":
+								if (joueur.Has(new Ferme().Prix))
+								{
+									m_pointer = Content.Load<Texture2D>("Batiments/ferme");
+									m_currentAction = "build_ferme";
+								}
+								else
+								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+								break;*/
 						}
 					}
 				}
 			}
-
+		 /*   if (Souris.Get().Clicked(MouseButton.Right) && Souris.Get().X < Resource. && Souris.Get().Y < Resource. )
+			foreach (Movible_Sprite sprite in selectedList)
+			{
+				if (sprite.Type == "peon")
+				{
+					
+				}
+			} */
 			foreach (Unit sprite in units)
 			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, units, buildings, matrice); }
 
 			units.Sort(Sprite.CompareByY);
 			buildings.Sort(Sprite.CompareByY);
-            son.Musiquemenu.Pause();
+			son.Musiquemenu.Pause();
 
 		}
 		void UpdateGameMenu(GameTime gameTime)
@@ -995,11 +970,8 @@ namespace NNNA
 			{ m_currentScreen = Screen.Game; }
 			curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			m_currentScreen = testPauseMenu(Screen.Title, Screen.Game);
-            son.Musiquemenu.Resume();
-
+			son.Musiquemenu.Resume();
 		}
-		void UpdateDebug(GameTime gameTime)
-		{ }
 
 		#endregion
 
@@ -1049,10 +1021,6 @@ namespace NNNA
 					break;
 				case Screen.GameMenu:
 					DrawGameMenu(gameTime);
-					break;
-
-				case Screen.Debug:
-					DrawDebug(gameTime);
 					break;
 			}
 
@@ -1124,7 +1092,7 @@ namespace NNNA
 			string[] types = { "Île" };
 			string[] tailles = { "Petite", "Moyenne", "Grande" };
 			string[] ressources = { "rares", "normales", "abondantes" };
-			makeMenu(types[(int)m_quick_type], tailles[m_quick_size], "Ressources " + ressources[m_quick_resources], "Jouer", "Retour");
+			makeMenu(types[(int)m_quick_type], tailles[m_quick_size], _("Ressources")+" " + _(ressources[m_quick_resources]), _("Ennemis :")+" " + m_foes.ToString(), "Jouer", "Retour");
 		}
 		private void DrawOptions(GameTime gameTime)
 		{
@@ -1140,13 +1108,13 @@ namespace NNNA
 		{
 			DrawCommon(gameTime);
 			string[] textures = { "min", "moyennes", "max" };
-			makeMenu(m_screen.X + "x" + m_screen.Y, (m_fullScreen ? "Plein écran" : "Fenêtré"), "Textures " + textures[m_textures], (m_shadows ? "Ombres" : "Pas d'ombres"), "Retour");
+			makeMenu(m_screen.X + "x" + m_screen.Y, (m_fullScreen ? "Plein écran" : "Fenêtré"), _("Textures")+" " + _(textures[m_textures]), (m_shadows ? "Ombres" : "Pas d'ombres"), "Retour");
 		}
 		private void DrawOptionsSound(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
 			string[] sound = { "min", "moy", "max" };
-			makeMenu("Général : " + m_sound_general, "Musique : " + m_sound_music, "Effets : " + m_sound_sfx, "Qualité " + sound[m_sound], "Retour");
+			makeMenu(_("Général :") + " " + m_sound_general, _("Musique :") + " " + m_sound_music, _("Effets :") + " " + m_sound_sfx, _("Qualité") + " " + _(sound[m_sound]), "Retour");
 		}
 		private void DrawCredits(GameTime gameTime)
 		{
@@ -1154,14 +1122,14 @@ namespace NNNA
 
 			// Crédits
 			int y = m_credits / 2;
-			if (y > m_screen.Y + 200 + (m_font_credits.MeasureString("Merci d'avoir joué !").Y / 2))
-			{ y = (int)(m_screen.Y + 200 + (m_font_credits.MeasureString("Merci d'avoir joué !").Y / 2)); }
+			if (y > m_screen.Y + 200 + (m_font_credits.MeasureString(_("Merci d'avoir joué !")).Y / 2))
+			{ y = (int)(m_screen.Y + 200 + (m_font_credits.MeasureString(_("Merci d'avoir joué !")).Y / 2)); }
 
-            spriteBatch.DrawString(m_font_credits, "Nicolas Allain", new Vector2((m_screen.X - m_font_credits.MeasureString("Nicolas Allain").X) / 2, m_screen.Y - y), Color.White);
+			spriteBatch.DrawString(m_font_credits, "Nicolas Allain", new Vector2((m_screen.X - m_font_credits.MeasureString("Nicolas Allain").X) / 2, m_screen.Y - y), Color.White);
 			spriteBatch.DrawString(m_font_credits, "Nicolas Faure", new Vector2((m_screen.X - m_font_credits.MeasureString("Nicolas Faure").X) / 2, m_screen.Y + 60 - y), Color.White);
 			spriteBatch.DrawString(m_font_credits, "Nicolas Mouton-Besson", new Vector2((m_screen.X - m_font_credits.MeasureString("Nicolas Mouton-Besson").X) / 2, m_screen.Y + 120 - y), Color.White);
 			spriteBatch.DrawString(m_font_credits, "Arnaud Weiss", new Vector2((m_screen.X - m_font_credits.MeasureString("Arnaud Weiss").X) / 2, m_screen.Y + 180 - y), Color.White);
-			spriteBatch.DrawString(m_font_credits, "Merci d'avoir joué !", new Vector2((m_screen.X - m_font_credits.MeasureString("Merci d'avoir joué !").X) / 2, m_screen.Y + (m_screen.Y / 2) + 180 + (m_font_credits.MeasureString("Merci d'avoir joué !").Y / 2) - y), Color.White);
+			spriteBatch.DrawString(m_font_credits, _("Merci d'avoir joué !"), new Vector2((m_screen.X - m_font_credits.MeasureString(_("Merci d'avoir joué !")).X) / 2, m_screen.Y + (m_screen.Y / 2) + 180 + (m_font_credits.MeasureString(_("Merci d'avoir joué !")).Y / 2) - y), Color.White);
 		}
 		private void DrawGame(GameTime gameTime)
 		{
@@ -1179,14 +1147,13 @@ namespace NNNA
 				}
 			}
 
+			// Affichage des objets sur la carte
 			foreach (Static_Sprite sprite in buildings)
 			{ sprite.Draw(spriteBatch, camera); }
-
 			foreach (Movible_Sprite sprite in units)
 			{ sprite.Draw(spriteBatch, camera, index); }
-
-            //foreach (Resource sprite in resource)
-            //{ sprite.Draw(spriteBatch, 1, camera); }
+			foreach (ResourceMine sprite in resource)
+			{ sprite.Draw(spriteBatch, 1, camera); }
 
 			// Rectangle de séléction
 			Vector2 coos = new Vector2(
@@ -1236,71 +1203,6 @@ namespace NNNA
 			}
 			spriteBatch.Draw(m_background_dark, Vector2.Zero, Color.White);
 			makePauseMenu("Quitter", "Retour");
-		}
-		
-		private void DrawDebug(GameTime gameTime)
-		{
-			List<float> heights = new List<float>();
-
-			// Calcul de la hauteur de l'eau
-			for (int x = 0; x < m_map.GetLength(0); x++)
-			{
-				for (int y = 0; y < m_map.GetLength(1); y++)
-				{ heights.Add(m_map[x, y] * 255); }
-			}
-			float spawnHeight = heights.Max();
-			Debug(1, heights.IndexOf(spawnHeight) % m_map.GetLength(1));
-			Debug(2, heights.IndexOf(spawnHeight) / m_map.GetLength(1));
-			Debug(3, spawnHeight);
-			Debug(4, heights.IndexOf(spawnHeight));
-			heights.Sort();
-			float waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
-
-			for (int x = 0; x < m_map.GetLength(0); x++)
-			{
-				for (int y = 0; y < m_map.GetLength(1); y++)
-				{
-					Color color = Color.White;
-					string sprite = "";
-					float m = m_map[x, y] * 255;
-					if (m < waterline - 40)
-					{
-						sprite = "~";
-						color = Color.Blue;
-					}
-					else if (m < waterline)
-					{
-						sprite = "~";
-						color = Color.Cyan;
-					}
-					else if (m < waterline + 15)
-					{
-						sprite = ".";
-						color = Color.Yellow;
-					}
-					else if (m < waterline + 35)
-					{
-						sprite = ".";
-						color = Color.Green;
-					}
-					else if (m > 230)
-					{
-						sprite = "^";
-						color = Color.Brown;
-					}
-					else if (m > 205)
-					{
-						sprite = "~";
-						color = Color.Brown;
-					}
-					else
-					{
-						sprite = "*";
-						color = Color.Green;
-					}
-					spriteBatch.DrawString(m_font_small, sprite, new Vector2(5 + x * 14, 5 + y * 14), color);
-				}
-			}
 		}
 
 		#endregion
@@ -1393,16 +1295,17 @@ namespace NNNA
 
 		protected void makeMenu(params string[] args)
 		{
+			m_currentMenus = args;
 			for (int i = 0; i < args.Length; i++)
-			{ DrawString(spriteBatch, m_font_menu, args[i], new Vector2(0, i * (m_screen.Y / 11) + m_screen.Y / 5 + (180 * (m_screen.Y / 1050))), (menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", m_screen.Y / 1050); }
+			{ DrawString(spriteBatch, m_font_menu, _(args[i]), new Vector2(0, i * (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? 2 : 0))) + m_screen.Y / 5 + (180 * (m_screen.Y / 1050))), (menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", m_screen.Y / 1050); }
 		}
 		protected int menu()
-		{ return Souris.Get().Y > m_screen.Y / 5 + (180 * (m_screen.Y / 1050)) && ((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) % (m_screen.Y / 11)) < (m_font_menu.MeasureString("Menu").Y * m_screen.Y) / 1050 ? (int)((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) / (m_screen.Y / 11)) : -1; }
+		{ return Souris.Get().Y > m_screen.Y / 5 + (180 * (m_screen.Y / 1050)) && ((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) % (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? 2 : 0)))) < (m_font_menu.MeasureString("Menu").Y * m_screen.Y) / 1050 ? (int)((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) / (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? 2 : 0)))) : -1; }
 
 		protected void makePauseMenu(params string[] args)
 		{
 			for (int i = 0; i < args.Length; i++)
-			{ spriteBatch.DrawString(m_font_menu, args[i], new Vector2((668 * (m_screen.X / 1680)), i * 80 + (180 * (m_screen.Y / 1050))), Color.White); }
+			{ spriteBatch.DrawString(m_font_menu, _(args[i]), new Vector2((668 * (m_screen.X / 1680)), i * 80 + (180 * (m_screen.Y / 1050))), Color.White); }
 		}
 		protected int pauseMenu()
 		{ return (Souris.Get().X > (654 * (m_screen.X / 1680)) && Souris.Get().Y > (180 * (m_screen.Y / 1050))) ? (int)((Souris.Get().Y - (180 * (m_screen.Y / 1050))) / 80) : -1; }
@@ -1521,6 +1424,70 @@ namespace NNNA
 		/// <returns>La Texture2D générée.</returns>
 		private Texture2D CreateRectangle(int width, int height, Color col)
 		{ return CreateRectangle(width, height, col, col); }
+
+		/// <summary>
+		/// Traduit la chaîne passée en argument en fonction de la langue choisie.
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		private string Translate(string text, string lang = "")
+		{
+			Dictionary<string, Dictionary<string, string>> translations = new Dictionary<string, Dictionary<string, string>>();
+			translations["en"] = new Dictionary<string, string>();
+			translations["en"]["Jouer"] = "Play";
+			translations["en"]["Options"] = "Settings";
+			translations["en"]["Crédits"] = "Credits";
+			translations["en"]["Quitter"] = "Quit";
+			translations["en"]["Escarmouche"] = "Skirmish";
+			translations["en"]["Retour"] = "Back";
+			translations["en"]["Île"] = "Island";
+			translations["en"]["Petite"] = "Small";
+			translations["en"]["Moyenne"] = "Medium";
+			translations["en"]["Grande"] = "Big";
+			translations["en"]["rares"] = "rare";
+			translations["en"]["normales"] = "normal";
+			translations["en"]["abondantes"] = "abundant";
+			translations["en"]["Ressources"] = "Resources";
+			translations["en"]["Ennemis :"] = "Enemies:";
+			translations["en"]["Jouabilité"] = "Playability";
+			translations["en"]["Graphismes"] = "Graphics";
+			translations["en"]["Son"] = "Sound";
+			translations["en"]["Vie au survol"] = "Over life";
+			translations["en"]["Vie constante"] = "Always life";
+			translations["en"]["HUD intelligent"] = "Smart HUD";
+			translations["en"]["HUD classique"] = "Classical HUD";
+			translations["en"]["min"] = "min";
+			translations["en"]["moyennes"] = "medium";
+			translations["en"]["max"] = "max";
+			translations["en"]["Plein écran"] = "Full screen";
+			translations["en"]["Fenêtré"] = "Windowed";
+			translations["en"]["Textures"] = "Textures";
+			translations["en"]["Ombres"] = "Shadows";
+			translations["en"]["Pas d'ombres"] = "No shadows";
+			translations["en"]["moy"] = "med";
+			translations["en"]["Général :"] = "General:";
+			translations["en"]["Musique :"] = "Music:";
+			translations["en"]["Effets :"] = "Effects:";
+			translations["en"]["Qualité"] = "Quality";
+			translations["en"]["Merci d'avoir joué !"] = "Thanks for playing!";
+
+			if (lang == "")
+			{ lang = m_language; }
+
+			if (translations.ContainsKey(lang))
+			{
+				if (translations[lang].ContainsKey(text))
+				{ return translations[lang][text]; }
+			}
+			return text;
+		}
+		/// <summary>
+		/// Traduit la chaîne passée en argument en fonction de la langue choisie.
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		private string _(string text, string lang = "")
+		{ return Translate(text, lang);  }
 
 		#region Conversions
 

@@ -14,34 +14,51 @@ using Microsoft.Xna.Framework.Storage;
 namespace NNNA
 {
     class HUD
-    {
+	{
+		private Texture2D texture_Background;
 		private Vector2 ressource;
 		private int interval_ressource;
-        private Rectangle position;
+
+        private Rectangle m_position;
         public Rectangle Position
+		{ get { return m_position; } }
+
+		private bool m_is_smart = false;
+		public bool IsSmart
+		{
+			get { return m_is_smart; }
+			set { m_is_smart = value; }
+		}
+		private int m_smart_pos, height;
+
+        public HUD(int x, int y, Minimap minimap, bool isSmart, GraphicsDeviceManager graphics)
         {
-            get { return position; }
+			m_position = new Rectangle(x, y, graphics.PreferredBackBufferWidth - x, graphics.PreferredBackBufferHeight - y);
+			ressource = new Vector2((int)(m_position.X + (m_position.Width * 288) / 1366), (int)(m_position.Y + (m_position.Height * 45) / 164));
+			interval_ressource = (int)((m_position.Width * 44) / graphics.PreferredBackBufferWidth);
+			m_is_smart = false;
+			m_smart_pos = y;
+			height = graphics.PreferredBackBufferHeight;
         }
 
-        private Texture2D texture_Background;
-        public HUD(int x, int y, Minimap minimap, GraphicsDeviceManager graphics)
-        {
-            position = new Rectangle(x, y, graphics.PreferredBackBufferWidth - x, graphics.PreferredBackBufferHeight - y);
-			ressource = new Vector2((int)(position.X + (position.Width * 288) / 1366), (int)(position.Y + (position.Height * 45) / 164));
-			interval_ressource = (int)((position.Width * 44) / graphics.PreferredBackBufferWidth);
-        }
         public void LoadContent(ContentManager content, string assetName)
-        {
-            texture_Background = content.Load<Texture2D>(assetName);
-        }
+        { texture_Background = content.Load<Texture2D>(assetName); }
+
         public void Draw(SpriteBatch spriteBatch, Minimap minimap, Joueur joueur, SpriteFont font)
         {
-            spriteBatch.Draw(texture_Background, position, Color.White);
-            minimap.Draw(spriteBatch);
+			// HUD
+			int posY = m_is_smart ? m_position.Y + m_smart_pos : m_position.Y;
+			if (posY < height)
+			{
+				spriteBatch.Draw(texture_Background, new Rectangle(m_position.X, posY, m_position.Width, m_position.Height), Color.White);
+				minimap.Draw(spriteBatch);
+			}
+
+			// Ressources
 			int i = 0;
 			foreach (Resource res in joueur.Resources(1))
 			{
-				spriteBatch.Draw(res.Texture(1), new Vector2(5 + i * 140, 5), Color.White);
+				spriteBatch.Draw(res.Icon(1), new Vector2(5 + i * 140, 5), Color.White);
 				spriteBatch.DrawString(font, res.Count.ToString(), new Vector2(10 + i * 140 + res.Texture(1).Width, 5 + ((res.Texture(1).Height - font.MeasureString(res.Count.ToString()).Y) / 2)), Color.White);
 				i++;
 			}
