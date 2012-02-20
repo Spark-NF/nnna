@@ -1,17 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
-using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using Forms = System.Windows.Forms;
-using System.Diagnostics;
 
 namespace NNNA
 {
@@ -56,12 +50,11 @@ namespace NNNA
 		HUD hud;
 		Camera2D camera;
 		Joueur joueur;
-		List<Movible_Sprite> units = new List<Movible_Sprite>();
-		List<Unit> selectedList = new List<Unit>();
-		List<Building> buildings = new List<Building>();
-		List<ResourceMine> resource = new List<ResourceMine>();
+		Joueur[] m_enemies;
 		Building selectedBuilding;
 		float[,] m_map;
+		List<ResourceMine> resource = new List<ResourceMine>();
+		List<Unit> selectedList = new List<Unit>();
 
 		// Audio objects
 		//private AudioEngine engine; 
@@ -451,44 +444,76 @@ namespace NNNA
 			{
 				if (s == Screen.Game)
 				{
-					// Génération
+					bool ok = false;
 					int[] sizes = { 50, 100, 200 };
 					double[] resources = { 0.05, 0.1, 0.2 };
-					matrice = generateMap(m_quick_type, sizes[m_quick_size], sizes[m_quick_size], resources[m_quick_resources]);
-
-					// Spawns
-					List<float> heights = new List<float>();
-					for (int x = 0; x < m_map.GetLength(0); x++)
-					{
-						for (int y = 0; y < m_map.GetLength(1); y++)
-						{ heights.Add(m_map[x, y] * 255); }
-					}
-					List<float> heightsOr = new List<float>(heights);
-					heights.Sort((x, y) => (y.CompareTo(x)));
 					List<Point> spawns = new List<Point>();
-					int i = 0;
-					while (spawns.Count < 2)
+					List<float> heights = new List<float>();
+					float dist = sizes[m_quick_size] / 2;
+
+					// On regénère une carte tant qu'elle est incapable d'accueillir le bon nombre de spawns
+					while (!ok)
 					{
-						spawns.Add(new Point(heightsOr.IndexOf(heights[i]) % m_map.GetLength(1), heightsOr.IndexOf(heights[i]) / m_map.GetLength(1)));
-						i++;
+						// Génération
+						matrice = generateMap(m_quick_type, sizes[m_quick_size], sizes[m_quick_size], resources[m_quick_resources]);
+
+						// Spawns
+						heights.Clear();
+						for (int x = 0; x < m_map.GetLength(0); x++)
+						{
+							for (int y = 0; y < m_map.GetLength(1); y++)
+							{ heights.Add(m_map[x, y] * 255); }
+						}
+						float waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
+						List<float> heightsOr = new List<float>(heights);
+						heights.Sort((x, y) => (y.CompareTo(x)));
+						spawns.Clear();
+						int j = 0;
+
+						// On génère $m_foes + 1 spawns, chacun espacés d'au moins $dist
+						while (spawns.Count < m_foes + 1 && j < heights.IndexOf(waterline))
+						{
+							Point point = new Point(heightsOr.IndexOf(heights[j]) % m_map.GetLength(1), heightsOr.IndexOf(heights[j]) / m_map.GetLength(1));
+							bool isNear = false;
+							foreach (Point p in spawns)
+							{
+								if (point.distanceTo(p) <= dist)
+								{ isNear = true; }
+							}
+							if (!isNear)
+							{ spawns.Add(point); }
+							j++;
+						}
+
+						if (spawns.Count == m_foes + 1)
+						{ ok = true; }
 					}
-					Point playerSpawn = spawns[0];
 
-					//Unites du Debut
-					joueur.Reset();
-					joueur.LoadResources(Content);
-					units.Clear();
-					units.Add(new Guerrier((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X + 100, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y + 200, Content, joueur, false));
-					units.Add(new Guerrier((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X + 0, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y + 200, Content, joueur, false));
-					units.Add(new Peon((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X + 50, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y + 200, Content, joueur, false));
+					// Les couleurs et noms des joueurs
+					Color[] colors = { Color.Blue, Color.Red, Color.Green, Color.Yellow };
+					string[] names = { Environment.UserName, "Lord Lard", "Herr von Speck", "Monsieur Martin" };
 
-					//Batiments du Debut
-					buildings.Clear();
-					buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).X, (int)matrice2xy(new Vector2(playerSpawn.X - 1, playerSpawn.Y - 1)).Y, Content, joueur));
-					camera.Position = matrice2xy(new Vector2(playerSpawn.X + 7, playerSpawn.Y + 5)) - m_screen / 2;
+					//Joueur
+					joueur = new Joueur(colors[0], names[0], Content);
+					joueur.Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 200, Content, joueur, false));
+					joueur.Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 200, Content, joueur, false));
+					joueur.Units.Add(new Peon((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 200, Content, joueur, false));
+					joueur.Buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, joueur));
+					camera.Position = matrice2xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - m_screen / 2;
+
+					// Ennemis
+					m_enemies = new Joueur[m_foes];
+					for (int i = 0; i < m_foes; i++)
+					{
+						m_enemies[i] = new Joueur(colors[i + 1], names[i + 1], Content);
+						m_enemies[i].Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 200, Content, joueur, false));
+						m_enemies[i].Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 200, Content, joueur, false));
+						m_enemies[i].Units.Add(new Peon((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 200, Content, joueur, false));
+						m_enemies[i].Buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, joueur));
+					}
 
 					//Decor
-					resource.Add(new ResourceMine((int)matrice2xy(new Vector2(playerSpawn.X + 10, playerSpawn.Y + 10)).X, (int)matrice2xy(new Vector2(playerSpawn.X + 5, playerSpawn.Y + 2)).Y, Content, joueur.Resource("Pierre")));
+					resource.Add(new ResourceMine((int)matrice2xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)matrice2xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, Content, joueur.Resource("Pierre")));
 					/*Random rand = new Random();
 					for (int i = 0; i < 15; i++)
 					{
@@ -618,6 +643,12 @@ namespace NNNA
 			curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			camera.Update(curseur, graphics);
 
+			// Intelligence artificielle
+			foreach (Joueur foe in m_enemies)
+			{
+				// FAIRE TOUTES LES MISES à JOUR DE L'IA ICI
+			}
+
 			// Rectangle de séléction
 			if (Souris.Get().Clicked(MouseButton.Left))
 			{
@@ -630,7 +661,7 @@ namespace NNNA
 						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur, (byte)random.Next(0,2));
 						if (joueur.Pay(b.Prix))
 						{
-							buildings.Add(b);
+							joueur.Buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
 							m_pointer = Content.Load<Texture2D>("pointer");
 							m_currentAction = "";
@@ -643,7 +674,7 @@ namespace NNNA
 						b = new Hutte_des_chasseurs((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
 						if (joueur.Pay(b.Prix))
 						{
-							buildings.Add(b);
+							joueur.Buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
 							m_pointer = Content.Load<Texture2D>("pointer");
 							m_currentAction = "";
@@ -657,7 +688,7 @@ namespace NNNA
 						if (joueur.Pay(u.Prix))
 						{
 							selectedBuilding.Iterator++;
-							units.Add(u);
+							joueur.Units.Add(u);
 							MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
 							m_currentAction = "";
 						}
@@ -670,7 +701,7 @@ namespace NNNA
 						if (joueur.Pay(u.Prix))
 						{
 							selectedBuilding.Iterator++;
-							units.Add(u);
+							joueur.Units.Add(u);
 							MessagesManager.Messages.Add(new Msg("Nouveau Guerrier !", Color.White, 5000));
 							m_currentAction = "";
 						}
@@ -680,12 +711,12 @@ namespace NNNA
 
 						// Fin Ere 1 
 
-						/* Ere 2 
+					/* Ere 2 
 					case "build_ferme":
 						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
 						if (joueur.Pay(b.Prix))
 						{
-							buildings.Add(b);
+							joueur.buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle ferme !", Color.White, 5000));
 							m_pointer = Content.Load<Texture2D>("pointer");
 							m_currentAction = "";
@@ -693,7 +724,7 @@ namespace NNNA
 						else
 						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 						break;
-						 Fin Ere 2 */
+					Fin Ere 2 */
 
 					default:
 						m_selection = new Rectangle(Souris.Get().X + (int)camera.Position.X, Souris.Get().Y + (int)camera.Position.Y, 0, 0);
@@ -723,7 +754,7 @@ namespace NNNA
 					{ selectedBuilding.Selected = false; }
 					selectedBuilding = null;
 				}
-				foreach (Unit sprite in units)
+				foreach (Unit sprite in joueur.Units)
 				{
 					Rectangle csel = new Rectangle((int)(m_selection.X - camera.Position.X + (m_selection.Width < 0 ? m_selection.Width : 0)), (int)(m_selection.Y - camera.Position.Y + (m_selection.Height < 0 ? m_selection.Height : 0)), (int)Math.Abs(m_selection.Width), (int)Math.Abs(m_selection.Height));
 					if (!sprite.Selected && csel.Intersects(sprite.Rectangle(camera)))
@@ -739,7 +770,7 @@ namespace NNNA
 					{ sprite.Selected = false; }
 					selectedList.Clear();
 
-					foreach (Building sprite in buildings)
+					foreach (Building sprite in joueur.Buildings)
 					{
 						Rectangle csel = new Rectangle((int)(m_selection.X - camera.Position.X + (m_selection.Width < 0 ? m_selection.Width : 0)), (int)(m_selection.Y - camera.Position.Y + (m_selection.Height < 0 ? m_selection.Height : 0)), (int)Math.Abs(m_selection.Width), (int)Math.Abs(m_selection.Height));
 						if (!sprite.Selected && csel.Intersects(sprite.Rectangle(camera)))
@@ -878,7 +909,7 @@ namespace NNNA
 								if (joueur.Pay(u.Prix))
 								{
 									selectedBuilding.Iterator++;
-									units.Add(u);
+									joueur.Units.Add(u);
 									MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
 									m_currentAction = "";
 								}
@@ -930,11 +961,11 @@ namespace NNNA
 					
 				}
 			} */
-			foreach (Unit sprite in units)
-			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, units, buildings, matrice); }
+			foreach (Unit sprite in joueur.Units)
+			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, joueur.Units, joueur.Buildings, matrice); }
 
-			units.Sort(Sprite.CompareByY);
-			buildings.Sort(Sprite.CompareByY);
+			joueur.Units.Sort(Sprite.CompareByY);
+			joueur.Buildings.Sort(Sprite.CompareByY);
 			son.Musiquemenu.Pause();
 
 		}
@@ -1125,10 +1156,9 @@ namespace NNNA
 			}
 
 			// Affichage des objets sur la carte
-			foreach (Static_Sprite sprite in buildings)
-			{ sprite.Draw(spriteBatch, camera); }
-			foreach (Movible_Sprite sprite in units)
-			{ sprite.Draw(spriteBatch, camera, index); }
+			joueur.Draw(spriteBatch, camera, index);
+			foreach (Joueur foe in m_enemies)
+			{ foe.Draw(spriteBatch, camera, index); }
 			foreach (ResourceMine sprite in resource)
 			{ sprite.Draw(spriteBatch, 1, camera); }
 
@@ -1203,7 +1233,7 @@ namespace NNNA
 			Console.Messages.Add(new ConsoleMessage(value));
 			System.Diagnostics.Debug.WriteLine(value);
 		}
-		private void Debug(List<float> value)
+		private void Debug(List<Point> value)
 		{
 			string deb = "List<" + value.GetType().GetGenericArguments()[0].ToString() + ">(" + value.Count.ToString() + ") { ";
 			for (int i = 0; i < value.Count; i++)

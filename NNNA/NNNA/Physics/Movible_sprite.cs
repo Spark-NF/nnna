@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using Microsoft.Xna.Framework.Net;
-using Microsoft.Xna.Framework.Storage;
 
 namespace NNNA
 {
@@ -233,7 +226,7 @@ namespace NNNA
                 create_hutte_chasseurs = false;
             }
         }
-		public void Draw(SpriteBatch spriteBatch, Camera2D camera, int index)
+		public void Draw(SpriteBatch spriteBatch, Camera2D camera, int index, Color col)
 		{
 			int tex = 0;
 
@@ -280,7 +273,7 @@ namespace NNNA
 				spriteBatch.Draw(m_texture, m_position - camera.Position, new Rectangle(m_click ? index * 32 : 0, 0, 32, 48), Color.Peru);
 			}
 			else
-			{ spriteBatch.Draw(m_texture, m_position - camera.Position, new Rectangle(m_click ? index * 32 : 0, 0, 32, 48), Color.White); }
+			{ spriteBatch.Draw(m_texture, m_position - camera.Position, new Rectangle(m_click ? index * 32 : 0, 0, 32, 48), col); }
 		}
 		public void DrawIcon(SpriteBatch spriteBatch, Vector2 position)
 		{ spriteBatch.Draw(m_icon, position, new Rectangle(0, 0, m_icon.Width, m_icon.Height), Color.White); }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Content;
 
-
 namespace NNNA
 {   // Ere 2
     class Ferme : Building

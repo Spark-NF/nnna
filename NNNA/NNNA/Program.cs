@@ -1,5 +1,3 @@
-using System;
-
 namespace NNNA
 {
 #if WINDOWS || XBOX
