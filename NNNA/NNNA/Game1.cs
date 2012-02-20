@@ -33,7 +33,7 @@ namespace NNNA
 		private SpriteFont m_font_menu, m_font_menu_title, m_font_small, m_font_credits;
 		private Screen m_currentScreen = Screen.Title;
 		private int m_konami = 0, m_konamiStatus = 0, m_foes = 1;
-		private string m_currentAction = "", m_language = "en";
+		private string m_currentAction = "", m_language = "fr";
 		private double m_elapsed;
 		private List<string> last_state = new List<string>();
 		private string[] m_currentMenus;
@@ -121,42 +121,18 @@ namespace NNNA
 		/// </summary>
 		private void loadSettings()
 		{
-			if (!File.Exists("settings.xml"))
-			{ return; }
-
-			XmlTextReader reader = new XmlTextReader("settings.xml");
-
-			string setting = "";
-			float temp;
-			int tmp;
-			while (reader.Read())
-			{
-				switch (reader.NodeType)
-				{
-					case XmlNodeType.Element:
-						while (reader.MoveToNextAttribute())
-						{ setting = reader.Value; }
-						break;
-
-					case XmlNodeType.Text:
-						string value = reader.Value;
-						switch (setting)
-						{
-							case "fullScreen": m_fullScreen = (value == "true" || value == "1"); break;
-							case "screenWidth": float.TryParse(value, out temp); m_screen.X = temp; break;
-							case "screenHeight": float.TryParse(value, out temp); m_screen.Y = temp; break;
-							case "healthHover": m_health_hover = (value == "true" || value == "1"); break;
-							case "smartHUD": m_smart_hud = (value == "true" || value == "1"); break;
-							case "textures": int.TryParse(value, out tmp); m_textures = tmp; break;
-							case "shadows": m_shadows = (value == "true" || value == "1"); break;
-							case "soundGeneral": int.TryParse(value, out tmp); m_sound_general = tmp; break;
-							case "soundMusic": int.TryParse(value, out tmp); m_sound_music = tmp; break;
-							case "soundSFX": int.TryParse(value, out tmp); m_sound_sfx = tmp; break;
-							case "sound": int.TryParse(value, out tmp); m_sound = tmp; break;
-						}
-						break;
-				}
-			}
+			m_language = Properties.Settings.Default.Language;
+			m_fullScreen = Properties.Settings.Default.FullScreen;
+			m_screen.X = Properties.Settings.Default.ScreenWidth;
+			m_screen.Y = Properties.Settings.Default.ScreenHeight;
+			m_health_hover = Properties.Settings.Default.HealthOver;
+			m_smart_hud = Properties.Settings.Default.SmartHUD;
+			m_textures = Properties.Settings.Default.Textures;
+			m_shadows = Properties.Settings.Default.Shadows;
+			m_sound_general = Properties.Settings.Default.SoundGeneral;
+			m_sound_music = Properties.Settings.Default.SoundMusic;
+			m_sound_sfx = Properties.Settings.Default.SoundSFX;
+			m_sound = Properties.Settings.Default.Sound;
 		}
 
 		/// <summary>
@@ -164,22 +140,19 @@ namespace NNNA
 		/// </summary>
 		private void saveSettings()
 		{
-			StreamWriter monStreamWriter = new StreamWriter("settings.xml");
-			monStreamWriter.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			monStreamWriter.WriteLine("<settings>");
-			monStreamWriter.WriteLine("	<setting name=\"fullScreen\">" + (m_fullScreen ? "true" : "false") + "</setting>");
-			monStreamWriter.WriteLine("	<setting name=\"screenWidth\">" + m_screen.X + "</setting>");
-			monStreamWriter.WriteLine("	<setting name=\"screenHeight\">" + m_screen.Y + "</setting>");
-			monStreamWriter.WriteLine("	<setting name=\"healthHover\">" + (m_health_hover ? "true" : "false") + "</setting>");
-			monStreamWriter.WriteLine("	<setting name=\"smartHUD\">" + (m_smart_hud ? "true" : "false") + "</setting>");
-			monStreamWriter.WriteLine("	<setting name=\"textures\">" + m_textures + "</setting>");
-			monStreamWriter.WriteLine("	<setting name=\"shadows\">" + (m_shadows ? "true" : "false") + "</setting>");
-			monStreamWriter.WriteLine("	<setting name=\"soundGeneral\">" + m_sound_general + "</setting>");
-			monStreamWriter.WriteLine("	<setting name=\"soundMusic\">" + m_sound_music + "</setting>");
-			monStreamWriter.WriteLine("	<setting name=\"soundSFX\">" + m_sound_sfx + "</setting>");
-			monStreamWriter.WriteLine("	<setting name=\"sound\">" + m_sound + "</setting>");
-			monStreamWriter.WriteLine("</settings>");
-			monStreamWriter.Close();
+			Properties.Settings.Default.Language = m_language;
+			Properties.Settings.Default.FullScreen = m_fullScreen;
+			Properties.Settings.Default.ScreenWidth = (int)m_screen.X;
+			Properties.Settings.Default.ScreenHeight = (int)m_screen.Y;
+			Properties.Settings.Default.HealthOver = m_health_hover;
+			Properties.Settings.Default.SmartHUD = m_smart_hud;
+			Properties.Settings.Default.Textures = m_textures;
+			Properties.Settings.Default.Shadows = m_shadows;
+			Properties.Settings.Default.SoundGeneral = (int)m_sound_general;
+			Properties.Settings.Default.SoundMusic = (int)m_sound_music;
+			Properties.Settings.Default.SoundSFX = (int)m_sound_sfx;
+			Properties.Settings.Default.Sound = m_sound;
+			Properties.Settings.Default.Save();
 		}
 
 		#endregion
@@ -565,7 +538,7 @@ namespace NNNA
 		}
 		private void UpdateOptionsGeneral(GameTime gameTime)
 		{
-			Screen s = testMenu(Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.Options);
+			Screen s = testMenu(Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.Options);
 			if (s != Screen.OptionsGeneral)
 			{ m_currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
@@ -573,8 +546,9 @@ namespace NNNA
 				int m = menu();
 				switch (m)
 				{
-					case 0: m_health_hover = !m_health_hover; break;
-					case 1: m_smart_hud = !m_smart_hud; break;
+					case 0: m_language = (m_language == "en" ? "fr" : "en"); break;
+					case 1: m_health_hover = !m_health_hover; break;
+					case 2: m_smart_hud = !m_smart_hud; break;
 				}
 			}
 		}
@@ -1102,7 +1076,10 @@ namespace NNNA
 		private void DrawOptionsGeneral(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
-			makeMenu((m_health_hover ? "Vie au survol" : "Vie constante"), (m_smart_hud ? "HUD intelligent" : "HUD classique"), "Retour");
+			Dictionary<string, string> languages = new Dictionary<string, string>();
+			languages["en"] = "English";
+			languages["fr"] = "Français";
+			makeMenu(languages[m_language], (m_health_hover ? "Vie au survol" : "Vie constante"), (m_smart_hud ? "HUD intelligent" : "HUD classique"), "Retour");
 		}
 		private void DrawOptionsGraphics(GameTime gameTime)
 		{
