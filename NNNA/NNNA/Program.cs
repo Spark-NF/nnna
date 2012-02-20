@@ -1,3 +1,4 @@
+using System;
 namespace NNNA
 {
 #if WINDOWS || XBOX
@@ -6,6 +7,8 @@ namespace NNNA
         /// <summary>
         /// Point d'entrée principal de l'application.
         /// </summary>
+        /// 
+        [STAThread]
         static void Main(string[] args)
         {
             using (Game1 game = new Game1())

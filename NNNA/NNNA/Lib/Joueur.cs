@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-	class Joueur
+    class Joueur
 	{
 		private Texture2D pop_Texture;
 		public Texture2D Pop_Texture

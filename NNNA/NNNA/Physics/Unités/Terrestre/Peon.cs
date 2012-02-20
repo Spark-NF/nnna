@@ -5,6 +5,7 @@ namespace NNNA
 {
 	class Peon : LandUnit
 	{
+        //SoundEffect creationPeon;
         public Peon(int x = 0, int y = 0)
             : base(x, y)
         {
@@ -28,6 +29,8 @@ namespace NNNA
 			m_speed = 0.06f;
 			SetTextures(content, "peon", 90);
             m_cost.Add("Nourriture", 50);
+            //creationPeon = content.Load<SoundEffect>("sounds/creationpeon");
+           // creationPeon.Play();
 		}
 	}
 }

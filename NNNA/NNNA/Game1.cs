@@ -1,12 +1,16 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
+using System.Windows.Forms.Integration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Forms = System.Windows.Forms;
-
+using System.Drawing;
+using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 namespace NNNA
 {
 	/// <summary>
@@ -40,32 +44,28 @@ namespace NNNA
 		private MapType m_quick_type = MapType.Island;
 		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0;
 		List<string> m_currentActions = new List<string>();
-		Random random = new Random(42);
-		
-		// Map
+		Random random = new Random(42);		// Map
 		Sprite h, e, p, t, s, i, curseur;
 		Sprite[,] matrice;
 		Map map;
 		Minimap minimap;
 		HUD hud;
 		Camera2D camera;
-		Joueur joueur;
+        Joueur joueur;
 		Joueur[] m_enemies;
 		Building selectedBuilding;
 		float[,] m_map;
 		List<ResourceMine> resource = new List<ResourceMine>();
 		List<Unit> selectedList = new List<Unit>();
 
-		// Audio objects
-		//private AudioEngine engine; 
-		//private WaveBank musique; 
-		//private SoundBank sons; 
-		//private Cue piste;
-		//AudioCategory musicCategory;
-		float musicVolume = 2.0f;
+		// Audio objects		
+        float musicVolume = 2.0f;
 		Sons son = new Sons();
 		SoundEffect _debutpartie;
 		SoundEffect _finpartie;
+        private ElementHost elementHost;
+        private Technologies techno;
+
 
 		#endregion
 
@@ -151,7 +151,7 @@ namespace NNNA
 		#endregion
 
 		/// <summary>
-		/// Fait toutes les initialisations nÃ©cÃ©ssaires pour le jeu.
+		/// Fait toutes les initialisations nécéssaires pour le jeu.
 		/// </summary>
 		protected override void Initialize()
 		{
@@ -170,19 +170,23 @@ namespace NNNA
 			son.Initializesons(musicVolume, m_sound_music, m_sound_general);
 			_debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
 			_finpartie = Content.Load<SoundEffect>("sounds/sortiedejeu");
+            
+            //menu technologie
+            elementHost= new ElementHost();
+            techno = new Technologies(joueur, elementHost);
 
 			base.Initialize();
 
 		}
 
 		/// <summary>
-		/// GÃ©nÃ¨re une carte alÃ©atoire.
+		/// Génère une carte aléatoire.
 		/// </summary>
-		/// <param name="mt">Le type de carte Ã  gÃ©nÃ©rer.</param>
-		/// <param name="width">La largeur de la carte Ã  gÃ©nÃ©rer.</param>
-		/// <param name="height">La hauteur de la carte Ã  gÃ©nÃ©rer.</param>
+		/// <param name="mt">Le type de carte à générer.</param>
+		/// <param name="width">La largeur de la carte à générer.</param>
+		/// <param name="height">La hauteur de la carte à générer.</param>
 		/// <param name="resources">La proportion de resources.</param>
-		/// <returns>Un tableau correspondant Ã  la carte.</returns>
+		/// <returns>Un tableau correspondant à la carte.</returns>
 		private Sprite[,] generateMap(MapType mt, int width, int height, double resources)
 		{
 			float[,] map = IslandGenerator.Generate(width, height);
@@ -224,7 +228,7 @@ namespace NNNA
 				}
 			}
 
-			// On met du sable Ã  cÃ´tÃ© de l'eau
+			// On met du sable à côté de l'eau
 			for (int x = 0; x < matrice.GetLength(0); x++)
 			{
 				for (int y = 0; y < matrice.GetLength(1); y++)
@@ -273,29 +277,20 @@ namespace NNNA
 			m_font_credits = Content.Load<SpriteFont>("font_credits");
 
 			#region Actions
-			#region Actions UnitÃ©s
+			#region Actions Unités
 			m_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
 			m_actions.Add("gather", Content.Load<Texture2D>("Actions/gather"));
 			m_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
 			m_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
 			m_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
 			// m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
-			#endregion Actions UnitÃ©s
+			#endregion Actions Unités
 
-			#region Actions Batiments
-			m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
-			m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
-			m_actions.Add("ere suivante", Content.Load<Texture2D>("Actions/evolution"));
-			m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
-
-			// Technologies
-			m_actions.Add("chasse", Content.Load<Texture2D>("Actions/chasse"));
-			m_actions.Add("feu", Content.Load<Texture2D>("Actions/feu"));
-			m_actions.Add("torche", Content.Load<Texture2D>("Actions/torche"));
-			m_actions.Add("silex", Content.Load<Texture2D>("Actions/silex"));
-			m_actions.Add("pierre_polie", Content.Load<Texture2D>("Actions/pierre_polie"));
-			m_actions.Add("outils", Content.Load<Texture2D>("Actions/outils"));
-			#endregion Actions Batiments
+            #region Actions Batiments
+            m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
+            m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
+            m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
+            #endregion Actions Batiments
 
 			#region Actions Communes
 			m_actions.Add("retour", Content.Load<Texture2D>("Actions/retour"));
@@ -309,10 +304,12 @@ namespace NNNA
 			LoadScreenSizeDependantContent();
 		}
 		/// <summary>
-		/// Charge tous les contenus du jeu dÃ©pendant de la rÃ©solution de l'Ã©cran.
+		/// Charge tous les contenus du jeu dépendant de la résolution de l'écran.
 		/// </summary>
 		protected void LoadScreenSizeDependantContent()
 		{
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
 			string ratio = ((int)((10 * m_screen.X) / m_screen.Y)).ToString();
 			if (ratio != "13" && ratio != "16" && ratio != "18")
 			{ ratio = "13"; }
@@ -322,21 +319,26 @@ namespace NNNA
 			m_night = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0,0,10));
 			m_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
+            //Fenetre des technologies
+            elementHost.Location = new System.Drawing.Point((int) m_screen.X/4, (int) m_screen.Y/4);
+            elementHost.Size = new Size(300, 300);
+            elementHost.Child = techno;
+
 			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, m_smart_hud, graphics);
-			minimap = new Minimap((hud.Position.Width * 7) / 8 - +hud.Position.Width / 150, hud.Position.Y + hud.Position.Height / 15, (hud.Position.Height * 9) / 10, (hud.Position.Height * 9) / 10);
+            minimap = new Minimap((hud.Position.Width * 7) / 8 - +hud.Position.Width / 150, hud.Position.Y + hud.Position.Height / 15, (hud.Position.Height * 9) / 10, (hud.Position.Height * 9) / 10);
 
 			MessagesManager.X = (uint)m_screen.X - 300;
 		}
 
 		/// <summary>
-		/// DÃ©charge tous les contenus du jeu.
+		/// Décharge tous les contenus du jeu.
 		/// </summary>
 		protected override void UnloadContent()
 		{
 			Content.Unload();
 		}
 
-		#endregion
+#endregion Content
 
 		#region Updates
 
@@ -346,12 +348,12 @@ namespace NNNA
 		/// <param name="from">Valeur minimale.</param>
 		/// <param name="to">Valeur maximale.</param>
 		/// <param name="current">Valeur actuelle.</param>
-		/// <returns>La valeur changÃ©e en fonction du clic de la souris.</returns>
+		/// <returns>La valeur changée en fonction du clic de la souris.</returns>
 		private int Variate(int from, int to, int current)
 		{ return (current + (Souris.Get().Clicked(MouseButton.Right) ? -1 : 1) + to - 2 * from + 1) % (to - from + 1) + from; }
 
 		/// <summary>
-		/// Met Ã  jour le jeu tous les 1/60 de secondes.
+		/// Met à jour le jeu tous les 1/60 de secondes.
 		/// </summary>
 		/// <param name="gameTime">Temps courant.</param>
 		protected override void Update(GameTime gameTime)
@@ -450,10 +452,10 @@ namespace NNNA
 					List<float> heights = new List<float>();
 					float dist = sizes[m_quick_size] / 2;
 
-					// On regÃ©nÃ¨re une carte tant qu'elle est incapable d'accueillir le bon nombre de spawns
+					// On regénère une carte tant qu'elle est incapable d'accueillir le bon nombre de spawns
 					while (!ok)
 					{
-						// GÃ©nÃ©ration
+						// Génération
 						matrice = generateMap(m_quick_type, sizes[m_quick_size], sizes[m_quick_size], resources[m_quick_resources]);
 
 						// Spawns
@@ -469,7 +471,7 @@ namespace NNNA
 						spawns.Clear();
 						int j = 0;
 
-						// On gÃ©nÃ¨re $m_foes + 1 spawns, chacun espacÃ©s d'au moins $dist
+						// On génère $m_foes + 1 spawns, chacun espacés d'au moins $dist
 						while (spawns.Count < m_foes + 1 && j < heights.IndexOf(waterline))
 						{
 							Point point = new Point(heightsOr.IndexOf(heights[j]) % m_map.GetLength(1), heightsOr.IndexOf(heights[j]) / m_map.GetLength(1));
@@ -531,6 +533,7 @@ namespace NNNA
 					}*/
 
 					//Le reste
+                    techno.Reset();
 					map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
 					hud.LoadContent(Content, "HUD/hud2");
 					minimap.LoadContent(map);
@@ -635,20 +638,23 @@ namespace NNNA
 		float compt = 0;
 		private void UpdateGame(GameTime gameTime)
 		{
+            System.Windows.Forms.Control.FromHandle(Window.Handle).Controls.Add(elementHost);
 			if (Clavier.Get().NewPress(Keys.Escape))
-			{ m_currentScreen = Screen.GameMenu; }
+			{
+                elementHost.Visible = false;
+                m_currentScreen = Screen.GameMenu;
+            }
 
 			compt = (compt + gameTime.ElapsedGameTime.Milliseconds * 0.1f) % 100;
 			curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			camera.Update(curseur, graphics);
 
-			// Intelligence artificielle
+            // Intelligence artificielle
 			foreach (Joueur foe in m_enemies)
 			{
-				// FAIRE TOUTES LES MISES Ã  JOUR DE L'IA ICI
+				// FAIRE TOUTES LES MISES à JOUR DE L'IA ICI
 			}
-
-			// Rectangle de sÃ©lÃ©ction
+			// Rectangle de séléction
 			if (Souris.Get().Clicked(MouseButton.Left))
 			{
 				Building b;
@@ -742,7 +748,7 @@ namespace NNNA
 			bool change;
 			if (!m_selection.IsEmpty && Souris.Get().Released(MouseButton.Left) && (curseur.Position.Y <= hud.Position.Y + 20 || m_selection.Y - camera.Position.Y <= hud.Position.Y + 20))
 			{
-				// On met Ã  jour les sÃ©lÃ©ctions
+				// On met à jour les séléctions
 				change = false;
 				if (!Keyboard.GetState().IsKeyDown(Keys.LeftControl) && !Keyboard.GetState().IsKeyDown(Keys.RightControl))
 				{
@@ -789,7 +795,7 @@ namespace NNNA
 					}
 				}
 
-				// On met Ã  jour les actions
+				// On met à jour les actions
 				m_currentActions.Clear();
 				if (selectedList.Count > 0)
 				{
@@ -916,18 +922,16 @@ namespace NNNA
 								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								break;
 
-							case "technologies":
-								m_currentActions.Clear();
-								m_currentActions.Add("ere suivante");
-								m_currentActions.Add("retour");
-								break;
+                            case "technologies":
+                                elementHost.Visible = true;
+                                break;
 
-							case "ere suivante":
-								m_currentActions.Clear();
-								m_currentActions.Add("create_peon");
-								m_currentActions.Add("technologies");
-								//Changements pour la deuxieme ere Ã  effectuer ici.
-								break;
+
+
+
+
+
+
 
 							case "create_guerrier":
 								if (joueur.Has(new Guerrier().Prix))
@@ -974,7 +978,9 @@ namespace NNNA
 			{ m_currentScreen = Screen.Game; }
 			curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			m_currentScreen = testPauseMenu(Screen.Title, Screen.Game);
-			son.Musiquemenu.Resume();
+            if (!son.Musiquemenu.IsPlaying && !son.Musiquemenu.IsPaused)
+            { son.Initializesons(musicVolume, m_sound_music, m_sound_general); }
+            son.Musiquemenu.Resume();
 		}
 
 		#endregion
@@ -982,7 +988,7 @@ namespace NNNA
 		#region Draws
 
 		/// <summary>
-		/// Affichage de tous les Ã©lÃ©ments du jeu.
+		/// Affichage de tous les éléments du jeu.
 		/// </summary>
 		/// <param name="gameTime">Temps courant.</param>
 		protected override void Draw(GameTime gameTime)
@@ -1065,7 +1071,7 @@ namespace NNNA
 
 		private void DrawCommon(GameTime gameTime, bool drawText = true)
 		{
-			// Le fond d'Ã©cran
+			// Le fond d'écran
 			Rectangle screenRectangle = new Rectangle(0, 0, (int)m_screen.X, (int)m_screen.Y);
 			spriteBatch.Draw(m_background, screenRectangle, Color.White);
 
@@ -1083,7 +1089,7 @@ namespace NNNA
 		private void DrawTitle(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
-			makeMenu("Jouer", "Options", "CrÃ©dits", "Quitter");
+			makeMenu("Jouer", "Options", "Crédits", "Quitter");
 		}
 		private void DrawPlay(GameTime gameTime)
 		{
@@ -1093,7 +1099,7 @@ namespace NNNA
 		private void DrawPlayQuick(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
-			string[] types = { "ÃŽle" };
+			string[] types = { "Île" };
 			string[] tailles = { "Petite", "Moyenne", "Grande" };
 			string[] ressources = { "rares", "normales", "abondantes" };
 			makeMenu(types[(int)m_quick_type], tailles[m_quick_size], _("Ressources")+" " + _(ressources[m_quick_resources]), _("Ennemis :")+" " + m_foes.ToString(), "Jouer", "Retour");
@@ -1101,42 +1107,42 @@ namespace NNNA
 		private void DrawOptions(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
-			makeMenu("JouabilitÃ©", "Graphismes", "Son", "Retour");
+			makeMenu("Jouabilité", "Graphismes", "Son", "Retour");
 		}
 		private void DrawOptionsGeneral(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
 			Dictionary<string, string> languages = new Dictionary<string, string>();
 			languages["en"] = "English";
-			languages["fr"] = "FranÃ§ais";
+			languages["fr"] = "Français";
 			makeMenu(languages[m_language], (m_health_hover ? "Vie au survol" : "Vie constante"), (m_smart_hud ? "HUD intelligent" : "HUD classique"), "Retour");
 		}
 		private void DrawOptionsGraphics(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
 			string[] textures = { "min", "moyennes", "max" };
-			makeMenu(m_screen.X + "x" + m_screen.Y, (m_fullScreen ? "Plein Ã©cran" : "FenÃªtrÃ©"), _("Textures")+" " + _(textures[m_textures]), (m_shadows ? "Ombres" : "Pas d'ombres"), "Retour");
+			makeMenu(m_screen.X + "x" + m_screen.Y, (m_fullScreen ? "Plein écran" : "Fenêtré"), _("Textures")+" " + _(textures[m_textures]), (m_shadows ? "Ombres" : "Pas d'ombres"), "Retour");
 		}
 		private void DrawOptionsSound(GameTime gameTime)
 		{
 			DrawCommon(gameTime);
 			string[] sound = { "min", "moy", "max" };
-			makeMenu(_("GÃ©nÃ©ral :") + " " + m_sound_general, _("Musique :") + " " + m_sound_music, _("Effets :") + " " + m_sound_sfx, _("QualitÃ©") + " " + _(sound[m_sound]), "Retour");
+			makeMenu(_("Général :") + " " + m_sound_general, _("Musique :") + " " + m_sound_music, _("Effets :") + " " + m_sound_sfx, _("Qualité") + " " + _(sound[m_sound]), "Retour");
 		}
 		private void DrawCredits(GameTime gameTime)
 		{
 			DrawCommon(gameTime, false);
 
-			// CrÃ©dits
+			// Crédits
 			int y = m_credits / 2;
-			if (y > m_screen.Y + 200 + (m_font_credits.MeasureString(_("Merci d'avoir jouÃ© !")).Y / 2))
-			{ y = (int)(m_screen.Y + 200 + (m_font_credits.MeasureString(_("Merci d'avoir jouÃ© !")).Y / 2)); }
+			if (y > m_screen.Y + 200 + (m_font_credits.MeasureString(_("Merci d'avoir joué !")).Y / 2))
+			{ y = (int)(m_screen.Y + 200 + (m_font_credits.MeasureString(_("Merci d'avoir joué !")).Y / 2)); }
 
 			spriteBatch.DrawString(m_font_credits, "Nicolas Allain", new Vector2((m_screen.X - m_font_credits.MeasureString("Nicolas Allain").X) / 2, m_screen.Y - y), Color.White);
 			spriteBatch.DrawString(m_font_credits, "Nicolas Faure", new Vector2((m_screen.X - m_font_credits.MeasureString("Nicolas Faure").X) / 2, m_screen.Y + 60 - y), Color.White);
 			spriteBatch.DrawString(m_font_credits, "Nicolas Mouton-Besson", new Vector2((m_screen.X - m_font_credits.MeasureString("Nicolas Mouton-Besson").X) / 2, m_screen.Y + 120 - y), Color.White);
 			spriteBatch.DrawString(m_font_credits, "Arnaud Weiss", new Vector2((m_screen.X - m_font_credits.MeasureString("Arnaud Weiss").X) / 2, m_screen.Y + 180 - y), Color.White);
-			spriteBatch.DrawString(m_font_credits, _("Merci d'avoir jouÃ© !"), new Vector2((m_screen.X - m_font_credits.MeasureString(_("Merci d'avoir jouÃ© !")).X) / 2, m_screen.Y + (m_screen.Y / 2) + 180 + (m_font_credits.MeasureString(_("Merci d'avoir jouÃ© !")).Y / 2) - y), Color.White);
+			spriteBatch.DrawString(m_font_credits, _("Merci d'avoir joué !"), new Vector2((m_screen.X - m_font_credits.MeasureString(_("Merci d'avoir joué !")).X) / 2, m_screen.Y + (m_screen.Y / 2) + 180 + (m_font_credits.MeasureString(_("Merci d'avoir joué !")).Y / 2) - y), Color.White);
 		}
 		private void DrawGame(GameTime gameTime)
 		{
@@ -1190,7 +1196,7 @@ namespace NNNA
                 sprite.Draw(spriteBatch, 1, camera, mul);
             }
 
-			// Rectangle de sÃ©lÃ©ction
+			// Rectangle de séléction
 			Vector2 coos = new Vector2(
 				m_selection.X - camera.Position.X + (m_selection.Width < 0 ? m_selection.Width : 0),
 				m_selection.Y - camera.Position.Y + (m_selection.Height < 0 ? m_selection.Height : 0)
@@ -1221,7 +1227,7 @@ namespace NNNA
 			MessagesManager.Draw(spriteBatch, m_font_small);
 			hud.Draw(spriteBatch, minimap, joueur, m_font_small);
 
-			// UnitÃ©s sÃ©lÃ©ctionnÃ©es
+			// Unités séléctionnées
 			for (int i = 0; i < selectedList.Count; i++)
 			{ selectedList[i].DrawIcon(spriteBatch, new Vector2(356 * (m_screen.X / 1680) + (i % 10) * 36, m_screen.Y - hud.Position.Height + 54 * (m_screen.Y / 1050) + (i / 10) * 36)); }
 
@@ -1244,7 +1250,7 @@ namespace NNNA
 
 		#region Debug
 
-		// Temprs rÃ©el
+		// Temprs réel
 		private void Debug(int i, string value)
 		{
 			#if DEBUG
@@ -1285,12 +1291,12 @@ namespace NNNA
 		#region Menus
 
 		/// <summary>
-		/// Affiche un texte avec bordures Ã  l'Ã©cran.
+		/// Affiche un texte avec bordures à l'écran.
 		/// </summary>
 		/// <param name="spriteBatch"></param>
-		/// <param name="font">La police Ã  utiliser pour afficher le texte.</param>
-		/// <param name="text">Le texte Ã  afficher.</param>
-		/// <param name="coos">Les coordonnÃ©es du texte.</param>
+		/// <param name="font">La police à utiliser pour afficher le texte.</param>
+		/// <param name="text">Le texte à afficher.</param>
+		/// <param name="coos">Les coordonnées du texte.</param>
 		/// <param name="color">La couleur du texte.</param>
 		/// <param name="borderCol">La couleur de la bordure.</param>
 		/// <param name="border">La taille de la bordure.</param>
@@ -1346,11 +1352,11 @@ namespace NNNA
 		{ return (Souris.Get().X > (654 * (m_screen.X / 1680)) && Souris.Get().Y > (180 * (m_screen.Y / 1050))) ? (int)((Souris.Get().Y - (180 * (m_screen.Y / 1050))) / 80) : -1; }
 
 		/// <summary>
-		/// Teste si un menu est cliquÃ©.
+		/// Teste si un menu est cliqué.
 		/// </summary>
-		/// <param name="up">Le menu sur lequel revenir si on est dÃ©jÃ  sur le menu cliquÃ©.</param>
+		/// <param name="up">Le menu sur lequel revenir si on est déjà sur le menu cliqué.</param>
 		/// <param name="args">La liste des menus possibles.</param>
-		/// <returns>Le menu cliquÃ©.</returns>
+		/// <returns>Le menu cliqué.</returns>
 		protected Screen testMenu(params Screen[] args)
 		{
 			if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
@@ -1363,10 +1369,10 @@ namespace NNNA
 		}
 
 		/// <summary>
-		/// Teste si un menu pause est cliquÃ©.
+		/// Teste si un menu pause est cliqué.
 		/// </summary>
 		/// <param name="args">La liste des menus possibles.</param>
-		/// <returns>Le menu cliquÃ©.</returns>
+		/// <returns>Le menu cliqué.</returns>
 		protected Screen testPauseMenu(params Screen[] args)
 		{
 			if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
@@ -1381,13 +1387,13 @@ namespace NNNA
 		#endregion
 
 		/// <summary>
-		/// Retourne la prochaine rÃ©solution disponible.
+		/// Retourne la prochaine résolution disponible.
 		/// </summary>
-		/// <returns>La prochaine rÃ©solution dans l'ordre croissant.</returns>
+		/// <returns>La prochaine résolution dans l'ordre croissant.</returns>
 		private Vector2 getNextResolution(bool previous = false)
 		{
 			Vector2[] l = { // Megaliste ! Yay ! // MDR
-				/*new Vector2(320, 200), Les petites rÃ©solutions servent Ã  rien
+				/*new Vector2(320, 200), Les petites résolutions servent à rien
 				new Vector2(320, 240), 
 				new Vector2(640, 480), 
 				new Vector2(800, 480), */
@@ -1418,7 +1424,7 @@ namespace NNNA
 			float w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 			foreach (Vector2 vector in l)
 			{
-				// On ne propose que les rÃ©solutions ayant Ã  peu prÃ¨s le mÃªme format que l'Ã©cran, sans Ãªtre plus grand que lui, sauf quelques rÃ©solutions standard
+				// On ne propose que les résolutions ayant à peu près le même format que l'écran, sans être plus grand que lui, sauf quelques résolutions standard
 				if ((Math.Round(vector.X / vector.Y, 2) == Math.Round(w / h, 2) && vector.X <= w && vector.Y <= h) || vector == new Vector2(800, 600))
 				{ list.Add(vector); }
 			}
@@ -1434,13 +1440,13 @@ namespace NNNA
 		}
 
 		/// <summary>
-		/// GÃ©nÃ¨re un rectangle d'une certaine couleur de fond et de bordure Ã  la volÃ©e.
+		/// Génère un rectangle d'une certaine couleur de fond et de bordure à la volée.
 		/// </summary>
 		/// <param name="width">La largeur du rectangle.</param>
 		/// <param name="height">La hauteur du rectangle.</param>
 		/// <param name="col">La couleur du rectangle (peut avoir un canal alpha).</param>
 		/// <param name="border">La couleur de la bordure du rectangle (peut avoir un canal alpha).</param>
-		/// <returns>La Texture2D gÃ©nÃ©rÃ©e.</returns>
+		/// <returns>La Texture2D générée.</returns>
 		private Texture2D CreateRectangle(int width, int height, Color col, Color border)
 		{
 			Texture2D rectangleTexture = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);
@@ -1451,17 +1457,17 @@ namespace NNNA
 			return rectangleTexture;
 		}
 		/// <summary>
-		/// GÃ©nÃ¨re un rectangle d'une certaine couleur de fond Ã  la volÃ©e.
+		/// Génère un rectangle d'une certaine couleur de fond à la volée.
 		/// </summary>
 		/// <param name="width">La largeur du rectangle.</param>
 		/// <param name="height">La hauteur du rectangle.</param>
 		/// <param name="col">La couleur du rectangle (peut avoir un canal alpha).</param>
-		/// <returns>La Texture2D gÃ©nÃ©rÃ©e.</returns>
+		/// <returns>La Texture2D générée.</returns>
 		private Texture2D CreateRectangle(int width, int height, Color col)
 		{ return CreateRectangle(width, height, col, col); }
 
 		/// <summary>
-		/// Traduit la chaÃ®ne passÃ©e en argument en fonction de la langue choisie.
+		/// Traduit la chaîne passée en argument en fonction de la langue choisie.
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
@@ -1471,11 +1477,11 @@ namespace NNNA
 			translations["en"] = new Dictionary<string, string>();
             translations["en"]["Jouer"] = "Play";
 			translations["en"]["Options"] = "Settings";
-			translations["en"]["CrÃ©dits"] = "Credits";
+			translations["en"]["Crédits"] = "Credits";
 			translations["en"]["Quitter"] = "Quit";
 			translations["en"]["Escarmouche"] = "Skirmish";
 			translations["en"]["Retour"] = "Back";
-			translations["en"]["ÃŽle"] = "Island";
+			translations["en"]["Île"] = "Island";
 			translations["en"]["Petite"] = "Small";
 			translations["en"]["Moyenne"] = "Medium";
 			translations["en"]["Grande"] = "Big";
@@ -1484,7 +1490,7 @@ namespace NNNA
 			translations["en"]["abondantes"] = "abundant";
 			translations["en"]["Ressources"] = "Resources";
 			translations["en"]["Ennemis :"] = "Enemies:";
-			translations["en"]["JouabilitÃ©"] = "Playability";
+			translations["en"]["Jouabilité"] = "Playability";
 			translations["en"]["Graphismes"] = "Graphics";
 			translations["en"]["Son"] = "Sound";
 			translations["en"]["Vie au survol"] = "Over life";
@@ -1494,17 +1500,17 @@ namespace NNNA
 			translations["en"]["min"] = "min";
 			translations["en"]["moyennes"] = "medium";
 			translations["en"]["max"] = "max";
-			translations["en"]["Plein Ã©cran"] = "Full screen";
-			translations["en"]["FenÃªtrÃ©"] = "Windowed";
+			translations["en"]["Plein écran"] = "Full screen";
+			translations["en"]["Fenêtré"] = "Windowed";
 			translations["en"]["Textures"] = "Textures";
 			translations["en"]["Ombres"] = "Shadows";
 			translations["en"]["Pas d'ombres"] = "No shadows";
 			translations["en"]["moy"] = "med";
-			translations["en"]["GÃ©nÃ©ral :"] = "General:";
+			translations["en"]["Général :"] = "General:";
 			translations["en"]["Musique :"] = "Music:";
 			translations["en"]["Effets :"] = "Effects:";
-			translations["en"]["QualitÃ©"] = "Quality";
-			translations["en"]["Merci d'avoir jouÃ© !"] = "Thanks for playing!";
+			translations["en"]["Qualité"] = "Quality";
+			translations["en"]["Merci d'avoir joué !"] = "Thanks for playing!";
 
 			if (lang == "")
 			{ lang = m_language; }
@@ -1517,7 +1523,7 @@ namespace NNNA
 			return text;
 		}
 		/// <summary>
-		/// Traduit la chaÃ®ne passÃ©e en argument en fonction de la langue choisie.
+		/// Traduit la chaîne passée en argument en fonction de la langue choisie.
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
@@ -1527,35 +1533,35 @@ namespace NNNA
 		#region Conversions
 
 		/// <summary>
-		/// Convertit un boolÃ©en en entier.
+		/// Convertit un booléen en entier.
 		/// </summary>
-		/// <param name="b">Le boolÃ©en Ã  convertir.</param>
+		/// <param name="b">Le booléen à convertir.</param>
 		/// <returns>L'entier binaire correspondant.</returns>
 		protected int b2i(bool b)
 		{ return b ? 1 : 0; }
 
 		/// <summary>
-		/// Transforme des coordonnÃ©es losange en coordonnÃ©es matrice.
+		/// Transforme des coordonnées losange en coordonnées matrice.
 		/// </summary>
-		/// <param name="mouse">CoordonnÃ©es losange.</param>
-		/// <returns>CoordonnÃ©es matrice.</returns>
+		/// <param name="mouse">Coordonnées losange.</param>
+		/// <returns>Coordonnées matrice.</returns>
 		public static Vector2 xy2matrice(Vector2 mouse)
 		{
 			double angleDegre = -26.57; // -36.57 = -arctan(1/2)
 			double angleRadian = Math.PI * angleDegre / 180;
 			double sina = Math.Sin(angleRadian);
 			double cosa = Math.Cos(angleRadian);
-			Vector2 rot = new Vector2((float)(mouse.X * cosa - mouse.Y * sina), (float)(mouse.X * sina + mouse.Y * cosa)); // CoordonÃ©es parallÃ©logramme
-			Vector2 final = new Vector2(rot.X + (float)(0.75 * rot.Y), rot.Y); // CoordonÃ©es rectangle
-			Vector2 coo = new Vector2((float)Math.Round((final.X - 35) / 35.777), (float)Math.Round((final.Y + 4) / 28.54)); // CoordonÃ©es matrice // 35.777 = sqrt(16Â²+32Â²)
+			Vector2 rot = new Vector2((float)(mouse.X * cosa - mouse.Y * sina), (float)(mouse.X * sina + mouse.Y * cosa)); // Coordonées parallélogramme
+			Vector2 final = new Vector2(rot.X + (float)(0.75 * rot.Y), rot.Y); // Coordonées rectangle
+			Vector2 coo = new Vector2((float)Math.Round((final.X - 35) / 35.777), (float)Math.Round((final.Y + 4) / 28.54)); // Coordonées matrice // 35.777 = sqrt(16²+32²)
 			return coo;
 		}
 
 		/// <summary>
-		/// Transforme des coordonnÃ©es matrice en coordonnÃ©es losange.
+		/// Transforme des coordonnées matrice en coordonnées losange.
 		/// </summary>
-		/// <param name="mouse">CoordonnÃ©es matrice.</param>
-		/// <returns>CoordonnÃ©es losange.</returns>
+		/// <param name="mouse">Coordonnées matrice.</param>
+		/// <returns>Coordonnées losange.</returns>
 		public Vector2 matrice2xy(Vector2 mouse)
 		{ return new Vector2(32 * (mouse.X - mouse.Y), 16 * (mouse.X + mouse.Y)); }
 

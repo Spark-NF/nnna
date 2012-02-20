@@ -4,6 +4,7 @@ namespace NNNA
 {
 	class Guerrier : LandUnit
 	{
+        //SoundEffect creationguerrier;
         public Guerrier(int x = 0, int y = 0)
             : base(x, y)
         {
@@ -25,6 +26,8 @@ namespace NNNA
 			m_speed = 0.05f;
 			SetTextures(content, "guerrier", 45);
             m_cost.Add("Nourriture", 70);
+            //creationguerrier =content.Load<SoundEffect>("sounds/creationguerrier");
+           // creationguerrier.Play();
 		}
 	}
 }

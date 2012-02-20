@@ -751,11 +751,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\evolution.png">
-      <Name>evolution</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Actions\retour2.png">
       <Name>retour2</Name>
       <Importer>TextureImporter</Importer>
@@ -763,45 +758,36 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\chasse.png">
-      <Name>chasse</Name>
+    <Compile Include="Actions\Copy of fer.png">
+      <Name>Copy of fer</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Actions\fer.png">
-      <Name>fer</Name>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\Copy of feu.png">
+      <Name>Copy of feu</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Actions\feu.png">
-      <Name>feu</Name>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\Copy of or.png">
+      <Name>Copy of or</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Actions\or.png">
-      <Name>or</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="sounds\creationguerrier.mp3">
+      <Name>creationguerrier</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <Compile Include="Actions\outils.png">
-      <Name>outils</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Actions\pierre_polie.png">
-      <Name>pierre_polie</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Actions\silex.png">
-      <Name>silex</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Actions\torche.png">
-      <Name>torche</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+    <Compile Include="sounds\creationpeon.mp3">
+      <Name>creationpeon</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
