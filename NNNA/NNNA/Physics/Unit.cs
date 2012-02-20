@@ -32,6 +32,13 @@
 			set { m_regeneration = value; }
 		}
 
+        protected int m_line_sight;
+        public int Line_sight
+        {
+            get { return m_line_sight; }
+            set { m_line_sight = value; }
+        }
+
 		public Unit(int x, int y)
             : base(x, y)
         {

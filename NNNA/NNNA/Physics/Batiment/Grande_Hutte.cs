@@ -21,7 +21,7 @@ namespace NNNA
 			vie = 500;
 			m_cost.Add("Bois", 1000);
 			m_cost.Add("Nourriture", 500);
-
+            Line_sight = 768;
 			if (joueur.Population_Max < 200)
 			{
 				if (joueur.Population_Max > 185)

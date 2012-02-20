@@ -18,6 +18,7 @@ namespace NNNA
             type = "caserne";
             LoadContent(content, "Batiments/hutte_des_chasseurs");
 			vie = 100;
+            Line_sight = 128;
 			m_cost.Add("Bois", 75);
         }
     }

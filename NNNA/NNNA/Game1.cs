@@ -21,6 +21,7 @@ namespace NNNA
 		private Effect gaussianBlur;
 		private Rectangle m_selection = Rectangle.Empty;
 		private GameTime m_gameTime;
+        private BasicEffect basicEffect;
 
 		private Texture2D m_background_light, m_background_dark, m_fog, m_menu, m_submenu, m_pointer, m_night, m_console, m_background;
 		private Dictionary<string, Texture2D> m_actions = new Dictionary<string, Texture2D>();
@@ -163,8 +164,7 @@ namespace NNNA
 			i = new Sprite('i');
 
 			map = new Map();
-			camera = new Camera2D(0, 0, 10);
-			curseur = new Sprite(0, 0);
+			camera = new Camera2D(0, 0, 10);			curseur = new Sprite(0, 0);
 			joueur = new Joueur(Color.Red, "NNNNA", Content);
 
 			 // son
@@ -966,8 +966,8 @@ namespace NNNA
 
 			joueur.Units.Sort(Sprite.CompareByY);
 			joueur.Buildings.Sort(Sprite.CompareByY);
+			//minimap.Update(units, buildings, selectedList, joueur);
 			son.Musiquemenu.Pause();
-
 		}
 		void UpdateGameMenu(GameTime gameTime)
 		{
@@ -1141,7 +1141,8 @@ namespace NNNA
 		}
 		private void DrawGame(GameTime gameTime)
 		{
-			int index = (int)Math.Floor(compt / 25);
+            
+            int index = (int)Math.Floor(compt / 25);
 			int compteur = 0;
 			foreach (Sprite sprite in matrice)
 			{
@@ -1150,7 +1151,20 @@ namespace NNNA
 					&& sprite.Position.X - camera.Position.X < m_screen.X
 					&& sprite.Position.Y - camera.Position.Y < m_screen.Y - ((hud.Position.Height * 4) / 5))
 				{
-					sprite.DrawMap(spriteBatch, camera);
+                    float mul = 0.0f;
+                    foreach (Unit unit in joueur.Units)
+                    {
+                        float m = (unit.Position_Center - sprite.Position_Center).Length();
+                        m = 1.0f - (m / unit.Line_sight);
+                        mul = (m > 0 && m > mul) ? m : mul;
+                    }
+                    foreach (Building building in joueur.Buildings)
+                    {
+                        float m = (building.Position_Center - sprite.Position_Center).Length();
+                        m = 1.0f - (m / building.Line_sight);
+                        mul = (m > 0 && m > mul) ? m : mul;
+                    }
+					sprite.DrawMap(spriteBatch, camera, mul);
 					compteur++;
 				}
 			}
@@ -1187,7 +1201,7 @@ namespace NNNA
 			}
 
 			// La nuit
-			spriteBatch.Draw(m_night, Vector2.Zero, new Color(0, 0, 255, (int)(64 - 64 * Math.Cos((m_gameTime.TotalGameTime.TotalMilliseconds - m_elapsed) / 50000))));
+			//spriteBatch.Draw(m_night, Vector2.Zero, new Color(0, 0, 220, (int)(64 - 64 * Math.Cos((m_gameTime.TotalGameTime.TotalMilliseconds - m_elapsed) / 50000))));
 
 			// Affichage du HUD
 			MessagesManager.Draw(spriteBatch, m_font_small);

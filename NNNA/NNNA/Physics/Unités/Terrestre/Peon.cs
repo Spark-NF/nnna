@@ -22,6 +22,7 @@ namespace NNNA
 			{ joueur.Resource("Nourriture").Remove(50); }
 			m_attaque = 2;
 			m_life = 30;
+            m_line_sight = 512;
 			m_portee = 1;
 			m_regeneration = 1;
 			m_speed = 0.06f;

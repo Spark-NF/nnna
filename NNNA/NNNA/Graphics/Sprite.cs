@@ -31,6 +31,12 @@ namespace NNNA
 			get { return m_position; }
 			set { m_position = value; }
 		}
+
+        public Vector2 Position_Center
+        {
+            get { return m_position + new Vector2(m_texture.Width/2, m_texture.Height/2); }
+        }
+
 		protected Texture2D m_texture, m_go, m_dots;
 		public Texture2D Texture
 		{
@@ -67,8 +73,8 @@ namespace NNNA
 
 		public void Draw(SpriteBatch spriteBatch)
 		{ spriteBatch.Draw(m_texture, m_position, Color.White); }
-		public void DrawMap(SpriteBatch spriteBatch, Camera2D camera)
-		{ spriteBatch.Draw(m_texture, m_position - camera.Position, Color.White); }
+		public void DrawMap(SpriteBatch spriteBatch, Camera2D camera, float mul)
+		{ spriteBatch.Draw(m_texture, m_position - camera.Position, new Color(mul, mul, mul)); }
 
 		public bool Collides(List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)
 		{
