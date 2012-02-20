@@ -27,7 +27,8 @@ namespace NNNA
 		/// <param name="spritebatch">Le SpriteBatch à utiliser pour afficher la ressource.</param>
 		/// <param name="ere">L'ère courante.</param>
 		/// <param name="camera">La caméra actuelle.</param>
-		public void Draw(SpriteBatch spritebatch, int ere, Camera2D camera)
-		{ spritebatch.Draw(m_resource.Texture(ere), m_position - camera.Position, Color.White); }
+        /// (SpriteBatch spriteBatch, Camera2D camera, float mul)
+		public void Draw(SpriteBatch spritebatch, int ere, Camera2D camera, float mul)
+		{ spritebatch.Draw(m_resource.Texture(ere), m_position - camera.Position, new Color(mul, mul, mul)); }
 	}
 }
