@@ -44,7 +44,9 @@ namespace NNNA
 		private MapType m_quick_type = MapType.Island;
 		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0;
 		List<string> m_currentActions = new List<string>();
-		Random random = new Random(42);		// Map
+		Random random = new Random(42);
+        
+        // Map
 		Sprite h, e, p, t, s, i, curseur;
 		Sprite[,] matrice;
 		Map map;
@@ -173,7 +175,7 @@ namespace NNNA
 			
 			//menu technologie
 			elementHost= new ElementHost();
-			techno = new Technologies(joueur, elementHost);
+			techno = new Technologies(ref joueur, ref elementHost);
 
 			base.Initialize();
 
@@ -515,22 +517,19 @@ namespace NNNA
 
 					//Decor
 					resource.Add(new ResourceMine((int)matrice2xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)matrice2xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, Content, joueur.Resource("Pierre")));
-					/*Random rand = new Random();
-					for (int i = 0; i < 15; i++)
-					{
-						int x = 0;
-						int y = 0;
-						x = rand.Next(-16 * (map.Map_Width),16 * map.Map_Width);
-						y = rand.Next(0,16 *map.Map_Height);
-						while ((xy2matrice(new Vector2(x, y)).X >= 0 && xy2matrice(new Vector2(x, y)).X < matrice.GetLength(0))
-							&& (xy2matrice(new Vector2(x, y)).Y >= 0 && xy2matrice(new Vector2(x, y)).Y < matrice.GetLength(1))
-							&& (!matrice[(int)xy2matrice(new Vector2(x, y)).X, (int)xy2matrice(new Vector2(x, y)).Y].Crossable))
-						{
-							x = rand.Next(-16 * map.Map_Width,16 * map.Map_Width);
-							y = rand.Next(0,16 * map.Map_Height);
-						}
-						buildings.Add(new Palmier(x, y, Content));
-					}*/
+                    for (int i = 0; i < 15; i++)
+                    {
+                        int x = 0;
+                        int y = 0;
+                        x = random.Next(0, matrice.GetLength(0));
+                        y = random.Next(0, matrice.GetLength(1));
+                        while ((!matrice[x, y].Crossable))
+                        {
+                            x = random.Next(0, matrice.GetLength(0));
+                            y = random.Next(0, matrice.GetLength(1));
+                        }
+                        resource.Add(new ResourceMine((int)(matrice2xy(new Vector2(x, y))).X, (int)(matrice2xy(new Vector2(x, y))).Y, Content, joueur.Resource("Bois")));
+                    }
 
 					//Le reste
 					techno.Reset();
@@ -677,7 +676,7 @@ namespace NNNA
 
 					case "build_hutteDesChasseurs":
 						b = new Hutte_des_chasseurs((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
-						if (joueur.Pay(b.Prix))
+                        if (joueur.Population + 1 > joueur.Population_Max && joueur.Pay(b.Prix))
 						{
 							joueur.Buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
@@ -689,8 +688,8 @@ namespace NNNA
 						break;
 
 					case "create_peon" :
-						u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 200, Content, joueur);
-						if (joueur.Pay(u.Prix))
+						u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 200, Content, joueur, false);
+						if (joueur.Population + 1 > joueur.Population_Max && joueur.Pay(u.Prix))
 						{
 							selectedBuilding.Iterator++;
 							joueur.Units.Add(u);
@@ -698,11 +697,11 @@ namespace NNNA
 							m_currentAction = "";
 						}
 						else
-						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); joueur.Population--; }
 						break;
 
 					case "create_guerrier":
-						u = new Guerrier((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 3), (int)selectedBuilding.Position.Y + 70, Content, joueur);
+						u = new Guerrier((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 3), (int)selectedBuilding.Position.Y + 70, Content, joueur, false);
 						if (joueur.Pay(u.Prix))
 						{
 							selectedBuilding.Iterator++;
@@ -711,7 +710,7 @@ namespace NNNA
 							m_currentAction = "";
 						}
 						else
-						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); joueur.Population--; }
 						break;
 
 						// Fin Ere 1 

@@ -14,7 +14,7 @@ namespace NNNA
 			: base(x, y)
 		{
 			m_joueur = joueur;
-			joueur.Population++;
+            joueur.Population++;
 			type = "guerrier";
 			if (remove_resources)
 			{ joueur.Resource("Nourriture").Remove(70); }

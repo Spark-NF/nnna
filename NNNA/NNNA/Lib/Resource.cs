@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace NNNA
 {
@@ -42,16 +43,17 @@ namespace NNNA
 		public bool IsEmpty()
 		{ return m_id == ""; }
 
-		public void Load(ContentManager content)
+		public void Load(ContentManager content, Random rand)
 		{
 			m_icons = new Texture2D[4];
 			m_textures = new Texture2D[4];
 			for (int i = 1; i <= 1; i++)
 			{
 				if (Name(i) != "")
-				{
+				{ 
 					m_icons[i - 1] = content.Load<Texture2D>("Resources/" + m_id + "_" + i);
-					m_textures[i - 1] = content.Load<Texture2D>("Resources/" + m_id + "_" + i + "_sprite");
+                    if (Name(i) == "Bois") m_textures[i - 1] = content.Load<Texture2D>("Resources/" + m_id + "_" + i + "_sprite" + (rand.Next(1000) % 3));
+                    else m_textures[i - 1] = content.Load<Texture2D>("Resources/" + m_id + "_" + i + "_sprite");
 				}
 			}
 		}

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" FontSize="16" Background="#00000000" OpacityMask="Black">
+             d:DesignHeight="300" d:DesignWidth="300" FontSize="16" Background="#00000000" OpacityMask="Black" BorderThickness="2" BorderBrush="#FF966F11" Name="technologies">
     <Grid Background="#00000000" OpacityMask="Black">
         <Label Content="      Technologies" Height="33" HorizontalAlignment="Left" Margin="44,0,0,0" Name="label1" VerticalAlignment="Top" Width="200" FontStretch="Normal" FontFamily="Jing Jing" FontWeight="Normal">
             <Label.Background>
@@ -17,7 +17,7 @@
                 <SolidColorBrush />
             </Label.BorderBrush>
         </Label>
-        <TabControl Height="272" HorizontalAlignment="Left" Margin="5,31,0,0" Name="tabControl1" VerticalAlignment="Top" Width="296" Background="#7AFFFFFF">
+        <TabControl Height="272" HorizontalAlignment="Left" Margin="5,31,0,0" Name="tabControl1" VerticalAlignment="Top" Width="290" Background="#7AFFFFFF">
             <TabItem Header="ERE 1" Name="tabItem1">
                 <Grid>
                     <Image Height="32" HorizontalAlignment="Left" Margin="92,2,0,0" Name="chasse" Stretch="Fill" VerticalAlignment="Top" Width="32" Source="/NNNA;component/Images/chasse.png" MouseLeftButtonDown="chasse_MouseLeftButtonDown" />

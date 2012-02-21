@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace NNNA
 {
@@ -18,6 +19,8 @@ namespace NNNA
 			get { return m_population; }
 			set { m_population = value; }
 		}
+
+        private Random rand = new Random();
 		private uint m_population_max;
 		public uint Population_Max
 		{
@@ -75,7 +78,7 @@ namespace NNNA
 			pop_Texture = content.Load<Texture2D>("Resources/Pop");
 
 			foreach (Resource res in m_resources)
-			{ res.Load(content); }
+			{ res.Load(content, rand); }
 		}
 
 

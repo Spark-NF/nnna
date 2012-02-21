@@ -17,7 +17,7 @@ namespace NNNA
 		{
 			create_maison = false;
 			m_joueur = joueur;
-			joueur.Population += 1;
+            joueur.Population++;
 			type = "peon";
 			if (remove_resources)
 			{ joueur.Resource("Nourriture").Remove(50); }

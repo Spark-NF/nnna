@@ -50,7 +50,7 @@ namespace NNNA
 			foreach (Resource res in joueur.Resources(1))
 			{
 				spriteBatch.Draw(res.Icon(1), new Vector2(5 + i * 140, 5), Color.White);
-				spriteBatch.DrawString(font, res.Count.ToString(), new Vector2(10 + i * 140 + res.Texture(1).Width, 5 + ((res.Texture(1).Height - font.MeasureString(res.Count.ToString()).Y) / 2)), Color.White);
+				spriteBatch.DrawString(font, res.Count.ToString(), new Vector2(10 + i * 140 + res.Icon(1).Width, 5 + ((res.Icon(1).Height - font.MeasureString(res.Count.ToString()).Y) / 2)), Color.White);
 				i++;
 			}
 			spriteBatch.Draw(joueur.Pop_Texture, new Vector2(5 + joueur.Resources(1).Count * 140, 5), Color.White);

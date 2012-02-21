@@ -356,11 +356,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Resources\bois_1_sprite.png">
-      <Name>bois_1_sprite</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Resources\nourriture_1_sprite.png">
       <Name>nourriture_1_sprite</Name>
       <Importer>TextureImporter</Importer>
@@ -421,23 +416,6 @@
       <Name>son projet</Name>
       <Importer>XactImporter</Importer>
       <Processor>XactProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Decors\palmier1.png">
-      <Name>palmier1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Decors\palmier2.png">
-      <Name>palmier2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Decors\palmier3.png">
-      <Name>palmier3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -788,6 +766,42 @@
       <Name>creationpeon</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Decors\palmier1.png">
+      <Name>palmier1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Decors\palmier2.png">
+      <Name>palmier2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Decors\palmier3.png">
+      <Name>palmier3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Resources\bois_1_sprite1.png">
+      <Name>bois_1_sprite1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Resources\bois_1_sprite2.png">
+      <Name>bois_1_sprite2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Resources\bois_1_sprite0.png">
+      <Name>bois_1_sprite0</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

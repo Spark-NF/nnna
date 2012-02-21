@@ -19,12 +19,12 @@ namespace NNNA
         private ElementHost elementHost;
         private bool m_chasse, m_feu, m_silex, m_pierre_polie, m_bronze, m_outils, m_agri, m_torche, m_irrigation;
         private Dictionary<string, int> Prix_chasse = new Dictionary<string, int>(), Prix_feu = new Dictionary<string, int>(), Prix_silex = new Dictionary<string, int>(), Prix_pierre_polie = new Dictionary<string, int>(), Prix_bronze = new Dictionary<string, int>(), Prix_outils = new Dictionary<string, int>(), Prix_agri = new Dictionary<string, int>(), Prix_torche = new Dictionary<string, int>(), Prix_irrigation = new Dictionary<string, int>();
-        internal Technologies(Joueur joueur, ElementHost elementHost)
+        internal Technologies(ref Joueur joueur, ref ElementHost elementHost)
         {
             InitializeComponent();
             this.joueur = joueur;
             this.elementHost = elementHost;
-            this.elementHost.Visible = false;
+            elementHost.Visible = false;
             #region Prix
             Prix_chasse.Add("Bois", 150);
             Prix_feu.Add("Bois", 200);
