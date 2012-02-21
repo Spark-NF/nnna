@@ -8,6 +8,8 @@ namespace NNNA
 	{
 		Resource m_resource;
 
+        private bool decouvert = false;
+
 		private Vector2 m_position;
 		public Vector2 Position
 		{
@@ -29,6 +31,10 @@ namespace NNNA
 		/// <param name="camera">La caméra actuelle.</param>
 		/// <param name="mul">La teinte de gris à utiliser pour l'affichage.</param>
 		public void Draw(SpriteBatch spritebatch, int ere, Camera2D camera, float mul)
-		{ spritebatch.Draw(m_resource.Texture(ere), m_position - camera.Position, new Color(mul, mul, mul)); }
+		{
+            if (mul > 0.25f) decouvert = true;
+            mul = (decouvert && mul < 0.25f) ? 0.25f : mul;
+            spritebatch.Draw(m_resource.Texture(ere), m_position - camera.Position, new Color(mul, mul, mul));
+        }
 	}
 }

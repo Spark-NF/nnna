@@ -24,6 +24,7 @@ namespace NNNA
             InitializeComponent();
             this.joueur = joueur;
             this.elementHost = elementHost;
+            this.elementHost.Visible = false;
             #region Prix
             Prix_chasse.Add("Bois", 150);
             Prix_feu.Add("Bois", 200);

@@ -19,6 +19,8 @@ namespace NNNA
 		public virtual void RightClick(Vector2 coos, Camera2D camera)
 		{ }
 
+        private bool decouvert = false;
+
 		protected bool m_crossable = true;
 		public bool Crossable
 		{
@@ -74,7 +76,11 @@ namespace NNNA
 		public void Draw(SpriteBatch spriteBatch)
 		{ spriteBatch.Draw(m_texture, m_position, Color.White); }
 		public void DrawMap(SpriteBatch spriteBatch, Camera2D camera, float mul)
-		{ spriteBatch.Draw(m_texture, m_position - camera.Position, new Color(mul, mul, mul)); }
+		{
+            if (mul > 0.25f) decouvert = true;
+            mul = (decouvert && mul < 0.25f) ? 0.25f : mul;
+            spriteBatch.Draw(m_texture, m_position - camera.Position, new Color(mul, mul, mul));
+        }
 
 		public bool Collides(List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)
 		{

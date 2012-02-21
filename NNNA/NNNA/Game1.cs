@@ -321,13 +321,13 @@ namespace NNNA
 
 			//Fenetre des technologies
 			elementHost.Location = new System.Drawing.Point((int) m_screen.X/4, (int) m_screen.Y/4);
-			elementHost.Size = new Size(300, 300);
+			elementHost.Size = new Size((int) m_screen.X/2, (int) m_screen.Y/2);
 			elementHost.Child = techno;
 
 			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, m_smart_hud, graphics);
 			minimap = new Minimap((hud.Position.Width * 7) / 8 - +hud.Position.Width / 150, hud.Position.Y + hud.Position.Height / 15, (hud.Position.Height * 9) / 10, (hud.Position.Height * 9) / 10);
 
-			MessagesManager.X = (uint)m_screen.X - 300;
+			MessagesManager.X = (uint)m_screen.X - 400;
 		}
 
 		/// <summary>
