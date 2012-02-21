@@ -29,7 +29,7 @@ namespace NNNA
         public Static_Sprite(int x, int y)
             : base(x, y)
 		{ }
-        
+
 		public void Draw(SpriteBatch spriteBatch, Camera2D camera, Color col)
 		{ spriteBatch.Draw(Texture, Position - camera.Position, new Rectangle(0, 0, Texture.Width, Texture.Height), Selected ? Color.Peru : col); }
     }

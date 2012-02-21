@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using System.Diagnostics;
 using System.Windows.Forms.Integration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Forms = System.Windows.Forms;
-using System.Drawing;
 using Color = Microsoft.Xna.Framework.Color;
+using Forms = System.Windows.Forms;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
+
 namespace NNNA
 {
 	/// <summary>
@@ -51,7 +51,7 @@ namespace NNNA
 		Minimap minimap;
 		HUD hud;
 		Camera2D camera;
-        Joueur joueur;
+		Joueur joueur;
 		Joueur[] m_enemies;
 		Building selectedBuilding;
 		float[,] m_map;
@@ -59,12 +59,12 @@ namespace NNNA
 		List<Unit> selectedList = new List<Unit>();
 
 		// Audio objects		
-        float musicVolume = 2.0f;
+		float musicVolume = 2.0f;
 		Sons son = new Sons();
 		SoundEffect _debutpartie;
 		SoundEffect _finpartie;
-        private ElementHost elementHost;
-        private Technologies techno;
+		private ElementHost elementHost;
+		private Technologies techno;
 
 
 		#endregion
@@ -170,10 +170,10 @@ namespace NNNA
 			son.Initializesons(musicVolume, m_sound_music, m_sound_general);
 			_debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
 			_finpartie = Content.Load<SoundEffect>("sounds/sortiedejeu");
-            
-            //menu technologie
-            elementHost= new ElementHost();
-            techno = new Technologies(joueur, elementHost);
+			
+			//menu technologie
+			elementHost= new ElementHost();
+			techno = new Technologies(joueur, elementHost);
 
 			base.Initialize();
 
@@ -286,11 +286,11 @@ namespace NNNA
 			// m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
 			#endregion Actions Unités
 
-            #region Actions Batiments
-            m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
-            m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
-            m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
-            #endregion Actions Batiments
+			#region Actions Batiments
+			m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
+			m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
+			m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
+			#endregion Actions Batiments
 
 			#region Actions Communes
 			m_actions.Add("retour", Content.Load<Texture2D>("Actions/retour"));
@@ -308,7 +308,7 @@ namespace NNNA
 		/// </summary>
 		protected void LoadScreenSizeDependantContent()
 		{
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+			spriteBatch = new SpriteBatch(GraphicsDevice);
 
 			string ratio = ((int)((10 * m_screen.X) / m_screen.Y)).ToString();
 			if (ratio != "13" && ratio != "16" && ratio != "18")
@@ -319,13 +319,13 @@ namespace NNNA
 			m_night = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0,0,10));
 			m_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
-            //Fenetre des technologies
-            elementHost.Location = new System.Drawing.Point((int) m_screen.X/4, (int) m_screen.Y/4);
-            elementHost.Size = new Size(300, 300);
-            elementHost.Child = techno;
+			//Fenetre des technologies
+			elementHost.Location = new System.Drawing.Point((int) m_screen.X/4, (int) m_screen.Y/4);
+			elementHost.Size = new Size(300, 300);
+			elementHost.Child = techno;
 
 			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, m_smart_hud, graphics);
-            minimap = new Minimap((hud.Position.Width * 7) / 8 - +hud.Position.Width / 150, hud.Position.Y + hud.Position.Height / 15, (hud.Position.Height * 9) / 10, (hud.Position.Height * 9) / 10);
+			minimap = new Minimap((hud.Position.Width * 7) / 8 - +hud.Position.Width / 150, hud.Position.Y + hud.Position.Height / 15, (hud.Position.Height * 9) / 10, (hud.Position.Height * 9) / 10);
 
 			MessagesManager.X = (uint)m_screen.X - 300;
 		}
@@ -533,7 +533,7 @@ namespace NNNA
 					}*/
 
 					//Le reste
-                    techno.Reset();
+					techno.Reset();
 					map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
 					hud.LoadContent(Content, "HUD/hud2");
 					minimap.LoadContent(map);
@@ -638,18 +638,18 @@ namespace NNNA
 		float compt = 0;
 		private void UpdateGame(GameTime gameTime)
 		{
-            System.Windows.Forms.Control.FromHandle(Window.Handle).Controls.Add(elementHost);
+			System.Windows.Forms.Control.FromHandle(Window.Handle).Controls.Add(elementHost);
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{
-                elementHost.Visible = false;
-                m_currentScreen = Screen.GameMenu;
-            }
+				elementHost.Visible = false;
+				m_currentScreen = Screen.GameMenu;
+			}
 
 			compt = (compt + gameTime.ElapsedGameTime.Milliseconds * 0.1f) % 100;
 			curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			camera.Update(curseur, graphics);
 
-            // Intelligence artificielle
+			// Intelligence artificielle
 			foreach (Joueur foe in m_enemies)
 			{
 				// FAIRE TOUTES LES MISES à JOUR DE L'IA ICI
@@ -922,9 +922,9 @@ namespace NNNA
 								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								break;
 
-                            case "technologies":
-                                elementHost.Visible = true;
-                                break;
+							case "technologies":
+								elementHost.Visible = true;
+								break;
 
 
 
@@ -978,9 +978,9 @@ namespace NNNA
 			{ m_currentScreen = Screen.Game; }
 			curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			m_currentScreen = testPauseMenu(Screen.Title, Screen.Game);
-            if (!son.Musiquemenu.IsPlaying && !son.Musiquemenu.IsPaused)
-            { son.Initializesons(musicVolume, m_sound_music, m_sound_general); }
-            son.Musiquemenu.Resume();
+			if (!son.Musiquemenu.IsPlaying && !son.Musiquemenu.IsPaused)
+			{ son.Initializesons(musicVolume, m_sound_music, m_sound_general); }
+			son.Musiquemenu.Resume();
 		}
 
 		#endregion
@@ -1146,8 +1146,7 @@ namespace NNNA
 		}
 		private void DrawGame(GameTime gameTime)
 		{
-            
-            int index = (int)Math.Floor(compt / 25);
+			int index = (int)Math.Floor(compt / 25);
 			int compteur = 0;
 			foreach (Sprite sprite in matrice)
 			{
@@ -1156,19 +1155,19 @@ namespace NNNA
 					&& sprite.Position.X - camera.Position.X < m_screen.X
 					&& sprite.Position.Y - camera.Position.Y < m_screen.Y - ((hud.Position.Height * 4) / 5))
 				{
-                    float mul = 0.0f;
-                    foreach (Unit unit in joueur.Units)
-                    {
-                        float m = (unit.Position_Center - sprite.Position_Center).Length();
-                        m = 1.0f - (m / unit.Line_sight);
-                        mul = (m > 0 && m > mul) ? m : mul;
-                    }
-                    foreach (Building building in joueur.Buildings)
-                    {
-                        float m = (building.Position_Center - sprite.Position_Center).Length();
-                        m = 1.0f - (m / building.Line_sight);
-                        mul = (m > 0 && m > mul) ? m : mul;
-                    }
+					float mul = 0.0f;
+					foreach (Unit unit in joueur.Units)
+					{
+						float m = (unit.Position_Center - sprite.Position_Center).Length();
+						m = 1.0f - (m / unit.Line_sight);
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					foreach (Building building in joueur.Buildings)
+					{
+						float m = (building.Position_Center - sprite.Position_Center).Length();
+						m = 1.0f - (m / building.Line_sight);
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
 					sprite.DrawMap(spriteBatch, camera, mul);
 					compteur++;
 				}
@@ -1177,24 +1176,59 @@ namespace NNNA
 			// Affichage des objets sur la carte
 			joueur.Draw(spriteBatch, camera, index);
 			foreach (Joueur foe in m_enemies)
-			{ foe.Draw(spriteBatch, camera, index); }
+			{
+				foreach (Building build in foe.Buildings)
+				{
+					float mul = 0.0f;
+					foreach (Unit unit in joueur.Units)
+					{
+						float m = (unit.Position_Center - build.Position).Length();
+						m = 1.0f - (m / unit.Line_sight);
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					foreach (Building building in joueur.Buildings)
+					{
+						float m = (building.Position_Center - build.Position).Length();
+						m = 1.0f - (m / building.Line_sight);
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					build.Draw(spriteBatch, camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255));
+				}
+				foreach (Unit uni in foe.Units)
+				{
+					float mul = 0.0f;
+					foreach (Unit unit in joueur.Units)
+					{
+						float m = (unit.Position_Center - uni.Position).Length();
+						m = 1.0f - (m / unit.Line_sight);
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					foreach (Building building in joueur.Buildings)
+					{
+						float m = (building.Position_Center - uni.Position).Length();
+						m = 1.0f - (m / building.Line_sight);
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					uni.Draw(spriteBatch, camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255));
+				}
+			}
 			foreach (ResourceMine sprite in resource)
 			{
-                float mul = 0.0f;
-                foreach (Unit unit in joueur.Units)
-                {
-                    float m = (unit.Position_Center - sprite.Position).Length();
-                    m = 1.0f - (m / unit.Line_sight);
-                    mul = (m > 0 && m > mul) ? m : mul;
-                }
-                foreach (Building building in joueur.Buildings)
-                {
-                    float m = (building.Position_Center - sprite.Position).Length();
-                    m = 1.0f - (m / building.Line_sight);
-                    mul = (m > 0 && m > mul) ? m : mul;
-                }
-                sprite.Draw(spriteBatch, 1, camera, mul);
-            }
+				float mul = 0.0f;
+				foreach (Unit unit in joueur.Units)
+				{
+					float m = (unit.Position_Center - sprite.Position).Length();
+					m = 1.0f - (m / unit.Line_sight);
+					mul = (m > 0 && m > mul) ? m : mul;
+				}
+				foreach (Building building in joueur.Buildings)
+				{
+					float m = (building.Position_Center - sprite.Position).Length();
+					m = 1.0f - (m / building.Line_sight);
+					mul = (m > 0 && m > mul) ? m : mul;
+				}
+				sprite.Draw(spriteBatch, 1, camera, mul);
+			}
 
 			// Rectangle de séléction
 			Vector2 coos = new Vector2(
@@ -1475,7 +1509,7 @@ namespace NNNA
 		{
 			Dictionary<string, Dictionary<string, string>> translations = new Dictionary<string, Dictionary<string, string>>();
 			translations["en"] = new Dictionary<string, string>();
-            translations["en"]["Jouer"] = "Play";
+			translations["en"]["Jouer"] = "Play";
 			translations["en"]["Options"] = "Settings";
 			translations["en"]["Crédits"] = "Credits";
 			translations["en"]["Quitter"] = "Quit";

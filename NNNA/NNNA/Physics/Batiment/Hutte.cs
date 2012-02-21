@@ -20,7 +20,7 @@ namespace NNNA
                 LoadContent(content, "Batiments/hutte2");
 			vie = 100;
 			m_cost.Add("Bois", 50);
-            Line_sight = 128;
+			Line_sight = 2 * 64;
 			if (joueur.Population_Max < 200)
 			{
 				if (joueur.Population_Max > 190)

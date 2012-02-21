@@ -30,6 +30,11 @@ namespace NNNA
 			get { return m_color; }
 			set { m_color = value; }
 		}
+		public Color ColorMovable
+		{
+			get { return m_colorMovable; }
+			set { m_colorMovable = value; }
+		}
 		private string m_name;
 		public string Name
 		{
