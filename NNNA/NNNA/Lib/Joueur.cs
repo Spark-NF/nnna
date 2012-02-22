@@ -56,9 +56,7 @@ namespace NNNA
 			get { return m_buildings; }
 			set { m_buildings = value; }
 		}
-		private List<Resource> m_resources = new List<Resource>();
-
-
+        public List<Resource> m_resources = new List<Resource>();
 
 		public Joueur(Color couleur, string nom, ContentManager content)
 		{

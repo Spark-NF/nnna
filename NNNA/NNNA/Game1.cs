@@ -165,7 +165,8 @@ namespace NNNA
 			i = new Sprite('i');
 
 			map = new Map();
-			camera = new Camera2D(0, 0, 10);			curseur = new Sprite(0, 0);
+			camera = new Camera2D(0, 0, 10);
+            curseur = new Sprite(0, 0);
 			joueur = new Joueur(Color.Red, "NNNNA", Content);
 
 			 // son
@@ -175,7 +176,7 @@ namespace NNNA
 			
 			//menu technologie
 			elementHost= new ElementHost();
-			techno = new Technologies(ref joueur, ref elementHost);
+			techno = new Technologies(joueur, ref elementHost);
 
 			base.Initialize();
 
@@ -322,8 +323,8 @@ namespace NNNA
 			m_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
 			//Fenetre des technologies
-			elementHost.Location = new System.Drawing.Point((int) m_screen.X/4, (int) m_screen.Y/4);
-			elementHost.Size = new Size((int) m_screen.X/2, (int) m_screen.Y/2);
+			elementHost.Location = new System.Drawing.Point((int) m_screen.X/2 - 150, (int) m_screen.Y/2 - 150);
+			elementHost.Size = new Size(300, 300);
 			elementHost.Child = techno;
 
 			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, m_smart_hud, graphics);
@@ -640,7 +641,9 @@ namespace NNNA
 		float compt = 0;
 		private void UpdateGame(GameTime gameTime)
 		{
-			System.Windows.Forms.Control.FromHandle(Window.Handle).Controls.Add(elementHost);
+            techno.Pre_Update(joueur);
+            System.Windows.Forms.Control.FromHandle(this.Window.Handle).Controls.Add(elementHost);
+            techno.Post_Update(joueur);
 
             //if (isbuilding)
             //{

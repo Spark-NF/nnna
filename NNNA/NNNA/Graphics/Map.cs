@@ -35,13 +35,13 @@ namespace NNNA
                 texture_Color[i] = Color.Black;
                 i++;
             }
-            for (int l = 0; l < map.GetLength(0); l++)
+            for (int l = 0; l < map.GetLength(1); l++)
             {
                 texture_Color[i] = Color.Black;
                 i++;
                 texture_Color[i] = Color.Black;
                 i++;
-                for (int c = 0; c < map.GetLength(1); c++)
+                for (int c = 0; c < map.GetLength(0); c++)
                 {
                     if ((map[l, c]).Name == 'h')
                     {
@@ -70,9 +70,8 @@ namespace NNNA
                     }
                     else if ((map[l, c]).Name == 't')
                     {
-                        if ((c + 1) < map.GetLength(1) && (c - 1) >= 0 && (l + 1) < map.GetLength(0) && (l - 1) >= 0)
+                        if ((c + 1) < map.GetLength(0) && (c - 1) >= 0 && (l + 1) < map.GetLength(1) && (l - 1) >= 0)
                         {
-
                             if ((map[l, c + 1]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c - 1]).Name != 's' && (map[l - 1, c]).Name != 's')
                                 (map[l, c]) = new Sprite(content, "Map/sable_(-90)", x, y);
                             else if ((map[l, c - 1]).Name == 's' && (map[l - 1, c]).Name == 's' && (map[l, c + 1]).Name != 's' && (map[l + 1, c]).Name != 's')

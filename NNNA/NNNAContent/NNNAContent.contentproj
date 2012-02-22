@@ -494,102 +494,6 @@
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
     </Compile>
-    <Compile Include="Map\sable_%28-135%29.png">
-      <Name>sable_%28-135%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_%28-45%29.png">
-      <Name>sable_%28-45%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_%28-90%29.png">
-      <Name>sable_%28-90%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_%280%29.png">
-      <Name>sable_%280%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_%28135%29.png">
-      <Name>sable_%28135%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_%28180%29.png">
-      <Name>sable_%28180%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_%2845%29.png">
-      <Name>sable_%2845%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_%2890%29.png">
-      <Name>sable_%2890%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_coin%28-90%29.png">
-      <Name>sable_coin%28-90%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_coin%280%29.png">
-      <Name>sable_coin%280%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_coin%28180%29.png">
-      <Name>sable_coin%28180%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_coin%2890%29.png">
-      <Name>sable_coin%2890%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_U%28-135%29.png">
-      <Name>sable_U%28-135%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_U%28-45%29.png">
-      <Name>sable_U%28-45%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_U%28135%29.png">
-      <Name>sable_U%28135%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-    <Compile Include="Map\sable_U%2845%29.png">
-      <Name>sable_U%2845%29</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="sounds\sortiedejeu.mp3">
@@ -785,6 +689,106 @@
       <Name>bois_1_sprite0</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Map\sable_%28-135%29.png">
+      <Name>sable_%28-135%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_%28-45%29.png">
+      <Name>sable_%28-45%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_%28-90%29.png">
+      <Name>sable_%28-90%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_%280%29.png">
+      <Name>sable_%280%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_%28135%29.png">
+      <Name>sable_%28135%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_%28180%29.png">
+      <Name>sable_%28180%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_%2845%29.png">
+      <Name>sable_%2845%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_%2890%29.png">
+      <Name>sable_%2890%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_coin%28-90%29.png">
+      <Name>sable_coin%28-90%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_coin%280%29.png">
+      <Name>sable_coin%280%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_coin%2890%29.png">
+      <Name>sable_coin%2890%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_U%28-135%29.png">
+      <Name>sable_U%28-135%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_U%28-45%29.png">
+      <Name>sable_U%28-45%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_U%28135%29.png">
+      <Name>sable_U%28135%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+    <Compile Include="Map\sable_U%2845%29.png">
+      <Name>sable_U%2845%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Map\sable_coin%28180%29.png">
+      <Name>sable_coin%28180%29</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyColor>42, 142, 142, 255</ProcessorParameters_ColorKeyColor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

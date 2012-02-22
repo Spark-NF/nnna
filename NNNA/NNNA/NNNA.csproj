@@ -216,7 +216,6 @@
     <Folder Include="Physics\Unités\Aériennes\" />
     <Folder Include="Physics\Unités\Marritimes\" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">

@@ -15,11 +15,11 @@ namespace NNNA
     /// </summary>
     public partial class Technologies : UserControl
     {
-        private Joueur joueur;
+        internal Joueur joueur;
         private ElementHost elementHost;
         private bool m_chasse, m_feu, m_silex, m_pierre_polie, m_bronze, m_outils, m_agri, m_torche, m_irrigation;
         private Dictionary<string, int> Prix_chasse = new Dictionary<string, int>(), Prix_feu = new Dictionary<string, int>(), Prix_silex = new Dictionary<string, int>(), Prix_pierre_polie = new Dictionary<string, int>(), Prix_bronze = new Dictionary<string, int>(), Prix_outils = new Dictionary<string, int>(), Prix_agri = new Dictionary<string, int>(), Prix_torche = new Dictionary<string, int>(), Prix_irrigation = new Dictionary<string, int>();
-        internal Technologies(ref Joueur joueur, ref ElementHost elementHost)
+        internal Technologies(Joueur joueur, ref ElementHost elementHost)
         {
             InitializeComponent();
             this.joueur = joueur;
@@ -31,7 +31,7 @@ namespace NNNA
             Prix_silex.Add("Bois", 200);
             Prix_silex.Add("Nourriture", 50);
             Prix_pierre_polie.Add("Bois", 250);
-            Prix_pierre_polie.Add("Nourriture",100);
+            Prix_pierre_polie.Add("Nourriture", 100);
             Prix_bronze.Add("Bois", 400);
             Prix_bronze.Add("Nourriture", 200);
             Prix_bronze.Add("Pierre", 50);
@@ -43,6 +43,16 @@ namespace NNNA
             Prix_torche.Add("Bois", 300);
             Prix_irrigation.Add("Nourriture", 500);
             #endregion Prix
+        }
+
+        internal void Pre_Update(Joueur joueur)
+        {
+            this.joueur.m_resources = joueur.m_resources;
+        }
+
+        internal void Post_Update(Joueur joueur)
+        {
+            joueur.m_resources = this.joueur.m_resources;
         }
 
         public void Reset()
