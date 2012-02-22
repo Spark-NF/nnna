@@ -17,6 +17,12 @@ namespace NNNA
 			set { m_position = value; }
 		}
 
+        public Vector2 Position_Center
+        {
+            get { return m_position + new Vector2(m_resource.Texture(1).Width / 2, m_resource.Texture(1).Height / 2); }
+        }
+
+
 		public ResourceMine(int x, int y, ContentManager content, Resource resource)
         {
 			m_resource = resource;

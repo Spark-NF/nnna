@@ -769,23 +769,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Decors\palmier1.png">
-      <Name>palmier1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Decors\palmier2.png">
-      <Name>palmier2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Decors\palmier3.png">
-      <Name>palmier3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Resources\bois_1_sprite1.png">
       <Name>bois_1_sprite1</Name>
       <Importer>TextureImporter</Importer>

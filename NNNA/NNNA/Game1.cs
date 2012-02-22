@@ -515,22 +515,6 @@ namespace NNNA
 						m_enemies[i].Buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, joueur));
 					}
 
-					//Decor
-					resource.Add(new ResourceMine((int)matrice2xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)matrice2xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, Content, joueur.Resource("Pierre")));
-                    for (int i = 0; i < 15; i++)
-                    {
-                        int x = 0;
-                        int y = 0;
-                        x = random.Next(0, matrice.GetLength(0));
-                        y = random.Next(0, matrice.GetLength(1));
-                        while ((!matrice[x, y].Crossable))
-                        {
-                            x = random.Next(0, matrice.GetLength(0));
-                            y = random.Next(0, matrice.GetLength(1));
-                        }
-                        resource.Add(new ResourceMine((int)(matrice2xy(new Vector2(x, y))).X, (int)(matrice2xy(new Vector2(x, y))).Y, Content, joueur.Resource("Bois")));
-                    }
-
 					//Le reste
 					techno.Reset();
 					map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
@@ -538,6 +522,25 @@ namespace NNNA
 					minimap.LoadContent(map);
 					m_elapsed = gameTime.TotalGameTime.TotalMilliseconds;
 					m_gameTime = gameTime;
+
+                    //Decor
+                    resource.Add(new ResourceMine((int)matrice2xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)matrice2xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, Content, joueur.Resource("Pierre")));
+                    for (int i = 0; i < 15; i++)
+                    {
+                        int x = 0;
+                        int y = 0;
+                        x = random.Next(matrice.GetLength(0));
+                        y = random.Next(matrice.GetLength(1));
+                        while ((!matrice[y, x].Crossable))
+                        {
+                            x = random.Next(matrice.GetLength(0));
+                            y = random.Next(matrice.GetLength(1));
+                        }
+                        resource.Add(new ResourceMine((int)(matrice2xy(new Vector2(x, y))).X - 44, (int)(matrice2xy(new Vector2(x, y))).Y - 152, Content, joueur.Resource("Bois")));
+                        matrice[y, x].Crossable = false;
+                    }
+
+                    //Le son
 					son.Musiquemenu.Pause();
 					_debutpartie.Play();
 					
@@ -638,6 +641,13 @@ namespace NNNA
 		private void UpdateGame(GameTime gameTime)
 		{
 			System.Windows.Forms.Control.FromHandle(Window.Handle).Controls.Add(elementHost);
+
+            //if (isbuilding)
+            //{
+            //    Vector2 xy = matrice2xy(xy2matrice(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)));
+            //    Mouse.SetPosition((int) xy.X, (int) xy.Y);
+            //}
+
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{
 				elementHost.Visible = false;
@@ -671,12 +681,14 @@ namespace NNNA
 							m_currentAction = "";
 						}
 						else
-						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                        {
+                            MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); m_pointer = Content.Load<Texture2D>("pointer"); m_currentAction = "";
+                        }
 						break;
 
 					case "build_hutteDesChasseurs":
 						b = new Hutte_des_chasseurs((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
-                        if (joueur.Population + 1 > joueur.Population_Max && joueur.Pay(b.Prix))
+                        if (joueur.Pay(b.Prix))
 						{
 							joueur.Buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
@@ -684,7 +696,7 @@ namespace NNNA
 							m_currentAction = "";
 						}
 						else
-						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); m_pointer = Content.Load<Texture2D>("pointer"); m_currentAction = ""; }
 						break;
 
 					case "create_peon" :
@@ -697,12 +709,12 @@ namespace NNNA
 							m_currentAction = "";
 						}
 						else
-                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); joueur.Population--; }
+                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); joueur.Population--; m_currentAction = ""; }
 						break;
 
 					case "create_guerrier":
 						u = new Guerrier((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 3), (int)selectedBuilding.Position.Y + 70, Content, joueur, false);
-						if (joueur.Pay(u.Prix))
+                        if (joueur.Population + 1 > joueur.Population_Max && joueur.Pay(u.Prix))
 						{
 							selectedBuilding.Iterator++;
 							joueur.Units.Add(u);
@@ -710,27 +722,28 @@ namespace NNNA
 							m_currentAction = "";
 						}
 						else
-                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); joueur.Population--; }
+                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); joueur.Population--; m_currentAction = ""; }
 						break;
 
 						// Fin Ere 1 
 
-					/* Ere 2 
-					case "build_ferme":
-						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
-						if (joueur.Pay(b.Prix))
-						{
-							joueur.buildings.Add(b);
-							MessagesManager.Messages.Add(new Msg("Nouvelle ferme !", Color.White, 5000));
-							m_pointer = Content.Load<Texture2D>("pointer");
-							m_currentAction = "";
-						}
-						else
-						{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-						break;
-					Fin Ere 2 */
+                    /* Ere 2 
+                    case "build_ferme":
+                        b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
+                        if (joueur.Pay(b.Prix))
+                        {
+                            joueur.buildings.Add(b);
+                            MessagesManager.Messages.Add(new Msg("Nouvelle ferme !", Color.White, 5000));
+                            m_pointer = Content.Load<Texture2D>("pointer");
+                            isbuilding = false;
+                            m_currentAction = "";
+                        }
+                        else
+                        { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); m_pointer = Content.Load<Texture2D>("pointer"); m_currentAction = ""; }
+                        break;
+                    Fin Ere 2 */
 
-					default:
+                    default:
 						m_selection = new Rectangle(Souris.Get().X + (int)camera.Position.X, Souris.Get().Y + (int)camera.Position.Y, 0, 0);
 						m_currentAction = "select";
 						break;
@@ -844,125 +857,111 @@ namespace NNNA
 			}
 
 			// Actions
-			if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= hud.Position.X + 20 && Souris.Get().Y >= hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V) || Clavier.Get().NewPress(Keys.F))
-			{
-				int x = Souris.Get().X - hud.Position.X - 20, y = Souris.Get().Y - hud.Position.Y - 20;
-				if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
-				{
-					x /= 40;
-					y /= 40;
-					int pos = x + 6 * y;
-					if (pos < m_currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V) )
-					{
-						string act = "";
-						if (Clavier.Get().NewPress(Keys.C))
-						{ act = "build_hutte"; }
-						else if (Clavier.Get().NewPress(Keys.V))
-						{ act = "build_hutteDesChasseurs"; }
-						else 
-						{ act = m_currentActions[pos]; }
-						Debug(act);
-						switch (act)
-						{
-							case "attack":
-								break;
+            if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= hud.Position.X + 20 && Souris.Get().Y >= hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+            {
+                int x = Souris.Get().X - hud.Position.X - 20, y = Souris.Get().Y - hud.Position.Y - 20;
+                if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+                {
+                    x /= 40;
+                    y /= 40;
+                    int pos = x + 6 * y;
+                    if (pos < m_currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+                    {
+                        string act = "";
+                        if (Clavier.Get().NewPress(Keys.C))
+                        { act = "build_hutte"; }
+                        else if (Clavier.Get().NewPress(Keys.V))
+                        { act = "build_hutteDesChasseurs"; }
+                        else
+                        { act = m_currentActions[pos]; }
+                        Debug(act);
+                        switch (act)
+                        {
+                            case "attack":
+                                break;
 
-							case "build":
-								m_currentActions.Clear();
-								m_currentActions.Add("build_hutte");
-								m_currentActions.Add("build_hutteDesChasseurs");
-								m_currentActions.Add("retour");
-								break;
+                            case "build":
+                                m_currentActions.Clear();
+                                m_currentActions.Add("build_hutte");
+                                m_currentActions.Add("build_hutteDesChasseurs");
+                                m_currentActions.Add("retour");
+                                break;
 
-							case "gather":
-								break;
+                            case "gather":
+                                break;
 
-							case "build_hutte":
-								if (joueur.Has(new Hutte().Prix))
-								{
-									if (random.Next(0, 2) == 0)
-										m_pointer = Content.Load<Texture2D>("Batiments/hutte1");
-									else
-										m_pointer = Content.Load<Texture2D>("Batiments/hutte2");
-									m_currentAction = "build_hutte";
-								}
-								else
-								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-								break;
+                            case "build_hutte":
+                                if (joueur.Has(new Hutte().Prix))
+                                {
+                                    if (random.Next(0, 2) == 0)
+                                        m_pointer = Content.Load<Texture2D>("Batiments/hutte1");
+                                    else
+                                        m_pointer = Content.Load<Texture2D>("Batiments/hutte2");
+                                    m_currentAction = "build_hutte";
+                                }
+                                else
+                                { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                                break;
 
-							case "build_hutteDesChasseurs":
-								if (joueur.Has(new Hutte_des_chasseurs().Prix))
-								{
-									m_pointer = Content.Load<Texture2D>("Batiments/hutte_des_chasseurs");
-									m_currentAction = "build_hutteDesChasseurs";
-								}
-								else
-								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-								break;
+                            case "build_hutteDesChasseurs":
+                                if (joueur.Has(new Hutte_des_chasseurs().Prix))
+                                {
+                                    m_pointer = Content.Load<Texture2D>("Batiments/hutte_des_chasseurs");
+                                    m_currentAction = "build_hutteDesChasseurs";
+                                }
+                                else
+                                { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                                break;
 
-							case "retour":
-								m_currentActions.Clear();
-								for (int i = 0; i < last_state.Count; i++)
-								{
-									m_currentActions.Add(last_state[i]);
-								}
-								break;
+                            case "retour":
+                                m_currentActions.Clear();
+                                for (int i = 0; i < last_state.Count; i++)
+                                {
+                                    m_currentActions.Add(last_state[i]);
+                                }
+                                break;
 
-							case "create_peon":
-								Peon u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 200, Content, joueur);
-								if (joueur.Pay(u.Prix))
-								{
-									selectedBuilding.Iterator++;
-									joueur.Units.Add(u);
-									MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
-									m_currentAction = "";
-								}
-								else
-								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-								break;
+                            case "create_peon":
+                                Peon u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 200, Content, joueur);
+                                if (joueur.Pay(u.Prix))
+                                {
+                                    selectedBuilding.Iterator++;
+                                    joueur.Units.Add(u);
+                                    MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
+                                    m_currentAction = "";
+                                }
+                                else
+                                { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                                break;
 
-							case "technologies":
-								elementHost.Visible = true;
-								break;
+                            case "technologies":
+                                elementHost.Visible = true;
+                                break;
 
+                            case "create_guerrier":
+                                if (joueur.Has(new Guerrier().Prix))
+                                {
+                                    m_currentAction = "create_guerrier";
+                                }
+                                else
+                                { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                                break;
 
-
-
-
-
-
-
-							case "create_guerrier":
-								if (joueur.Has(new Guerrier().Prix))
-								{
-									m_currentAction = "create_guerrier";
-								}
-								else
-								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-								break;
-
-								/* Ere 2 
-							case "build_ferme":
-								if (joueur.Has(new Ferme().Prix))
-								{
-									m_pointer = Content.Load<Texture2D>("Batiments/ferme");
-									m_currentAction = "build_ferme";
-								}
-								else
-								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
-								break;*/
-						}
-					}
-				}
-			}
-		 /*   if (Souris.Get().Clicked(MouseButton.Right) && Souris.Get().X < Resource. && Souris.Get().Y < Resource. )
-			foreach (Movible_Sprite sprite in selectedList)
-			{
-				if (sprite.Type == "peon")
-				{
-					
-				}
-			} */
+                            /* Ere 2 
+                        case "build_ferme":
+                            if (joueur.Has(new Ferme().Prix))
+                            {
+                                m_pointer = Content.Load<Texture2D>("Batiments/ferme");
+                                isbuilding = true;
+                                m_currentAction = "build_ferme";
+                            }
+                            else
+                            { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+                            break;*/
+                        }
+                    }
+                }
+            }
 			foreach (Unit sprite in joueur.Units)
 			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, joueur.Units, joueur.Buildings, matrice); }
 
@@ -1216,13 +1215,13 @@ namespace NNNA
 				float mul = 0.0f;
 				foreach (Unit unit in joueur.Units)
 				{
-					float m = (unit.Position_Center - sprite.Position).Length();
+					float m = (unit.Position_Center - sprite.Position_Center).Length();
 					m = 1.0f - (m / unit.Line_sight);
 					mul = (m > 0 && m > mul) ? m : mul;
 				}
 				foreach (Building building in joueur.Buildings)
 				{
-					float m = (building.Position_Center - sprite.Position).Length();
+					float m = (building.Position_Center - sprite.Position_Center).Length();
 					m = 1.0f - (m / building.Line_sight);
 					mul = (m > 0 && m > mul) ? m : mul;
 				}
