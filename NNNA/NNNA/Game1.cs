@@ -968,8 +968,9 @@ namespace NNNA
 			foreach (Unit sprite in joueur.Units)
 			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, joueur.Units, joueur.Buildings, matrice); }
 
-			joueur.Units.Sort(Sprite.CompareByY);
-			joueur.Buildings.Sort(Sprite.CompareByY);
+            joueur.Units.Sort(Sprite.CompareByY);
+            joueur.Buildings.Sort(Sprite.CompareByY);
+             
 			//minimap.Update(units, buildings, selectedList, joueur);
 			son.Musiquemenu.Pause();
 		}
@@ -1160,13 +1161,13 @@ namespace NNNA
 					foreach (Unit unit in joueur.Units)
 					{
 						float m = (unit.Position_Center - sprite.Position_Center).Length();
-						m = 1.0f - (m / unit.Line_sight);
+						m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
 					foreach (Building building in joueur.Buildings)
 					{
 						float m = (building.Position_Center - sprite.Position_Center).Length();
-						m = 1.0f - (m / building.Line_sight);
+						m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
 					sprite.DrawMap(spriteBatch, camera, mul);
@@ -1175,62 +1176,61 @@ namespace NNNA
 			}
 
 			// Affichage des objets sur la carte
-			joueur.Draw(spriteBatch, camera, index);
-			foreach (Joueur foe in m_enemies)
-			{
-				foreach (Building build in foe.Buildings)
-				{
-					float mul = 0.0f;
-					foreach (Unit unit in joueur.Units)
-					{
-						float m = (unit.Position_Center - build.Position).Length();
-						m = 1.0f - (m / unit.Line_sight);
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					foreach (Building building in joueur.Buildings)
-					{
-						float m = (building.Position_Center - build.Position).Length();
-						m = 1.0f - (m / building.Line_sight);
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					build.Draw(spriteBatch, camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255));
-				}
-				foreach (Unit uni in foe.Units)
-				{
-					float mul = 0.0f;
-					foreach (Unit unit in joueur.Units)
-					{
-						float m = (unit.Position_Center - uni.Position).Length();
-						m = 1.0f - (m / unit.Line_sight);
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					foreach (Building building in joueur.Buildings)
-					{
-						float m = (building.Position_Center - uni.Position).Length();
-						m = 1.0f - (m / building.Line_sight);
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					uni.Draw(spriteBatch, camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255));
-				}
-			}
-			foreach (ResourceMine sprite in resource)
-			{
-				float mul = 0.0f;
-				foreach (Unit unit in joueur.Units)
-				{
-					float m = (unit.Position_Center - sprite.Position_Center).Length();
-					m = 1.0f - (m / unit.Line_sight);
-					mul = (m > 0 && m > mul) ? m : mul;
-				}
-				foreach (Building building in joueur.Buildings)
-				{
-					float m = (building.Position_Center - sprite.Position_Center).Length();
-					m = 1.0f - (m / building.Line_sight);
-					mul = (m > 0 && m > mul) ? m : mul;
-				}
-				sprite.Draw(spriteBatch, 1, camera, mul);
-			}
-
+            foreach (Joueur foe in m_enemies)
+            {
+                foreach (Building build in foe.Buildings)
+                {
+                    float mul = 0.0f;
+                    foreach (Unit unit in joueur.Units)
+                    {
+                        float m = (unit.Position_Center - build.Position).Length();
+                        m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
+                        mul = (m > 0 && m > mul) ? m : mul;
+                    }
+                    foreach (Building building in joueur.Buildings)
+                    {
+                        float m = (building.Position_Center - build.Position).Length();
+                        m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+                        mul = (m > 0 && m > mul) ? m : mul;
+                    }
+                    build.Draw(spriteBatch, camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255));
+                }
+                foreach (Unit uni in foe.Units)
+                {
+                    float mul = 0.0f;
+                    foreach (Unit unit in joueur.Units)
+                    {
+                        float m = (unit.Position_Center - uni.Position).Length();
+                        m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
+                        mul = (m > 0 && m > mul) ? m : mul;
+                    }
+                    foreach (Building building in joueur.Buildings)
+                    {
+                        float m = (building.Position_Center - uni.Position).Length();
+                        m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+                        mul = (m > 0 && m > mul) ? m : mul;
+                    }
+                    uni.Draw(spriteBatch, camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255));
+                }
+            }
+            joueur.Draw(spriteBatch, camera, index);
+            foreach (ResourceMine sprite in resource)
+            {
+                float mul = 0.0f;
+                foreach (Unit unit in joueur.Units)
+                {
+                    float m = (unit.Position_Center - sprite.Position_Center).Length();
+                    m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
+                    mul = (m > 0 && m > mul) ? m : mul;
+                }
+                foreach (Building building in joueur.Buildings)
+                {
+                    float m = (building.Position_Center - sprite.Position_Center).Length();
+                    m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+                    mul = (m > 0 && m > mul) ? m : mul;
+                }
+                sprite.Draw(spriteBatch, 1, camera, mul);
+            }
 			// Rectangle de séléction
 			Vector2 coos = new Vector2(
 				m_selection.X - camera.Position.X + (m_selection.Width < 0 ? m_selection.Width : 0),

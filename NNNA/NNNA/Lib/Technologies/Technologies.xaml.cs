@@ -48,11 +48,13 @@ namespace NNNA
         internal void Pre_Update(Joueur joueur)
         {
             this.joueur.m_resources = joueur.m_resources;
+            this.joueur.Additional_line_sight = joueur.Additional_line_sight;
         }
 
         internal void Post_Update(Joueur joueur)
         {
             joueur.m_resources = this.joueur.m_resources;
+            joueur.Additional_line_sight = this.joueur.Additional_line_sight;
         }
 
         public void Reset()
@@ -102,6 +104,7 @@ namespace NNNA
             if (!m_feu && joueur.Pay(Prix_feu))
             {
                 torche.Visibility = Visibility.Visible;
+                this.joueur.Additional_line_sight += 128;
                 m_feu = true;
             }
             if (!joueur.Pay(Prix_feu))
@@ -179,7 +182,10 @@ namespace NNNA
         private void torche_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!m_torche && joueur.Pay(Prix_torche))
+            {
                 m_torche = true;
+                this.joueur.Additional_line_sight += 128;
+            }
             if (!joueur.Pay(Prix_torche))
             {
                 { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }

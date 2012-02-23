@@ -4,29 +4,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-	class ResourceMine
+	class ResourceMine : Static_Sprite
 	{
 		Resource m_resource;
 
         private bool decouvert = false;
 
-		private Vector2 m_position;
-		public Vector2 Position
-		{
-			get { return m_position; }
-			set { m_position = value; }
-		}
-
-        public Vector2 Position_Center
-        {
-            get { return m_position + new Vector2(m_resource.Texture(1).Width / 2, m_resource.Texture(1).Height / 2); }
-        }
-
-
 		public ResourceMine(int x, int y, ContentManager content, Resource resource)
+            : base(x, y)
         {
+            m_texture = resource.Texture(1);
 			m_resource = resource;
-            m_position = new Vector2(x, y);
         }
 
 		/// <summary>

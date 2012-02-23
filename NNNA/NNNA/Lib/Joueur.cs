@@ -20,6 +20,14 @@ namespace NNNA
 			set { m_population = value; }
 		}
 
+        private int additional_line_sight;
+        internal int Additional_line_sight
+        {
+            get { return additional_line_sight; }
+            set { additional_line_sight = value; }
+        }
+
+
         private Random rand = new Random();
 		private uint m_population_max;
 		public uint Population_Max
@@ -65,6 +73,7 @@ namespace NNNA
 			m_name = nom;
 			m_population = 0;
 			m_population_max = 5;
+            additional_line_sight = 0;
 
 			m_resources.Add(new Resource("Bois", new string[] { "Bois", "Bois", "Bois", "Bois" }, 500));
 			m_resources.Add(new Resource("Pierre", new string[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));
