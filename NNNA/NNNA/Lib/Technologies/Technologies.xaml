@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" FontSize="16" Background="#00000000" OpacityMask="Black" BorderThickness="2" BorderBrush="#FF966F11" Name="technologies" Visibility="Visible">
-    <Grid Background="#00000000" OpacityMask="Black">
+             d:DesignHeight="300" d:DesignWidth="300" FontSize="16" OpacityMask="Black" BorderThickness="2" BorderBrush="#FF966F11" Name="technologies" Visibility="Visible" Background="White">
+    <Grid OpacityMask="Black">
         <Label Content="      Technologies" Height="33" HorizontalAlignment="Left" Margin="44,0,0,0" Name="label1" VerticalAlignment="Top" Width="200" FontStretch="Normal" FontFamily="Jing Jing" FontWeight="Normal">
             <Label.Background>
                 <RadialGradientBrush>
@@ -17,8 +17,8 @@
                 <SolidColorBrush />
             </Label.BorderBrush>
         </Label>
-        <TabControl Height="272" HorizontalAlignment="Left" Margin="5,31,0,0" Name="tabControl1" VerticalAlignment="Top" Width="290" Background="#7AFFFFFF">
-            <TabItem Header="ERE 1" Name="tabItem1">
+        <TabControl Height="272" HorizontalAlignment="Left" Margin="5,31,0,0" Name="tabControl1" VerticalAlignment="Top" Width="290">
+            <TabItem Header="ERE 1" Name="tabItem1" Foreground="#C8000000">
                 <Grid>
                     <Image Height="32" HorizontalAlignment="Left" Margin="92,2,0,0" Name="chasse" Stretch="Fill" VerticalAlignment="Top" Width="32" Source="/NNNA;component/Images/chasse.png" MouseLeftButtonDown="chasse_MouseLeftButtonDown" />
                     <Image Height="32" HorizontalAlignment="Left" Margin="14,40,0,0" Name="silex" Source="/NNNA;component/Images/silex.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="silex_MouseLeftButtonDown" />
@@ -30,11 +30,21 @@
                     <Image Height="32" HorizontalAlignment="Left" Margin="230,40,0,0" Name="feu" Source="/NNNA;component/Images/feu.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="feu_MouseLeftButtonDown" />
                     <Image Height="32" HorizontalAlignment="Left" Margin="230,116,0,0" Name="torche" Source="/NNNA;component/Images/torche.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="torche_MouseLeftButtonDown" />
                     <Image Height="32" HorizontalAlignment="Left" Margin="73,169,0,0" Name="fer" Source="/NNNA;component/Images/fer.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="irrigation_MouseLeftButtonDown" />
+                    <Grid.Background>
+                        <SolidColorBrush />
+                    </Grid.Background>
                 </Grid>
             </TabItem>
             <TabItem Header="ERE 2" Name="tabItem2">
-                <Grid Width="Auto"></Grid>
+                <Grid Width="Auto">
+                    <Grid.Background>
+                        <SolidColorBrush />
+                    </Grid.Background>
+                </Grid>
             </TabItem>
+            <TabControl.Background>
+                <SolidColorBrush />
+            </TabControl.Background>
         </TabControl>
         <Button Content="X" Height="20" HorizontalAlignment="Left" Margin="275,5,0,0" Name="button_Close" VerticalAlignment="Top" Width="20" DataContext="{Binding}" FontFamily="Jing Jing" FontWeight="Bold" FontStretch="Normal" FontSize="10" BorderBrush="Black" Click="button_Close_Click">
             <Button.Background>
@@ -44,5 +54,8 @@
                 </RadialGradientBrush>
             </Button.Background>
         </Button>
+        <Grid.Background>
+            <SolidColorBrush />
+        </Grid.Background>
     </Grid>
 </UserControl>

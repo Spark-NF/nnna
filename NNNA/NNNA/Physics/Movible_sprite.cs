@@ -82,9 +82,14 @@ namespace NNNA
 			set { m_speed = value; }
 		}
 
+        private List<Sprite> pathList;
+        private int pathIterator;
+
         protected Dictionary<string, int> m_cost = new Dictionary<string, int>();
         public Dictionary<string, int> Prix
         { get { return m_cost; } }
+
+        private bool m_click_interne = false;
 
 		private bool m_click = false;
 		public bool Click
@@ -108,12 +113,12 @@ namespace NNNA
 		public Movible_Sprite(int x, int y)
 			: base(x, y)
 		{ }
-		public void ClickMouvement(Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)
-		{
-			if (m_click == true || m_selected == true)
-			{
-				if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (m_selected == true || m_click == false))
-				{
+        public void ClickMouvement(Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)
+        {
+            if (m_click == true || m_selected == true)
+            {
+                if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (m_selected == true || m_click == false))
+                {
                     m_click = true;
                     m_clickPosition = curseur.Position + camera.Position - new Vector2(Texture.Width / 8, (Texture.Height * 4) / 5);
                     m_angle = Math.Atan2(m_clickPosition.Y - m_position.Y, m_clickPosition.X - m_position.X);
@@ -131,14 +136,64 @@ namespace NNNA
                     else
                     {
                         m_cparcouru = m_position - m_positionIni;
-						Vector2 translation = m_direction * gameTime.ElapsedGameTime.Milliseconds * m_speed;
+                        Vector2 translation = m_direction * gameTime.ElapsedGameTime.Milliseconds * m_speed;
                         Update(translation);
-						if (Collides(sprites, buildings, matrice))
-						{ m_position -= translation; }
+                        if (Collides(sprites, buildings, matrice))
+                        { m_position -= translation; }
                     }
                 }
             }
         }
+        public void ClickMouvement(Map map, Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)
+        {
+            if (m_click == true || m_selected == true)
+            {
+                if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (m_selected == true || m_click == false))
+                {
+                    m_click = true;
+                    m_click_interne = false;
+                    m_positionIni = m_position;
+                    Vector2 start = Game1.xy2matrice(m_positionIni);
+                    Vector2 destination = Game1.xy2matrice(curseur.Position + camera.Position - new Vector2(Texture.Width / 8, (Texture.Height * 4) / 5));
+                    pathList = PathFinding.FindPath(map.Carte, map.Carte[(int)start.Y, (int)start.X], map.Carte[(int)destination.Y, (int)destination.X]);
+                    if (pathList != null)
+                    {
+                        pathIterator = pathList.Count - 1;
+                    }
+                    else m_click = false;
+                }
+                if (m_click)
+                {
+                    if (pathIterator >= 0)
+                    {
+                        if (!m_click_interne)
+                        {
+                            m_angle = Math.Atan2(pathList[pathIterator].Position_Center.Y - m_position.Y, pathList[pathIterator].Position_Center.X - m_position.X);
+                            m_direction = new Vector2((float)Math.Cos(m_angle), (float)Math.Sin(m_angle));
+                            m_cparcourir = new Vector2(pathList[pathIterator].Position_Center.X - m_position.X, pathList[pathIterator].Position_Center.Y - m_position.Y);
+                            m_cparcouru = Vector2.Zero;
+                            m_click_interne = true;
+                        }
+                        if (Math.Abs(m_cparcouru.X) >= Math.Abs(m_cparcourir.X) && Math.Abs(m_cparcouru.Y) >= Math.Abs(m_cparcourir.Y))
+                        {
+                            pathIterator--;
+                            m_positionIni = m_position;
+                            m_click_interne = false;
+                        }
+                        else
+                        {
+                            m_cparcouru = m_position - m_positionIni;
+                            Vector2 translation = m_direction * gameTime.ElapsedGameTime.Milliseconds * m_speed;
+                            Update(translation);
+                            if (Collides(sprites, buildings, matrice))
+                            { m_position -= translation; }
+                        }
+                    }
+                    else m_click = false;
+                }
+            }
+        }
+
 		public void Create_Maison(Sprite curseur, List<Static_Sprite> Static_Sprite_List, ContentManager content, Joueur joueur, Camera2D camera, Random random)
 		{
 			if (joueur.Resource("Bois").Count >= 50)

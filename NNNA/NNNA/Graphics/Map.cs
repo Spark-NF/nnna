@@ -18,6 +18,13 @@ namespace NNNA
             get { return map_Height; }
             set { map_Height = value; }
         }
+        private Sprite[,] map;
+        public Sprite[,] Carte
+        {
+            get { return map; }
+            set { map = value; }
+        }
+
         public Map()
         {
         }
@@ -45,27 +52,27 @@ namespace NNNA
                 {
                     if ((map[l, c]).Name == 'h')
                     {
-                        (map[l, c]) = new Sprite(content, "Map/herbe3", x, y);
+                        (map[l, c]) = new Sprite(content, "Map/herbe3", x, y, true, l, c);
                         texture_Color[i] = new Color(46, 180, 4);
                     }
                     else if ((map[l, c]).Name == 'i')
                     {
-                        (map[l, c]) = new Sprite(content, "Map/herbe2", x, y);
+                        (map[l, c]) = new Sprite(content, "Map/herbe2", x, y, true, l, c);
                         texture_Color[i] = new Color(136, 188, 10);
                     }
                     else if ((map[l, c]).Name == 'p')
                     {
-                        (map[l, c]) = new Sprite(content, "Map/pave", x, y);
+                        (map[l, c]) = new Sprite(content, "Map/pave", x, y, true, l, c);
                         texture_Color[i] = Color.Gray;
                     }
                     else if ((map[l, c]).Name == 's')
                     {
-                        (map[l, c]) = new Sprite(content, "Map/sable2", x, y);
+                        (map[l, c]) = new Sprite(content, "Map/sable2", x, y, true, l, c);
                         texture_Color[i] = new Color(196, 196, 150);
                     }
                     else if ((map[l, c]).Name == 'e')
                     {
-						(map[l, c]) = new Sprite(content, "Map/eau2", x, y, false);
+						(map[l, c]) = new Sprite(content, "Map/eau2", x, y, false, l, c);
 						texture_Color[i] = new Color(23, 115, 154);
                     }
                     else if ((map[l, c]).Name == 't')
@@ -73,44 +80,44 @@ namespace NNNA
                         if ((c + 1) < map.GetLength(0) && (c - 1) >= 0 && (l + 1) < map.GetLength(1) && (l - 1) >= 0)
                         {
                             if ((map[l, c + 1]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c - 1]).Name != 's' && (map[l - 1, c]).Name != 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(-90)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_(-90)", x, y, true, l, c);
                             else if ((map[l, c - 1]).Name == 's' && (map[l - 1, c]).Name == 's' && (map[l, c + 1]).Name != 's' && (map[l + 1, c]).Name != 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(90)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_(90)", x, y, true, l, c);
                             else if ((map[l, c - 1]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name != 's' && (map[l - 1, c]).Name != 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(180)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_(180)", x, y, true, l, c);
                             else if ((map[l, c + 1]).Name == 's' && (map[l - 1, c]).Name == 's' && (map[l, c - 1]).Name != 's' && (map[l + 1, c]).Name != 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(0)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_(0)", x, y, true, l, c);
                             else if ((map[l - 1, c]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_U(45)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_U(45)", x, y, true, l, c);
                             else if ((map[l - 1, c]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_U(-45)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_U(-45)", x, y, true, l, c);
                             else if ((map[l - 1, c]).Name == 's' && (map[l, c + 1]).Name == 's' && (map[l, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_U(135)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_U(135)", x, y, true, l, c);
                             else if ((map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name == 's' && (map[l, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_U(-135)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_U(-135)", x, y, true, l, c);
                             //else if (((map[l, c + 1]).Name != 't' && (map[l, c + 1]).Name != 'e') && ((map[l, c - 1]).Name != 't' && (map[l, c - 1]).Name != 'e') && ((map[l + 1, c]).Name != 't' && (map[l + 1, c]).Name != 'e') && ((map[l - 1, c]).Name != 't' && (map[l - 1, c]).Name != 'e'))
-                            //(map[l, c]) = new Sprite(content, "Map/flaque", x, y);
+                            //(map[l, c]) = new Sprite(content, "Map/flaque", x, y, true, l, c);
                             else if ((map[l + 1, c]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(-135)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_(-135)", x, y, true, l, c);
                             else if ((map[l - 1, c]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(45)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_(45)", x, y, true, l, c);
                             else if ((map[l, c + 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(-45)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_(-45)", x, y, true, l, c);
                             else if ((map[l, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(135)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_(135)", x, y, true, l, c);
                             else if ((map[l - 1, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_coin(90)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_coin(90)", x, y, true, l, c);
                             else if ((map[l + 1, c + 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_coin(-90)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_coin(-90)", x, y, true, l, c);
                             else if ((map[l - 1, c + 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_coin(0)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_coin(0)", x, y, true, l, c);
                             else if ((map[l + 1, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_coin(180)", x, y);
+                                (map[l, c]) = new Sprite(content, "Map/sable_coin(180)", x, y, true, l, c);
                             else
-                                (map[l, c]) = new Sprite(content, "Map/eau3", x, y, false);
+                                (map[l, c]) = new Sprite(content, "Map/eau3", x, y, false, l, c);
                         }
                         else
-                            (map[l, c]) = new Sprite(content, "Map/eau3", x, y, false);
+                            (map[l, c]) = new Sprite(content, "Map/eau3", x, y, false, l, c);
 
                         texture_Color[i] = new Color(18, 147, 166);
                     }
@@ -146,6 +153,7 @@ namespace NNNA
             minimap.Texture = new Texture2D(device, map.GetLength(1) + 4, map.GetLength(0) + 4, false, SurfaceFormat.Color);
             minimap.Texture.SetData(texture_Color);
             minimap.Base_texture = minimap.Texture;
+            this.map = map;
         }
     }
 }

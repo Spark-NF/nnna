@@ -125,6 +125,9 @@
     <Compile Include="Lib\Console.cs" />
     <Compile Include="Lib\ConsoleMessage.cs" />
     <Compile Include="Lib\Joueur.cs" />
+    <Compile Include="Lib\Node.cs" />
+    <Compile Include="Lib\NodeList.cs" />
+    <Compile Include="Lib\PathFinding.cs" />
     <Compile Include="Lib\Point.cs" />
     <Compile Include="Lib\Resource.cs" />
     <Compile Include="Lib\ResourceMine.cs" />

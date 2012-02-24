@@ -35,9 +35,14 @@ namespace NNNA
 		}
 
         public Vector2 Position_Center
-        {
-            get { return m_position + new Vector2(m_texture.Width/2, m_texture.Height/2); }
-        }
+        { get { return m_position + new Vector2(m_texture.Width/2, m_texture.Height/2); } }
+
+        private Vector2 position_matrice;
+        /// <summary>
+        /// Retourne la position dans la matrice. /!\ Si = (-1, -1), alors la position n'apas été assignée /!\
+        /// </summary>
+        public Vector2 Position_matrice
+        { get { return position_matrice; } }
 
 		protected Texture2D m_texture, m_go, m_dots;
 		public Texture2D Texture
@@ -57,9 +62,10 @@ namespace NNNA
 		public Sprite(Vector2 position)
 		{ m_position = position; }
 		public Sprite(int x, int y) : this(new Vector2(x, y)) { }
-		public Sprite(ContentManager content, string assetName, int x, int y, bool crossable = true)
+		public Sprite(ContentManager content, string assetName, int x, int y, bool crossable = true, int i = -1, int j = -1)
 		{
 			m_position = new Vector2(x, y);
+            position_matrice = new Vector2(i, j);
 			m_texture = content.Load<Texture2D>(assetName);
 			m_crossable = crossable;
 		}

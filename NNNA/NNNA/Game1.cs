@@ -326,6 +326,8 @@ namespace NNNA
 			elementHost.Location = new System.Drawing.Point((int) m_screen.X/2 - 150, (int) m_screen.Y/2 - 150);
 			elementHost.Size = new Size(300, 300);
 			elementHost.Child = techno;
+            elementHost.BackColor = System.Drawing.Color.Transparent;
+            elementHost.BackColorTransparent = true;
 
 			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, m_smart_hud, graphics);
 			minimap = new Minimap((hud.Position.Width * 7) / 8 - +hud.Position.Width / 150, hud.Position.Y + hud.Position.Height / 15, (hud.Position.Height * 9) / 10, (hud.Position.Height * 9) / 10);
@@ -1269,7 +1271,7 @@ namespace NNNA
 			// List des actions
 			for (int i = 0; i < m_currentActions.Count; i++)
 			{ spriteBatch.Draw(m_actions[m_currentActions[i]], new Vector2(hud.Position.X + 20 + 40 * (i % 6), hud.Position.Y + 20 + 40 * (i / 6)), Color.White); }
-		}
+        }
 		private void DrawGameMenu(GameTime gameTime)
 		{
 			foreach (EffectPass pass in gaussianBlur.CurrentTechnique.Passes)
@@ -1597,7 +1599,7 @@ namespace NNNA
 		/// </summary>
 		/// <param name="mouse">Coordonnées matrice.</param>
 		/// <returns>Coordonnées losange.</returns>
-		public Vector2 matrice2xy(Vector2 mouse)
+		public static Vector2 matrice2xy(Vector2 mouse)
 		{ return new Vector2(32 * (mouse.X - mouse.Y), 16 * (mouse.X + mouse.Y)); }
 
 		#endregion
