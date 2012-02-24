@@ -647,13 +647,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\Copy of feu.png">
-      <Name>Copy of feu</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Actions\Copy of or.png">
       <Name>Copy of or</Name>
       <Importer>TextureImporter</Importer>

@@ -46,6 +46,14 @@ namespace NNNA
 			get { return m_colorMovable; }
 			set { m_colorMovable = value; }
 		}
+
+        private int m_ere;
+        internal int Ere
+        {
+            get { return m_ere; }
+            set { m_ere = value; }
+        }
+
 		private string m_name;
 		public string Name
 		{
@@ -68,6 +76,7 @@ namespace NNNA
 
 		public Joueur(Color couleur, string nom, ContentManager content)
 		{
+            m_ere = 1;
 			m_color = couleur;
 			m_colorMovable = new Color(couleur.R + ((255 - couleur.R) / 2), couleur.G + ((255 - couleur.G) / 2), couleur.B + ((255 - couleur.B) / 2));
 			m_name = nom;

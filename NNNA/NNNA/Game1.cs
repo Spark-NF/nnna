@@ -944,9 +944,13 @@ namespace NNNA
                                 break;
 
                             case "create_guerrier":
-                                if (joueur.Has(new Guerrier().Prix))
+                                Guerrier u1 = new Guerrier((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 3), (int)selectedBuilding.Position.Y + 70, Content, joueur);
+                                if (joueur.Has(u1.Prix))
                                 {
-                                    m_currentAction = "create_guerrier";
+                                    selectedBuilding.Iterator++;
+                                    joueur.Units.Add(u1);
+                                    MessagesManager.Messages.Add(new Msg("Nouveau Chasseur !", Color.White, 5000));
+                                    m_currentAction = "";
                                 }
                                 else
                                 { MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
