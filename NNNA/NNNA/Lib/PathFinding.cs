@@ -9,12 +9,15 @@ namespace NNNA
     {
         public static List<Sprite> FindPath(Sprite[,] map, Sprite start, Sprite destination)
         {
+            if (!destination.Crossable)
+                return null;
+
             List<Sprite> path = new List<Sprite>();
             NodeList<Node> openList = new NodeList<Node>();
             NodeList<Node> closedList = new NodeList<Node>();
             List<Node> possibleNodes;
             int possibleNodesCount;
-
+            
             Node startNode = new Node(start, null, destination);
 
             openList.Add(startNode);

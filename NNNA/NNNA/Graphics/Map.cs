@@ -28,6 +28,7 @@ namespace NNNA
         public Map()
         {
         }
+
         public void LoadContent(Sprite[,] map, ContentManager content, Minimap minimap, GraphicsDevice device)
         {
             Color[] texture_Color = new Color[(map.GetLength(1) + 4) * (map.GetLength(0) + 4)];

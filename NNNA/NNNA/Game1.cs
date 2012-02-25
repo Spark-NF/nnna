@@ -501,9 +501,9 @@ namespace NNNA
 
 					//Joueur
 					joueur = new Joueur(colors[0], names[0], Content);
-					joueur.Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 200, Content, joueur, false));
-					joueur.Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 200, Content, joueur, false));
-					joueur.Units.Add(new Peon((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 200, Content, joueur, false));
+					joueur.Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, joueur, false));
+					joueur.Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, joueur, false));
+					joueur.Units.Add(new Peon((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, joueur, false));
 					joueur.Buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, joueur));
 					camera.Position = matrice2xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - m_screen / 2;
 
@@ -512,9 +512,9 @@ namespace NNNA
 					for (int i = 0; i < m_foes; i++)
 					{
 						m_enemies[i] = new Joueur(colors[i + 1], names[i + 1], Content);
-						m_enemies[i].Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 200, Content, joueur, false));
-						m_enemies[i].Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 200, Content, joueur, false));
-						m_enemies[i].Units.Add(new Peon((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 200, Content, joueur, false));
+						m_enemies[i].Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, joueur, false));
+						m_enemies[i].Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, joueur, false));
+						m_enemies[i].Units.Add(new Peon((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, joueur, false));
 						m_enemies[i].Buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, joueur));
 					}
 
@@ -705,7 +705,7 @@ namespace NNNA
 						break;
 
 					case "create_peon" :
-						u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 200, Content, joueur, false);
+						u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 155, Content, joueur, false);
 						if (joueur.Population + 1 > joueur.Population_Max && joueur.Pay(u.Prix))
 						{
 							selectedBuilding.Iterator++;
@@ -927,7 +927,7 @@ namespace NNNA
                                 break;
 
                             case "create_peon":
-                                Peon u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 200, Content, joueur);
+                                Peon u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 155, Content, joueur);
                                 if (joueur.Pay(u.Prix))
                                 {
                                     selectedBuilding.Iterator++;

@@ -144,7 +144,7 @@ namespace NNNA
                 }
             }
         }
-        public void ClickMouvement(Map map, Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)
+        public void ClickMouvement(Sprite[,] map, Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)
         {
             if (m_click == true || m_selected == true)
             {
@@ -153,9 +153,10 @@ namespace NNNA
                     m_click = true;
                     m_click_interne = false;
                     m_positionIni = m_position;
+                    m_clickPosition = curseur.Position + camera.Position - new Vector2(Texture.Width / 8, (Texture.Height * 4) / 5);
                     Vector2 start = Game1.xy2matrice(m_positionIni);
                     Vector2 destination = Game1.xy2matrice(curseur.Position + camera.Position - new Vector2(Texture.Width / 8, (Texture.Height * 4) / 5));
-                    pathList = PathFinding.FindPath(map.Carte, map.Carte[(int)start.Y, (int)start.X], map.Carte[(int)destination.Y, (int)destination.X]);
+                    pathList = PathFinding.FindPath(map, map[(int)start.Y, (int)start.X], map[(int)destination.Y, (int)destination.X]);
                     if (pathList != null)
                     {
                         pathIterator = pathList.Count - 1;
@@ -164,13 +165,38 @@ namespace NNNA
                 }
                 if (m_click)
                 {
-                    if (pathIterator >= 0)
+                    if (pathIterator > 0)
                     {
                         if (!m_click_interne)
                         {
                             m_angle = Math.Atan2(pathList[pathIterator].Position_Center.Y - m_position.Y, pathList[pathIterator].Position_Center.X - m_position.X);
                             m_direction = new Vector2((float)Math.Cos(m_angle), (float)Math.Sin(m_angle));
                             m_cparcourir = new Vector2(pathList[pathIterator].Position_Center.X - m_position.X, pathList[pathIterator].Position_Center.Y - m_position.Y);
+                            m_cparcouru = Vector2.Zero;
+                            m_click_interne = true;
+                        }
+                        if (Math.Abs(m_cparcouru.X) >= Math.Abs(m_cparcourir.X) && Math.Abs(m_cparcouru.Y) >= Math.Abs(m_cparcourir.Y))
+                        {
+                            pathIterator--;
+                            m_positionIni = m_position;
+                            m_click_interne = false;
+                        }
+                        else
+                        {
+                            m_cparcouru = m_position - m_positionIni;
+                            Vector2 translation = m_direction * gameTime.ElapsedGameTime.Milliseconds * m_speed;
+                            Update(translation);
+                            if (Collides(sprites, buildings, matrice))
+                            { m_position -= translation; }
+                        }
+                    }
+                    else if (pathIterator == 0)
+                    {
+                        if (!m_click_interne)
+                        {
+                            m_angle = Math.Atan2(m_clickPosition.Y - m_position.Y, m_clickPosition.X - m_position.X);
+                            m_direction = new Vector2((float)Math.Cos(m_angle), (float)Math.Sin(m_angle));
+                            m_cparcourir = new Vector2(m_clickPosition.X - m_position.X, m_clickPosition.Y - m_position.Y);
                             m_cparcouru = Vector2.Zero;
                             m_click_interne = true;
                         }
