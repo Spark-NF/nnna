@@ -18,12 +18,12 @@ namespace NNNA
 			type = "guerrier";
 			if (remove_resources)
 			{ joueur.Resource("Nourriture").Remove(70); }
-			m_attaque = 8;
-			m_life = 50;
-            m_line_sight = 384;
-			m_portee = 1;
-			m_regeneration = 1;
-			m_speed = 0.05f;
+			Attaque = 8;
+			Life = 50;
+            Line_sight = 384;
+			Portee = 1;
+			Regeneration = 1;
+			Speed = 0.05f;
 			SetTextures(content, "guerrier", 45);
             m_cost.Add("Nourriture", 70);
             //creationguerrier =content.Load<SoundEffect>("sounds/creationguerrier");

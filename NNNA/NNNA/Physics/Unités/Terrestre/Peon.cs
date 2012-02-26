@@ -21,12 +21,12 @@ namespace NNNA
 			type = "peon";
 			if (remove_resources)
 			{ joueur.Resource("Nourriture").Remove(50); }
-			m_attaque = 2;
-			m_life = 30;
-            m_line_sight = 512;
-			m_portee = 1;
-			m_regeneration = 1;
-			m_speed = 0.06f;
+			Attaque = 2;
+			Life = 30;
+            Line_sight = 512;
+			Portee = 1;
+			Regeneration = 1;
+			Speed = 0.06f;
 			SetTextures(content, "peon", 90);
             m_cost.Add("Nourriture", 50);
             //creationPeon = content.Load<SoundEffect>("sounds/creationpeon");

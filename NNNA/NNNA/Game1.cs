@@ -1246,7 +1246,7 @@ namespace NNNA
                     uni.Draw(spriteBatch, camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255));
                 }
             }
-            joueur.Draw(spriteBatch, camera, index);
+			joueur.Draw(spriteBatch, camera, index);
             foreach (ResourceMine sprite in resource)
             {
                 float mul = 0.0f;
@@ -1290,6 +1290,17 @@ namespace NNNA
 
 			// La nuit
 			//spriteBatch.Draw(m_night, Vector2.Zero, new Color(0, 0, 220, (int)(64 - 64 * Math.Cos((m_gameTime.TotalGameTime.TotalMilliseconds - m_elapsed) / 50000))));
+
+			// Barres de vie
+			foreach (Unit unit in joueur.Units)
+			{
+				int greenLength = (unit.Life * 40) / unit.MaxLife;
+				int redLength = ((unit.MaxLife - unit.Life) * 40) / unit.MaxLife;
+				if (greenLength > 0)
+				{ spriteBatch.Draw(CreateRectangle(greenLength, 5, Color.Green), unit.Position - new Vector2((40 - unit.Texture.Width / 4) / 2, 14) - camera.Position, Color.White); }
+				if (redLength > 0)
+				{ spriteBatch.Draw(CreateRectangle(redLength, 5, Color.Red), unit.Position - new Vector2((40 - unit.Texture.Width / 4) / 2 - greenLength, 14) - camera.Position, Color.White); }
+			}
 
 			// Affichage du HUD
 			MessagesManager.Draw(spriteBatch, m_font_small);
