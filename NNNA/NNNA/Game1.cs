@@ -26,7 +26,8 @@ namespace NNNA
 		private Rectangle m_selection = Rectangle.Empty;
 		private GameTime m_gameTime;
 
-		private Texture2D m_background_light, m_background_dark, m_fog, m_menu, m_flash, m_submenu, m_pointer, m_night, m_console, m_background;
+		private Texture2D m_background_light, m_background_dark, m_fog, m_menu, m_flash, m_submenu, m_pointer, m_night, m_console;
+		private Texture2D[] m_backgrounds = new Texture2D[2];
 		private Dictionary<string, Texture2D> m_actions = new Dictionary<string, Texture2D>();
 		private SpriteFont m_font_menu, m_font_menu_title, m_font_small, m_font_credits;
 		private Screen m_currentScreen = Screen.Title;
@@ -44,7 +45,7 @@ namespace NNNA
         internal static bool flash_bool = false;
         
 		private MapType m_quick_type = MapType.Island;
-		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0;
+		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0, m_theme = 0;
 		List<string> m_currentActions = new List<string>();
 		Random random = new Random(42);
 		Dictionary<Color, Texture2D> colors = new Dictionary<Color, Texture2D>();
@@ -133,6 +134,7 @@ namespace NNNA
 			m_sound_music = Properties.Settings.Default.SoundMusic;
 			m_sound_sfx = Properties.Settings.Default.SoundSFX;
 			m_sound = Properties.Settings.Default.Sound;
+			m_theme = Properties.Settings.Default.Theme;
 		}
 
 		/// <summary>
@@ -152,6 +154,7 @@ namespace NNNA
 			Properties.Settings.Default.SoundMusic = (int)m_sound_music;
 			Properties.Settings.Default.SoundSFX = (int)m_sound_sfx;
 			Properties.Settings.Default.Sound = m_sound;
+			Properties.Settings.Default.Theme = m_theme;
 			Properties.Settings.Default.Save();
 		}
 
@@ -327,7 +330,8 @@ namespace NNNA
 			string ratio = ((int)((10 * m_screen.X) / m_screen.Y)).ToString();
 			if (ratio != "13" && ratio != "16" && ratio != "18")
 			{ ratio = "13"; }
-			m_background = Content.Load<Texture2D>("background/" + ratio);
+			m_backgrounds[0] = Content.Load<Texture2D>("background/" + ratio + "_0");
+			m_backgrounds[1] = Content.Load<Texture2D>("background/" + ratio + "_1");
 			m_background_light = CreateRectangle((int)(654 * (m_screen.X / 1680)), (int)m_screen.Y, Color.White);
 			m_background_dark = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0, 0, 0, 170));
 			m_night = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0,0,10));
@@ -602,7 +606,7 @@ namespace NNNA
 		}
 		private void UpdateOptionsGraphics(GameTime gameTime)
 		{
-			Screen s = testMenu(Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.Options);
+			Screen s = testMenu(Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.Options);
 			if (s != Screen.OptionsGraphics)
 			{ m_currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
@@ -628,6 +632,7 @@ namespace NNNA
 
 					case 2: m_textures = Variate(0, 2, m_textures); break;
 					case 3: m_shadows = !m_shadows; break;
+					case 4: m_theme = Variate(0, 1, m_theme); break;
 				}
 			}
 		}
@@ -1107,7 +1112,7 @@ namespace NNNA
 		{
 			// Le fond d'écran
 			Rectangle screenRectangle = new Rectangle(0, 0, (int)m_screen.X, (int)m_screen.Y);
-			spriteBatch.Draw(m_background, screenRectangle, Color.White);
+			spriteBatch.Draw(m_backgrounds[m_theme], screenRectangle, Color.White);
 
 			if (drawText)
 			{
@@ -1161,7 +1166,7 @@ namespace NNNA
 		{
 			DrawCommon(gameTime);
 			string[] textures = { "min", "moyennes", "max" };
-			makeMenu(m_screen.X + "x" + m_screen.Y, (m_fullScreen ? "Plein écran" : "Fenêtré"), _("Textures")+" " + _(textures[m_textures]), (m_shadows ? "Ombres" : "Pas d'ombres"), "Retour");
+			makeMenu(m_screen.X + "x" + m_screen.Y, (m_fullScreen ? "Plein écran" : "Fenêtré"), _("Textures")+" " + _(textures[m_textures]), (m_shadows ? "Ombres" : "Pas d'ombres"), _("Thème")+" "+(m_theme + 1), "Retour");
 		}
 		private void DrawOptionsSound(GameTime gameTime)
 		{
@@ -1447,10 +1452,10 @@ namespace NNNA
 		{
 			m_currentMenus = args;
 			for (int i = 0; i < args.Length; i++)
-			{ DrawString(spriteBatch, m_font_menu, _(args[i]), new Vector2(0, i * (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? 2 : 0))) + m_screen.Y / 5 + (180 * (m_screen.Y / 1050))), (menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", m_screen.Y / 1050); }
+			{ DrawString(spriteBatch, m_font_menu, _(args[i]), new Vector2(0, i * (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? (m_currentMenus.Length - 5) * 2 : 0))) + m_screen.Y / 5 + (180 * (m_screen.Y / 1050))), (menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", m_screen.Y / 1050); }
 		}
 		protected int menu()
-		{ return Souris.Get().Y > m_screen.Y / 5 + (180 * (m_screen.Y / 1050)) && ((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) % (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? 2 : 0)))) < (m_font_menu.MeasureString("Menu").Y * m_screen.Y) / 1050 ? (int)((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) / (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? 2 : 0)))) : -1; }
+		{ return Souris.Get().Y > m_screen.Y / 5 + (180 * (m_screen.Y / 1050)) && ((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) % (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? (m_currentMenus.Length - 5) * 2 : 0)))) < (m_font_menu.MeasureString("Menu").Y * m_screen.Y) / 1050 ? (int)((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) / (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? (m_currentMenus.Length - 5) * 2 : 0)))) : -1; }
 
 		protected void makePauseMenu(params string[] args)
 		{
@@ -1614,6 +1619,7 @@ namespace NNNA
 			translations["en"]["Textures"] = "Textures";
 			translations["en"]["Ombres"] = "Shadows";
 			translations["en"]["Pas d'ombres"] = "No shadows";
+			translations["en"]["Thème"] = "Theme";
 			translations["en"]["moy"] = "med";
 			translations["en"]["Général :"] = "General:";
 			translations["en"]["Musique :"] = "Music:";
