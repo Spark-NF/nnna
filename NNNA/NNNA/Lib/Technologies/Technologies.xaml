@@ -20,23 +20,100 @@
         <TabControl Height="272" HorizontalAlignment="Left" Margin="5,31,0,0" Name="tabControl1" VerticalAlignment="Top" Width="290">
             <TabItem Header="ERE 1" Name="tabItem1" Foreground="#C8000000">
                 <Grid>
-                    <Image Height="32" HorizontalAlignment="Left" Margin="92,2,0,0" Name="chasse" Stretch="Fill" VerticalAlignment="Top" Width="32" Source="/NNNA;component/Images/chasse.png" MouseLeftButtonDown="chasse_MouseLeftButtonDown" />
-                    <Image Height="32" HorizontalAlignment="Left" Margin="14,40,0,0" Name="silex" Source="/NNNA;component/Images/silex.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="silex_MouseLeftButtonDown" />
-                    <Image Height="32" HorizontalAlignment="Left" Margin="153,40,0,0" Name="agri" Source="/NNNA;component/Images/chasse.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="agri_MouseLeftButtonDown" />
-                    <Image Height="32" HorizontalAlignment="Left" Margin="14,0,0,125" Name="pierre_polie" Source="/NNNA;component/Images/pierre_polie.png" Stretch="Fill" VerticalAlignment="Bottom" Width="32" Visibility="Hidden" MouseLeftButtonDown="pierre_polie_MouseLeftButtonDown" />
-                    <Image Height="32" HorizontalAlignment="Left" Margin="153,154,0,0" Name="irrigation" Source="/NNNA;component/Images/chasse.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="irrigation_MouseLeftButtonDown" />
-                    <Image Height="32" HorizontalAlignment="Left" Margin="14,116,0,0" Name="bronze" Source="/NNNA;component/Images/chasse.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="bronze_MouseLeftButtonDown" />
-                    <Image Height="32" HorizontalAlignment="Left" Margin="73,116,0,0" Name="outils" Source="/NNNA;component/Images/outils.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="outils_MouseLeftButtonDown" />
-                    <Image Height="32" HorizontalAlignment="Left" Margin="230,40,0,0" Name="feu" Source="/NNNA;component/Images/feu.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="feu_MouseLeftButtonDown" />
-                    <Image Height="32" HorizontalAlignment="Left" Margin="230,116,0,0" Name="torche" Source="/NNNA;component/Images/torche.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="torche_MouseLeftButtonDown" />
-                    <Image Height="32" HorizontalAlignment="Left" Margin="73,154,0,0" Name="fer" Source="/NNNA;component/Images/fer.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="fer_MouseLeftButtonDown" />
-                    <Image Height="32" HorizontalAlignment="Left" Margin="113,192,0,0" Name="evolution" Source="/NNNA;component/Images/evolution.png" Stretch="Fill" VerticalAlignment="Top" Visibility="Hidden" Width="32" MouseLeftButtonDown="evolution_MouseLeftButtonDown" />
+                    <Image Height="32" HorizontalAlignment="Left" Margin="92,2,0,0" Name="chasse" Stretch="Fill" VerticalAlignment="Top" Width="32" Source="/NNNA;component/Images/chasse.png" MouseLeftButtonDown="chasse_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
+                    <Image Height="32" HorizontalAlignment="Left" Margin="14,40,0,0" Name="silex" Source="/NNNA;component/Images/silex.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="silex_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
+                    <Image Height="32" HorizontalAlignment="Left" Margin="153,40,0,0" Name="agri" Source="/NNNA;component/Images/chasse.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="agri_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
+                    <Image Height="32" HorizontalAlignment="Left" Margin="14,0,0,125" Name="pierre_polie" Source="/NNNA;component/Images/pierre_polie.png" Stretch="Fill" VerticalAlignment="Bottom" Width="32" Visibility="Hidden" MouseLeftButtonDown="pierre_polie_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
+                    <Image Height="32" HorizontalAlignment="Left" Margin="153,154,0,0" Name="irrigation" Source="/NNNA;component/Images/chasse.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="irrigation_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
+                    <Image Height="32" HorizontalAlignment="Left" Margin="14,116,0,0" Name="bronze" Source="/NNNA;component/Images/chasse.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="bronze_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
+                    <Image Height="32" HorizontalAlignment="Left" Margin="73,116,0,0" Name="outils" Source="/NNNA;component/Images/outils.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="outils_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
+                    <Image Height="32" HorizontalAlignment="Left" Margin="230,40,0,0" Name="feu" Source="/NNNA;component/Images/feu.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="feu_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
+                    <Image Height="32" HorizontalAlignment="Left" Margin="230,116,0,0" Name="torche" Source="/NNNA;component/Images/torche.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="torche_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
+                    <Image Height="32" HorizontalAlignment="Left" Margin="73,154,0,0" Name="fer" Source="/NNNA;component/Images/fer.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="fer_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
+                    <Image Height="32" HorizontalAlignment="Left" Margin="113,192,0,0" Name="evolution" Source="/NNNA;component/Images/evolution.png" Stretch="Fill" VerticalAlignment="Top" Visibility="Hidden" Width="32" MouseLeftButtonDown="evolution_MouseLeftButtonDown">
+                        <Image.OpacityMask>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </RadialGradientBrush>
+                        </Image.OpacityMask>
+                    </Image>
                     <Grid.Background>
                         <SolidColorBrush />
                     </Grid.Background>
                 </Grid>
             </TabItem>
-            <TabItem Header="ERE 2" Name="tabItem2">
+            <TabItem Header="ERE 2" Name="tabItem2" Visibility="Hidden">
                 <Grid Width="Auto">
                     <Grid.Background>
                         <SolidColorBrush />

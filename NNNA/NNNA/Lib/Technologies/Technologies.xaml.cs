@@ -17,6 +17,7 @@ namespace NNNA
     /// </summary>
     public partial class Technologies : UserControl
     {
+        UIElement u;
         ContentManager Content;
         internal Joueur joueur;
         private ElementHost elementHost;
@@ -30,6 +31,8 @@ namespace NNNA
             this.elementHost = elementHost;
             elementHost.Visible = false;
             evolution.Visibility = Visibility.Visible;
+            u = new UIElement();
+            u.OpacityMask = chasse.OpacityMask;
             #region Prix
             Prix_chasse.Add("Bois", 150);
             Prix_feu.Add("Bois", 200);
@@ -90,6 +93,18 @@ namespace NNNA
             outils.Visibility = Visibility.Hidden;
             fer.Visibility = Visibility.Hidden;
             irrigation.Visibility = Visibility.Hidden;
+            tabItem2.Visibility = Visibility.Hidden;
+            chasse.OpacityMask = u.OpacityMask;
+            silex.OpacityMask = u.OpacityMask;
+            agri.OpacityMask = u.OpacityMask;
+            feu.OpacityMask = u.OpacityMask;
+            torche.OpacityMask = u.OpacityMask;
+            pierre_polie.OpacityMask = u.OpacityMask;
+            bronze.OpacityMask = u.OpacityMask;
+            outils.OpacityMask = u.OpacityMask;
+            fer.OpacityMask = u.OpacityMask;
+            irrigation.OpacityMask = u.OpacityMask;
+            evolution.OpacityMask = u.OpacityMask;
         }
 
         private void button_Close_Click(object sender, RoutedEventArgs e)
@@ -105,6 +120,8 @@ namespace NNNA
                 agri.Visibility = Visibility.Visible;
                 feu.Visibility = Visibility.Visible;
                 m_chasse = true;
+                chasse.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Chasse » aquise !", Color.White, 5000));
             }
             else if (!joueur.Pay(Prix_chasse))
             {
@@ -119,6 +136,8 @@ namespace NNNA
                 torche.Visibility = Visibility.Visible;
                 this.joueur.Additional_line_sight += 128;
                 m_feu = true;
+                feu.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Feu » aquise !", Color.White, 5000));
             }
             else if (!joueur.Pay(Prix_feu))
             {
@@ -132,6 +151,8 @@ namespace NNNA
             {
                 pierre_polie.Visibility = Visibility.Visible;
                 m_silex = true;
+                silex.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Silex » aquise !", Color.White, 5000));
             }
             else if (!joueur.Pay(Prix_silex))
             {
@@ -145,6 +166,8 @@ namespace NNNA
             {
                 bronze.Visibility = Visibility.Visible;
                 m_pierre_polie = true;
+                pierre_polie.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Pierre polie » aquise !", Color.White, 5000));
             }
             else if (!joueur.Pay(Prix_pierre_polie))
             {
@@ -158,6 +181,8 @@ namespace NNNA
             {
                 outils.Visibility = Visibility.Visible;
                 m_bronze = true;
+                bronze.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Bronze » aquise !", Color.White, 5000));
             }
             else if (!joueur.Pay(Prix_bronze))
             {
@@ -171,6 +196,8 @@ namespace NNNA
             {
                 fer.Visibility = Visibility.Visible;
                 m_outils = true;
+                outils.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Outils » aquise !", Color.White, 5000));
             }
             if (m_agri)
                 irrigation.Visibility = Visibility.Visible;
@@ -185,7 +212,11 @@ namespace NNNA
             if (m_outils)
                 irrigation.Visibility = Visibility.Visible;
             if (!m_agri && joueur.Pay(Prix_agri))
+            {
                 m_agri = true;
+                agri.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Agriculture » aquise !", Color.White, 5000));
+            }
             else if (!joueur.Pay(Prix_agri))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
@@ -197,7 +228,9 @@ namespace NNNA
             if (!m_torche && joueur.Pay(Prix_torche))
             {
                 m_torche = true;
+                torche.OpacityMask = null;
                 this.joueur.Additional_line_sight += 128;
+                MessagesManager.Messages.Add(new Msg("Technologie « Torche » aquise !", Color.White, 5000));
             }
             else if (!joueur.Pay(Prix_torche))
             {
@@ -208,7 +241,11 @@ namespace NNNA
         private void irrigation_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!m_irrigation && joueur.Pay(Prix_irrigation))
+            {
+                irrigation.OpacityMask = null;
                 m_irrigation = true;
+                MessagesManager.Messages.Add(new Msg("Technologie « Irrigation » aquise !", Color.White, 5000));
+            }
             else if (!joueur.Pay(Prix_irrigation))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
@@ -218,7 +255,11 @@ namespace NNNA
         private void fer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (m_outils && joueur.Pay(Prix_fer))
+            {
+                fer.OpacityMask = null;
                 m_fer = true;
+                MessagesManager.Messages.Add(new Msg("Technologie « Fer » aquise !", Color.White, 5000));
+            }
             else if (!joueur.Pay(Prix_fer))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
@@ -230,7 +271,9 @@ namespace NNNA
             if (m_fer && m_irrigation && !m_ere1)
             {
                 m_ere1 = true;
+                evolution.OpacityMask = null;
                 joueur.Ere = 2;
+                tabItem2.Visibility = Visibility.Visible;
                 MessagesManager.Messages.Add(new Msg("ERE MEDIEVALE ATTEINTE !!", Color.Red, 5000));
                 foreach (Building build in joueur.Buildings)
                 {
