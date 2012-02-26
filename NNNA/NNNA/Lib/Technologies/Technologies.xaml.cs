@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Forms.Integration;
+using System.Windows.Input;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
@@ -33,24 +29,36 @@ namespace NNNA
             evolution.Visibility = Visibility.Visible;
             u = new UIElement();
             u.OpacityMask = chasse.OpacityMask;
+
             #region Prix
+
             Prix_chasse.Add("Bois", 150);
+
             Prix_feu.Add("Bois", 200);
+
             Prix_silex.Add("Bois", 200);
             Prix_silex.Add("Nourriture", 50);
+
             Prix_pierre_polie.Add("Bois", 250);
             Prix_pierre_polie.Add("Nourriture", 100);
+
             Prix_bronze.Add("Bois", 400);
             Prix_bronze.Add("Nourriture", 200);
             Prix_bronze.Add("Pierre", 50);
+
             Prix_outils.Add("Bois", 200);
             Prix_outils.Add("Nourriture", 100);
             Prix_outils.Add("Pierre", 50);
+
             Prix_agri.Add("Bois", 100);
             Prix_agri.Add("Nourriture", 50);
+
             Prix_torche.Add("Bois", 300);
+
             Prix_irrigation.Add("Nourriture", 500);
+
             Prix_fer.Add("Pierre", 500);
+
             #endregion Prix
         }
 

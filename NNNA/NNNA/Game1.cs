@@ -39,7 +39,7 @@ namespace NNNA
 		private Vector2 m_screen = new Vector2(1680, 1050);
 		private bool m_fullScreen = true, m_shadows = true, m_smart_hud = false, m_health_hover = false, m_showConsole = false;
 		private float m_sound_general = 10, m_sound_sfx = 10, m_sound_music = 10, a = 1.0f;
-		private int m_textures = 2, m_sound = 2;
+		private int m_textures = 2, m_sound = 2, m_weather = 1;
         internal static bool flash_bool = false;
         
 		private MapType m_quick_type = MapType.Island;
@@ -60,6 +60,8 @@ namespace NNNA
 		float[,] m_map;
 		List<ResourceMine> resource = new List<ResourceMine>();
 		List<Unit> selectedList = new List<Unit>();
+		List<Building> buildings = new List<Building>();
+		List<Movible_Sprite> units = new List<Movible_Sprite>();
 
 		// Audio objects		
 		float musicVolume = 2.0f;
@@ -447,7 +449,7 @@ namespace NNNA
 		{ m_currentScreen = testMenu(Screen.PlayQuick, Screen.Title); }
 		private void UpdatePlayQuick(GameTime gameTime)
 		{
-			Screen s = testMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.Game, Screen.Play);
+			Screen s = testMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.Game, Screen.Play);
 			if (s != Screen.PlayQuick)
 			{
 				if (s == Screen.Game)
@@ -508,6 +510,8 @@ namespace NNNA
 					joueur.Units.Add(new Peon((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, joueur, false));
 					joueur.Buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, joueur));
 					camera.Position = matrice2xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - m_screen / 2;
+					units.AddRange(joueur.Units);
+					buildings.AddRange(joueur.Buildings);
 
 					// Ennemis
 					m_enemies = new Joueur[m_foes];
@@ -518,6 +522,8 @@ namespace NNNA
 						m_enemies[i].Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, joueur, false));
 						m_enemies[i].Units.Add(new Peon((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, joueur, false));
 						m_enemies[i].Buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, joueur));
+						units.AddRange(m_enemies[i].Units);
+						buildings.AddRange(m_enemies[i].Buildings);
 					}
 
 					//Le reste
@@ -561,6 +567,7 @@ namespace NNNA
 					case 1: m_quick_size = Variate(0, 2, m_quick_size); break;
 					case 2: m_quick_resources = Variate(0, 2, m_quick_resources); break;
 					case 3: m_foes = Variate(1, 3, m_foes); break;
+					case 4: m_weather = Variate(0, 2, m_weather); break;
 				}
 			}
 		}
@@ -666,10 +673,20 @@ namespace NNNA
 			camera.Update(curseur, graphics);
 
 			// Intelligence artificielle
+			Random rand = new Random();
 			foreach (Joueur foe in m_enemies)
 			{
-				// FAIRE TOUTES LES MISES à JOUR DE L'IA ICI
+				foreach (Unit unit in foe.Units)
+				{
+					if (++unit.Updates == 120)
+					{
+						unit.Move(unit.Position + new Vector2(rand.Next(-40, 41), rand.Next(-40, 41)), units, buildings, matrice);
+						unit.Updates = rand.Next(0, 40);
+					}
+					unit.ClickMouvement(curseur, gameTime, camera, hud, units, buildings, matrice);
+				}
 			}
+
 			// Rectangle de séléction
 			if (Souris.Get().Clicked(MouseButton.Left))
 			{
@@ -677,7 +694,7 @@ namespace NNNA
 				Unit u;
 				switch (m_currentAction)
 				{
-						// Ere 1 
+					// Ere 1 
 					case "build_hutte":
 						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur, (byte)random.Next(0,2));
 						if (joueur.Pay(b.Prix))
@@ -974,7 +991,7 @@ namespace NNNA
                 }
             }
 			foreach (Unit sprite in joueur.Units)
-			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, joueur.Units, joueur.Buildings, matrice); }
+			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, units, buildings, matrice); }
 
             joueur.Units.Sort(Sprite.CompareByY);
             joueur.Buildings.Sort(Sprite.CompareByY);
@@ -1112,7 +1129,8 @@ namespace NNNA
 			string[] types = { "Île" };
 			string[] tailles = { "Petite", "Moyenne", "Grande" };
 			string[] ressources = { "rares", "normales", "abondantes" };
-			makeMenu(types[(int)m_quick_type], tailles[m_quick_size], _("Ressources")+" " + _(ressources[m_quick_resources]), _("Ennemis :")+" " + m_foes.ToString(), "Jouer", "Retour");
+			string[] weathers = { "Ensoleillé", "Nuageux", "Pluvieux" };
+			makeMenu(types[(int)m_quick_type], tailles[m_quick_size], _("Ressources") + " " + _(ressources[m_quick_resources]), _("Ennemis :") + " " + m_foes.ToString(), weathers[m_weather], "Jouer", "Retour");
 		}
 		private void DrawOptions(GameTime gameTime)
 		{
@@ -1446,8 +1464,8 @@ namespace NNNA
 		/// <returns>La prochaine résolution dans l'ordre croissant.</returns>
 		private Vector2 getNextResolution(bool previous = false)
 		{
-			Vector2[] l = { // Megaliste ! Yay ! // MDR
-				/*new Vector2(320, 200), Les petites résolutions servent à rien
+			Vector2[] l = {
+				/*new Vector2(320, 200), 
 				new Vector2(320, 240), 
 				new Vector2(640, 480), 
 				new Vector2(800, 480), */

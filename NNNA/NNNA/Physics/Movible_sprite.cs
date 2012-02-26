@@ -27,6 +27,7 @@ namespace NNNA
 		}
 
         private byte a = 0;
+		public int Updates = 0;
 
 		private int dec = 90;
 		protected bool create_maison;
@@ -113,26 +114,38 @@ namespace NNNA
 		public Movible_Sprite(int x, int y)
 			: base(x, y)
 		{ }
+
+		/// <summary>
+		/// Initialise le déplacement de l'objet.
+		/// </summary>
+		/// <param name="coordinates">Les coordonnées de destination.</param>
+		/// <param name="sprites">Les unités du monde.</param>
+		/// <param name="buildings">Les bâtiments du monde.</param>
+		/// <param name="matrice">La matrice de la carte.</param>
+		public void Move(Vector2 coordinates, List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)
+		{
+			if (coordinates != m_position)
+			{
+				m_click = true;
+				m_clickPosition = coordinates;
+				m_angle = Math.Atan2(m_clickPosition.Y - m_position.Y, m_clickPosition.X - m_position.X);
+				m_direction = new Vector2((float)Math.Cos(m_angle), (float)Math.Sin(m_angle));
+				m_cparcourir = new Vector2(m_clickPosition.X - m_position.X, m_clickPosition.Y - m_position.Y);
+				m_cparcouru = Vector2.Zero;
+				m_positionIni = m_position;
+			}
+		}
+
         public void ClickMouvement(Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)
         {
             if (m_click == true || m_selected == true)
             {
                 if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (m_selected == true || m_click == false))
-                {
-                    m_click = true;
-                    m_clickPosition = curseur.Position + camera.Position - new Vector2(Texture.Width / 8, (Texture.Height * 4) / 5);
-                    m_angle = Math.Atan2(m_clickPosition.Y - m_position.Y, m_clickPosition.X - m_position.X);
-                    m_direction = new Vector2((float)Math.Cos(m_angle), (float)Math.Sin(m_angle));
-                    m_cparcourir = new Vector2(m_clickPosition.X - m_position.X, m_clickPosition.Y - m_position.Y);
-                    m_cparcouru = Vector2.Zero;
-                    m_positionIni = m_position;
-                }
+				{ Move(curseur.Position + camera.Position - new Vector2(Texture.Width / 8, (Texture.Height * 4) / 5), sprites, buildings, matrice); }
                 if (m_click == true)
                 {
                     if (Math.Abs(m_cparcouru.X) >= Math.Abs(m_cparcourir.X) && Math.Abs(m_cparcouru.Y) >= Math.Abs(m_cparcourir.Y))
-                    {
-                        m_click = false;
-                    }
+                    { m_click = false; }
                     else
                     {
                         m_cparcouru = m_position - m_positionIni;
