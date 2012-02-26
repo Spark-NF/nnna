@@ -84,9 +84,15 @@ namespace NNNA
 		{ spriteBatch.Draw(m_texture, m_position, Color.White); }
 		public void DrawMap(SpriteBatch spriteBatch, Camera2D camera, float mul)
 		{
-            if (mul > 0.25f) decouvert = true;
-            mul = (decouvert && mul < 0.25f) ? 0.25f : mul;
-            spriteBatch.Draw(m_texture, m_position - camera.Position, new Color(mul, mul, mul));
+			if (mul > -3)
+			{
+				if (mul > 0.25f || mul < 0) decouvert = true;
+				mul = mul > 0 ? mul : -mul - 1;
+				mul = (decouvert && Math.Abs(mul) < 0.25f) ? 0.25f : Math.Abs(mul);
+				spriteBatch.Draw(m_texture, m_position - camera.Position, new Color(mul, mul, mul));
+			}
+			else
+			{ spriteBatch.Draw(m_texture, m_position - camera.Position, Color.White); }
         }
 
 		public bool Collides(List<Movible_Sprite> sprites, List<Building> buildings, Sprite[,] matrice)

@@ -1184,18 +1184,25 @@ namespace NNNA
 					&& sprite.Position.Y - camera.Position.Y < m_screen.Y - ((hud.Position.Height * 4) / 5))
 				{
 					float mul = 0.0f;
-					foreach (Unit unit in joueur.Units)
+					if (m_weather > 0)
 					{
-						float m = (unit.Position_Center - sprite.Position_Center).Length();
-						m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
-						mul = (m > 0 && m > mul) ? m : mul;
+						foreach (Unit unit in joueur.Units)
+						{
+							float m = (unit.Position_Center - sprite.Position_Center).Length();
+							m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
+							mul = (m > 0 && m > mul) ? m : mul;
+						}
+						foreach (Building building in joueur.Buildings)
+						{
+							float m = (building.Position_Center - sprite.Position_Center).Length();
+							m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+							mul = (m > 0 && m > mul) ? m : mul;
+						}
+						if (m_weather == 1)
+						{ mul = -mul - 1; }
 					}
-					foreach (Building building in joueur.Buildings)
-					{
-						float m = (building.Position_Center - sprite.Position_Center).Length();
-						m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
+					else
+					{ mul = -3.0f; }
 					sprite.DrawMap(spriteBatch, camera, mul);
 					compteur++;
 				}
