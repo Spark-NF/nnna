@@ -46,7 +46,7 @@ namespace NNNA
 			m_cameraPosition.Y +=
 				(Keyboard.GetState().IsKeyDown(Keys.Down) ? m_speed : 0) +
 				(Keyboard.GetState().IsKeyDown(Keys.S) ? m_speed : 0) +
-				(curseur.Position.Y <= (graphics.PreferredBackBufferHeight) && curseur.Position.Y > (graphics.PreferredBackBufferHeight - 10) ? m_speed : 0) +
+				(curseur.Position.Y <= (graphics.PreferredBackBufferHeight) && curseur.Position.Y > (graphics.PreferredBackBufferHeight - 10) && !Game1.m_smart_hud ? m_speed : 0) +
 				(Keyboard.GetState().IsKeyDown(Keys.Up) ? -m_speed : 0) +
 				(Keyboard.GetState().IsKeyDown(Keys.Z) ? -m_speed : 0) + 
 				(curseur.Position.Y >= 0 && curseur.Position.Y < 10 ? -m_speed : 0);

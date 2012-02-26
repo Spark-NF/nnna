@@ -20,15 +20,15 @@ namespace NNNA
 			get { return m_is_smart; }
 			set { m_is_smart = value; }
 		}
-		private int m_smart_pos, height;
+		public int m_smart_pos, height;
 
         public HUD(int x, int y, Minimap minimap, bool isSmart, GraphicsDeviceManager graphics)
         {
 			m_position = new Rectangle(x, y, graphics.PreferredBackBufferWidth - x, graphics.PreferredBackBufferHeight - y);
 			ressource = new Vector2((int)(m_position.X + (m_position.Width * 288) / 1366), (int)(m_position.Y + (m_position.Height * 45) / 164));
 			interval_ressource = (int)((m_position.Width * 44) / graphics.PreferredBackBufferWidth);
-			m_is_smart = false;
-			m_smart_pos = y;
+			m_is_smart = isSmart;
+			m_smart_pos = 0;
 			height = graphics.PreferredBackBufferHeight;
         }
 
@@ -38,12 +38,16 @@ namespace NNNA
         public void Draw(SpriteBatch spriteBatch, Minimap minimap, Joueur joueur, SpriteFont font)
         {
 			// HUD
+			if (Souris.Get().Position.Y > height - 10)
+			{ m_smart_pos = 0; }
 			int posY = m_is_smart ? m_position.Y + m_smart_pos : m_position.Y;
 			if (posY < height)
 			{
 				spriteBatch.Draw(texture_Background, new Rectangle(m_position.X, posY, m_position.Width, m_position.Height), Color.White);
-				minimap.Draw(spriteBatch);
+				minimap.Draw(m_smart_pos, spriteBatch);
 			}
+			if (Souris.Get().Position.Y < m_position.Y && m_position.Y + m_smart_pos < height)
+			{ m_smart_pos += 5; }
 
 			// Ressources
 			int i = 0;

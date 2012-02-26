@@ -56,9 +56,9 @@ namespace NNNA
         //    }
         //    texture.SetData(texture_Color);
         //}
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(int decay, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, reduced_Map, null, Color.White, (float)(Math.PI / 4), Vector2.Zero, SpriteEffects.None, 0f);
+			spriteBatch.Draw(texture, new Rectangle(reduced_Map.X, reduced_Map.Y + decay, reduced_Map.Width, reduced_Map.Height), null, Color.White, (float)(Math.PI / 4), Vector2.Zero, SpriteEffects.None, 0f);
         }
     }
 }

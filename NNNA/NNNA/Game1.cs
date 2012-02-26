@@ -37,7 +37,8 @@ namespace NNNA
 		private string[] m_currentMenus;
 
 		private Vector2 m_screen = new Vector2(1680, 1050);
-		private bool m_fullScreen = true, m_shadows = true, m_smart_hud = false, m_health_hover = false, m_showConsole = false;
+		private bool m_fullScreen = true, m_shadows = true, m_health_hover = false, m_showConsole = false;
+		public static bool m_smart_hud = false;
 		private float m_sound_general = 10, m_sound_sfx = 10, m_sound_music = 10, a = 1.0f;
 		private int m_textures = 2, m_sound = 2, m_weather = 1;
         internal static bool flash_bool = false;
@@ -1189,10 +1190,11 @@ namespace NNNA
 			int compteur = 0;
 			foreach (Sprite sprite in matrice)
 			{
-				if (sprite.Position.X - camera.Position.X > -64
+				if ((sprite.Position.X - camera.Position.X > -64
 					&& sprite.Position.Y - camera.Position.Y > -32
 					&& sprite.Position.X - camera.Position.X < m_screen.X
 					&& sprite.Position.Y - camera.Position.Y < m_screen.Y - ((hud.Position.Height * 4) / 5))
+					|| m_smart_hud)
 				{
 					float mul = 0.0f;
 					if (m_weather > 0)
@@ -1307,14 +1309,14 @@ namespace NNNA
 			{
 				if (!m_health_hover || unit.Selected)
 				{
-					int greenLength = (unit.Life * 30 - 300) / unit.MaxLife;
-					int redLength = 30 - greenLength;
-					Vector2 pos = unit.Position - new Vector2((30 - unit.Texture.Width / 4) / 2, 14) - camera.Position;
-					spriteBatch.Draw(colors[Color.Black], new Rectangle((int)pos.X - 1, (int)pos.Y - 1, 32, 6), Color.White);
+					int greenLength = (unit.Life * 28) / unit.MaxLife;
+					int redLength = 28 - greenLength;
+					Vector2 pos = unit.Position - new Vector2((28 - unit.Texture.Width / 4) / 2, 6) - camera.Position;
+					spriteBatch.Draw(colors[Color.Black], new Rectangle((int)pos.X - 1, (int)pos.Y - 1, 30, 5), Color.White);
 					if (greenLength > 0)
-					{ spriteBatch.Draw(colors[Color.Green], new Rectangle((int)pos.X, (int)pos.Y, greenLength, 4), Color.White); }
+					{ spriteBatch.Draw(colors[Color.Green], new Rectangle((int)pos.X, (int)pos.Y, greenLength, 3), Color.White); }
 					if (redLength > 0)
-					{ spriteBatch.Draw(colors[Color.Red], new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 4), Color.White); }
+					{ spriteBatch.Draw(colors[Color.Red], new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 3), Color.White); }
 				}
 			}
 
@@ -1324,12 +1326,13 @@ namespace NNNA
 
 			// Unités séléctionnées
 			for (int i = 0; i < selectedList.Count; i++)
-			{ selectedList[i].DrawIcon(spriteBatch, new Vector2(356 * (m_screen.X / 1680) + (i % 10) * 36, m_screen.Y - hud.Position.Height + 54 * (m_screen.Y / 1050) + (i / 10) * 36)); }
+			{ selectedList[i].DrawIcon(spriteBatch, new Vector2(356 * (m_screen.X / 1680) + (i % 10) * 36, m_screen.Y - hud.Position.Height + 54 * (m_screen.Y / 1050) + (i / 10) * 36 + hud.m_smart_pos)); }
 
 			// List des actions
 			for (int i = 0; i < m_currentActions.Count; i++)
-			{ spriteBatch.Draw(m_actions[m_currentActions[i]], new Vector2(hud.Position.X + 20 + 40 * (i % 6), hud.Position.Y + 20 + 40 * (i / 6)), Color.White); }
+			{ spriteBatch.Draw(m_actions[m_currentActions[i]], new Vector2(hud.Position.X + 20 + 40 * (i % 6), hud.Position.Y + 20 + 40 * (i / 6) + hud.m_smart_pos), Color.White); }
 
+			// Flash de changement d'ère
             if (flash_bool && a > 0f)
             {
                 spriteBatch.Draw(m_flash ,new Rectangle(0, 0, (int) m_screen.X, (int) m_screen.Y), new Color(0f, 0f, 0f, a));
