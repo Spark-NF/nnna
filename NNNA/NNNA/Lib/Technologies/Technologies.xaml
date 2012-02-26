@@ -36,7 +36,7 @@
                             </RadialGradientBrush>
                         </Image.OpacityMask>
                     </Image>
-                    <Image Height="32" HorizontalAlignment="Left" Margin="153,40,0,0" Name="agri" Source="/NNNA;component/Images/chasse.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="agri_MouseLeftButtonDown">
+                    <Image Height="32" HorizontalAlignment="Left" Margin="153,40,0,0" Name="agri" Source="/NNNA;component/Images/agriculture.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="agri_MouseLeftButtonDown">
                         <Image.OpacityMask>
                             <RadialGradientBrush>
                                 <GradientStop Color="#00000000" Offset="0" />
@@ -52,7 +52,7 @@
                             </RadialGradientBrush>
                         </Image.OpacityMask>
                     </Image>
-                    <Image Height="32" HorizontalAlignment="Left" Margin="153,154,0,0" Name="irrigation" Source="/NNNA;component/Images/chasse.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="irrigation_MouseLeftButtonDown">
+                    <Image Height="32" HorizontalAlignment="Left" Margin="153,154,0,0" Name="irrigation" Source="/NNNA;component/Images/irrigation.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="irrigation_MouseLeftButtonDown">
                         <Image.OpacityMask>
                             <RadialGradientBrush>
                                 <GradientStop Color="#00000000" Offset="0" />
@@ -60,7 +60,7 @@
                             </RadialGradientBrush>
                         </Image.OpacityMask>
                     </Image>
-                    <Image Height="32" HorizontalAlignment="Left" Margin="14,116,0,0" Name="bronze" Source="/NNNA;component/Images/chasse.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="bronze_MouseLeftButtonDown">
+                    <Image Height="32" HorizontalAlignment="Left" Margin="14,116,0,0" Name="bronze" Source="/NNNA;component/Images/bronze.png" Stretch="Fill" VerticalAlignment="Top" Width="32" Visibility="Hidden" MouseLeftButtonDown="bronze_MouseLeftButtonDown">
                         <Image.OpacityMask>
                             <RadialGradientBrush>
                                 <GradientStop Color="#00000000" Offset="0" />

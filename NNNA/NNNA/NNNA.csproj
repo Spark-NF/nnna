@@ -172,6 +172,9 @@
   <ItemGroup>
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
+    <Resource Include="Images\agriculture.png" />
+    <Resource Include="Images\bronze.png" />
+    <Resource Include="Images\irrigation.png" />
     <Resource Include="Images\evolution.png" />
     <Resource Include="Images\fer.png" />
     <Resource Include="Images\feu.png" />
