@@ -16,7 +16,7 @@ namespace NNNA
             : base(x, y)
         {
             type = "caserne";
-            LoadContent(content, "Batiments/hutte_des_chasseurs");
+            LoadContent(content, "Batiments/caserne_" + joueur.Ere.ToString());
 			vie = 100;
 			Line_sight = 2 * 64;
 			m_cost.Add("Bois", 75);

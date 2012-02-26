@@ -17,7 +17,7 @@ namespace NNNA
 			: base(x, y)
 		{
             type = "forum";
-			LoadContent(content, "Batiments/grande_hutte");
+			LoadContent(content, "Batiments/forum_" + joueur.Ere.ToString());
 			vie = 500;
 			m_cost.Add("Bois", 1000);
 			m_cost.Add("Nourriture", 500);

@@ -176,7 +176,7 @@ namespace NNNA
 			
 			//menu technologie
 			elementHost= new ElementHost();
-			techno = new Technologies(joueur, ref elementHost);
+			techno = new Technologies(joueur, ref elementHost, Content);
 
 			base.Initialize();
 
@@ -899,9 +899,9 @@ namespace NNNA
                                 if (joueur.Has(new Hutte().Prix))
                                 {
                                     if (random.Next(0, 2) == 0)
-                                        m_pointer = Content.Load<Texture2D>("Batiments/hutte1");
+                                        m_pointer = Content.Load<Texture2D>("Batiments/maison1_" + joueur.Ere.ToString());
                                     else
-                                        m_pointer = Content.Load<Texture2D>("Batiments/hutte2");
+                                        m_pointer = Content.Load<Texture2D>("Batiments/maison2_" + joueur.Ere.ToString());
                                     m_currentAction = "build_hutte";
                                 }
                                 else
@@ -911,7 +911,7 @@ namespace NNNA
                             case "build_hutteDesChasseurs":
                                 if (joueur.Has(new Hutte_des_chasseurs().Prix))
                                 {
-                                    m_pointer = Content.Load<Texture2D>("Batiments/hutte_des_chasseurs");
+                                    m_pointer = Content.Load<Texture2D>("Batiments/caserne_" + joueur.Ere.ToString());
                                     m_currentAction = "build_hutteDesChasseurs";
                                 }
                                 else
@@ -1045,9 +1045,9 @@ namespace NNNA
 			// Code Konami
 			if (m_konami >= 10)
 			{
-				joueur.Resource("Bois").Add(500);
-				joueur.Resource("Pierre").Add(500);
-				joueur.Resource("Nourriture").Add(500);
+				joueur.Resource("Bois").Add(5000);
+				joueur.Resource("Pierre").Add(5000);
+				joueur.Resource("Nourriture").Add(5000);
 				m_konami = 0;
 				/*if (m_konamiStatus < 300)
 				{

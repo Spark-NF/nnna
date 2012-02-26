@@ -15,9 +15,9 @@ namespace NNNA
 			: base(x, y)
 		{
             if (a == 0)
-			    LoadContent(content, "Batiments/hutte1");
+			    LoadContent(content, "Batiments/maison1_" + joueur.Ere.ToString());
             else
-                LoadContent(content, "Batiments/hutte2");
+                LoadContent(content, "Batiments/maison2_" + joueur.Ere.ToString());
 			vie = 100;
 			m_cost.Add("Bois", 50);
 			Line_sight = 2 * 64;

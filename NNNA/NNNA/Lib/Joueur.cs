@@ -27,7 +27,6 @@ namespace NNNA
             set { additional_line_sight = value; }
         }
 
-
         private Random rand = new Random();
 		private uint m_population_max;
 		public uint Population_Max

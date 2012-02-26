@@ -73,6 +73,7 @@ namespace NNNA
 		public void LoadContent(ContentManager content, string assetName)
 		{
 			m_texture = content.Load<Texture2D>(assetName);
+            m_texture.Name = assetName;
 			m_go = content.Load<Texture2D>("go");
 		}
 

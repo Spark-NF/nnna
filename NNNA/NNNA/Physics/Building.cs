@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
@@ -24,5 +25,10 @@ namespace NNNA
 		public Building(int x, int y)
             : base(x, y)
         { iterator = 0; }
+
+        public void Update_ere(ContentManager content, Joueur joueur)
+        {
+            LoadContent(content, m_texture.Name.Substring(0, m_texture.Name.Length - 1) + joueur.Ere.ToString());
+        }
 	}
 }

@@ -1,4 +1,5 @@
-﻿namespace NNNA
+﻿using Microsoft.Xna.Framework.Content;
+namespace NNNA
 {
 	class Unit : Movible_Sprite
 	{

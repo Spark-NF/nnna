@@ -7,6 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Forms.Integration;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
@@ -15,16 +17,19 @@ namespace NNNA
     /// </summary>
     public partial class Technologies : UserControl
     {
+        ContentManager Content;
         internal Joueur joueur;
         private ElementHost elementHost;
         private bool m_chasse, m_feu, m_silex, m_fer, m_pierre_polie, m_ere1, m_ere2, m_bronze, m_outils, m_agri, m_torche, m_irrigation;
         private Dictionary<string, int> Prix_fer = new Dictionary<string, int>(), Prix_chasse = new Dictionary<string, int>(), Prix_feu = new Dictionary<string, int>(), Prix_silex = new Dictionary<string, int>(), Prix_pierre_polie = new Dictionary<string, int>(), Prix_bronze = new Dictionary<string, int>(), Prix_outils = new Dictionary<string, int>(), Prix_agri = new Dictionary<string, int>(), Prix_torche = new Dictionary<string, int>(), Prix_irrigation = new Dictionary<string, int>();
-        internal Technologies(Joueur joueur, ref ElementHost elementHost)
+        internal Technologies(Joueur joueur, ref ElementHost elementHost, ContentManager content)
         {
+            Content = content;
             InitializeComponent();
             this.joueur = joueur;
             this.elementHost = elementHost;
             elementHost.Visible = false;
+            evolution.Visibility = Visibility.Visible;
             #region Prix
             Prix_chasse.Add("Bois", 150);
             Prix_feu.Add("Bois", 200);
@@ -49,8 +54,8 @@ namespace NNNA
         internal void Pre_Update(Joueur joueur)
         {
             this.joueur.m_resources = joueur.m_resources;
-            this.joueur.Additional_line_sight = joueur.Additional_line_sight;
-            this.joueur.Ere = joueur.Ere;
+            this.joueur.Buildings = joueur.Buildings;
+            this.joueur.Units = joueur.Units;
         }
 
         internal void Post_Update(Joueur joueur)
@@ -58,6 +63,8 @@ namespace NNNA
             joueur.m_resources = this.joueur.m_resources;
             joueur.Additional_line_sight = this.joueur.Additional_line_sight;
             joueur.Ere = this.joueur.Ere;
+            joueur.Buildings = this.joueur.Buildings;
+            joueur.Units = this.joueur.Units;
         }
 
         public void Reset()
@@ -99,7 +106,7 @@ namespace NNNA
                 feu.Visibility = Visibility.Visible;
                 m_chasse = true;
             }
-            if (!joueur.Pay(Prix_chasse))
+            else if (!joueur.Pay(Prix_chasse))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -113,7 +120,7 @@ namespace NNNA
                 this.joueur.Additional_line_sight += 128;
                 m_feu = true;
             }
-            if (!joueur.Pay(Prix_feu))
+            else if (!joueur.Pay(Prix_feu))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -126,7 +133,7 @@ namespace NNNA
                 pierre_polie.Visibility = Visibility.Visible;
                 m_silex = true;
             }
-            if (!joueur.Pay(Prix_silex))
+            else if (!joueur.Pay(Prix_silex))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -139,7 +146,7 @@ namespace NNNA
                 bronze.Visibility = Visibility.Visible;
                 m_pierre_polie = true;
             }
-            if (!joueur.Pay(Prix_pierre_polie))
+            else if (!joueur.Pay(Prix_pierre_polie))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -152,7 +159,7 @@ namespace NNNA
                 outils.Visibility = Visibility.Visible;
                 m_bronze = true;
             }
-            if (!joueur.Pay(Prix_bronze))
+            else if (!joueur.Pay(Prix_bronze))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -167,7 +174,7 @@ namespace NNNA
             }
             if (m_agri)
                 irrigation.Visibility = Visibility.Visible;
-            if (!joueur.Pay(Prix_outils))
+            else if (!joueur.Pay(Prix_outils))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -179,7 +186,7 @@ namespace NNNA
                 irrigation.Visibility = Visibility.Visible;
             if (!m_agri && joueur.Pay(Prix_agri))
                 m_agri = true;
-            if (!joueur.Pay(Prix_agri))
+            else if (!joueur.Pay(Prix_agri))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -192,7 +199,7 @@ namespace NNNA
                 m_torche = true;
                 this.joueur.Additional_line_sight += 128;
             }
-            if (!joueur.Pay(Prix_torche))
+            else if (!joueur.Pay(Prix_torche))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -202,7 +209,7 @@ namespace NNNA
         {
             if (!m_irrigation && joueur.Pay(Prix_irrigation))
                 m_irrigation = true;
-            if (!joueur.Pay(Prix_irrigation))
+            else if (!joueur.Pay(Prix_irrigation))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -210,9 +217,9 @@ namespace NNNA
 
         private void fer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (!m_outils && joueur.Pay(Prix_fer))
+            if (m_outils && joueur.Pay(Prix_fer))
                 m_fer = true;
-            if (!joueur.Pay(Prix_fer))
+            else if (!joueur.Pay(Prix_fer))
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -225,13 +232,17 @@ namespace NNNA
                 m_ere1 = true;
                 joueur.Ere = 2;
                 MessagesManager.Messages.Add(new Msg("ERE MEDIEVALE ATTEINTE !!", Color.Red, 5000));
+                foreach (Building build in joueur.Buildings)
+                {
+                    build.Update_ere(Content, joueur);
+                }
             }
-            else if (!m_ere2)
-            {
-                m_ere2 = true;
-                joueur.Ere = 3;
-                MessagesManager.Messages.Add(new Msg("ERE IMPERIALE ATTEINTE !!", Color.Red, 5000));
-            }
+            //else if (!m_ere2)
+            //{
+            //    m_ere2 = true;
+            //    joueur.Ere = 3;
+            //    MessagesManager.Messages.Add(new Msg("ERE IMPERIALE ATTEINTE !!", Color.Red, 5000));
+            //}
         }
     }
 }
