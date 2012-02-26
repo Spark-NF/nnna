@@ -46,6 +46,7 @@ namespace NNNA
 		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0;
 		List<string> m_currentActions = new List<string>();
 		Random random = new Random(42);
+		Dictionary<Color, Texture2D> colors = new Dictionary<Color, Texture2D>();
         
         // Map
 		Sprite h, e, p, t, s, i, curseur;
@@ -267,7 +268,7 @@ namespace NNNA
 		{
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 
-			// Backgrounds
+			// Fonds
 			m_fog = Content.Load<Texture2D>("fog");
             m_flash = Content.Load<Texture2D>("flash");
 
@@ -282,6 +283,11 @@ namespace NNNA
 			m_font_menu_title = Content.Load<SpriteFont>("font_menu_title");
 			m_font_small = Content.Load<SpriteFont>("font_small");
 			m_font_credits = Content.Load<SpriteFont>("font_credits");
+
+			// Couleurs
+			colors.Add(Color.Red, CreateRectangle(1, 1, Color.Red));
+			colors.Add(Color.Green, CreateRectangle(1, 1, Color.Green));
+			colors.Add(Color.Black, CreateRectangle(1, 1, Color.Black));
 
 			#region Actions
 			#region Actions Unités
@@ -1294,12 +1300,17 @@ namespace NNNA
 			// Barres de vie
 			foreach (Unit unit in joueur.Units)
 			{
-				int greenLength = (unit.Life * 40) / unit.MaxLife;
-				int redLength = ((unit.MaxLife - unit.Life) * 40) / unit.MaxLife;
-				if (greenLength > 0)
-				{ spriteBatch.Draw(CreateRectangle(greenLength, 5, Color.Green), unit.Position - new Vector2((40 - unit.Texture.Width / 4) / 2, 14) - camera.Position, Color.White); }
-				if (redLength > 0)
-				{ spriteBatch.Draw(CreateRectangle(redLength, 5, Color.Red), unit.Position - new Vector2((40 - unit.Texture.Width / 4) / 2 - greenLength, 14) - camera.Position, Color.White); }
+				if (!m_health_hover || unit.Selected)
+				{
+					int greenLength = (unit.Life * 30 - 300) / unit.MaxLife;
+					int redLength = 30 - greenLength;
+					Vector2 pos = unit.Position - new Vector2((30 - unit.Texture.Width / 4) / 2, 14) - camera.Position;
+					spriteBatch.Draw(colors[Color.Black], new Rectangle((int)pos.X - 1, (int)pos.Y - 1, 32, 6), Color.White);
+					if (greenLength > 0)
+					{ spriteBatch.Draw(colors[Color.Green], new Rectangle((int)pos.X, (int)pos.Y, greenLength, 4), Color.White); }
+					if (redLength > 0)
+					{ spriteBatch.Draw(colors[Color.Red], new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 4), Color.White); }
+				}
 			}
 
 			// Affichage du HUD
