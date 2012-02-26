@@ -274,6 +274,7 @@ namespace NNNA
                 evolution.OpacityMask = null;
                 joueur.Ere = 2;
                 tabItem2.Visibility = Visibility.Visible;
+                Game1.flash_bool = true;
                 MessagesManager.Messages.Add(new Msg("ERE MEDIEVALE ATTEINTE !!", Color.Red, 5000));
                 foreach (Building build in joueur.Buildings)
                 {

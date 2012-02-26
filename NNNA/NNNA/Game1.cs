@@ -26,7 +26,7 @@ namespace NNNA
 		private Rectangle m_selection = Rectangle.Empty;
 		private GameTime m_gameTime;
 
-		private Texture2D m_background_light, m_background_dark, m_fog, m_menu, m_submenu, m_pointer, m_night, m_console, m_background;
+		private Texture2D m_background_light, m_background_dark, m_fog, m_menu, m_flash, m_submenu, m_pointer, m_night, m_console, m_background;
 		private Dictionary<string, Texture2D> m_actions = new Dictionary<string, Texture2D>();
 		private SpriteFont m_font_menu, m_font_menu_title, m_font_small, m_font_credits;
 		private Screen m_currentScreen = Screen.Title;
@@ -38,9 +38,10 @@ namespace NNNA
 
 		private Vector2 m_screen = new Vector2(1680, 1050);
 		private bool m_fullScreen = true, m_shadows = true, m_smart_hud = false, m_health_hover = false, m_showConsole = false;
-		private float m_sound_general = 10, m_sound_sfx = 10, m_sound_music = 10;
+		private float m_sound_general = 10, m_sound_sfx = 10, m_sound_music = 10, a = 1.0f;
 		private int m_textures = 2, m_sound = 2;
-
+        internal static bool flash_bool = false;
+        
 		private MapType m_quick_type = MapType.Island;
 		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0;
 		List<string> m_currentActions = new List<string>();
@@ -266,6 +267,7 @@ namespace NNNA
 
 			// Backgrounds
 			m_fog = Content.Load<Texture2D>("fog");
+            m_flash = Content.Load<Texture2D>("flash");
 
 			// Sprites
 			m_menu = Content.Load<Texture2D>("menu");
@@ -1275,6 +1277,17 @@ namespace NNNA
 			// List des actions
 			for (int i = 0; i < m_currentActions.Count; i++)
 			{ spriteBatch.Draw(m_actions[m_currentActions[i]], new Vector2(hud.Position.X + 20 + 40 * (i % 6), hud.Position.Y + 20 + 40 * (i / 6)), Color.White); }
+
+            if (flash_bool && a > 0f)
+            {
+                spriteBatch.Draw(m_flash ,new Rectangle(0, 0, (int) m_screen.X, (int) m_screen.Y), new Color(0f, 0f, 0f, a));
+                a -= 0.01f;
+            }
+            else
+            {
+                flash_bool = false;
+                a = 1.0f;
+            }
         }
 		private void DrawGameMenu(GameTime gameTime)
 		{
