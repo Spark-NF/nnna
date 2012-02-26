@@ -1115,7 +1115,12 @@ namespace NNNA
 
 				// Version
 				spriteBatch.DrawString(m_font_small, this.GetType().Assembly.GetName().Version.ToString(), new Vector2((m_screen.X - m_font_small.MeasureString(this.GetType().Assembly.GetName().Version.ToString()).X) / 2, m_screen.Y - 50), Color.GhostWhite);
-			}
+			   
+                // réseau
+                DrawString(spriteBatch, m_font_small, Réseau.Connected(), new Vector2(5, m_screen.Y -20),Color.GhostWhite,Color.Transparent,1);
+                DrawString(spriteBatch, m_font_small, "Votre adresse IP est: " + Réseau.GetIPaddresses(Environment.MachineName), new Vector2((m_screen.X - m_font_small.MeasureString("Votre adresse IP est: " + Réseau.GetIPaddresses(Environment.MachineName)).X)-35, m_screen.Y - 20), Color.GhostWhite, Color.Transparent, 1);
+            }
+
 		}
 		private void DrawPointer(GameTime gameTime)
 		{ spriteBatch.Draw(m_pointer, new Vector2(Souris.Get().X, Souris.Get().Y), Color.White); }
