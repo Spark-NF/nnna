@@ -710,7 +710,8 @@ namespace NNNA
 						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur, (byte)random.Next(0,2));
 						if (joueur.Pay(b.Prix))
 						{
-							joueur.Buildings.Add(b);
+                            joueur.Buildings.Add(b);
+                            buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
 							m_pointer = "pointer";
 							m_currentAction = "";
@@ -727,7 +728,8 @@ namespace NNNA
 						b = new Hutte_des_chasseurs((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
 						if (joueur.Pay(b.Prix))
 						{
-							joueur.Buildings.Add(b);
+                            joueur.Buildings.Add(b);
+                            buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
 							m_pointer = "pointer";
 							m_currentAction = "";
@@ -746,6 +748,7 @@ namespace NNNA
 						{
 							selectedBuilding.Iterator++;
 							joueur.Units.Add(u);
+                            units.Add(u);
 							MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
 							m_currentAction = "";
 						}
@@ -762,7 +765,8 @@ namespace NNNA
 						if (joueur.Population + 1 > joueur.Population_Max && joueur.Pay(u.Prix))
 						{
 							selectedBuilding.Iterator++;
-							joueur.Units.Add(u);
+                            joueur.Units.Add(u);
+                            units.Add(u);
 							MessagesManager.Messages.Add(new Msg("Nouveau Guerrier !", Color.White, 5000));
 							m_currentAction = "";
 						}
