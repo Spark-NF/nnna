@@ -658,7 +658,7 @@ namespace NNNA
 		{
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{ m_currentScreen = Screen.Title; }
-			m_credits++;
+            m_credits += (Keyboard.GetState().IsKeyDown(Keys.LeftControl) || Keyboard.GetState().IsKeyDown(Keys.RightControl) ? 10 : 1);
 		}
 		float compt = 0;
 		private void UpdateGame(GameTime gameTime)
@@ -1185,8 +1185,8 @@ namespace NNNA
 				spriteBatch.DrawString(m_font_small, this.GetType().Assembly.GetName().Version.ToString(), new Vector2((m_screen.X - m_font_small.MeasureString(this.GetType().Assembly.GetName().Version.ToString()).X) / 2, m_screen.Y - 50), Color.GhostWhite);
 			   
 				// réseau
-				DrawString(spriteBatch, m_font_small, Réseau.Connected(), new Vector2(5, m_screen.Y -20),Color.GhostWhite,Color.Transparent,1);
-				DrawString(spriteBatch, m_font_small, "Votre adresse IP est: " + Réseau.GetIPaddresses(Environment.MachineName), new Vector2((m_screen.X - m_font_small.MeasureString("Votre adresse IP est: " + Réseau.GetIPaddresses(Environment.MachineName)).X), m_screen.Y - 20), Color.GhostWhite, Color.Transparent, 1);
+				DrawString(spriteBatch, m_font_small, _(Réseau.Connected()), new Vector2(5, m_screen.Y -20),Color.GhostWhite,Color.Transparent,1);
+				DrawString(spriteBatch, m_font_small, _("Votre adresse IP est :")+" " + Réseau.GetIPaddresses(Environment.MachineName), new Vector2((m_screen.X - m_font_small.MeasureString("Votre adresse IP est: " + Réseau.GetIPaddresses(Environment.MachineName)).X), m_screen.Y - 20), Color.GhostWhite, Color.Transparent, 1);
 			}
 
 		}
@@ -1739,7 +1739,10 @@ namespace NNNA
 			translations["en"]["rares"] = "rare";
 			translations["en"]["normales"] = "normal";
 			translations["en"]["abondantes"] = "abundant";
-			translations["en"]["Ressources"] = "Resources";
+            translations["en"]["Ressources"] = "Resources";
+            translations["en"]["Pluvieux"] = "Rainy";
+            translations["en"]["Nuageux"] = "Couldy";
+            translations["en"]["Ensoleillé"] = "Sunny";
 			translations["en"]["Ennemis :"] = "Enemies:";
 			translations["en"]["Jouabilité"] = "Playability";
 			translations["en"]["Graphismes"] = "Graphics";
@@ -1762,7 +1765,10 @@ namespace NNNA
 			translations["en"]["Musique :"] = "Music:";
 			translations["en"]["Effets :"] = "Effects:";
 			translations["en"]["Qualité"] = "Quality";
-			translations["en"]["Merci d'avoir joué !"] = "Thanks for playing!";
+            translations["en"]["Merci d'avoir joué !"] = "Thanks for playing!";
+            translations["en"]["Votre adresse IP est :"] = "Your IP adress is:";
+            translations["en"]["Vous etes connecte"] = "Your are connected";
+            translations["en"]["Vous etes deconnecte"] = "Your are not connected";
 
 			if (lang == "")
 			{ lang = m_language; }
