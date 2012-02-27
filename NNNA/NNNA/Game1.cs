@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
 using Forms = System.Windows.Forms;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using System.IO;
 
 namespace NNNA
 {
@@ -380,8 +381,25 @@ namespace NNNA
 			Clavier.Get().Update(Keyboard.GetState());
 			Souris.Get().Update(Mouse.GetState());
 
+			// Console de debug
 			if (Clavier.Get().NewPress(Keys.OemQuotes))
 			{ m_showConsole = !m_showConsole; }
+
+			// Screenshots
+			if (Clavier.Get().NewPress(Keys.PrintScreen))
+			{
+				Draw(gameTime);
+
+				int[] backBuffer = new int[(int)m_screen.X * (int)m_screen.Y];
+				GraphicsDevice.GetBackBufferData(backBuffer);
+
+				Texture2D texture = new Texture2D(GraphicsDevice, (int)m_screen.X, (int)m_screen.Y, false, GraphicsDevice.PresentationParameters.BackBufferFormat);
+				texture.SetData(backBuffer);
+
+				Stream stream = File.OpenWrite("screenshot_" + Guid.NewGuid().ToString() + ".png");
+				texture.SaveAsPng(stream, (int)m_screen.X, (int)m_screen.Y);
+				stream.Close(); 
+			}
 
 			// Code Konami
 			if (m_konami >= 10)
@@ -1040,18 +1058,23 @@ namespace NNNA
 						if (unit.Rectangle(camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
 						{
 							float mul = 0.0f;
-							foreach (Unit uni in joueur.Units)
+							if (m_weather > 0)
 							{
-								float m = (uni.Position_Center - unit.Position).Length();
-								m = 1.0f - (m / (uni.Line_sight + joueur.Additional_line_sight));
-								mul = (m > 0 && m > mul) ? m : mul;
+								foreach (Unit uni in joueur.Units)
+								{
+									float m = (uni.Position_Center - unit.Position).Length();
+									m = 1.0f - (m / (uni.Line_sight + joueur.Additional_line_sight));
+									mul = (m > 0 && m > mul) ? m : mul;
+								}
+								foreach (Building building in joueur.Buildings)
+								{
+									float m = (building.Position_Center - unit.Position).Length();
+									m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+									mul = (m > 0 && m > mul) ? m : mul;
+								}
 							}
-							foreach (Building building in joueur.Buildings)
-							{
-								float m = (building.Position_Center - unit.Position).Length();
-								m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
-								mul = (m > 0 && m > mul) ? m : mul;
-							}
+							else
+							{ mul = 1.0f; }
 							if (mul > 0.25f)
 							{
 								m_pointer = "fight";
@@ -1186,7 +1209,7 @@ namespace NNNA
 			   
 				// réseau
 				DrawString(spriteBatch, m_font_small, _(Réseau.Connected()), new Vector2(5, m_screen.Y -20),Color.GhostWhite,Color.Transparent,1);
-				DrawString(spriteBatch, m_font_small, _("Votre adresse IP est :")+" " + Réseau.GetIPaddresses(Environment.MachineName), new Vector2((m_screen.X - m_font_small.MeasureString("Votre adresse IP est: " + Réseau.GetIPaddresses(Environment.MachineName)).X), m_screen.Y - 20), Color.GhostWhite, Color.Transparent, 1);
+				DrawString(spriteBatch, m_font_small, _("Votre adresse IP est :") + " " + Réseau.GetIPaddresses(Environment.MachineName), new Vector2((m_screen.X - m_font_small.MeasureString(_("Votre adresse IP est :") + " " + Réseau.GetIPaddresses(Environment.MachineName)).X), m_screen.Y - 20), Color.GhostWhite, Color.Transparent, 1);
 			}
 
 		}
