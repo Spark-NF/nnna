@@ -1276,12 +1276,10 @@ namespace NNNA
 							m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
-						if (m_weather == 1)
-						{ mul = -mul - 1; }
 					}
 					else
-					{ mul = -3.0f; }
-					sprite.DrawMap(spriteBatch, camera, mul);
+					{ mul = 1.0f; }
+					sprite.DrawMap(spriteBatch, camera, mul, m_weather);
 					compteur++;
 				}
 			}
@@ -1291,58 +1289,73 @@ namespace NNNA
 			{
 				foreach (Building build in foe.Buildings)
 				{
-					float mul = 0.0f;
-					foreach (Unit unit in joueur.Units)
-					{
-						float m = (unit.Position_Center - build.Position).Length();
-						m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					foreach (Building building in joueur.Buildings)
-					{
-						float m = (building.Position_Center - build.Position).Length();
-						m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					build.Draw(spriteBatch, camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255));
-				}
+                    if (m_weather == 0)
+                    { build.Draw(spriteBatch, camera, foe.ColorMovable); }
+                    else
+                    {
+                        float mul = 0.0f;
+                        foreach (Unit unit in joueur.Units)
+                        {
+                            float m = (unit.Position_Center - build.Position).Length();
+                            m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
+                            mul = (m > 0 && m > mul) ? m : mul;
+                        }
+                        foreach (Building building in joueur.Buildings)
+                        {
+                            float m = (building.Position_Center - build.Position).Length();
+                            m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+                            mul = (m > 0 && m > mul) ? m : mul;
+                        }
+                        if (mul > 0)
+                        { build.Draw(spriteBatch, camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
+                    }
+                }
 				foreach (Unit uni in foe.Units)
 				{
-					float mul = 0.0f;
-					foreach (Unit unit in joueur.Units)
-					{
-						float m = (unit.Position_Center - uni.Position).Length();
-						m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					foreach (Building building in joueur.Buildings)
-					{
-						float m = (building.Position_Center - uni.Position).Length();
-						m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					mul = (mul - 0.25f) * 1.33f;
-					if (mul > 0)
-					{ uni.Draw(spriteBatch, camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
-				}
+                    if (m_weather == 0)
+                    { uni.Draw(spriteBatch, camera, index, foe.ColorMovable); }
+                    else
+                    {
+                        float mul = 0.0f;
+                        foreach (Unit unit in joueur.Units)
+                        {
+                            float m = (unit.Position_Center - uni.Position).Length();
+                            m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
+                            mul = (m > 0 && m > mul) ? m : mul;
+                        }
+                        foreach (Building building in joueur.Buildings)
+                        {
+                            float m = (building.Position_Center - uni.Position).Length();
+                            m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+                            mul = (m > 0 && m > mul) ? m : mul;
+                        }
+                        if (mul > 0f)
+                        { uni.Draw(spriteBatch, camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
+                    }
+                }
 			}
 			joueur.Draw(spriteBatch, camera, index);
 			foreach (ResourceMine sprite in resource)
 			{
-				float mul = 0.0f;
-				foreach (Unit unit in joueur.Units)
-				{
-					float m = (unit.Position_Center - sprite.Position_Center).Length();
-					m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
-					mul = (m > 0 && m > mul) ? m : mul;
-				}
-				foreach (Building building in joueur.Buildings)
-				{
-					float m = (building.Position_Center - sprite.Position_Center).Length();
-					m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
-					mul = (m > 0 && m > mul) ? m : mul;
-				}
-				sprite.Draw(spriteBatch, 1, camera, mul);
+                if (m_weather == 0)
+                { sprite.Draw(spriteBatch, 1, camera, 1.0f, m_weather); }
+                else
+                {
+                    float mul = 0.0f;
+                    foreach (Unit unit in joueur.Units)
+                    {
+                        float m = (unit.Position_Center - sprite.Position_Center).Length();
+                        m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
+                        mul = (m > 0 && m > mul) ? m : mul;
+                    }
+                    foreach (Building building in joueur.Buildings)
+                    {
+                        float m = (building.Position_Center - sprite.Position_Center).Length();
+                        m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+                        mul = (m > 0 && m > mul) ? m : mul;
+                    }
+                    sprite.Draw(spriteBatch, 1, camera, mul, m_weather);
+                }
 			}
 			// Rectangle de séléction
 			Vector2 coos = new Vector2(
