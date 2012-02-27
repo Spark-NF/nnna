@@ -1,99 +1,100 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace NNNA
 {
-    class Joueur
+	class Joueur
 	{
-		private Texture2D pop_Texture;
-		public Texture2D Pop_Texture
+		private Texture2D _popTexture;
+		public Texture2D PopTexture
 		{
-			get { return pop_Texture; }
+			get { return _popTexture; }
 		}
-		private uint m_population;
+		private uint _population;
 		public uint Population
 		{
-			get { return m_population; }
-			set { m_population = value; }
+			get { return _population; }
+			set { _population = value; }
 		}
 
-        private int additional_line_sight;
-        internal int Additional_line_sight
-        {
-            get { return additional_line_sight; }
-            set { additional_line_sight = value; }
-        }
-
-        private Random rand = new Random();
-		private uint m_population_max;
-		public uint Population_Max
+		private int _additionalLineSight;
+		internal int AdditionalLineSight
 		{
-			get { return m_population_max; }
-			set { m_population_max = value; }
+			get { return _additionalLineSight; }
+			set { _additionalLineSight = value; }
 		}
-		private Color m_color, m_colorMovable;
+
+		private Random _rand = new Random();
+		private uint _populationMax;
+		public uint PopulationMax
+		{
+			get { return _populationMax; }
+			set { _populationMax = value; }
+		}
+		private Color _color, _colorMovable;
 		public Color Color
 		{
-			get { return m_color; }
-			set { m_color = value; }
+			get { return _color; }
+			set { _color = value; }
 		}
 		public Color ColorMovable
 		{
-			get { return m_colorMovable; }
-			set { m_colorMovable = value; }
+			get { return _colorMovable; }
+			set { _colorMovable = value; }
 		}
 
-        private int m_ere;
-        internal int Ere
-        {
-            get { return m_ere; }
-            set { m_ere = value; }
-        }
+		private int _ere;
+		internal int Ere
+		{
+			get { return _ere; }
+			set { _ere = value; }
+		}
 
-		private string m_name;
+		private string _name;
 		public string Name
 		{
-			get { return m_name; }
-			set { m_name = value; }
+			get { return _name; }
+			set { _name = value; }
 		}
-		private List<Movible_Sprite> m_units = new List<Movible_Sprite>();
-		public List<Movible_Sprite> Units
+		private List<MovibleSprite> _units = new List<MovibleSprite>();
+		public List<MovibleSprite> Units
 		{
-			get { return m_units; }
-			set { m_units = value; }
+			get { return _units; }
+			set { _units = value; }
 		}
-		private List<Building> m_buildings = new List<Building>();
+		private List<Building> _buildings = new List<Building>();
 		public List<Building> Buildings
 		{
-			get { return m_buildings; }
-			set { m_buildings = value; }
+			get { return _buildings; }
+			set { _buildings = value; }
 		}
-        public List<Resource> m_resources = new List<Resource>();
+		public List<Resource> _resources = new List<Resource>();
 
 		public Joueur(Color couleur, string nom, ContentManager content)
 		{
-            m_ere = 1;
-			m_color = couleur;
-			m_colorMovable = new Color(couleur.R + ((255 - couleur.R) / 2), couleur.G + ((255 - couleur.G) / 2), couleur.B + ((255 - couleur.B) / 2));
-			m_name = nom;
-			m_population = 0;
-			m_population_max = 5;
-            additional_line_sight = 0;
+			_ere = 1;
+			_color = couleur;
+			_colorMovable = new Color(couleur.R + ((255 - couleur.R) / 2), couleur.G + ((255 - couleur.G) / 2), couleur.B + ((255 - couleur.B) / 2));
+			_name = nom;
+			_population = 0;
+			_populationMax = 5;
+			_additionalLineSight = 0;
 
-			m_resources.Add(new Resource("Bois", new string[] { "Bois", "Bois", "Bois", "Bois" }, 500));
-			m_resources.Add(new Resource("Pierre", new string[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));
-			m_resources.Add(new Resource("Nourriture", new string[] { "Nourriture", "Nourriture", "Nourriture", "Oxygene" }, 500));
-			m_resources.Add(new Resource("Or", new string[] { "", "Or", "Or", "Cristaux" }));
-			m_resources.Add(new Resource("Fer", new string[] { "", "Fer", "Titane", "Tritonite" }));
-			m_resources.Add(new Resource("Petrole", new string[] { "", "", "Petrole", "Tritium" }));
+			_resources.Add(new Resource("Bois", new[] { "Bois", "Bois", "Bois", "Bois" }, 500));
+			_resources.Add(new Resource("Pierre", new[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));
+			_resources.Add(new Resource("Nourriture", new[] { "Nourriture", "Nourriture", "Nourriture", "Oxygene" }, 500));
+			_resources.Add(new Resource("Or", new[] { "", "Or", "Or", "Cristaux" }));
+			_resources.Add(new Resource("Fer", new[] { "", "Fer", "Titane", "Tritonite" }));
+			_resources.Add(new Resource("Petrole", new[] { "", "", "Petrole", "Tritium" }));
 
-			pop_Texture = content.Load<Texture2D>("Resources/Pop");
+			_popTexture = content.Load<Texture2D>("Resources/Pop");
 
-			foreach (Resource res in m_resources)
-			{ res.Load(content, rand); }
+			foreach (Resource res in _resources)
+			{ res.Load(content, _rand); }
 		}
 
 
@@ -105,7 +106,7 @@ namespace NNNA
 		/// <returns>La ressource correspondant à cet identifiant.</returns>
 		public Resource Resource(string name)
 		{
-			foreach (Resource res in m_resources)
+			foreach (Resource res in _resources)
 			{
 				if (res.Id == name)
 				{ return res; }
@@ -150,15 +151,7 @@ namespace NNNA
 		/// <param name="ere">L'ère à laquelle chercher les ressources.</param>
 		/// <returns>La liste des ressources.</returns>
 		public List<Resource> Resources(int ere = 1)
-		{
-			List<Resource> r = new List<Resource>();
-			foreach (Resource res in m_resources)
-			{
-				if (res.Name(ere) != "")
-				{ r.Add(res); }
-			}
-			return r;
-		}
+		{ return _resources.Where(res => res.Name(ere) != "").ToList(); }
 
 		/// <summary>
 		/// Affiche les bâtiments et unités du joueur sur la carte.
@@ -168,10 +161,10 @@ namespace NNNA
 		/// <param name="index">L'index, pour les unités.</param>
 		public void Draw(SpriteBatch sb, Camera2D camera, int index)
 		{
-			foreach (Static_Sprite sprite in m_buildings)
-			{ sprite.Draw(sb, camera, m_colorMovable); }
-			foreach (Movible_Sprite sprite in m_units)
-			{ sprite.Draw(sb, camera, index, m_colorMovable); }
+			foreach (Building sprite in _buildings)
+			{ sprite.Draw(sb, camera, _colorMovable); }
+			foreach (MovibleSprite sprite in _units)
+			{ sprite.Draw(sb, camera, index, _colorMovable); }
 		}
 	}
 }

@@ -6,54 +6,54 @@ namespace NNNA
 {
 	class Resource
 	{
-		public static Resource Empty = new Resource("", new string[] {}, 0);
+		public static Resource Empty = new Resource("", new string[] {});
 
-		private Texture2D[] m_icons;
+		private Texture2D[] _icons;
 		public Texture2D Icon(int ere)
-		{ return m_icons[ere - 1]; }
+		{ return _icons[ere - 1]; }
 
-		private Texture2D[] m_textures;
+		private Texture2D[] _textures;
 		public Texture2D Texture(int ere)
-		{ return m_textures[ere - 1]; }
+		{ return _textures[ere - 1]; }
 
-		private string m_id;
+		private string _id;
 		public string Id
-		{ get { return m_id; } }
+		{ get { return _id; } }
 
-		private string[] m_names;
+		private string[] _names;
 		public string Name(int ere)
-		{ return m_names[ere - 1]; }
+		{ return _names[ere - 1]; }
 
-		private int m_count;
+		private int _count;
 		public int Count
-		{ get { return m_count; } }
+		{ get { return _count; } }
 		
 		public void Remove(int v)
-		{ m_count -= v; }
+		{ _count -= v; }
 		public void Add(int v)
-		{ m_count += v; }
+		{ _count += v; }
 
 		public Resource(string id, string[] names, int count = 0)
 		{
-			m_id = id;
-			m_names = names;
-			m_count = count;
+			_id = id;
+			_names = names;
+			_count = count;
 		}
 
 		public bool IsEmpty()
-		{ return m_id == ""; }
+		{ return _id == ""; } 
 
 		public void Load(ContentManager content, Random rand)
 		{
-			m_icons = new Texture2D[4];
-			m_textures = new Texture2D[4];
+			_icons = new Texture2D[4];
+			_textures = new Texture2D[4];
 			for (int i = 1; i <= 1; i++)
 			{
 				if (Name(i) != "")
 				{ 
-					m_icons[i - 1] = content.Load<Texture2D>("Resources/" + m_id + "_" + i);
-                    if (Name(i) == "Bois") m_textures[i - 1] = content.Load<Texture2D>("Resources/" + m_id + "_" + i + "_sprite" + (rand.Next(1000) % 3));
-                    else m_textures[i - 1] = content.Load<Texture2D>("Resources/" + m_id + "_" + i + "_sprite");
+					_icons[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + i);
+					if (Name(i) == "Bois") _textures[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + i + "_sprite" + (rand.Next(1000) % 3));
+					else _textures[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + i + "_sprite");
 				}
 			}
 		}

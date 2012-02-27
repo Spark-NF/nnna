@@ -2,33 +2,32 @@
 
 namespace NNNA
 {
-    class Sons
-    {
-        private AudioEngine engine_menu;
-        private WaveBank musique_menu;
-        private SoundBank sons_menu; 
-        private Cue musiquemenu;
-        AudioCategory musicCategory;
+	class Sons
+	{
+		private AudioEngine _engineMenu;
+		private SoundBank _sonsMenu; 
+		private Cue _musiqueMenu;
+		AudioCategory _musicCategory;
 
-        public void Initializesons(float musicVolume, float m_sound_music, float m_sound_general)
-        {
-            engine_menu = new AudioEngine("Content/sounds/son projet.xgs");
-            musique_menu = new WaveBank(engine_menu, "Content/sounds/Wave Bank.xwb");
-            sons_menu = new SoundBank(engine_menu, "Content/sounds/sound_menu.xsb");
-            musiquemenu = sons_menu.GetCue("sonmenu");
-            musiquemenu.Play();
-            engine_menu.Update();
-            musicCategory = engine_menu.GetCategory("Music");
-            musicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
-        }
-        
-        public Cue Musiquemenu
-        { get { return musiquemenu; } }
+		public void Initializesons(float musicVolume, float soundMusic, float soundGeneral)
+		{
+			_engineMenu = new AudioEngine("Content/sounds/son projet.xgs");
+			new WaveBank(_engineMenu, "Content/sounds/Wave Bank.xwb");
+			_sonsMenu = new SoundBank(_engineMenu, "Content/sounds/sound_menu.xsb");
+			_musiqueMenu = _sonsMenu.GetCue("sonmenu");
+			_musiqueMenu.Play();
+			_engineMenu.Update();
+			_musicCategory = _engineMenu.GetCategory("Music");
+			_musicCategory.SetVolume(musicVolume * soundMusic * (soundGeneral / 10));
+		}
+		
+		public Cue MusiqueMenu
+		{ get { return _musiqueMenu; } }
 
-        public AudioEngine Engine_menu
-        { get { return engine_menu; } }
+		public AudioEngine EngineMenu
+		{ get { return _engineMenu; } }
 
-        public AudioCategory MusicCategory
-        { get { return musicCategory; } }
-    }
+		public AudioCategory MusicCategory
+		{ get { return _musicCategory; } }
+	}
 }

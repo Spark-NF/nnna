@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-    class Static_Sprite : Sprite
+	class StaticSprite : Sprite
 	{
 		public Rectangle Rectangle(Camera2D cam)
 		{
@@ -15,22 +15,25 @@ namespace NNNA
 			);
 		}
 
-		private bool m_selected = false;
+		private bool _selected;
 		public bool Selected
 		{
-			get { return m_selected; }
-			set { m_selected = value; }
+			get { return _selected; }
+			set { _selected = value; }
 		}
 
-        protected string type;
-        public string Type
-        { get { return type; } set { type = value; } }
+		protected string _type;
+		public string Type
+		{
+			get { return _type; }
+			set { _type = value; }
+		}
 
-        public Static_Sprite(int x, int y)
-            : base(x, y)
-		{ }
+		public StaticSprite(int x, int y)
+			: base(x, y)
+		{ _selected = false; }
 
 		public void Draw(SpriteBatch spriteBatch, Camera2D camera, Color col)
 		{ spriteBatch.Draw(Texture, Position - camera.Position, new Rectangle(0, 0, Texture.Width, Texture.Height), Selected ? Color.Peru : col); }
-    }
+	}
 }

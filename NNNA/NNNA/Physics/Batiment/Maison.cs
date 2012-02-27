@@ -8,25 +8,22 @@ namespace NNNA
         public Maison(int x = 0, int y = 0)
 			: base(x, y)
 		{
-			m_cost.Add("Bois", 50);
+			_cost.Add("Bois", 50);
 		}
 
 		public Maison(int x, int y, ContentManager content, Joueur joueur, byte a)
 			: base(x, y)
 		{
-            if (a == 0)
-			    LoadContent(content, "Batiments/hutte1");
-            else
-                LoadContent(content, "Batiments/hutte2");
+			LoadContent(content, "Batiments/hutte" + (a == 0 ? 1 : 2));
 			Life = 100;
-			m_cost.Add("Bois", 50);
-            Line_sight = 128;
-			if (joueur.Population_Max < 200)
+			_cost.Add("Bois", 50);
+            LineSight = 128;
+			if (joueur.PopulationMax < 200)
 			{
-				if (joueur.Population_Max > 190)
-				{ joueur.Population_Max += 200 - joueur.Population_Max; }
+				if (joueur.PopulationMax > 190)
+				{ joueur.PopulationMax += 200 - joueur.PopulationMax; }
 				else
-				{joueur.Population_Max += 10; }
+				{joueur.PopulationMax += 10; }
 			}
 		}
     }

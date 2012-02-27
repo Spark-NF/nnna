@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms.Integration;
 using Microsoft.Xna.Framework;
@@ -10,7 +12,6 @@ using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
 using Forms = System.Windows.Forms;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using System.IO;
 
 namespace NNNA
 {
@@ -21,59 +22,56 @@ namespace NNNA
 	{
 		#region Variables
 
-		private GraphicsDeviceManager graphics;
-		private SpriteBatch spriteBatch;
-		private Effect gaussianBlur;
-		private Rectangle m_selection = Rectangle.Empty;
-		private GameTime m_gameTime;
+		private GraphicsDeviceManager _graphics;
+		private SpriteBatch _spriteBatch;
+		private Effect _gaussianBlur;
+		private Rectangle _selection = Rectangle.Empty;
 
-		private Texture2D m_background_light, m_background_dark, m_fog, m_menu, m_flash, m_submenu, m_night, m_console;
-		private Texture2D[] m_backgrounds = new Texture2D[2];
-		private Dictionary<string, Texture2D> m_actions = new Dictionary<string, Texture2D>(), m_pointers = new Dictionary<string, Texture2D>();
-		private SpriteFont m_font_menu, m_font_menu_title, m_font_small, m_font_credits;
-		private Screen m_currentScreen = Screen.Title;
-		private int m_konami = 0, m_konamiStatus = 0, m_foes = 1;
-		private string m_currentAction = "", m_language = "fr", m_pointer = "pointer";
-		private double m_elapsed;
-		private List<string> last_state = new List<string>();
-		private string[] m_currentMenus;
+		private Texture2D _backgroundDark, _flash, _night, _console;
+		private Texture2D[] _backgrounds = new Texture2D[2];
+		private Dictionary<string, Texture2D> _actions = new Dictionary<string, Texture2D>(), _pointers = new Dictionary<string, Texture2D>();
+		private SpriteFont _fontMenu, _fontMenuTitle, _fontSmall, _fontCredits;
+		private Screen _currentScreen = Screen.Title;
+		private int _konami = 0, _konamiStatus = 0, _foes = 1;
+		private string _currentAction = "", _language = "fr", _pointer = "pointer";
+		private List<string> _lastState = new List<string>();
+		private string[] _currentMenus;
 
-		private Vector2 m_screen = new Vector2(1680, 1050);
-		private bool m_fullScreen = true, m_shadows = true, m_health_hover = false, m_showConsole = false;
-		public static bool m_smart_hud = false;
-		private float m_sound_general = 10, m_sound_sfx = 10, m_sound_music = 10, a = 1.0f;
-		private int m_textures = 2, m_sound = 2, m_weather = 1;
-		internal static bool flash_bool = false;
+		private Vector2 _screenSize = new Vector2(1680, 1050);
+		private bool _fullScreen = true, _shadows = true, _healthOver, _showConsole;
+		public static bool SmartHud = false;
+		private float _soundGeneral = 10, _soundSFX = 10, _soundMusic = 10, a = 1.0f;
+		private int _textures = 2, _sound = 2, _weather = 1;
+		internal static bool FlashBool = false;
 		
-		private MapType m_quick_type = MapType.Island;
-		private int m_quick_size = 1, m_quick_resources = 1, m_credits = 0, m_theme = 0;
-		List<string> m_currentActions = new List<string>();
-		Random random = new Random(42);
-		Dictionary<Color, Texture2D> colors = new Dictionary<Color, Texture2D>();
+		private MapType _quickType = MapType.Island;
+		private int _quickSize = 1, _quickResources = 1, _credits = 0, _theme = 0;
+		private List<string> _currentActions = new List<string>();
+		private Random _random = new Random(42);
+		private Dictionary<Color, Texture2D> _colors = new Dictionary<Color, Texture2D>();
 		
 		// Map
-		Sprite h, e, p, t, s, i, curseur;
-		Sprite[,] matrice;
-		Map map;
-		Minimap minimap;
-		HUD hud;
-		Camera2D camera;
-		Joueur joueur;
-		Joueur[] m_enemies;
-		Building selectedBuilding;
-		float[,] m_map;
-		List<ResourceMine> resource = new List<ResourceMine>();
-		List<Unit> selectedList = new List<Unit>();
-		List<Building> buildings = new List<Building>();
-		List<Movible_Sprite> units = new List<Movible_Sprite>();
+		private Sprite _h, _e, _p, _t, _s, _i, _curseur;
+		private Sprite[,] _matrice;
+		private Map _map;
+		private Minimap _minimap;
+		private HUD _hud;
+		private Camera2D _camera;
+		private Joueur _joueur;
+		private Joueur[] _enemies;
+		private Building _selectedBuilding;
+		private float[,] _heightMap;
+		private List<ResourceMine> _resources = new List<ResourceMine>();
+		private List<Unit> _selectedList = new List<Unit>();
+		private List<Building> _buildings = new List<Building>();
+		private List<MovibleSprite> _units = new List<MovibleSprite>();
 
 		// Audio objects		
-		float musicVolume = 2.0f;
-		Sons son = new Sons();
-		SoundEffect _debutpartie;
-		SoundEffect _finpartie;
-		private ElementHost elementHost;
-		private Technologies techno;
+		private const float MusicVolume = 2.0f;
+		private Sons _son = new Sons();
+		private SoundEffect _debutpartie;
+		private ElementHost _elementHost;
+		private Technologies _techno;
 
 
 		#endregion
@@ -104,14 +102,17 @@ namespace NNNA
 
 		public Game1()
 		{
-			Window.Title = "NNNA - " + this.GetType().Assembly.GetName().Version.ToString();
+			Window.Title = "NNNA - " + GetType().Assembly.GetName().Version;
 
-			loadSettings();
+			LoadSettings();
+			_showConsole = false;
 
-			graphics = new GraphicsDeviceManager(this);
-			graphics.PreferredBackBufferWidth = (int)m_screen.X;
-			graphics.PreferredBackBufferHeight = (int)m_screen.Y;
-			graphics.IsFullScreen = m_fullScreen;
+			_graphics = new GraphicsDeviceManager(this)
+			{
+			    PreferredBackBufferWidth = (int)_screenSize.X,
+			    PreferredBackBufferHeight = (int)_screenSize.Y,
+			    IsFullScreen = _fullScreen
+			};
 
 			Content.RootDirectory = "Content";
 		}
@@ -121,41 +122,41 @@ namespace NNNA
 		/// <summary>
 		/// Charge les options depuis le fichier "settings.xml".
 		/// </summary>
-		private void loadSettings()
+		private void LoadSettings()
 		{
-			m_language = Properties.Settings.Default.Language;
-			m_fullScreen = Properties.Settings.Default.FullScreen;
-			m_screen.X = Properties.Settings.Default.ScreenWidth;
-			m_screen.Y = Properties.Settings.Default.ScreenHeight;
-			m_health_hover = Properties.Settings.Default.HealthOver;
-			m_smart_hud = Properties.Settings.Default.SmartHUD;
-			m_textures = Properties.Settings.Default.Textures;
-			m_shadows = Properties.Settings.Default.Shadows;
-			m_sound_general = Properties.Settings.Default.SoundGeneral;
-			m_sound_music = Properties.Settings.Default.SoundMusic;
-			m_sound_sfx = Properties.Settings.Default.SoundSFX;
-			m_sound = Properties.Settings.Default.Sound;
-			m_theme = Properties.Settings.Default.Theme;
+			_language = Properties.Settings.Default.Language;
+			_fullScreen = Properties.Settings.Default.FullScreen;
+			_screenSize.X = Properties.Settings.Default.ScreenWidth;
+			_screenSize.Y = Properties.Settings.Default.ScreenHeight;
+			_healthOver = Properties.Settings.Default.HealthOver;
+			SmartHud = Properties.Settings.Default.SmartHUD;
+			_textures = Properties.Settings.Default.Textures;
+			_shadows = Properties.Settings.Default.Shadows;
+			_soundGeneral = Properties.Settings.Default.SoundGeneral;
+			_soundMusic = Properties.Settings.Default.SoundMusic;
+			_soundSFX = Properties.Settings.Default.SoundSFX;
+			_sound = Properties.Settings.Default.Sound;
+			_theme = Properties.Settings.Default.Theme;
 		}
 
 		/// <summary>
 		/// Enregistre les options dans le fichier "settings.xml".
 		/// </summary>
-		private void saveSettings()
+		private void SaveSettings()
 		{
-			Properties.Settings.Default.Language = m_language;
-			Properties.Settings.Default.FullScreen = m_fullScreen;
-			Properties.Settings.Default.ScreenWidth = (int)m_screen.X;
-			Properties.Settings.Default.ScreenHeight = (int)m_screen.Y;
-			Properties.Settings.Default.HealthOver = m_health_hover;
-			Properties.Settings.Default.SmartHUD = m_smart_hud;
-			Properties.Settings.Default.Textures = m_textures;
-			Properties.Settings.Default.Shadows = m_shadows;
-			Properties.Settings.Default.SoundGeneral = (int)m_sound_general;
-			Properties.Settings.Default.SoundMusic = (int)m_sound_music;
-			Properties.Settings.Default.SoundSFX = (int)m_sound_sfx;
-			Properties.Settings.Default.Sound = m_sound;
-			Properties.Settings.Default.Theme = m_theme;
+			Properties.Settings.Default.Language = _language;
+			Properties.Settings.Default.FullScreen = _fullScreen;
+			Properties.Settings.Default.ScreenWidth = (int)_screenSize.X;
+			Properties.Settings.Default.ScreenHeight = (int)_screenSize.Y;
+			Properties.Settings.Default.HealthOver = _healthOver;
+			Properties.Settings.Default.SmartHUD = SmartHud;
+			Properties.Settings.Default.Textures = _textures;
+			Properties.Settings.Default.Shadows = _shadows;
+			Properties.Settings.Default.SoundGeneral = (int)_soundGeneral;
+			Properties.Settings.Default.SoundMusic = (int)_soundMusic;
+			Properties.Settings.Default.SoundSFX = (int)_soundSFX;
+			Properties.Settings.Default.Sound = _sound;
+			Properties.Settings.Default.Theme = _theme;
 			Properties.Settings.Default.Save();
 		}
 
@@ -166,26 +167,25 @@ namespace NNNA
 		/// </summary>
 		protected override void Initialize()
 		{
-			h = new Sprite('h');
-			e = new Sprite('e');
-			t = new Sprite('t');
-			p = new Sprite('p');
-			s = new Sprite('s');
-			i = new Sprite('i');
+			_h = new Sprite('h');
+			_e = new Sprite('e');
+			_t = new Sprite('t');
+			_p = new Sprite('p');
+			_s = new Sprite('s');
+			_i = new Sprite('i');
 
-			map = new Map();
-			camera = new Camera2D(0, 0, 10);
-			curseur = new Sprite(0, 0);
-			joueur = new Joueur(Color.Red, "NNNNA", Content);
+			_map = new Map();
+			_camera = new Camera2D(0, 0);
+			_curseur = new Sprite(0, 0);
+			_joueur = new Joueur(Color.Red, "NNNNA", Content);
 
 			 // son
-			son.Initializesons(musicVolume, m_sound_music, m_sound_general);
+			_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
 			_debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
-			_finpartie = Content.Load<SoundEffect>("sounds/sortiedejeu");
 			
 			//menu technologie
-			elementHost= new ElementHost();
-			techno = new Technologies(joueur, ref elementHost, Content);
+			_elementHost= new ElementHost();
+			_techno = new Technologies(_joueur, ref _elementHost, Content);
 
 			base.Initialize();
 
@@ -197,12 +197,11 @@ namespace NNNA
 		/// <param name="mt">Le type de carte à générer.</param>
 		/// <param name="width">La largeur de la carte à générer.</param>
 		/// <param name="height">La hauteur de la carte à générer.</param>
-		/// <param name="resources">La proportion de resources.</param>
 		/// <returns>Un tableau correspondant à la carte.</returns>
-		private Sprite[,] generateMap(MapType mt, int width, int height, double resources)
+		private Sprite[,] GenerateMap(MapType mt, int width, int height)
 		{
 			float[,] map = IslandGenerator.Generate(width, height);
-			m_map = map;
+			_heightMap = map;
 			Sprite[,] matrice = new Sprite[width, height];
 			List<float> heights = new List<float>();
 
@@ -220,22 +219,16 @@ namespace NNNA
 			{
 				for (int y = 0; y < map.GetLength(1); y++)
 				{
-					Sprite sp = h;
+					Sprite sp = _h;
 					float m = map[x, y] * 255;
 					if (m < waterline - 40)
-					{ sp = e; }
+					{ sp = _e; }
 					else if (m < waterline)
-					{ sp = t; }
+					{ sp = _t; }
 					else if (m < waterline + 15)
-					{ sp = s; }
+					{ sp = _s; }
 					else if (m < waterline + 35)
-					{ sp = i; }
-					else if (m > 230)
-					{ sp = h; }
-					else if (m > 205)
-					{ sp = h; }
-					else
-					{ sp = h; }
+					{ sp = _i; }
 					matrice[x, y] = sp;
 				}
 			}
@@ -245,18 +238,10 @@ namespace NNNA
 			{
 				for (int y = 0; y < matrice.GetLength(1); y++)
 				{
-					if (matrice[x, y] == h)
+					if (matrice[x, y] == _h)
 					{
-						bool waternear = false;
-						if (x > 0 && matrice[x - 1, y] == e)
-						{ waternear = true; }
-						if (y > 0 && matrice[x, y - 1] == e)
-						{ waternear = true; }
-						if (x < matrice.GetLength(0) - 1 && matrice[x + 1, y] == e)
-						{ waternear = true; }
-						if (y < matrice.GetLength(1) - 1 && matrice[x, y + 1] == e)
-						{ waternear = true; }
-						matrice[x, y] = waternear ? p : h;
+						bool waternear = (x > 0 && matrice[x - 1, y] == _e) || (y > 0 && matrice[x, y - 1] == _e) || (x < matrice.GetLength(0) - 1 && matrice[x + 1, y] == _e) || (y < matrice.GetLength(1) - 1 && matrice[x, y + 1] == _e);
+						matrice[x, y] = waternear ? _p : _h;
 					}
 				}
 			}
@@ -271,52 +256,51 @@ namespace NNNA
 		/// </summary>
 		protected override void LoadContent()
 		{
-			spriteBatch = new SpriteBatch(GraphicsDevice);
+			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 			// Fonds
-			m_fog = Content.Load<Texture2D>("fog");
-			m_flash = Content.Load<Texture2D>("flash");
+			_flash = Content.Load<Texture2D>("flash");
 
 			// Sprites
-			m_menu = Content.Load<Texture2D>("menu");
-			m_submenu = Content.Load<Texture2D>("submenu");
-			curseur.LoadContent(Content, "pointer");
+			_curseur.LoadContent(Content, "pointer");
 
 			// Fontes
-			m_font_menu = Content.Load<SpriteFont>("font_menu");
-			m_font_menu_title = Content.Load<SpriteFont>("font_menu_title");
-			m_font_small = Content.Load<SpriteFont>("font_small");
-			m_font_credits = Content.Load<SpriteFont>("font_credits");
+			_fontMenu = Content.Load<SpriteFont>("font_menu");
+			_fontMenuTitle = Content.Load<SpriteFont>("font_menu_title");
+			_fontSmall = Content.Load<SpriteFont>("font_small");
+			_fontCredits = Content.Load<SpriteFont>("font_credits");
 
 			// Couleurs
-			colors.Add(Color.Red, CreateRectangle(1, 1, Color.Red));
-			colors.Add(Color.Green, CreateRectangle(1, 1, Color.Green));
-			colors.Add(Color.Black, CreateRectangle(1, 1, Color.Black));
+			_colors.Add(Color.Red, CreateRectangle(1, 1, Color.Red));
+			_colors.Add(Color.Green, CreateRectangle(1, 1, Color.Green));
+			_colors.Add(Color.Black, CreateRectangle(1, 1, Color.Black));
 
 			#region Actions
+
 			#region Actions Unités
-			m_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
-			m_actions.Add("gather", Content.Load<Texture2D>("Actions/gather"));
-			m_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
-			m_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
-			m_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
+			_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
+			_actions.Add("gather", Content.Load<Texture2D>("Actions/gather"));
+			_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
+			_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
+			_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
 			// m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
 			#endregion Actions Unités
 
 			#region Actions Batiments
-			m_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
-			m_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
-			m_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
+			_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
+			_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
+			_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
 			#endregion Actions Batiments
 
 			#region Actions Communes
-			m_actions.Add("retour", Content.Load<Texture2D>("Actions/retour"));
+			_actions.Add("retour", Content.Load<Texture2D>("Actions/retour"));
 			#endregion Actions Communes
+
 			#endregion Actions
 
 			// Shaders
-			gaussianBlur = Content.Load<Effect>("Shaders/GaussianBlur");
-			gaussianBlur.CurrentTechnique = gaussianBlur.Techniques["Blur"];
+			_gaussianBlur = Content.Load<Effect>("Shaders/GaussianBlur");
+			_gaussianBlur.CurrentTechnique = _gaussianBlur.Techniques["Blur"];
 
 			LoadScreenSizeDependantContent();
 		}
@@ -325,29 +309,28 @@ namespace NNNA
 		/// </summary>
 		protected void LoadScreenSizeDependantContent()
 		{
-			spriteBatch = new SpriteBatch(GraphicsDevice);
+			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-			string ratio = ((int)((10 * m_screen.X) / m_screen.Y)).ToString();
+			string ratio = ((int)((10 * _screenSize.X) / _screenSize.Y)).ToString(CultureInfo.CurrentCulture);
 			if (ratio != "13" && ratio != "16" && ratio != "18")
 			{ ratio = "13"; }
-			m_backgrounds[0] = Content.Load<Texture2D>("background/" + ratio + "_0");
-			m_backgrounds[1] = Content.Load<Texture2D>("background/" + ratio + "_1");
-			m_background_light = CreateRectangle((int)(654 * (m_screen.X / 1680)), (int)m_screen.Y, Color.White);
-			m_background_dark = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0, 0, 0, 170));
-			m_night = CreateRectangle((int)m_screen.X, (int)m_screen.Y, new Color(0,0,10));
-			m_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
+			_backgrounds[0] = Content.Load<Texture2D>("background/" + ratio + "_0");
+			_backgrounds[1] = Content.Load<Texture2D>("background/" + ratio + "_1");
+			_backgroundDark = CreateRectangle((int)_screenSize.X, (int)_screenSize.Y, new Color(0, 0, 0, 170));
+			_night = CreateRectangle((int)_screenSize.X, (int)_screenSize.Y, new Color(0,0,10));
+			_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
 			//Fenetre des technologies
-			elementHost.Location = new System.Drawing.Point((int) m_screen.X/2 - 150, (int) m_screen.Y/2 - 150);
-			elementHost.Size = new Size(300, 300);
-			elementHost.Child = techno;
-			elementHost.BackColor = System.Drawing.Color.Transparent;
-			elementHost.BackColorTransparent = true;
+			_elementHost.Location = new System.Drawing.Point((int) _screenSize.X/2 - 150, (int) _screenSize.Y/2 - 150);
+			_elementHost.Size = new Size(300, 300);
+			_elementHost.Child = _techno;
+			_elementHost.BackColor = System.Drawing.Color.Transparent;
+			_elementHost.BackColorTransparent = true;
 
-			hud = new HUD(0, ((graphics.PreferredBackBufferHeight * 5) / 6) - 10, minimap, m_smart_hud, graphics);
-			minimap = new Minimap((hud.Position.Width * 7) / 8 - +hud.Position.Width / 150, hud.Position.Y + hud.Position.Height / 15, (hud.Position.Height * 9) / 10, (hud.Position.Height * 9) / 10);
+			_hud = new HUD(0, ((_graphics.PreferredBackBufferHeight * 5) / 6) - 10, SmartHud, _graphics);
+			_minimap = new Minimap((_hud.Position.Width * 7) / 8 - _hud.Position.Width / 150, _hud.Position.Y + _hud.Position.Height / 15, (_hud.Position.Height * 9) / 10, (_hud.Position.Height * 9) / 10);
 
-			MessagesManager.X = (uint)m_screen.X - 400;
+			MessagesManager.X = (uint)_screenSize.X - 400;
 		}
 
 		/// <summary>
@@ -383,101 +366,101 @@ namespace NNNA
 
 			// Console de debug
 			if (Clavier.Get().NewPress(Keys.OemQuotes))
-			{ m_showConsole = !m_showConsole; }
+			{ _showConsole = !_showConsole; }
 
 			// Screenshots
 			if (Clavier.Get().NewPress(Keys.PrintScreen))
 			{
 				Draw(gameTime);
 
-				int[] backBuffer = new int[(int)m_screen.X * (int)m_screen.Y];
+				var backBuffer = new int[(int)_screenSize.X * (int)_screenSize.Y];
 				GraphicsDevice.GetBackBufferData(backBuffer);
 
-				Texture2D texture = new Texture2D(GraphicsDevice, (int)m_screen.X, (int)m_screen.Y, false, GraphicsDevice.PresentationParameters.BackBufferFormat);
+				var texture = new Texture2D(GraphicsDevice, (int)_screenSize.X, (int)_screenSize.Y, false, GraphicsDevice.PresentationParameters.BackBufferFormat);
 				texture.SetData(backBuffer);
 
 				Stream stream = File.OpenWrite("screenshot_" + Guid.NewGuid().ToString() + ".png");
-				texture.SaveAsPng(stream, (int)m_screen.X, (int)m_screen.Y);
+				texture.SaveAsPng(stream, (int)_screenSize.X, (int)_screenSize.Y);
 				stream.Close(); 
 			}
 
 			// Code Konami
-			if (m_konami >= 10)
-			{ m_konamiStatus++; }
+			if (_konami >= 10)
+			{ _konamiStatus++; }
 			if (
-				(Clavier.Get().NewPress(Keys.Up)	&& m_konami == 0) ||
-				(Clavier.Get().NewPress(Keys.Up)	&& m_konami == 1) ||
-				(Clavier.Get().NewPress(Keys.Down)  && m_konami == 2) ||
-				(Clavier.Get().NewPress(Keys.Down)  && m_konami == 3) ||
-				(Clavier.Get().NewPress(Keys.Left)  && m_konami == 4) ||
-				(Clavier.Get().NewPress(Keys.Right) && m_konami == 5) ||
-				(Clavier.Get().NewPress(Keys.Left)  && m_konami == 6) ||
-				(Clavier.Get().NewPress(Keys.Right) && m_konami == 7) ||
-				(Clavier.Get().NewPress(Keys.B)	 && m_konami == 8) ||
-				(Clavier.Get().NewPress(Keys.A)	 && m_konami == 9)
+				(Clavier.Get().NewPress(Keys.Up)	&& _konami == 0) ||
+				(Clavier.Get().NewPress(Keys.Up)	&& _konami == 1) ||
+				(Clavier.Get().NewPress(Keys.Down)  && _konami == 2) ||
+				(Clavier.Get().NewPress(Keys.Down)  && _konami == 3) ||
+				(Clavier.Get().NewPress(Keys.Left)  && _konami == 4) ||
+				(Clavier.Get().NewPress(Keys.Right) && _konami == 5) ||
+				(Clavier.Get().NewPress(Keys.Left)  && _konami == 6) ||
+				(Clavier.Get().NewPress(Keys.Right) && _konami == 7) ||
+				(Clavier.Get().NewPress(Keys.B)	 && _konami == 8) ||
+				(Clavier.Get().NewPress(Keys.A)	 && _konami == 9)
 			)
-			{ m_konami++; }
+			{ _konami++; }
 			else if (Clavier.Get().NewPress())
-			{ m_konami = 0; }
+			{ _konami = 0; }
 
-			switch (m_currentScreen)
+			switch (_currentScreen)
 			{
 				case Screen.Title:
-					UpdateTitle(gameTime);
+					UpdateTitle();
 					break;
 
 				case Screen.Play:
-					UpdatePlay(gameTime);
+					UpdatePlay();
 					break;
 				case Screen.PlayQuick:
-					UpdatePlayQuick(gameTime);
+					UpdatePlayQuick();
 					break;
 
 				case Screen.Options:
-					UpdateOptions(gameTime);
+					UpdateOptions();
 					break;
 				case Screen.OptionsGeneral:
-					UpdateOptionsGeneral(gameTime);
+					UpdateOptionsGeneral();
 					break;
 				case Screen.OptionsGraphics:
-					UpdateOptionsGraphics(gameTime);
+					UpdateOptionsGraphics();
 					break;
 				case Screen.OptionsSound:
-					UpdateOptionsSound(gameTime);
+					UpdateOptionsSound();
 					break;
 
 				case Screen.Credits:
-					UpdateCredits(gameTime);
+					UpdateCredits();
 					break;
 
 				case Screen.Game:
 					UpdateGame(gameTime);
 					break;
 				case Screen.GameMenu:
-					UpdateGameMenu(gameTime);
+					UpdateGameMenu();
 					break;
 			}
 
 			//Son 
-			son.Engine_menu.Update();
-			if (!son.Musiquemenu.IsPlaying && !son.Musiquemenu.IsPaused)
-			{ son.Initializesons(musicVolume, m_sound_music, m_sound_general); }
+			_son.EngineMenu.Update();
+			if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
+			{ _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
 
 			base.Update(gameTime);
 		}
-		private void UpdateTitle(GameTime gameTime)
+		private void UpdateTitle()
 		{
-			m_currentScreen = testMenu(Screen.Play, Screen.Options, Screen.Credits, Screen.OptionsSound);
-			if (m_currentScreen == Screen.Credits)
-			{ m_credits = 0; }
-			if (m_currentScreen == Screen.OptionsSound)
-			{ this.Exit(); }
+			_currentScreen = TestMenu(Screen.Play, Screen.Options, Screen.Credits, Screen.OptionsSound);
+			if (_currentScreen == Screen.Credits)
+			{ _credits = 0; }
+			if (_currentScreen == Screen.OptionsSound)
+			{ Exit(); }
 		}
-		private void UpdatePlay(GameTime gameTime)
-		{ m_currentScreen = testMenu(Screen.PlayQuick, Screen.Title); }
-		private void UpdatePlayQuick(GameTime gameTime)
+		private void UpdatePlay()
+		{ _currentScreen = TestMenu(Screen.PlayQuick, Screen.Title); }
+		private void UpdatePlayQuick()
 		{
-			Screen s = testMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.Game, Screen.Play);
+			Screen s = TestMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.Game, Screen.Play);
 			if (s != Screen.PlayQuick)
 			{
 				if (s == Screen.Game)
@@ -485,37 +468,37 @@ namespace NNNA
 					bool ok = false;
 					int[] sizes = { 50, 100, 200 };
 					double[] resources = { 0.05, 0.1, 0.2 };
-					List<Point> spawns = new List<Point>();
-					List<float> heights = new List<float>();
-					float dist = sizes[m_quick_size] / 2;
+					var spawns = new List<Point>();
+					var heights = new List<float>();
+					float dist = sizes[_quickSize] / 2;
 
 					// On regénère une carte tant qu'elle est incapable d'accueillir le bon nombre de spawns
 					while (!ok)
 					{
 						// Génération
-						matrice = generateMap(m_quick_type, sizes[m_quick_size], sizes[m_quick_size], resources[m_quick_resources]);
+						_matrice = GenerateMap(_quickType, sizes[_quickSize], sizes[_quickSize]);
 
 						// Spawns
 						heights.Clear();
-						for (int x = 0; x < m_map.GetLength(0); x++)
+						for (int x = 0; x < _heightMap.GetLength(0); x++)
 						{
-							for (int y = 0; y < m_map.GetLength(1); y++)
-							{ heights.Add(m_map[x, y] * 255); }
+							for (int y = 0; y < _heightMap.GetLength(1); y++)
+							{ heights.Add(_heightMap[x, y] * 255); }
 						}
 						float waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
-						List<float> heightsOr = new List<float>(heights);
+						var heightsOr = new List<float>(heights);
 						heights.Sort((x, y) => (y.CompareTo(x)));
 						spawns.Clear();
 						int j = 0;
 
 						// On génère $m_foes + 1 spawns, chacun espacés d'au moins $dist
-						while (spawns.Count < m_foes + 1 && j < heights.IndexOf(waterline))
+						while (spawns.Count < _foes + 1 && j < heights.IndexOf(waterline))
 						{
-							Point point = new Point(heightsOr.IndexOf(heights[j]) % m_map.GetLength(1), heightsOr.IndexOf(heights[j]) / m_map.GetLength(1));
+							var point = new Point(heightsOr.IndexOf(heights[j]) % _heightMap.GetLength(1), heightsOr.IndexOf(heights[j]) / _heightMap.GetLength(1));
 							bool isNear = false;
 							foreach (Point p in spawns)
 							{
-								if (point.distanceTo(p) <= dist)
+								if (point.DistanceTo(p) <= dist)
 								{ isNear = true; }
 							}
 							if (!isNear)
@@ -523,7 +506,7 @@ namespace NNNA
 							j++;
 						}
 
-						if (spawns.Count == m_foes + 1)
+						if (spawns.Count == _foes + 1)
 						{ ok = true; }
 					}
 
@@ -532,158 +515,154 @@ namespace NNNA
 					string[] names = { Environment.UserName, "Lord Lard", "Herr von Speck", "Monsieur Martin" };
 
 					//Joueur
-					joueur = new Joueur(colors[0], names[0], Content);
-					joueur.Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, joueur, false));
-					joueur.Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, joueur, false));
-					joueur.Units.Add(new Peon((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, joueur, false));
-					joueur.Buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)matrice2xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, joueur));
-					camera.Position = matrice2xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - m_screen / 2;
-					units.AddRange(joueur.Units);
-					buildings.AddRange(joueur.Buildings);
+					_joueur = new Joueur(colors[0], names[0], Content);
+					_joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, _joueur, false));
+					_joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, _joueur, false));
+					_joueur.Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, _joueur, false));
+					_joueur.Buildings.Add(new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, _joueur));
+					_camera.Position = Matrice2Xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - _screenSize / 2;
+					_units.AddRange(_joueur.Units);
+					_buildings.AddRange(_joueur.Buildings);
 
 					// Ennemis
-					m_enemies = new Joueur[m_foes];
-					for (int i = 0; i < m_foes; i++)
+					_enemies = new Joueur[_foes];
+					for (int i = 0; i < _foes; i++)
 					{
-						m_enemies[i] = new Joueur(colors[i + 1], names[i + 1], Content);
-						m_enemies[i].Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, joueur, false));
-						m_enemies[i].Units.Add(new Guerrier((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, joueur, false));
-						m_enemies[i].Units.Add(new Peon((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, joueur, false));
-						m_enemies[i].Buildings.Add(new Grande_Hutte((int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)matrice2xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, joueur));
-						units.AddRange(m_enemies[i].Units);
-						buildings.AddRange(m_enemies[i].Buildings);
+						_enemies[i] = new Joueur(colors[i + 1], names[i + 1], Content);
+						_enemies[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _joueur, false));
+						_enemies[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _joueur, false));
+						_enemies[i].Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _joueur, false));
+						_enemies[i].Buildings.Add(new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, _joueur));
+						_units.AddRange(_enemies[i].Units);
+						_buildings.AddRange(_enemies[i].Buildings);
 					}
 
 					//Le reste
-					techno.Reset();
-					map.LoadContent(matrice, Content, minimap, graphics.GraphicsDevice);
-					hud.LoadContent(Content, "HUD/hud2");
-					minimap.LoadContent(map);
-					m_elapsed = gameTime.TotalGameTime.TotalMilliseconds;
-					m_gameTime = gameTime;
+					_techno.Reset();
+					_map.LoadContent(_matrice, Content, _minimap, _graphics.GraphicsDevice);
+					_hud.LoadContent(Content, "HUD/hud2");
+					_minimap.LoadContent(_map);
 
 					//Decor
-                    resource.Add(new ResourceMine((int)matrice2xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)matrice2xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, Content, joueur.Resource("Pierre"), joueur.Resource("Pierre").Texture(1)));
-					for (int i = 0; i < 5 + m_quick_resources * 5 * (m_quick_size + 1); i++)
+					_resources.Add(new ResourceMine((int)Matrice2Xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)Matrice2Xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, _joueur.Resource("Pierre"), _joueur.Resource("Pierre").Texture(1)));
+					for (int i = 0; i < 5 + _quickResources * 5 * (_quickSize + 1); i++)
 					{
-						int x = 0;
-						int y = 0;
-						x = random.Next(matrice.GetLength(0));
-						y = random.Next(matrice.GetLength(1));
-						while ((!matrice[y, x].Crossable))
+						int x = _random.Next(_matrice.GetLength(0));
+						int y = _random.Next(_matrice.GetLength(1));
+						while ((!_matrice[y, x].Crossable))
 						{
-							x = random.Next(matrice.GetLength(0));
-							y = random.Next(matrice.GetLength(1));
+							x = _random.Next(_matrice.GetLength(0));
+							y = _random.Next(_matrice.GetLength(1));
 						}
-                        resource.Add(new ResourceMine((int)(matrice2xy(new Vector2(x, y))).X - 44, (int)(matrice2xy(new Vector2(x, y))).Y - 152, Content, joueur.Resource("Bois"), Content.Load<Texture2D>("Resources/bois_1_sprite" + random.Next(0, 3))));
-						matrice[y, x].Crossable = false;
+						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, _joueur.Resource("Bois"), Content.Load<Texture2D>("Resources/bois_1_sprite" + _random.Next(0, 3))));
+						_matrice[y, x].Crossable = false;
 					}
 
 					//Le son
-					son.Musiquemenu.Pause();
+					_son.MusiqueMenu.Pause();
 					_debutpartie.Play();
 					
 				}
-				m_currentScreen = s;
+				_currentScreen = s;
 			}
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = menu();
+				int m = Menu();
 				switch (m)
 				{
-					case 0: m_quick_type = (MapType)Variate(0, Enum.GetValues(typeof(MapType)).Length - 1, (int)m_quick_type); break;
-					case 1: m_quick_size = Variate(0, 2, m_quick_size); break;
-					case 2: m_quick_resources = Variate(0, 2, m_quick_resources); break;
-					case 3: m_foes = Variate(1, 3, m_foes); break;
-					case 4: m_weather = Variate(0, 2, m_weather); break;
+					case 0: _quickType = (MapType)Variate(0, Enum.GetValues(typeof(MapType)).Length - 1, (int)_quickType); break;
+					case 1: _quickSize = Variate(0, 2, _quickSize); break;
+					case 2: _quickResources = Variate(0, 2, _quickResources); break;
+					case 3: _foes = Variate(1, 3, _foes); break;
+					case 4: _weather = Variate(0, 2, _weather); break;
 				}
 			}
 		}
-		private void UpdateOptions(GameTime gameTime)
+		private void UpdateOptions()
 		{
-			m_currentScreen = testMenu(Screen.OptionsGeneral, Screen.OptionsGraphics, Screen.OptionsSound, Screen.Title);
-			if (m_currentScreen == Screen.Title)
-			{ saveSettings(); }
+			_currentScreen = TestMenu(Screen.OptionsGeneral, Screen.OptionsGraphics, Screen.OptionsSound, Screen.Title);
+			if (_currentScreen == Screen.Title)
+			{ SaveSettings(); }
 		}
-		private void UpdateOptionsGeneral(GameTime gameTime)
+		private void UpdateOptionsGeneral()
 		{
-			Screen s = testMenu(Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.Options);
+			Screen s = TestMenu(Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.Options);
 			if (s != Screen.OptionsGeneral)
-			{ m_currentScreen = s; }
+			{ _currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = menu();
+				int m = Menu();
 				switch (m)
 				{
-					case 0: m_language = (m_language == "en" ? "fr" : "en"); break;
-					case 1: m_health_hover = !m_health_hover; break;
-					case 2: m_smart_hud = !m_smart_hud; break;
+					case 0: _language = (_language == "en" ? "fr" : "en"); break;
+					case 1: _healthOver = !_healthOver; break;
+					case 2: SmartHud = !SmartHud; break;
 				}
 			}
 		}
-		private void UpdateOptionsGraphics(GameTime gameTime)
+		private void UpdateOptionsGraphics()
 		{
-			Screen s = testMenu(Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.Options);
+			Screen s = TestMenu(Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.Options);
 			if (s != Screen.OptionsGraphics)
-			{ m_currentScreen = s; }
+			{ _currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = menu();
+				int m = Menu();
 				switch (m)
 				{
 					case 0:
-						m_screen = getNextResolution(Souris.Get().Clicked(MouseButton.Right));
-						graphics.PreferredBackBufferWidth = (int)m_screen.X;
-						graphics.PreferredBackBufferHeight = (int)m_screen.Y;
+						_screenSize = GetNextResolution(Souris.Get().Clicked(MouseButton.Right));
+						_graphics.PreferredBackBufferWidth = (int)_screenSize.X;
+						_graphics.PreferredBackBufferHeight = (int)_screenSize.Y;
 						LoadScreenSizeDependantContent();
-						graphics.ApplyChanges();
+						_graphics.ApplyChanges();
 						break;
 
 					case 1:
-						m_fullScreen = !m_fullScreen;
-						if (!m_fullScreen)
+						_fullScreen = !_fullScreen;
+						if (!_fullScreen)
 						{ Forms.Application.EnableVisualStyles(); }
-						graphics.IsFullScreen = m_fullScreen;
-						graphics.ApplyChanges();
+						_graphics.IsFullScreen = _fullScreen;
+						_graphics.ApplyChanges();
 						break;
 
-					case 2: m_textures = Variate(0, 2, m_textures); break;
-					case 3: m_shadows = !m_shadows; break;
-					case 4: m_theme = Variate(0, 1, m_theme); break;
+					case 2: _textures = Variate(0, 2, _textures); break;
+					case 3: _shadows = !_shadows; break;
+					case 4: _theme = Variate(0, 1, _theme); break;
 				}
 			}
 		}
-		private void UpdateOptionsSound(GameTime gameTime)
+		private void UpdateOptionsSound()
 		{
-			Screen s = testMenu(Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.Options);
+			Screen s = TestMenu(Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.Options);
 			if (s != Screen.OptionsSound)
-			{ m_currentScreen = s; }
+			{ _currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = menu();
+				int m = Menu();
 				switch (m)
 				{
-					case 0: m_sound_general = Variate(0, 10, (int)m_sound_general); break;
-					case 1: m_sound_music = Variate(0, 10, (int)m_sound_music); break;
-					case 2: m_sound_sfx = Variate(0, 10, (int)m_sound_sfx); break;
-					case 3: m_sound = Variate(0, 2, (int)m_sound); break;
+					case 0: _soundGeneral = Variate(0, 10, (int)_soundGeneral); break;
+					case 1: _soundMusic = Variate(0, 10, (int)_soundMusic); break;
+					case 2: _soundSFX = Variate(0, 10, (int)_soundSFX); break;
+					case 3: _sound = Variate(0, 2, _sound); break;
 				}
 			}
-			son.MusicCategory.SetVolume(musicVolume * m_sound_music * (m_sound_general / 10));
+			_son.MusicCategory.SetVolume(MusicVolume * _soundMusic * (_soundGeneral / 10));
 
 		}
-		private void UpdateCredits(GameTime gameTime)
+		private void UpdateCredits()
 		{
 			if (Clavier.Get().NewPress(Keys.Escape))
-			{ m_currentScreen = Screen.Title; }
-            m_credits += (Keyboard.GetState().IsKeyDown(Keys.LeftControl) || Keyboard.GetState().IsKeyDown(Keys.RightControl) ? 10 : 1);
+			{ _currentScreen = Screen.Title; }
+			_credits += (Keyboard.GetState().IsKeyDown(Keys.LeftControl) || Keyboard.GetState().IsKeyDown(Keys.RightControl) ? 10 : 1);
 		}
-		float compt = 0;
+		float _compt;
 		private void UpdateGame(GameTime gameTime)
 		{
-			techno.Pre_Update(joueur);
-			System.Windows.Forms.Control.FromHandle(this.Window.Handle).Controls.Add(elementHost);
-			techno.Post_Update(joueur);
+			_techno.Pre_Update(_joueur);
+			Forms.Control.FromHandle(Window.Handle).Controls.Add(_elementHost);
+			_techno.Post_Update(_joueur);
 
 			//if (isbuilding)
 			//{
@@ -693,26 +672,26 @@ namespace NNNA
 
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{
-				elementHost.Visible = false;
-				m_currentScreen = Screen.GameMenu;
+				_elementHost.Visible = false;
+				_currentScreen = Screen.GameMenu;
 			}
 
-			compt = (compt + gameTime.ElapsedGameTime.Milliseconds * 0.1f) % 100;
-			curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-			camera.Update(curseur, graphics);
+			_compt = (_compt + gameTime.ElapsedGameTime.Milliseconds * 0.1f) % 100;
+			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+			_camera.Update(_curseur, _graphics);
 
 			// Intelligence artificielle
-			Random rand = new Random();
-			foreach (Joueur foe in m_enemies)
+			var rand = new Random();
+			foreach (Joueur foe in _enemies)
 			{
 				foreach (Unit unit in foe.Units)
 				{
 					if (++unit.Updates == 120)
 					{
-						unit.Move(unit.Position + new Vector2(rand.Next(-40, 41), rand.Next(-40, 41)), units, buildings, matrice);
+						unit.Move(unit.Position + new Vector2(rand.Next(-40, 41), rand.Next(-40, 41)), _units, _buildings, _matrice);
 						unit.Updates = rand.Next(0, 40);
 					}
-					unit.ClickMouvement(curseur, gameTime, camera, hud, units, buildings, matrice);
+					unit.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _matrice);
 				}
 			}
 
@@ -721,78 +700,78 @@ namespace NNNA
 			{
 				Building b;
 				Unit u;
-				switch (m_currentAction)
+				switch (_currentAction)
 				{
 					// Ere 1 
 					case "build_hutte":
-						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur, (byte)random.Next(0,2));
-						if (joueur.Pay(b.Prix))
+						b = new Hutte((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, _joueur, (byte)_random.Next(0,2));
+						if (_joueur.Pay(b.Prix))
 						{
-							joueur.Buildings.Add(b);
-                            buildings.Add(b);
+							_joueur.Buildings.Add(b);
+							_buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
-							m_pointer = "pointer";
-							m_currentAction = "";
+							_pointer = "pointer";
+							_currentAction = "";
 						}
 						else
 						{
 							MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
-							m_pointer = "pointer";
-							m_currentAction = "";
+							_pointer = "pointer";
+							_currentAction = "";
 						}
 						break;
 
 					case "build_hutteDesChasseurs":
-						b = new Hutte_des_chasseurs((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
-						if (joueur.Pay(b.Prix))
+						b = new HutteDesChasseurs((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, _joueur);
+						if (_joueur.Pay(b.Prix))
 						{
-                            joueur.Buildings.Add(b);
-                            buildings.Add(b);
+							_joueur.Buildings.Add(b);
+							_buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
-							m_pointer = "pointer";
-							m_currentAction = "";
+							_pointer = "pointer";
+							_currentAction = "";
 						}
 						else
 						{
 							MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
-							m_pointer = "pointer";
-							m_currentAction = "";
+							_pointer = "pointer";
+							_currentAction = "";
 						}
 						break;
 
 					case "create_peon" :
-						u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 155, Content, joueur, false);
-						if (joueur.Population + 1 > joueur.Population_Max && joueur.Pay(u.Prix))
+						u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, _joueur, false);
+						if (_joueur.Population + 1 > _joueur.PopulationMax && _joueur.Pay(u.Prix))
 						{
-							selectedBuilding.Iterator++;
-							joueur.Units.Add(u);
-                            units.Add(u);
+							_selectedBuilding.Iterator++;
+							_joueur.Units.Add(u);
+							_units.Add(u);
 							MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
-							m_currentAction = "";
+							_currentAction = "";
 						}
 						else
 						{
 							MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
-							joueur.Population--;
-							m_currentAction = "";
+							_joueur.Population--;
+							_currentAction = "";
 						}
 						break;
 
 					case "create_guerrier":
-						u = new Guerrier((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 3), (int)selectedBuilding.Position.Y + 70, Content, joueur, false);
-						if (joueur.Population + 1 > joueur.Population_Max && joueur.Pay(u.Prix))
+						u = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, _joueur, false);
+						if (_joueur.Population + 1 > _joueur.PopulationMax && _joueur.Pay(u.Prix))
 						{
-							selectedBuilding.Iterator++;
-                            joueur.Units.Add(u);
-                            units.Add(u);
+							_selectedBuilding.Iterator++;
+							_joueur.Units.Add(u);
+							_units.Add(u);
 							MessagesManager.Messages.Add(new Msg("Nouveau Guerrier !", Color.White, 5000));
-							m_currentAction = "";
+							_currentAction = "";
 						}
 						else
 						{
 							MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
-							joueur.Population--;
-							m_currentAction = "";
+							_joueur.Population--;
+							_currentAction = "";
 						}
 						break;
 
@@ -819,56 +798,55 @@ namespace NNNA
 					Fin Ere 2 */
 
 					default:
-						m_selection = new Rectangle(Souris.Get().X + (int)camera.Position.X, Souris.Get().Y + (int)camera.Position.Y, 0, 0);
-						m_currentAction = "select";
+						_selection = new Rectangle(Souris.Get().X + (int)_camera.Position.X, Souris.Get().Y + (int)_camera.Position.Y, 0, 0);
+						_currentAction = "select";
 						break;
 				}
 			}
-			else if (Souris.Get().Hold(MouseButton.Left) && m_currentAction == "select")
+			else if (Souris.Get().Hold(MouseButton.Left) && _currentAction == "select")
 			{
-				m_selection.Width = Souris.Get().X + (int)camera.Position.X - m_selection.X;
-				m_selection.Height = Souris.Get().Y + (int)camera.Position.Y - m_selection.Y;
+				_selection.Width = Souris.Get().X + (int)_camera.Position.X - _selection.X;
+				_selection.Height = Souris.Get().Y + (int)_camera.Position.Y - _selection.Y;
 			}
 			else if (Souris.Get().Hold(MouseButton.Left, ButtonState.Released))
-			{ m_selection = Rectangle.Empty; }
+			{ _selection = Rectangle.Empty; }
 
-			bool change;
-			if (!m_selection.IsEmpty && Souris.Get().Released(MouseButton.Left) && (curseur.Position.Y <= hud.Position.Y + 20 || m_selection.Y - camera.Position.Y <= hud.Position.Y + 20))
+			if (!_selection.IsEmpty && Souris.Get().Released(MouseButton.Left) && (_curseur.Position.Y <= _hud.Position.Y + 20 || _selection.Y - _camera.Position.Y <= _hud.Position.Y + 20))
 			{
 				// On met à jour les séléctions
-				change = false;
+				bool change = false;
 				if (!Keyboard.GetState().IsKeyDown(Keys.LeftControl) && !Keyboard.GetState().IsKeyDown(Keys.RightControl))
 				{
-					foreach (Movible_Sprite sprite in selectedList)
+					foreach (Unit sprite in _selectedList)
 					{ sprite.Selected = false; }
-					selectedList.Clear();
-					if (selectedBuilding != null)
-					{ selectedBuilding.Selected = false; }
-					selectedBuilding = null;
+					_selectedList.Clear();
+					if (_selectedBuilding != null)
+					{ _selectedBuilding.Selected = false; }
+					_selectedBuilding = null;
 				}
-				foreach (Unit sprite in joueur.Units)
+				foreach (Unit sprite in _joueur.Units)
 				{
-					Rectangle csel = new Rectangle((int)(m_selection.X - camera.Position.X + (m_selection.Width < 0 ? m_selection.Width : 0)), (int)(m_selection.Y - camera.Position.Y + (m_selection.Height < 0 ? m_selection.Height : 0)), (int)Math.Abs(m_selection.Width), (int)Math.Abs(m_selection.Height));
-					if (!sprite.Selected && csel.Intersects(sprite.Rectangle(camera)))
+					var csel = new Rectangle((int)(_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0)), (int)(_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)), Math.Abs(_selection.Width), Math.Abs(_selection.Height));
+					if (!sprite.Selected && csel.Intersects(sprite.Rectangle(_camera)))
 					{
 						sprite.Selected = true;
-						selectedList.Add(sprite);
+						_selectedList.Add(sprite);
 						change = true;
 					}
 				}
 				if (!change)
 				{
-					foreach (Movible_Sprite sprite in selectedList)
+					foreach (Unit sprite in _selectedList)
 					{ sprite.Selected = false; }
-					selectedList.Clear();
+					_selectedList.Clear();
 
-					foreach (Building sprite in joueur.Buildings)
+					foreach (Building sprite in _joueur.Buildings)
 					{
-						Rectangle csel = new Rectangle((int)(m_selection.X - camera.Position.X + (m_selection.Width < 0 ? m_selection.Width : 0)), (int)(m_selection.Y - camera.Position.Y + (m_selection.Height < 0 ? m_selection.Height : 0)), (int)Math.Abs(m_selection.Width), (int)Math.Abs(m_selection.Height));
-						if (!sprite.Selected && csel.Intersects(sprite.Rectangle(camera)))
+						var csel = new Rectangle((int)(_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0)), (int)(_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)), Math.Abs(_selection.Width), Math.Abs(_selection.Height));
+						if (!sprite.Selected && csel.Intersects(sprite.Rectangle(_camera)))
 						{
 							sprite.Selected = true;
-							selectedBuilding = sprite;
+							_selectedBuilding = sprite;
 							change = true;
 							break;
 						}
@@ -876,79 +854,77 @@ namespace NNNA
 
 					if (!change)
 					{
-						if (selectedBuilding != null)
-						{ selectedBuilding.Selected = false; }
-						selectedBuilding = null;
+						if (_selectedBuilding != null)
+						{ _selectedBuilding.Selected = false; }
+						_selectedBuilding = null;
 					}
 				}
 
 				// On met à jour les actions
-				m_currentActions.Clear();
-				if (selectedList.Count > 0)
+				_currentActions.Clear();
+				if (_selectedList.Count > 0)
 				{
-					bool all_same = true;
+					bool allSame = true;
 					string type = "";
-					m_currentActions.Add("attack");
-					foreach (Movible_Sprite sprite in selectedList)
+					_currentActions.Add("attack");
+					foreach (Unit sprite in _selectedList)
 					{
 						if (sprite.Type != type)
 						{
 							if (type != "")
-							{ all_same = false; }
+							{ allSame = false; }
 							type = sprite.Type;
-							if (sprite.Type == "peon" && !m_currentActions.Contains("build"))
+							if (sprite.Type == "peon" && !_currentActions.Contains("build"))
 							{
-								m_currentActions.Add("gather");
-								m_currentActions.Add("build");
+								_currentActions.Add("gather");
+								_currentActions.Add("build");
 							}
 						}
 					}
-					if (!all_same)
+					if (!allSame)
 					{
-						m_currentActions.Clear();
-						m_currentActions.Add("attack");
+						_currentActions.Clear();
+						_currentActions.Add("attack");
 					}
 				}
-				else if (selectedBuilding != null)
+				else if (_selectedBuilding != null)
 				{
-					switch (selectedBuilding.Type)
+					switch (_selectedBuilding.Type)
 					{
 						case "forum" :
-							m_currentActions.Add("create_peon");
-							m_currentActions.Add("technologies");
+							_currentActions.Add("create_peon");
+							_currentActions.Add("technologies");
 							break;
 
 						case "caserne" :
-							m_currentActions.Add("create_guerrier");
+							_currentActions.Add("create_guerrier");
 							break;
 					}
 				}
-				m_currentAction = "";
-				last_state.Clear();
-				for (int i = 0; i < m_currentActions.Count; i++)
-				{
-					last_state.Add(m_currentActions[i]);
-				}
+				_currentAction = "";
+				_lastState.Clear();
+				foreach (string t in _currentActions)
+				{ _lastState.Add(t); }
 			}
 
 			// Actions
-			if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= hud.Position.X + 20 && Souris.Get().Y >= hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+			if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= _hud.Position.X + 20 && Souris.Get().Y >= _hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
 			{
-				int x = Souris.Get().X - hud.Position.X - 20, y = Souris.Get().Y - hud.Position.Y - 20;
+				int x = Souris.Get().X - _hud.Position.X - 20, y = Souris.Get().Y - _hud.Position.Y - 20;
 				if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
 				{
 					x /= 40;
 					y /= 40;
 					int pos = x + 6 * y;
-					if (pos < m_currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+					if (pos < _currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
 					{
-						string act = "";
+						string act;
 						if (Clavier.Get().NewPress(Keys.C))
 						{ act = "build_hutte"; }
 						else if (Clavier.Get().NewPress(Keys.V))
 						{ act = "build_hutteDesChasseurs"; }
 						else
-						{ act = m_currentActions[pos]; }
+						{ act = _currentActions[pos]; }
 						Debug(act);
 						switch (act)
 						{
@@ -956,76 +932,80 @@ namespace NNNA
 								break;
 
 							case "build":
-								m_currentActions.Clear();
-								m_currentActions.Add("build_hutte");
-								m_currentActions.Add("build_hutteDesChasseurs");
-								m_currentActions.Add("retour");
+								_currentActions.Clear();
+								_currentActions.Add("build_hutte");
+								_currentActions.Add("build_hutteDesChasseurs");
+								_currentActions.Add("retour");
 								break;
 
 							case "gather":
 								break;
 
 							case "build_hutte":
-								if (joueur.Has(new Hutte().Prix))
+								if (_joueur.Has(new Hutte().Prix))
 								{
-									if (random.Next(0, 2) == 0)
-										m_pointer = "Batiments/maison1_" + joueur.Ere.ToString();
+									if (_random.Next(0, 2) == 0)
+									{ _pointer = "Batiments/maison1_" + _joueur.Ere.ToString(CultureInfo.CurrentCulture); }
 									else
-										m_pointer = "Batiments/maison2_" + joueur.Ere.ToString();
-									m_currentAction = "build_hutte";
+									{ _pointer = "Batiments/maison2_" + _joueur.Ere.ToString(CultureInfo.CurrentCulture); }
+									_currentAction = "build_hutte";
 								}
 								else
 								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								break;
 
 							case "build_hutteDesChasseurs":
-								if (joueur.Has(new Hutte_des_chasseurs().Prix))
+								if (_joueur.Has(new HutteDesChasseurs().Prix))
 								{
-									m_pointer = "Batiments/caserne_" + joueur.Ere.ToString();
-									m_currentAction = "build_hutteDesChasseurs";
+									_pointer = "Batiments/caserne_" + _joueur.Ere.ToString(CultureInfo.CurrentCulture);
+									_currentAction = "build_hutteDesChasseurs";
 								}
 								else
 								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								break;
 
 							case "retour":
-								m_currentActions.Clear();
-								for (int i = 0; i < last_state.Count; i++)
-								{
-									m_currentActions.Add(last_state[i]);
-								}
+								_currentActions.Clear();
+								foreach (string t in _lastState)
+								{ _currentActions.Add(t); }
 								break;
 
 							case "create_peon":
-								Peon u = new Peon((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 5), (int)selectedBuilding.Position.Y + 155, Content, joueur);
-								if (joueur.Pay(u.Prix))
+								if (_selectedBuilding != null)
 								{
-									selectedBuilding.Iterator++;
-									joueur.Units.Add(u);
-                                    units.Add(u);
-									MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
-									m_currentAction = "";
+									var u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, _joueur);
+									if (_joueur.Pay(u.Prix))
+									{
+										_selectedBuilding.Iterator++;
+										_joueur.Units.Add(u);
+										_units.Add(u);
+										MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
+										_currentAction = "";
+									}
+									else
+									{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								}
-								else
-								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								break;
 
 							case "technologies":
-								elementHost.Visible = true;
+								_elementHost.Visible = true;
 								break;
 
 							case "create_guerrier":
-								Guerrier u1 = new Guerrier((int)selectedBuilding.Position.X + 50 * (selectedBuilding.Iterator % 3), (int)selectedBuilding.Position.Y + 70, Content, joueur);
-								if (joueur.Has(u1.Prix))
+								if (_selectedBuilding != null)
 								{
-									selectedBuilding.Iterator++;
-                                    joueur.Units.Add(u1);
-                                    units.Add(u1);
-									MessagesManager.Messages.Add(new Msg("Nouveau Chasseur !", Color.White, 5000));
-									m_currentAction = "";
+									var u1 = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, _joueur);
+									if (_joueur.Has(u1.Prix))
+									{
+										_selectedBuilding.Iterator++;
+										_joueur.Units.Add(u1);
+										_units.Add(u1);
+										MessagesManager.Messages.Add(new Msg("Nouveau Chasseur !", Color.White, 5000));
+										_currentAction = "";
+									}
+									else
+									{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								}
-								else
-								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
 								break;
 
 							/* Ere 2 
@@ -1043,33 +1023,33 @@ namespace NNNA
 					}
 				}
 			}
-			foreach (Unit sprite in joueur.Units)
-			{ sprite.ClickMouvement(curseur, gameTime, camera, hud, units, buildings, matrice); }
+			foreach (Unit sprite in _joueur.Units)
+			{ sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _matrice); }
 			
 			// Curseur de combat
-			if (m_currentAction == "" && selectedList.Count > 0)
+			if (_currentAction == "" && _selectedList.Count > 0)
 			{
 				bool unitUnder = false;
-				foreach (Joueur foe in m_enemies)
+				foreach (Joueur foe in _enemies)
 				{
 					foreach (Unit unit in foe.Units)
 					{
 						// Si une unité ennemie se trouve sous le curseur
-						if (unit.Rectangle(camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
+						if (unit.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
 						{
 							float mul = 0.0f;
-							if (m_weather > 0)
+							if (_weather > 0)
 							{
-								foreach (Unit uni in joueur.Units)
+								foreach (Unit uni in _joueur.Units)
 								{
-									float m = (uni.Position_Center - unit.Position).Length();
-									m = 1.0f - (m / (uni.Line_sight + joueur.Additional_line_sight));
+									float m = (uni.PositionCenter - unit.Position).Length();
+									m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
 									mul = (m > 0 && m > mul) ? m : mul;
 								}
-								foreach (Building building in joueur.Buildings)
+								foreach (Building building in _joueur.Buildings)
 								{
-									float m = (building.Position_Center - unit.Position).Length();
-									m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+									float m = (building.PositionCenter - unit.Position).Length();
+									m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
 									mul = (m > 0 && m > mul) ? m : mul;
 								}
 							}
@@ -1077,34 +1057,34 @@ namespace NNNA
 							{ mul = 1.0f; }
 							if (mul > 0.25f)
 							{
-								m_pointer = "fight";
+								_pointer = "fight";
 								unitUnder = true;
 							}
 						}
 					}
 				}
 				if (!unitUnder)
-				{ m_pointer = "pointer"; }
+				{ _pointer = "pointer"; }
 			}
 
-			joueur.Units.Sort(Sprite.CompareByY);
-			joueur.Buildings.Sort(Sprite.CompareByY);
+			_joueur.Units.Sort(Sprite.CompareByY);
+			_joueur.Buildings.Sort(Sprite.CompareByY);
 			 
 			//minimap.Update(units, buildings, selectedList, joueur);
-			son.Musiquemenu.Pause();
+			_son.MusiqueMenu.Pause();
 		}
-		void UpdateGameMenu(GameTime gameTime)
+		void UpdateGameMenu()
 		{
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{
-				m_pointer = "pointer";
-				m_currentScreen = Screen.Game;
+				_pointer = "pointer";
+				_currentScreen = Screen.Game;
 			}
-			curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-			m_currentScreen = testPauseMenu(Screen.Title, Screen.Game);
-			if (!son.Musiquemenu.IsPlaying && !son.Musiquemenu.IsPaused)
-			{ son.Initializesons(musicVolume, m_sound_music, m_sound_general); }
-			son.Musiquemenu.Resume();
+			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+			_currentScreen = TestPauseMenu(Screen.Title, Screen.Game);
+			if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
+			{ _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
+			_son.MusiqueMenu.Resume();
 		}
 
 		#endregion
@@ -1118,53 +1098,53 @@ namespace NNNA
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.Black);
-			spriteBatch.Begin();
+			_spriteBatch.Begin();
 
-			switch (m_currentScreen)
+			switch (_currentScreen)
 			{
 				case Screen.Title:
-					DrawTitle(gameTime);
+					DrawTitle();
 					break;
 
 				case Screen.Play:
-					DrawPlay(gameTime);
+					DrawPlay();
 					break;
 				case Screen.PlayQuick:
-					DrawPlayQuick(gameTime);
+					DrawPlayQuick();
 					break;
 
 				case Screen.Options:
-					DrawOptions(gameTime);
+					DrawOptions();
 					break;
 				case Screen.OptionsGeneral:
-					DrawOptionsGeneral(gameTime);
+					DrawOptionsGeneral();
 					break;
 				case Screen.OptionsGraphics:
-					DrawOptionsGraphics(gameTime);
+					DrawOptionsGraphics();
 					break;
 				case Screen.OptionsSound:
-					DrawOptionsSound(gameTime);
+					DrawOptionsSound();
 					break;
 
 				case Screen.Credits:
-					DrawCredits(gameTime);
+					DrawCredits();
 					break;
 
 				case Screen.Game:
-					DrawGame(gameTime);
+					DrawGame();
 					break;
 				case Screen.GameMenu:
-					DrawGameMenu(gameTime);
+					DrawGameMenu();
 					break;
 			}
 
 			// Code Konami
-			if (m_konami >= 10)
+			if (_konami >= 10)
 			{
-				joueur.Resource("Bois").Add(5000);
-				joueur.Resource("Pierre").Add(5000);
-				joueur.Resource("Nourriture").Add(5000);
-				m_konami = 0;
+				_joueur.Resource("Bois").Add(5000);
+				_joueur.Resource("Pierre").Add(5000);
+				_joueur.Resource("Nourriture").Add(5000);
+				_konami = 0;
 				/*if (m_konamiStatus < 300)
 				{
 					spriteBatch.DrawString(m_font_credits, "KONAMI CODE!", new Vector2(10, 10), Color.Red);
@@ -1179,231 +1159,231 @@ namespace NNNA
 				}*/
 			}
 
-			if (m_showConsole)
+			if (_showConsole)
 			{
-				List<ConsoleMessage> msgs = Console.GetLast(10);
-				spriteBatch.Draw(m_console, new Rectangle(0, 0, (int)m_screen.X, 26 * msgs.Count), Color.White);
+				List<ConsoleMessage> msgs = Console.GetLast();
+				_spriteBatch.Draw(_console, new Rectangle(0, 0, (int)_screenSize.X, 26 * msgs.Count), Color.White);
 				for (int i = msgs.Count; i > 0; i--)
-				{ spriteBatch.DrawString(m_font_small, msgs[msgs.Count - i].Message, new Vector2(5, 26 * i - 24), Color.White); }
+				{ _spriteBatch.DrawString(_fontSmall, msgs[msgs.Count - i].Message, new Vector2(5, 26 * i - 24), Color.White); }
 			}
 
-			DrawPointer(gameTime);
+			DrawPointer();
 			
-			spriteBatch.End();
+			_spriteBatch.End();
 			base.Draw(gameTime);
 		}
 
-		private void DrawCommon(GameTime gameTime, bool drawText = true)
+		private void DrawCommon(bool drawText = true)
 		{
 			// Le fond d'écran
-			Rectangle screenRectangle = new Rectangle(0, 0, (int)m_screen.X, (int)m_screen.Y);
-			spriteBatch.Draw(m_backgrounds[m_theme], screenRectangle, Color.White);
+			var screenRectangle = new Rectangle(0, 0, (int)_screenSize.X, (int)_screenSize.Y);
+			_spriteBatch.Draw(_backgrounds[_theme], screenRectangle, Color.White);
 
 			if (drawText)
 			{
 				// Titre
-				DrawString(spriteBatch, m_font_menu_title, "NNNA", new Vector2((m_screen.X - m_font_menu_title.MeasureString("NNNA").X) / 2, m_screen.Y / 13), Color.Red, Color.Black, 1);
+				DrawString(_spriteBatch, _fontMenuTitle, "NNNA", new Vector2((_screenSize.X - _fontMenuTitle.MeasureString("NNNA").X) / 2, _screenSize.Y / 13), new Color(200, 0, 0), Color.Black, 1);
 
 				// Version
-				spriteBatch.DrawString(m_font_small, this.GetType().Assembly.GetName().Version.ToString(), new Vector2((m_screen.X - m_font_small.MeasureString(this.GetType().Assembly.GetName().Version.ToString()).X) / 2, m_screen.Y - 50), Color.GhostWhite);
+				_spriteBatch.DrawString(_fontSmall, GetType().Assembly.GetName().Version.ToString(), new Vector2((_screenSize.X - _fontSmall.MeasureString(GetType().Assembly.GetName().Version.ToString()).X) / 2, _screenSize.Y - 50), Color.GhostWhite);
 			   
 				// réseau
-				DrawString(spriteBatch, m_font_small, _(Réseau.Connected()), new Vector2(5, m_screen.Y -20),Color.GhostWhite,Color.Transparent,1);
-				DrawString(spriteBatch, m_font_small, _("Votre adresse IP est :") + " " + Réseau.GetIPaddresses(Environment.MachineName), new Vector2((m_screen.X - m_font_small.MeasureString(_("Votre adresse IP est :") + " " + Réseau.GetIPaddresses(Environment.MachineName)).X), m_screen.Y - 20), Color.GhostWhite, Color.Transparent, 1);
+				DrawString(_spriteBatch, _fontSmall, _(Réseau.Connected()), new Vector2(5, _screenSize.Y -20),Color.GhostWhite,Color.Transparent,1);
+				DrawString(_spriteBatch, _fontSmall, _("Votre adresse IP est :") + " " + Réseau.GetIPaddresses(Environment.MachineName), new Vector2((_screenSize.X - _fontSmall.MeasureString(_("Votre adresse IP est :") + " " + Réseau.GetIPaddresses(Environment.MachineName)).X), _screenSize.Y - 20), Color.GhostWhite, Color.Transparent, 1);
 			}
 
 		}
-		private void DrawPointer(GameTime gameTime)
+		private void DrawPointer()
 		{
-			if (!m_pointers.ContainsKey(m_pointer))
-			{ m_pointers.Add(m_pointer, Content.Load<Texture2D>(m_pointer)); }
-			spriteBatch.Draw(m_pointers[m_pointer], new Vector2(Souris.Get().X, Souris.Get().Y), Color.White);
+			if (!_pointers.ContainsKey(_pointer))
+			{ _pointers.Add(_pointer, Content.Load<Texture2D>(_pointer)); }
+			_spriteBatch.Draw(_pointers[_pointer], new Vector2(Souris.Get().X, Souris.Get().Y), Color.White);
 		}
-		private void DrawTitle(GameTime gameTime)
+		private void DrawTitle()
 		{
-			DrawCommon(gameTime);
-			makeMenu("Jouer", "Options", "Crédits", "Quitter");
+			DrawCommon();
+			MakeMenu("Jouer", "Options", "Crédits", "Quitter");
 		}
-		private void DrawPlay(GameTime gameTime)
+		private void DrawPlay()
 		{
-			DrawCommon(gameTime);
-			makeMenu("Escarmouche", "Retour");
+			DrawCommon();
+			MakeMenu("Escarmouche", "Retour");
 		}
-		private void DrawPlayQuick(GameTime gameTime)
+		private void DrawPlayQuick()
 		{
-			DrawCommon(gameTime);
+			DrawCommon();
 			string[] types = { "Île" };
 			string[] tailles = { "Petite", "Moyenne", "Grande" };
 			string[] ressources = { "rares", "normales", "abondantes" };
 			string[] weathers = { "Ensoleillé", "Nuageux", "Pluvieux" };
-			makeMenu(types[(int)m_quick_type], tailles[m_quick_size], _("Ressources") + " " + _(ressources[m_quick_resources]), _("Ennemis :") + " " + m_foes.ToString(), weathers[m_weather], "Jouer", "Retour");
+			MakeMenu(types[(int)_quickType], tailles[_quickSize], _("Ressources") + " " + _(ressources[_quickResources]), _("Ennemis :") + " " + _foes.ToString(CultureInfo.CurrentCulture), weathers[_weather], "Jouer", "Retour");
 		}
-		private void DrawOptions(GameTime gameTime)
+		private void DrawOptions()
 		{
-			DrawCommon(gameTime);
-			makeMenu("Jouabilité", "Graphismes", "Son", "Retour");
+			DrawCommon();
+			MakeMenu("Jouabilité", "Graphismes", "Son", "Retour");
 		}
-		private void DrawOptionsGeneral(GameTime gameTime)
+		private void DrawOptionsGeneral()
 		{
-			DrawCommon(gameTime);
-			Dictionary<string, string> languages = new Dictionary<string, string>();
+			DrawCommon();
+			var languages = new Dictionary<string, string>();
 			languages["en"] = "English";
 			languages["fr"] = "Français";
-			makeMenu(languages[m_language], (m_health_hover ? "Vie au survol" : "Vie constante"), (m_smart_hud ? "HUD intelligent" : "HUD classique"), "Retour");
+			MakeMenu(languages[_language], (_healthOver ? "Vie au survol" : "Vie constante"), (SmartHud ? "HUD intelligent" : "HUD classique"), "Retour");
 		}
-		private void DrawOptionsGraphics(GameTime gameTime)
+		private void DrawOptionsGraphics()
 		{
-			DrawCommon(gameTime);
+			DrawCommon();
 			string[] textures = { "min", "moyennes", "max" };
-			makeMenu(m_screen.X + " x " + m_screen.Y, (m_fullScreen ? "Plein écran" : "Fenêtré"), _("Textures")+" " + _(textures[m_textures]), (m_shadows ? "Ombres" : "Pas d'ombres"), _("Thème")+" "+(m_theme + 1), "Retour");
+			MakeMenu(_screenSize.X + " x " + _screenSize.Y, (_fullScreen ? "Plein écran" : "Fenêtré"), _("Textures")+" " + _(textures[_textures]), (_shadows ? "Ombres" : "Pas d'ombres"), _("Thème")+" "+(_theme + 1), "Retour");
 		}
-		private void DrawOptionsSound(GameTime gameTime)
+		private void DrawOptionsSound()
 		{
-			DrawCommon(gameTime);
+			DrawCommon();
 			string[] sound = { "min", "moy", "max" };
-			makeMenu(_("Général :") + " " + m_sound_general, _("Musique :") + " " + m_sound_music, _("Effets :") + " " + m_sound_sfx, _("Qualité") + " " + _(sound[m_sound]), "Retour");
+			MakeMenu(_("Général :") + " " + _soundGeneral, _("Musique :") + " " + _soundMusic, _("Effets :") + " " + _soundSFX, _("Qualité") + " " + _(sound[_sound]), "Retour");
 		}
-		private void DrawCredits(GameTime gameTime)
+		private void DrawCredits()
 		{
-			DrawCommon(gameTime, false);
+			DrawCommon(false);
 
 			// Crédits
-			int y = m_credits / 2;
-			if (y > m_screen.Y + 200 + (m_font_credits.MeasureString(_("Merci d'avoir joué !")).Y / 2))
-			{ y = (int)(m_screen.Y + 200 + (m_font_credits.MeasureString(_("Merci d'avoir joué !")).Y / 2)); }
+			int y = _credits / 2;
+			if (y > _screenSize.Y + 200 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2))
+			{ y = (int)(_screenSize.Y + 200 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2)); }
 
-			spriteBatch.DrawString(m_font_credits, "Nicolas Allain", new Vector2((m_screen.X - m_font_credits.MeasureString("Nicolas Allain").X) / 2, m_screen.Y - y), Color.White);
-			spriteBatch.DrawString(m_font_credits, "Nicolas Faure", new Vector2((m_screen.X - m_font_credits.MeasureString("Nicolas Faure").X) / 2, m_screen.Y + 60 - y), Color.White);
-			spriteBatch.DrawString(m_font_credits, "Nicolas Mouton-Besson", new Vector2((m_screen.X - m_font_credits.MeasureString("Nicolas Mouton-Besson").X) / 2, m_screen.Y + 120 - y), Color.White);
-			spriteBatch.DrawString(m_font_credits, "Arnaud Weiss", new Vector2((m_screen.X - m_font_credits.MeasureString("Arnaud Weiss").X) / 2, m_screen.Y + 180 - y), Color.White);
-			spriteBatch.DrawString(m_font_credits, _("Merci d'avoir joué !"), new Vector2((m_screen.X - m_font_credits.MeasureString(_("Merci d'avoir joué !")).X) / 2, m_screen.Y + (m_screen.Y / 2) + 180 + (m_font_credits.MeasureString(_("Merci d'avoir joué !")).Y / 2) - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, "Nicolas Allain", new Vector2((_screenSize.X - _fontCredits.MeasureString("Nicolas Allain").X) / 2, _screenSize.Y - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, "Nicolas Faure", new Vector2((_screenSize.X - _fontCredits.MeasureString("Nicolas Faure").X) / 2, _screenSize.Y + 60 - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, "Nicolas Mouton-Besson", new Vector2((_screenSize.X - _fontCredits.MeasureString("Nicolas Mouton-Besson").X) / 2, _screenSize.Y + 120 - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, "Arnaud Weiss", new Vector2((_screenSize.X - _fontCredits.MeasureString("Arnaud Weiss").X) / 2, _screenSize.Y + 180 - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, _("Merci d'avoir joué !"), new Vector2((_screenSize.X - _fontCredits.MeasureString(_("Merci d'avoir joué !")).X) / 2, _screenSize.Y + (_screenSize.Y / 2) + 180 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2) - y), Color.White);
 		}
-		private void DrawGame(GameTime gameTime)
+		private void DrawGame()
 		{
-			int index = (int)Math.Floor(compt / 25);
+			int index = (int)Math.Floor(_compt / 25);
 			int compteur = 0;
-			foreach (Sprite sprite in matrice)
+			foreach (Sprite sprite in _matrice)
 			{
-				if ((sprite.Position.X - camera.Position.X > -64
-					&& sprite.Position.Y - camera.Position.Y > -32
-					&& sprite.Position.X - camera.Position.X < m_screen.X
-					&& sprite.Position.Y - camera.Position.Y < m_screen.Y - ((hud.Position.Height * 4) / 5))
-					|| m_smart_hud)
+				if ((sprite.Position.X - _camera.Position.X > -64
+					&& sprite.Position.Y - _camera.Position.Y > -32
+					&& sprite.Position.X - _camera.Position.X < _screenSize.X
+					&& sprite.Position.Y - _camera.Position.Y < _screenSize.Y - (_hud.Position.Height * 4 / 5))
+					|| SmartHud)
 				{
 					float mul = 0.0f;
-					if (m_weather > 0)
+					if (_weather > 0)
 					{
-						foreach (Unit unit in joueur.Units)
+						foreach (Unit unit in _joueur.Units)
 						{
-							float m = (unit.Position_Center - sprite.Position_Center).Length();
-							m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
+							float m = (unit.PositionCenter - sprite.PositionCenter).Length();
+							m = 1.0f - (m / (unit.LineSight + _joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
-						foreach (Building building in joueur.Buildings)
+						foreach (Building building in _joueur.Buildings)
 						{
-							float m = (building.Position_Center - sprite.Position_Center).Length();
-							m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+							float m = (building.PositionCenter - sprite.PositionCenter).Length();
+							m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
 					}
 					else
 					{ mul = 1.0f; }
-					sprite.DrawMap(spriteBatch, camera, mul, m_weather);
+					sprite.DrawMap(_spriteBatch, _camera, mul, _weather);
 					compteur++;
 				}
 			}
 
 			// Affichage des objets sur la carte
-			foreach (Joueur foe in m_enemies)
+			foreach (Joueur foe in _enemies)
 			{
 				foreach (Building build in foe.Buildings)
 				{
-                    if (m_weather == 0)
-                    { build.Draw(spriteBatch, camera, foe.ColorMovable); }
-                    else
-                    {
-                        float mul = 0.0f;
-                        foreach (Unit unit in joueur.Units)
-                        {
-                            float m = (unit.Position_Center - build.Position).Length();
-                            m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
-                            mul = (m > 0 && m > mul) ? m : mul;
-                        }
-                        foreach (Building building in joueur.Buildings)
-                        {
-                            float m = (building.Position_Center - build.Position).Length();
-                            m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
-                            mul = (m > 0 && m > mul) ? m : mul;
-                        }
-                        if (mul > 0)
-                        { build.Draw(spriteBatch, camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
-                    }
-                }
+					if (_weather == 0)
+					{ build.Draw(_spriteBatch, _camera, foe.ColorMovable); }
+					else
+					{
+						float mul = 0.0f;
+						foreach (Unit unit in _joueur.Units)
+						{
+							float m = (unit.PositionCenter - build.Position).Length();
+							m = 1.0f - (m / (unit.LineSight + _joueur.AdditionalLineSight));
+							mul = (m > 0 && m > mul) ? m : mul;
+						}
+						foreach (Building building in _joueur.Buildings)
+						{
+							float m = (building.PositionCenter - build.Position).Length();
+							m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+							mul = (m > 0 && m > mul) ? m : mul;
+						}
+						if (mul > 0)
+						{ build.Draw(_spriteBatch, _camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
+					}
+				}
 				foreach (Unit uni in foe.Units)
 				{
-                    if (m_weather == 0)
-                    { uni.Draw(spriteBatch, camera, index, foe.ColorMovable); }
-                    else
-                    {
-                        float mul = 0.0f;
-                        foreach (Unit unit in joueur.Units)
-                        {
-                            float m = (unit.Position_Center - uni.Position).Length();
-                            m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
-                            mul = (m > 0 && m > mul) ? m : mul;
-                        }
-                        foreach (Building building in joueur.Buildings)
-                        {
-                            float m = (building.Position_Center - uni.Position).Length();
-                            m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
-                            mul = (m > 0 && m > mul) ? m : mul;
-                        }
-                        if (mul > 0f)
-                        { uni.Draw(spriteBatch, camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
-                    }
-                }
+					if (_weather == 0)
+					{ uni.Draw(_spriteBatch, _camera, index, foe.ColorMovable); }
+					else
+					{
+						float mul = 0.0f;
+						foreach (Unit unit in _joueur.Units)
+						{
+							float m = (unit.PositionCenter - uni.Position).Length();
+							m = 1.0f - (m / (unit.LineSight + _joueur.AdditionalLineSight));
+							mul = (m > 0 && m > mul) ? m : mul;
+						}
+						foreach (Building building in _joueur.Buildings)
+						{
+							float m = (building.PositionCenter - uni.Position).Length();
+							m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+							mul = (m > 0 && m > mul) ? m : mul;
+						}
+						if (mul > 0f)
+						{ uni.Draw(_spriteBatch, _camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
+					}
+				}
 			}
-			joueur.Draw(spriteBatch, camera, index);
-			foreach (ResourceMine sprite in resource)
+			_joueur.Draw(_spriteBatch, _camera, index);
+			foreach (ResourceMine sprite in _resources)
 			{
-                if (m_weather == 0)
-                { sprite.Draw(spriteBatch, 1, camera, 1.0f, m_weather); }
-                else
-                {
-                    float mul = 0.0f;
-                    foreach (Unit unit in joueur.Units)
-                    {
-                        float m = (unit.Position_Center - sprite.Position_Center).Length();
-                        m = 1.0f - (m / (unit.Line_sight + joueur.Additional_line_sight));
-                        mul = (m > 0 && m > mul) ? m : mul;
-                    }
-                    foreach (Building building in joueur.Buildings)
-                    {
-                        float m = (building.Position_Center - sprite.Position_Center).Length();
-                        m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
-                        mul = (m > 0 && m > mul) ? m : mul;
-                    }
-                    sprite.Draw(spriteBatch, 1, camera, mul, m_weather);
-                }
+				if (_weather == 0)
+				{ sprite.Draw(_spriteBatch, 1, _camera, 1.0f, _weather); }
+				else
+				{
+					float mul = 0.0f;
+					foreach (Unit unit in _joueur.Units)
+					{
+						float m = (unit.PositionCenter - sprite.PositionCenter).Length();
+						m = 1.0f - (m / (unit.LineSight + _joueur.AdditionalLineSight));
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					foreach (Building building in _joueur.Buildings)
+					{
+						float m = (building.PositionCenter - sprite.PositionCenter).Length();
+						m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					sprite.Draw(_spriteBatch, 1, _camera, mul, _weather);
+				}
 			}
 			// Rectangle de séléction
 			Vector2 coos = new Vector2(
-				m_selection.X - camera.Position.X + (m_selection.Width < 0 ? m_selection.Width : 0),
-				m_selection.Y - camera.Position.Y + (m_selection.Height < 0 ? m_selection.Height : 0)
+				_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0),
+				_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)
 			);
 			Rectangle tex = new Rectangle(
 				coos.X < 0 ? 0 : (int)coos.X,
 				coos.Y < 0 ? 0 : (int)coos.Y, 
-				(int)(Math.Abs(m_selection.Width) + (coos.X < 0 ? coos.X : 0)),
-				(int)(Math.Abs(m_selection.Height) + (coos.Y < 0 ? coos.Y : 0))
+				(int)(Math.Abs(_selection.Width) + (coos.X < 0 ? coos.X : 0)),
+				(int)(Math.Abs(_selection.Height) + (coos.Y < 0 ? coos.Y : 0))
 			);
-			if (tex.Width + tex.X > m_screen.X)
-			{ tex.Width = (int)m_screen.X - tex.X; }
-			if (tex.Height + tex.Y > m_screen.Y)
-			{ tex.Height = (int)m_screen.Y - tex.Y; }
-			if ((int)Math.Abs(m_selection.Width) > 0 && (int)Math.Abs(m_selection.Height) > 0)
+			if (tex.Width + tex.X > _screenSize.X)
+			{ tex.Width = (int)_screenSize.X - tex.X; }
+			if (tex.Height + tex.Y > _screenSize.Y)
+			{ tex.Height = (int)_screenSize.Y - tex.Y; }
+			if (Math.Abs(_selection.Width) > 0 && Math.Abs(_selection.Height) > 0)
 			{
-				spriteBatch.Draw(
+				_spriteBatch.Draw(
 					CreateRectangle(tex.Width, tex.Height, Color.Blue, Color.DarkBlue),
 					new Vector2(tex.X, tex.Y), 
 					new Color(64, 64, 64, 64)
@@ -1414,82 +1394,82 @@ namespace NNNA
 			//spriteBatch.Draw(m_night, Vector2.Zero, new Color(0, 0, 220, (int)(64 - 64 * Math.Cos((m_gameTime.TotalGameTime.TotalMilliseconds - m_elapsed) / 50000))));
 
 			// Barres de vie
-			foreach (Unit unit in joueur.Units)
+			foreach (Unit unit in _joueur.Units)
 			{
-				if (!m_health_hover || unit.Selected)
-				{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2((26 - unit.Texture.Width / 4) / 2, 6) - camera.Position, 28); }
+				if (!_healthOver || unit.Selected)
+				{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2((26 - unit.Texture.Width / 4) / 2, 6) - _camera.Position, 28); }
 			}
-			foreach (Building build in joueur.Buildings)
+			foreach (Building build in _joueur.Buildings)
 			{
-				if (!m_health_hover || build.Selected)
-				{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2((98 - build.Texture.Width) / 2, 10) - camera.Position, 100); }
+				if (!_healthOver || build.Selected)
+				{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2((98 - build.Texture.Width) / 2, 10) - _camera.Position, 100); }
 			}
-			foreach (Joueur foe in m_enemies)
+			foreach (Joueur foe in _enemies)
 			{
 				foreach (Unit unit in foe.Units)
 				{
 					float mul = 0.0f;
-					foreach (Unit uni in joueur.Units)
+					foreach (Unit uni in _joueur.Units)
 					{
-						float m = (uni.Position_Center - unit.Position).Length();
-						m = 1.0f - (m / (uni.Line_sight + joueur.Additional_line_sight));
+						float m = (uni.PositionCenter - unit.Position).Length();
+						m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
-					foreach (Building building in joueur.Buildings)
+					foreach (Building building in _joueur.Buildings)
 					{
-						float m = (building.Position_Center - unit.Position).Length();
-						m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+						float m = (building.PositionCenter - unit.Position).Length();
+						m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
 					if (mul > 0.25f)
-					{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2((26 - unit.Texture.Width / 4) / 2, 6) - camera.Position, 28); }
+					{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2((26 - unit.Texture.Width / 4) / 2, 6) - _camera.Position, 28); }
 				}
 				foreach (Building build in foe.Buildings)
 				{
 					float mul = 0.0f;
-					foreach (Unit uni in joueur.Units)
+					foreach (Unit uni in _joueur.Units)
 					{
-						float m = (uni.Position_Center - build.Position).Length();
-						m = 1.0f - (m / (uni.Line_sight + joueur.Additional_line_sight));
+						float m = (uni.PositionCenter - build.Position).Length();
+						m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
-					foreach (Building building in joueur.Buildings)
+					foreach (Building building in _joueur.Buildings)
 					{
-						float m = (building.Position_Center - build.Position).Length();
-						m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+						float m = (building.PositionCenter - build.Position).Length();
+						m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
 					if (mul > 0.25f)
-					{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2((98 - build.Texture.Width) / 2, 10) - camera.Position, 100); }
+					{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2((98 - build.Texture.Width) / 2, 10) - _camera.Position, 100); }
 				}
 			}
 
 			// Affichage du HUD
-			MessagesManager.Draw(spriteBatch, m_font_small);
-			hud.Draw(spriteBatch, minimap, joueur, m_font_small);
+			MessagesManager.Draw(_spriteBatch, _fontSmall);
+			_hud.Draw(_spriteBatch, _minimap, _joueur, _fontSmall);
 
 			// Unités séléctionnées
-			for (int i = 0; i < selectedList.Count; i++)
-			{ selectedList[i].DrawIcon(spriteBatch, new Vector2(356 * (m_screen.X / 1680) + (i % 10) * 36, m_screen.Y - hud.Position.Height + 54 * (m_screen.Y / 1050) + (i / 10) * 36 + hud.m_smart_pos)); }
+			for (int i = 0; i < _selectedList.Count; i++)
+			{ _selectedList[i].DrawIcon(_spriteBatch, new Vector2(356 * (_screenSize.X / 1680) + (i % 10) * 36, _screenSize.Y - _hud.Position.Height + 54 * (_screenSize.Y / 1050) + (i / 10) * 36 + _hud.SmartPos)); }
 
 			// List des actions
-			for (int i = 0; i < m_currentActions.Count; i++)
-			{ spriteBatch.Draw(m_actions[m_currentActions[i]], new Vector2(hud.Position.X + 20 + 40 * (i % 6), hud.Position.Y + 20 + 40 * (i / 6) + hud.m_smart_pos), Color.White); }
+			for (int i = 0; i < _currentActions.Count; i++)
+			{ _spriteBatch.Draw(_actions[_currentActions[i]], new Vector2(_hud.Position.X + 20 + 40 * (i % 6), _hud.Position.Y + 20 + 40 * (i / 6) + _hud.SmartPos), Color.White); }
 
 			// Flash de changement d'ère
-			if (flash_bool && a > 0f)
+			if (FlashBool && a > 0f)
 			{
-				spriteBatch.Draw(m_flash ,new Rectangle(0, 0, (int) m_screen.X, (int) m_screen.Y), new Color(0f, 0f, 0f, a));
+				_spriteBatch.Draw(_flash ,new Rectangle(0, 0, (int) _screenSize.X, (int) _screenSize.Y), new Color(0f, 0f, 0f, a));
 				a -= 0.01f;
 			}
 			else
 			{
-				flash_bool = false;
+				FlashBool = false;
 				a = 1.0f;
-            }
+			}
 
-            Debug(3, units.Count);
-            Debug(4, buildings.Count);
+			Debug(3, _units.Count);
+			Debug(4, _buildings.Count);
 		}
 
 		/// <summary>
@@ -1501,23 +1481,23 @@ namespace NNNA
 		/// <param name="width">La longueur de la barre de vie en pixels.</param>
 		private void DrawLife(int life, int max, Vector2 pos, int width)
 		{
-			int greenLength = (life * (width - 2)) / life;
+			int greenLength = (life * (width - 2)) / max;
 			int redLength = (width - 2) - greenLength;
-			spriteBatch.Draw(colors[Color.Black], new Rectangle((int)pos.X - 1, (int)pos.Y - 1, width, 5), Color.White);
+			_spriteBatch.Draw(_colors[Color.Black], new Rectangle((int)pos.X - 1, (int)pos.Y - 1, width, 5), Color.White);
 			if (greenLength > 0)
-			{ spriteBatch.Draw(colors[Color.Green], new Rectangle((int)pos.X, (int)pos.Y, greenLength, 3), Color.White); }
+			{ _spriteBatch.Draw(_colors[Color.Green], new Rectangle((int)pos.X, (int)pos.Y, greenLength, 3), Color.White); }
 			if (redLength > 0)
-			{ spriteBatch.Draw(colors[Color.Red], new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 3), Color.White); }
+			{ _spriteBatch.Draw(_colors[Color.Red], new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 3), Color.White); }
 		}
-		private void DrawGameMenu(GameTime gameTime)
+		private void DrawGameMenu()
 		{
-			foreach (EffectPass pass in gaussianBlur.CurrentTechnique.Passes)
+			foreach (EffectPass pass in _gaussianBlur.CurrentTechnique.Passes)
 			{
-				DrawGame(gameTime);
+				DrawGame();
 				pass.Apply();
 			}
-			spriteBatch.Draw(m_background_dark, Vector2.Zero, Color.White);
-			makePauseMenu("Quitter", "Retour");
+			_spriteBatch.Draw(_backgroundDark, Vector2.Zero, Color.White);
+			MakePauseMenu("Quitter", "Retour");
 		}
 
 		#endregion
@@ -1528,7 +1508,7 @@ namespace NNNA
 		private void Debug(int i, string value)
 		{
 			#if DEBUG
-				spriteBatch.DrawString(m_font_small, value, new Vector2(10, 10 + i * 20), Color.White);
+				_spriteBatch.DrawString(_fontSmall, value, new Vector2(10, 10 + i * 20), Color.White);
 			#endif
 		}
 		private void Debug(int i, bool value)
@@ -1543,16 +1523,16 @@ namespace NNNA
 		}
 		private void Debug(List<Point> value)
 		{
-			string deb = "List<" + value.GetType().GetGenericArguments()[0].ToString() + ">(" + value.Count.ToString() + ") { ";
+			string deb = "List<" + value.GetType().GetGenericArguments()[0].ToString() + ">(" + value.Count.ToString(CultureInfo.CurrentCulture) + ") { ";
 			for (int i = 0; i < value.Count; i++)
-			{ deb += value[i].ToString() + ", "; }
+			{ deb += value[i] + ", "; }
 			Debug(deb.Substring(0, deb.Length - 2) + " }");
 		}
 		private void Debug(object[] value)
 		{
-			string deb = value.GetType() + "[" + value.Length.ToString() + "] { ";
+			string deb = value.GetType() + "[" + value.Length.ToString(CultureInfo.CurrentCulture) + "] { ";
 			for (int i = 0; i < value.Length; i++)
-			{ deb += value[i].ToString() + ", "; }
+			{ deb += value[i] + ", "; }
 			Debug(deb.Substring(0, deb.Length - 2) + " }");
 		}
 		private void Debug(bool value)
@@ -1575,9 +1555,10 @@ namespace NNNA
 		/// <param name="borderCol">La couleur de la bordure.</param>
 		/// <param name="border">La taille de la bordure.</param>
 		/// <param name="spec">L'alignement du text. Valeurs possibles : "Left", "Right", "Center". Laissez vide pour ne rien changer.</param>
+		/// <param name="scale">La déformation en taille du texte.</param>
 		protected void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border = 0, string spec = "", float scale = 1)
 		{
-			while (font.MeasureString(text).X * scale > m_screen.X * 0.36)
+			while (font.MeasureString(text).X * scale > _screenSize.X * 0.36)
 			{ font.Spacing--; }
 
 			switch (spec)
@@ -1587,11 +1568,11 @@ namespace NNNA
 					break;
 
 				case "Right":
-					coos.X = m_screen.X - font.MeasureString(text).X * scale;
+					coos.X = _screenSize.X - font.MeasureString(text).X * scale;
 					break;
 
 				case "Center":
-					coos.X = (m_screen.X - font.MeasureString(text).X * scale) / 2;
+					coos.X = (_screenSize.X - font.MeasureString(text).X * scale) / 2;
 					break;
 			}
 
@@ -1608,38 +1589,37 @@ namespace NNNA
 			font.Spacing = 0;
 		}
 
-		protected void makeMenu(params string[] args)
+		protected void MakeMenu(params string[] args)
 		{
-			m_currentMenus = args;
+			_currentMenus = args;
 			for (int i = 0; i < args.Length; i++)
-			{ DrawString(spriteBatch, m_font_menu, _(args[i]), new Vector2(0, i * (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? (m_currentMenus.Length - 5) * 2 : 0))) + m_screen.Y / 5 + (180 * (m_screen.Y / 1050))), (menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", m_screen.Y / 1050); }
+			{ DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, i * (_screenSize.Y / (11 + (_currentMenus.Length > 5 ? (_currentMenus.Length - 5) * 2 : 0))) + _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050))), (Menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", _screenSize.Y / 1050); }
 		}
-		protected int menu()
-		{ return Souris.Get().Y > m_screen.Y / 5 + (180 * (m_screen.Y / 1050)) && ((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) % (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? (m_currentMenus.Length - 5) * 2 : 0)))) < (m_font_menu.MeasureString("Menu").Y * m_screen.Y) / 1050 ? (int)((Souris.Get().Y - m_screen.Y / 5 - (180 * (m_screen.Y / 1050))) / (m_screen.Y / (11 + (m_currentMenus.Length > 5 ? (m_currentMenus.Length - 5) * 2 : 0)))) : -1; }
+		protected int Menu()
+		{ return Souris.Get().Y > _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050)) && ((Souris.Get().Y - _screenSize.Y / 5 - (180 * (_screenSize.Y / 1050))) % (_screenSize.Y / (11 + (_currentMenus.Length > 5 ? (_currentMenus.Length - 5) * 2 : 0)))) < (_fontMenu.MeasureString("Menu").Y * _screenSize.Y) / 1050 ? (int)((Souris.Get().Y - _screenSize.Y / 5 - (180 * (_screenSize.Y / 1050))) / (_screenSize.Y / (11 + (_currentMenus.Length > 5 ? (_currentMenus.Length - 5) * 2 : 0)))) : -1; }
 
-		protected void makePauseMenu(params string[] args)
+		protected void MakePauseMenu(params string[] args)
 		{
 			for (int i = 0; i < args.Length; i++)
-			{ spriteBatch.DrawString(m_font_menu, _(args[i]), new Vector2((668 * (m_screen.X / 1680)), i * 80 + (180 * (m_screen.Y / 1050))), Color.White); }
+			{ _spriteBatch.DrawString(_fontMenu, _(args[i]), new Vector2((668 * (_screenSize.X / 1680)), i * 80 + (180 * (_screenSize.Y / 1050))), Color.White); }
 		}
-		protected int pauseMenu()
-		{ return (Souris.Get().X > (654 * (m_screen.X / 1680)) && Souris.Get().Y > (180 * (m_screen.Y / 1050))) ? (int)((Souris.Get().Y - (180 * (m_screen.Y / 1050))) / 80) : -1; }
+		protected int PauseMenu()
+		{ return (Souris.Get().X > (654 * (_screenSize.X / 1680)) && Souris.Get().Y > (180 * (_screenSize.Y / 1050))) ? (int)((Souris.Get().Y - (180 * (_screenSize.Y / 1050))) / 80) : -1; }
 
 		/// <summary>
 		/// Teste si un menu est cliqué.
 		/// </summary>
-		/// <param name="up">Le menu sur lequel revenir si on est déjà sur le menu cliqué.</param>
 		/// <param name="args">La liste des menus possibles.</param>
 		/// <returns>Le menu cliqué.</returns>
-		protected Screen testMenu(params Screen[] args)
+		protected Screen TestMenu(params Screen[] args)
 		{
 			if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = menu();
+				int m = Menu();
 				if (m >= 0 && m < args.Length)
 				{ return args[m]; }
 			}
-			return m_currentScreen;
+			return _currentScreen;
 		}
 
 		/// <summary>
@@ -1647,15 +1627,15 @@ namespace NNNA
 		/// </summary>
 		/// <param name="args">La liste des menus possibles.</param>
 		/// <returns>Le menu cliqué.</returns>
-		protected Screen testPauseMenu(params Screen[] args)
+		protected Screen TestPauseMenu(params Screen[] args)
 		{
 			if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = pauseMenu();
+				int m = PauseMenu();
 				if (m >= 0 && m < args.Length)
 				{ return args[m]; }
 			}
-			return m_currentScreen;
+			return _currentScreen;
 		}
 
 		#endregion
@@ -1664,7 +1644,7 @@ namespace NNNA
 		/// Retourne la prochaine résolution disponible.
 		/// </summary>
 		/// <returns>La prochaine résolution dans l'ordre croissant.</returns>
-		private Vector2 getNextResolution(bool previous = false)
+		private Vector2 GetNextResolution(bool previous = false)
 		{
 			Vector2[] l = {
 				/*new Vector2(320, 200), 
@@ -1694,7 +1674,7 @@ namespace NNNA
 				new Vector2(2560, 1600), 
 				new Vector2(2560, 2048)
 			};
-			List<Vector2> list = new List<Vector2>();
+			var list = new List<Vector2>();
 			float w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 			foreach (Vector2 vector in l)
 			{
@@ -1703,9 +1683,9 @@ namespace NNNA
 				{ list.Add(vector); }
 			}
 			Vector2 next;
-			if (list.Contains(m_screen))
+			if (list.Contains(_screenSize))
 			{
-				int index = list.IndexOf(m_screen);
+				int index = list.IndexOf(_screenSize);
 				next = list.ElementAt((index + (previous ? -1 : 1) + list.Count) % list.Count);
 			}
 			else
@@ -1723,8 +1703,8 @@ namespace NNNA
 		/// <returns>La Texture2D générée.</returns>
 		private Texture2D CreateRectangle(int width, int height, Color col, Color border)
 		{
-			Texture2D rectangleTexture = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);
-			Color[] color = new Color[width * height];
+			var rectangleTexture = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);
+			var color = new Color[width * height];
 			for (int i = 0; i < color.Length; i++)
 			{ color[i] = (i < width || i >= color.Length - width || i % width == 0 || i % width == width - 1 ? border : col); }
 			rectangleTexture.SetData(color);
@@ -1743,11 +1723,12 @@ namespace NNNA
 		/// <summary>
 		/// Traduit la chaîne passée en argument en fonction de la langue choisie.
 		/// </summary>
-		/// <param name="text"></param>
-		/// <returns></returns>
+		/// <param name="text">Le texte à traduire.</param>
+		/// <param name="lang">Langue de destination.</param>
+		/// <returns>Le texte traduit.</returns>
 		private string Translate(string text, string lang = "")
 		{
-			Dictionary<string, Dictionary<string, string>> translations = new Dictionary<string, Dictionary<string, string>>();
+			var translations = new Dictionary<string, Dictionary<string, string>>();
 			translations["en"] = new Dictionary<string, string>();
 			translations["en"]["Jouer"] = "Play";
 			translations["en"]["Options"] = "Settings";
@@ -1762,10 +1743,10 @@ namespace NNNA
 			translations["en"]["rares"] = "rare";
 			translations["en"]["normales"] = "normal";
 			translations["en"]["abondantes"] = "abundant";
-            translations["en"]["Ressources"] = "Resources";
-            translations["en"]["Pluvieux"] = "Rainy";
-            translations["en"]["Nuageux"] = "Couldy";
-            translations["en"]["Ensoleillé"] = "Sunny";
+			translations["en"]["Ressources"] = "Resources";
+			translations["en"]["Pluvieux"] = "Rainy";
+			translations["en"]["Nuageux"] = "Couldy";
+			translations["en"]["Ensoleillé"] = "Sunny";
 			translations["en"]["Ennemis :"] = "Enemies:";
 			translations["en"]["Jouabilité"] = "Playability";
 			translations["en"]["Graphismes"] = "Graphics";
@@ -1788,13 +1769,13 @@ namespace NNNA
 			translations["en"]["Musique :"] = "Music:";
 			translations["en"]["Effets :"] = "Effects:";
 			translations["en"]["Qualité"] = "Quality";
-            translations["en"]["Merci d'avoir joué !"] = "Thanks for playing!";
-            translations["en"]["Votre adresse IP est :"] = "Your IP adress is:";
-            translations["en"]["Vous etes connecte"] = "Your are connected";
-            translations["en"]["Vous etes deconnecte"] = "Your are not connected";
+			translations["en"]["Merci d'avoir joué !"] = "Thanks for playing!";
+			translations["en"]["Votre adresse IP est :"] = "Your IP adress is:";
+			translations["en"]["Vous etes connecte"] = "Your are connected";
+			translations["en"]["Vous etes deconnecte"] = "Your are not connected";
 
 			if (lang == "")
-			{ lang = m_language; }
+			{ lang = _language; }
 
 			if (translations.ContainsKey(lang))
 			{
@@ -1803,11 +1784,13 @@ namespace NNNA
 			}
 			return text;
 		}
+
 		/// <summary>
 		/// Traduit la chaîne passée en argument en fonction de la langue choisie.
 		/// </summary>
-		/// <param name="text"></param>
-		/// <returns></returns>
+		/// <param name="text">Le texte à traduire.</param>
+		/// <param name="lang">Langue de destination.</param>
+		/// <returns>Le texte traduit.</returns>
 		private string _(string text, string lang = "")
 		{ return Translate(text, lang);  }
 
@@ -1818,7 +1801,7 @@ namespace NNNA
 		/// </summary>
 		/// <param name="b">Le booléen à convertir.</param>
 		/// <returns>L'entier binaire correspondant.</returns>
-		protected int b2i(bool b)
+		protected int B2I(bool b)
 		{ return b ? 1 : 0; }
 
 		/// <summary>
@@ -1826,15 +1809,15 @@ namespace NNNA
 		/// </summary>
 		/// <param name="mouse">Coordonnées losange.</param>
 		/// <returns>Coordonnées matrice.</returns>
-		public static Vector2 xy2matrice(Vector2 mouse)
+		public static Vector2 Xy2Matrice(Vector2 mouse)
 		{
-			double angleDegre = -26.57; // -36.57 = -arctan(1/2)
-			double angleRadian = Math.PI * angleDegre / 180;
+			const double angleDegre = -26.57; // -36.57 = -arctan(1/2)
+			const double angleRadian = Math.PI * angleDegre / 180;
 			double sina = Math.Sin(angleRadian);
 			double cosa = Math.Cos(angleRadian);
-			Vector2 rot = new Vector2((float)(mouse.X * cosa - mouse.Y * sina), (float)(mouse.X * sina + mouse.Y * cosa)); // Coordonées parallélogramme
-			Vector2 final = new Vector2(rot.X + (float)(0.75 * rot.Y), rot.Y); // Coordonées rectangle
-			Vector2 coo = new Vector2((float)Math.Round((final.X - 35) / 35.777), (float)Math.Round((final.Y + 4) / 28.54)); // Coordonées matrice // 35.777 = sqrt(16²+32²)
+			var rot = new Vector2((float)(mouse.X * cosa - mouse.Y * sina), (float)(mouse.X * sina + mouse.Y * cosa)); // Coordonées parallélogramme
+			var final = new Vector2(rot.X + (float)(0.75 * rot.Y), rot.Y); // Coordonées rectangle
+			var coo = new Vector2((float)Math.Round((final.X - 35) / 35.777), (float)Math.Round((final.Y + 4) / 28.54)); // Coordonées matrice // 35.777 = sqrt(16²+32²)
 			return coo;
 		}
 
@@ -1843,7 +1826,7 @@ namespace NNNA
 		/// </summary>
 		/// <param name="mouse">Coordonnées matrice.</param>
 		/// <returns>Coordonnées losange.</returns>
-		public static Vector2 matrice2xy(Vector2 mouse)
+		public static Vector2 Matrice2Xy(Vector2 mouse)
 		{ return new Vector2(32 * (mouse.X - mouse.Y), 16 * (mouse.X + mouse.Y)); }
 
 		#endregion

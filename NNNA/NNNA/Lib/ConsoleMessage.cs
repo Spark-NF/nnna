@@ -2,14 +2,14 @@
 {
 	class ConsoleMessage
 	{
-		private string m_message;
+		private string _message;
 		public string Message
 		{
-			get { return m_message; }
-			set { m_message = value; }
+			get { return _message; }
+			set { _message = value; }
 		}
 
 		public ConsoleMessage(string message)
-		{ m_message = message; }
+		{ _message = message; }
 	}
 }

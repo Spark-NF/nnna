@@ -4,32 +4,32 @@ namespace NNNA
 {
 	class Msg
 	{
-		private string m_message;
+		private string _message;
 		public string Message
 		{
-			get { return m_message; }
-			set { m_message = value; }
+			get { return _message; }
+			set { _message = value; }
 		}
 
-		private Color m_color;
+		private Color _color;
 		public Color Couleur
 		{
-			get { return m_color; }
-			set { m_color = value; }
+			get { return _color; }
+			set { _color = value; }
 		}
 
-		private int m_timeout;
+		private int _timeout;
 		public int Timeout
 		{
-			get { return m_timeout; }
-			set { m_timeout = value; }
+			get { return _timeout; }
+			set { _timeout = value; }
 		}
 
 		public Msg(string message, Color color, int timeout)
 		{
-			m_message = message;
-			m_color = color;
-			m_timeout = timeout;
+			_message = message;
+			_color = color;
+			_timeout = timeout;
 		}
 	}
 }

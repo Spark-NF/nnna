@@ -4,157 +4,148 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-    class Map
-    {
-        private int map_Width;
-        public int Map_Width
-        {
-            get { return map_Width; }
-            set { map_Width = value; }
-        }
-        private int map_Height;
-        public int Map_Height
-        {
-            get { return map_Height; }
-            set { map_Height = value; }
-        }
-        private Sprite[,] map;
-        public Sprite[,] Carte
-        {
-            get { return map; }
-            set { map = value; }
-        }
+	class Map
+	{
+		private int _mapWidth;
+		public int MapWidth
+		{
+			get { return _mapWidth; }
+			set { _mapWidth = value; }
+		}
+		private int _mapHeight;
+		public int MapHeight
+		{
+			get { return _mapHeight; }
+			set { _mapHeight = value; }
+		}
+		private Sprite[,] _map;
+		public Sprite[,] Carte
+		{
+			get { return _map; }
+			set { _map = value; }
+		}
 
-        public Map()
-        {
-        }
-
-        public void LoadContent(Sprite[,] map, ContentManager content, Minimap minimap, GraphicsDevice device)
-        {
-            Color[] texture_Color = new Color[(map.GetLength(1) + 4) * (map.GetLength(0) + 4)];
-            int x = 0;
-            int y = 0;
-            int max_X = 0;
-            int min_X = 0;
-            int max_Y = 0;
-            int i = 0;
-            while (i < (map.GetLength(1) * 2) + 8)
-            {
-                texture_Color[i] = Color.Black;
-                i++;
-            }
-            for (int l = 0; l < map.GetLength(1); l++)
-            {
-                texture_Color[i] = Color.Black;
-                i++;
-                texture_Color[i] = Color.Black;
-                i++;
-                for (int c = 0; c < map.GetLength(0); c++)
-                {
-                    if ((map[l, c]).Name == 'h')
-                    {
-                        (map[l, c]) = new Sprite(content, "Map/herbe3", x, y, true, l, c);
-                        texture_Color[i] = new Color(46, 180, 4);
-                    }
-                    else if ((map[l, c]).Name == 'i')
-                    {
-                        (map[l, c]) = new Sprite(content, "Map/herbe2", x, y, true, l, c);
-                        texture_Color[i] = new Color(136, 188, 10);
-                    }
-                    else if ((map[l, c]).Name == 'p')
-                    {
-                        (map[l, c]) = new Sprite(content, "Map/pave", x, y, true, l, c);
-                        texture_Color[i] = Color.Gray;
-                    }
-                    else if ((map[l, c]).Name == 's')
-                    {
-                        (map[l, c]) = new Sprite(content, "Map/sable2", x, y, true, l, c);
-                        texture_Color[i] = new Color(196, 196, 150);
-                    }
-                    else if ((map[l, c]).Name == 'e')
-                    {
+		public void LoadContent(Sprite[,] map, ContentManager content, Minimap minimap, GraphicsDevice device)
+		{
+			var textureColor = new Color[(map.GetLength(1) + 4) * (map.GetLength(0) + 4)];
+			int x = 0, y = 0, maxX = 0, minX = 0, maxY = 0, i = 0;
+			while (i < (map.GetLength(1) * 2) + 8)
+			{
+				textureColor[i] = Color.Black;
+				i++;
+			}
+			for (int l = 0; l < map.GetLength(1); l++)
+			{
+				textureColor[i] = Color.Black;
+				i++;
+				textureColor[i] = Color.Black;
+				i++;
+				for (int c = 0; c < map.GetLength(0); c++)
+				{
+					if ((map[l, c]).Name == 'h')
+					{
+						(map[l, c]) = new Sprite(content, "Map/herbe3", x, y, true, l, c);
+						textureColor[i] = new Color(46, 180, 4);
+					}
+					else if ((map[l, c]).Name == 'i')
+					{
+						(map[l, c]) = new Sprite(content, "Map/herbe2", x, y, true, l, c);
+						textureColor[i] = new Color(136, 188, 10);
+					}
+					else if ((map[l, c]).Name == 'p')
+					{
+						(map[l, c]) = new Sprite(content, "Map/pave", x, y, true, l, c);
+						textureColor[i] = Color.Gray;
+					}
+					else if ((map[l, c]).Name == 's')
+					{
+						(map[l, c]) = new Sprite(content, "Map/sable2", x, y, true, l, c);
+						textureColor[i] = new Color(196, 196, 150);
+					}
+					else if ((map[l, c]).Name == 'e')
+					{
 						(map[l, c]) = new Sprite(content, "Map/eau2", x, y, false, l, c);
-						texture_Color[i] = new Color(23, 115, 154);
-                    }
-                    else if ((map[l, c]).Name == 't')
-                    {
-                        if ((c + 1) < map.GetLength(0) && (c - 1) >= 0 && (l + 1) < map.GetLength(1) && (l - 1) >= 0)
-                        {
-                            if ((map[l, c + 1]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c - 1]).Name != 's' && (map[l - 1, c]).Name != 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(-90)", x, y, true, l, c);
-                            else if ((map[l, c - 1]).Name == 's' && (map[l - 1, c]).Name == 's' && (map[l, c + 1]).Name != 's' && (map[l + 1, c]).Name != 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(90)", x, y, true, l, c);
-                            else if ((map[l, c - 1]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name != 's' && (map[l - 1, c]).Name != 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(180)", x, y, true, l, c);
-                            else if ((map[l, c + 1]).Name == 's' && (map[l - 1, c]).Name == 's' && (map[l, c - 1]).Name != 's' && (map[l + 1, c]).Name != 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(0)", x, y, true, l, c);
-                            else if ((map[l - 1, c]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_U(45)", x, y, true, l, c);
-                            else if ((map[l - 1, c]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_U(-45)", x, y, true, l, c);
-                            else if ((map[l - 1, c]).Name == 's' && (map[l, c + 1]).Name == 's' && (map[l, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_U(135)", x, y, true, l, c);
-                            else if ((map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name == 's' && (map[l, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_U(-135)", x, y, true, l, c);
-                            //else if (((map[l, c + 1]).Name != 't' && (map[l, c + 1]).Name != 'e') && ((map[l, c - 1]).Name != 't' && (map[l, c - 1]).Name != 'e') && ((map[l + 1, c]).Name != 't' && (map[l + 1, c]).Name != 'e') && ((map[l - 1, c]).Name != 't' && (map[l - 1, c]).Name != 'e'))
-                            //(map[l, c]) = new Sprite(content, "Map/flaque", x, y, true, l, c);
-                            else if ((map[l + 1, c]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(-135)", x, y, true, l, c);
-                            else if ((map[l - 1, c]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(45)", x, y, true, l, c);
-                            else if ((map[l, c + 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(-45)", x, y, true, l, c);
-                            else if ((map[l, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_(135)", x, y, true, l, c);
-                            else if ((map[l - 1, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_coin(90)", x, y, true, l, c);
-                            else if ((map[l + 1, c + 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_coin(-90)", x, y, true, l, c);
-                            else if ((map[l - 1, c + 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_coin(0)", x, y, true, l, c);
-                            else if ((map[l + 1, c - 1]).Name == 's')
-                                (map[l, c]) = new Sprite(content, "Map/sable_coin(180)", x, y, true, l, c);
-                            else
-                                (map[l, c]) = new Sprite(content, "Map/eau3", x, y, false, l, c);
-                        }
-                        else
-                            (map[l, c]) = new Sprite(content, "Map/eau3", x, y, false, l, c);
+						textureColor[i] = new Color(23, 115, 154);
+					}
+					else if ((map[l, c]).Name == 't')
+					{
+						if ((c + 1) < map.GetLength(0) && (c - 1) >= 0 && (l + 1) < map.GetLength(1) && (l - 1) >= 0)
+						{
+							if ((map[l, c + 1]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c - 1]).Name != 's' && (map[l - 1, c]).Name != 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_(-90)", x, y, true, l, c);
+							else if ((map[l, c - 1]).Name == 's' && (map[l - 1, c]).Name == 's' && (map[l, c + 1]).Name != 's' && (map[l + 1, c]).Name != 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_(90)", x, y, true, l, c);
+							else if ((map[l, c - 1]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name != 's' && (map[l - 1, c]).Name != 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_(180)", x, y, true, l, c);
+							else if ((map[l, c + 1]).Name == 's' && (map[l - 1, c]).Name == 's' && (map[l, c - 1]).Name != 's' && (map[l + 1, c]).Name != 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_(0)", x, y, true, l, c);
+							else if ((map[l - 1, c]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c - 1]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_U(45)", x, y, true, l, c);
+							else if ((map[l - 1, c]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_U(-45)", x, y, true, l, c);
+							else if ((map[l - 1, c]).Name == 's' && (map[l, c + 1]).Name == 's' && (map[l, c - 1]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_U(135)", x, y, true, l, c);
+							else if ((map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name == 's' && (map[l, c - 1]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_U(-135)", x, y, true, l, c);
+							//else if (((map[l, c + 1]).Name != 't' && (map[l, c + 1]).Name != 'e') && ((map[l, c - 1]).Name != 't' && (map[l, c - 1]).Name != 'e') && ((map[l + 1, c]).Name != 't' && (map[l + 1, c]).Name != 'e') && ((map[l - 1, c]).Name != 't' && (map[l - 1, c]).Name != 'e'))
+							//(map[l, c]) = new Sprite(content, "Map/flaque", x, y, true, l, c);
+							else if ((map[l + 1, c]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_(-135)", x, y, true, l, c);
+							else if ((map[l - 1, c]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_(45)", x, y, true, l, c);
+							else if ((map[l, c + 1]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_(-45)", x, y, true, l, c);
+							else if ((map[l, c - 1]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_(135)", x, y, true, l, c);
+							else if ((map[l - 1, c - 1]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_coin(90)", x, y, true, l, c);
+							else if ((map[l + 1, c + 1]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_coin(-90)", x, y, true, l, c);
+							else if ((map[l - 1, c + 1]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_coin(0)", x, y, true, l, c);
+							else if ((map[l + 1, c - 1]).Name == 's')
+								(map[l, c]) = new Sprite(content, "Map/sable_coin(180)", x, y, true, l, c);
+							else
+								(map[l, c]) = new Sprite(content, "Map/eau3", x, y, false, l, c);
+						}
+						else
+							(map[l, c]) = new Sprite(content, "Map/eau3", x, y, false, l, c);
 
-                        texture_Color[i] = new Color(18, 147, 166);
-                    }
-                    x += (map[l, c]).Texture.Width / 2;
-                    y += (map[l, c]).Texture.Height / 2;
-                    if ((c + 1) == map.GetLength(1))
-                    {
-                        if (x > max_X)
-                            max_X = x + ((map[l, c]).Texture.Width / 2);
-                        if (y > max_Y)
-                            max_Y = y + ((map[l, c]).Texture.Height / 2);
+						textureColor[i] = new Color(18, 147, 166);
+					}
+					x += (map[l, c]).Texture.Width / 2;
+					y += (map[l, c]).Texture.Height / 2;
+					if ((c + 1) == map.GetLength(1))
+					{
+						if (x > maxX)
+							maxX = x + ((map[l, c]).Texture.Width / 2);
+						if (y > maxY)
+							maxY = y + ((map[l, c]).Texture.Height / 2);
 
-                        x -= ((map.GetLength(1) + 1) * ((map[l, c]).Texture.Width / 2));
-                        y -= ((map.GetLength(1) - 1) * ((map[l, c]).Texture.Height / 2));
+						x -= ((map.GetLength(1) + 1) * ((map[l, c]).Texture.Width / 2));
+						y -= ((map.GetLength(1) - 1) * ((map[l, c]).Texture.Height / 2));
 
-                        if (x < min_X)
-                            min_X = x + ((map[l, c]).Texture.Width / 2);
-                    }
-                    i++;
-                }
-                texture_Color[i] = Color.Black;
-                i++;
-                texture_Color[i] = Color.Black;
-                i++;
-            }
-            while (i < texture_Color.Length)
-            {
-                texture_Color[i] = Color.Black;
-                i++;
-            }
-            map_Width = (max_X - min_X) / 64;
-            map_Height = (max_Y) / 32;
-            minimap.Texture = new Texture2D(device, map.GetLength(1) + 4, map.GetLength(0) + 4, false, SurfaceFormat.Color);
-            minimap.Texture.SetData(texture_Color);
-            minimap.Base_texture = minimap.Texture;
-            this.map = map;
-        }
-    }
+						if (x < minX)
+							minX = x + ((map[l, c]).Texture.Width / 2);
+					}
+					i++;
+				}
+				textureColor[i] = Color.Black;
+				i++;
+				textureColor[i] = Color.Black;
+				i++;
+			}
+			while (i < textureColor.Length)
+			{
+				textureColor[i] = Color.Black;
+				i++;
+			}
+			_mapWidth = (maxX - minX) / 64;
+			_mapHeight = (maxY) / 32;
+			minimap.Texture = new Texture2D(device, map.GetLength(1) + 4, map.GetLength(0) + 4, false, SurfaceFormat.Color);
+			minimap.Texture.SetData(textureColor);
+			minimap.Base_texture = minimap.Texture;
+			_map = map;
+		}
+	}
 }

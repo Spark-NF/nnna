@@ -1,21 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-	class ResourceMine : Static_Sprite
+	class ResourceMine : StaticSprite
 	{
-		Resource m_resource;
+		private Resource _resource;
+		private bool _decouvert;
 
-        private bool decouvert = false;
-
-        public ResourceMine(int x, int y, ContentManager content, Resource resource, Texture2D texture)
-            : base(x, y)
-        {
-            m_texture = texture;
-			m_resource = resource;
-        }
+		public ResourceMine(int x, int y, Resource resource, Texture2D texture)
+			: base(x, y)
+		{
+			_decouvert = false;
+			_texture = texture;
+			_resource = resource;
+		}
 
 		/// <summary>
 		/// Affiche la ressource à l'écran.
@@ -24,14 +23,16 @@ namespace NNNA
 		/// <param name="ere">L'ère courante.</param>
 		/// <param name="camera">La caméra actuelle.</param>
 		/// <param name="mul">La teinte de gris à utiliser pour l'affichage.</param>
+		/// <param name="weather">La météo actuelle.</param>
 		public void Draw(SpriteBatch spritebatch, int ere, Camera2D camera, float mul, int weather)
 		{
-            if (weather == 1)
-            {
-                if (mul > 0.25f) decouvert = true;
-                mul = (decouvert && mul < 0.25f) ? 0.25f : mul;
-            }
-            spritebatch.Draw(m_resource.Texture(ere), m_position - camera.Position, new Color(mul, mul, mul));
-        }
+			if (weather == 1)
+			{
+				if (mul > 0.25f)
+				{ _decouvert = true; }
+				mul = (_decouvert && mul < 0.25f) ? 0.25f : mul;
+			}
+			spritebatch.Draw(_resource.Texture(ere), _position - camera.Position, new Color(mul, mul, mul));
+		}
 	}
 }

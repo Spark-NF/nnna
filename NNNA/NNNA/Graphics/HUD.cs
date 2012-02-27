@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Globalization;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,59 +7,55 @@ namespace NNNA
 {
     class HUD
 	{
-		private Texture2D texture_Background;
-		private Vector2 ressource;
-		private int interval_ressource;
+		private Texture2D _textureBackground;
 
-        private Rectangle m_position;
+    	private Rectangle _position;
         public Rectangle Position
-		{ get { return m_position; } }
+		{ get { return _position; } }
 
-		private bool m_is_smart = false;
+		private bool _isSmart;
 		public bool IsSmart
 		{
-			get { return m_is_smart; }
-			set { m_is_smart = value; }
+			get { return _isSmart; }
+			set { _isSmart = value; }
 		}
-		public int m_smart_pos, height;
+		public int SmartPos, Height;
 
-        public HUD(int x, int y, Minimap minimap, bool isSmart, GraphicsDeviceManager graphics)
+        public HUD(int x, int y, bool isSmart, GraphicsDeviceManager graphics)
         {
-			m_position = new Rectangle(x, y, graphics.PreferredBackBufferWidth - x, graphics.PreferredBackBufferHeight - y);
-			ressource = new Vector2((int)(m_position.X + (m_position.Width * 288) / 1366), (int)(m_position.Y + (m_position.Height * 45) / 164));
-			interval_ressource = (int)((m_position.Width * 44) / graphics.PreferredBackBufferWidth);
-			m_is_smart = isSmart;
-			m_smart_pos = 0;
-			height = graphics.PreferredBackBufferHeight;
+			_position = new Rectangle(x, y, graphics.PreferredBackBufferWidth - x, graphics.PreferredBackBufferHeight - y);
+			_isSmart = isSmart;
+			SmartPos = 0;
+			Height = graphics.PreferredBackBufferHeight;
         }
 
         public void LoadContent(ContentManager content, string assetName)
-        { texture_Background = content.Load<Texture2D>(assetName); }
+        { _textureBackground = content.Load<Texture2D>(assetName); }
 
         public void Draw(SpriteBatch spriteBatch, Minimap minimap, Joueur joueur, SpriteFont font)
         {
 			// HUD
-			if (Souris.Get().Position.Y > height - 10)
-			{ m_smart_pos = 0; }
-			int posY = m_is_smart ? m_position.Y + m_smart_pos : m_position.Y;
-			if (posY < height)
+			if (Souris.Get().Position.Y > Height - 10)
+			{ SmartPos = 0; }
+			int posY = _isSmart ? _position.Y + SmartPos : _position.Y;
+			if (posY < Height)
 			{
-				spriteBatch.Draw(texture_Background, new Rectangle(m_position.X, posY, m_position.Width, m_position.Height), Color.White);
-				minimap.Draw(m_smart_pos, spriteBatch);
+				spriteBatch.Draw(_textureBackground, new Rectangle(_position.X, posY, _position.Width, _position.Height), Color.White);
+				minimap.Draw(SmartPos, spriteBatch);
 			}
-			if (Souris.Get().Position.Y < m_position.Y && m_position.Y + m_smart_pos < height)
-			{ m_smart_pos += 5; }
+			if (Souris.Get().Position.Y < _position.Y && _position.Y + SmartPos < Height)
+			{ SmartPos += 5; }
 
 			// Ressources
 			int i = 0;
-			foreach (Resource res in joueur.Resources(1))
+			foreach (Resource res in joueur.Resources())
 			{
 				spriteBatch.Draw(res.Icon(1), new Vector2(5 + i * 140, 5), Color.White);
-				spriteBatch.DrawString(font, res.Count.ToString(), new Vector2(10 + i * 140 + res.Icon(1).Width, 5 + ((res.Icon(1).Height - font.MeasureString(res.Count.ToString()).Y) / 2)), Color.White);
+				spriteBatch.DrawString(font, res.Count.ToString(CultureInfo.CurrentCulture), new Vector2(10 + i * 140 + res.Icon(1).Width, 5 + ((res.Icon(1).Height - font.MeasureString(res.Count.ToString(CultureInfo.CurrentCulture)).Y) / 2)), Color.White);
 				i++;
 			}
-			spriteBatch.Draw(joueur.Pop_Texture, new Vector2(5 + joueur.Resources(1).Count * 140, 5), Color.White);
-			spriteBatch.DrawString(font, joueur.Population.ToString() + "/" + joueur.Population_Max.ToString(), new Vector2(10 + joueur.Resources(1).Count * 140 + joueur.Pop_Texture.Width, 5 + ((joueur.Pop_Texture.Height - font.MeasureString(joueur.Population.ToString() + "/" + joueur.Population_Max.ToString()).Y) / 2)), Color.White);
+			spriteBatch.Draw(joueur.PopTexture, new Vector2(5 + joueur.Resources().Count * 140, 5), Color.White);
+			spriteBatch.DrawString(font, joueur.Population.ToString(CultureInfo.CurrentCulture) + "/" + joueur.PopulationMax.ToString(CultureInfo.CurrentCulture), new Vector2(10 + joueur.Resources().Count * 140 + joueur.PopTexture.Width, 5 + ((joueur.PopTexture.Height - font.MeasureString(joueur.Population.ToString(CultureInfo.CurrentCulture) + "/" + joueur.PopulationMax.ToString(CultureInfo.CurrentCulture)).Y) / 2)), Color.White);
         }
     }
 }

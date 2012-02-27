@@ -1,41 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace NNNA
 {
     class Node
     {
-        private Node parent;
-        public Node Parent
-        { get { return parent; } set { parent = value; } }
+        private Node _parent;
+    	public Node Parent
+    	{
+    		get { return _parent; }
+			set { _parent = value; }
+    	}
 
-        private Sprite tile;
+        private Sprite _tile;
         public Sprite Tile
-        { get { return tile; } }
+        { get { return _tile; } }
 
-        private Sprite destination;
-        public Sprite Destination
-        { get { return destination; } set { destination = value; } }
+        private Sprite _destination;
+    	public Sprite Destination
+    	{
+    		get { return _destination; }
+			set { _destination = value; }
+    	}
 
-        private int manhattan_dist;
-        public int Manhattan_dist
-        { get { return manhattan_dist; } set { manhattan_dist = value; } }
+        private int _manhattanDist;
+    	public int ManhattanDist
+    	{
+    		get { return _manhattanDist; }
+			set { _manhattanDist = value; }
+    	}
 
         public Node(Sprite tile, Node parent, Sprite destination)
         {
-            this.tile = tile;
-            this.parent = parent;
-            this.destination = destination;
-            manhattan_dist = (int)(Math.Abs(tile.Position_matrice.X - destination.Position_matrice.X) + Math.Abs(tile.Position_matrice.Y - destination.Position_matrice.Y));
+            _tile = tile;
+            _parent = parent;
+            _destination = destination;
+            _manhattanDist = (int)(Math.Abs(tile.PositionMatrice.X - destination.PositionMatrice.X) + Math.Abs(tile.PositionMatrice.Y - destination.PositionMatrice.Y));
         }
 
         public List<Node> Neightborhood(Sprite[,] map, Sprite destination)
         {
-            List<Node> neight = new List<Node>();
-            Vector2 m = tile.Position_matrice;
+            var neight = new List<Node>();
+            Vector2 m = _tile.PositionMatrice;
 
             //Up
             if (m.Y > 0 && map[(int)m.X, (int)m.Y - 1].Crossable)

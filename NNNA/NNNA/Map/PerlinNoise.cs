@@ -12,24 +12,24 @@ namespace NNNA
 
 		static PerlinNoise()
 		{
-			Random r = new Random();
-			PerlinNoise.Seed = r.Next(Int32.MaxValue);
-			PerlinNoise.Octaves = 8;
-			PerlinNoise.Amplitude = 1;
-			PerlinNoise.Frequency = 0.015;
-			PerlinNoise.Persistence = 0.65;
+			var r = new Random();
+			Seed = r.Next(Int32.MaxValue);
+			Octaves = 8;
+			Amplitude = 1;
+			Frequency = 0.015;
+			Persistence = 0.65;
 		}
 
 		public static double Noise(int x, int y)
 		{
 			//returns -1 to 1
 			double total = 0.0;
-			double freq = PerlinNoise.Frequency, amp = PerlinNoise.Amplitude;
-			for (int i = 0; i < PerlinNoise.Octaves; ++i)
+			double freq = Frequency, amp = Amplitude;
+			for (int i = 0; i < Octaves; ++i)
 			{
-				total = total + PerlinNoise.Smooth(x * freq, y * freq) * amp;
+				total = total + Smooth(x * freq, y * freq) * amp;
 				freq *= 2;
-				amp *= PerlinNoise.Persistence;
+				amp *= Persistence;
 			}
 			if (total < -2.4) total = -2.4;
 			else if (total > 2.4) total = 2.4;
@@ -42,7 +42,7 @@ namespace NNNA
 			int n = x + y * 57;
 			n = (n << 13) ^ n;
 
-			return (1.0 - ((n * (n * n * 15731 + 789221) + PerlinNoise.Seed) & 0x7fffffff) / 1073741824.0);
+			return (1.0 - ((n * (n * n * 15731 + 789221) + Seed) & 0x7fffffff) / 1073741824.0);
 		}
 
 		private static double Interpolate(double x, double y, double a)
@@ -63,5 +63,5 @@ namespace NNNA
 
 			return Interpolate(i1, i2, y - (int)y);
 		}
-		}
+	}
 }

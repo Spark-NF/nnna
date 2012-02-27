@@ -8,7 +8,7 @@ namespace NNNA
 	{
 		static public List<Msg> Messages = new List<Msg>();
 
-		static public uint X = 0;
+		static public uint X;
 
 		static public void Draw(SpriteBatch spriteBatch, SpriteFont font)
 		{

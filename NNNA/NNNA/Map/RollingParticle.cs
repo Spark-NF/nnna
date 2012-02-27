@@ -6,16 +6,12 @@ namespace NNNA
 {
 	class RollingParticle
 	{
-		private static float[,] tiles;
+		private static float[,] _tiles;
 
-		/**
-		 * Constructor.
-		 * Generate a rolling particle map, blur edges, and normalize.
-		 */
 		public static float[,] Generate(int width, int height, int iterations = 3000, int length = 50, bool centerBias = true, int edgeBias = 12, float outerBlur = 0.75f, float innerBlur = 0.88f)
 		{
-			Random r = new Random();
-			tiles = new float[width, height];
+			var r = new Random();
+			_tiles = new float[width, height];
 
 			for (int j = 0; j < iterations; j++)
 			{
@@ -41,11 +37,11 @@ namespace NNNA
 					if (sourceX < 1 || sourceX > width - 2 || sourceY < 1 || sourceY > height - 2)
 					{ break; }
 
-					List<Point> hood = getNeighborhood(sourceX, sourceY);
+					List<Point> hood = GetNeighborhood(sourceX, sourceY);
 
 					for (int i = 0; i < hood.Count(); i++)
 					{
-						if (tiles[hood[i].X, hood[i].Y] < tiles[sourceX, sourceY])
+						if (_tiles[hood[i].X, hood[i].Y] < _tiles[sourceX, sourceY])
 						{
 							sourceX = hood[i].X;
 							sourceY = hood[i].Y;
@@ -53,28 +49,25 @@ namespace NNNA
 						}
 					}
 
-					tiles[sourceX, sourceY]++;
+					_tiles[sourceX, sourceY]++;
 				}
 			}
 			
 			if (centerBias)
-			{
-				blurEdges(outerBlur, innerBlur);
-			}
+			{ BlurEdges(outerBlur, innerBlur); }
 
-			return tiles;
+			return _tiles;
 		}
 		
-		
-		/**
-		 * Get the Moore neighborhood (3x3, 8 surrounding tiles, minus the center tile).
-		 * @param	x	The x position of the center of the neighborhood.
-		 * @param	y	The y position of the center of the neighborhood.
-		 * @return	An array of neighbor Points, shuffled.
-		 */
-		private static List<Point> getNeighborhood(int x, int y)
+		/// <summary>
+		/// Get the Moore neighborhood (3x3, 8 surrounding tiles, minus the center tile).
+		/// </summary>
+		/// <param name="x">The x position of the center of the neighborhood.</param>
+		/// <param name="y">The y position of the center of the neighborhood.</param>
+		/// <returns>An array of neighbor Points, shuffled.</returns>
+		private static List<Point> GetNeighborhood(int x, int y)
 		{
-			List<Point> result = new List<Point>();
+			var result = new List<Point>();
 			
 			for (int a = -1; a <= 1; a++)
 			{
@@ -82,7 +75,7 @@ namespace NNNA
 				{
 					if (a != 0 || b != 0)
 					{
-						if (x + a >= 0 && x + a < tiles.GetLength(0) && y + b >= 0 && y + b < tiles.GetLength(1))
+						if (x + a >= 0 && x + a < _tiles.GetLength(0) && y + b >= 0 && y + b < _tiles.GetLength(1))
 						{
 							result.Add(new Point(x + a, y + b));
 						}
@@ -91,7 +84,7 @@ namespace NNNA
 			}
 			
 			// Return the neighborhood in no particular order
-			Random r = new Random();
+			var r = new Random();
 			for (int i = 1; i < result.Count(); i++)
 			{
 				int pos = r.Next(i + 1);
@@ -100,23 +93,23 @@ namespace NNNA
 				result[pos] = p;
 			}
 
-						
 			return result;
 		}
 		
-		
-		/**
-		 * "Blur" the edges of the tile array to ensure no hard edges.
-		 */
-		private static void blurEdges(float outer_blur, float inner_blur)
+		/// <summary>
+		/// "Blur" the edges of the tile array to ensure no hard edges.
+		/// </summary>
+		/// <param name="outerBlur">Outer blur density.</param>
+		/// <param name="innerBlur">Inner blur density.</param>
+		private static void BlurEdges(float outerBlur, float innerBlur)
 		{
-			for (int ix = 0; ix < tiles.GetLength(0); ix++)
+			for (int ix = 0; ix < _tiles.GetLength(0); ix++)
 			{
-				for (int iy = 0; iy < tiles.GetLength(1); iy++)
+				for (int iy = 0; iy < _tiles.GetLength(1); iy++)
 				{
 					// Multiply the outer edge and the second outer edge by some constants to ensure the world does not touch the edges.
-					if (ix == 0 || ix == tiles.GetLength(0) - 1 || iy == 0 || iy == tiles.GetLength(1) - 1) tiles[ix, iy] *= outer_blur;
-					else if (ix == 1 || ix == tiles.GetLength(0) - 2 || iy == 1 || iy == tiles.GetLength(1) - 2) tiles[ix, iy] *= inner_blur;
+					if (ix == 0 || ix == _tiles.GetLength(0) - 1 || iy == 0 || iy == _tiles.GetLength(1) - 1) _tiles[ix, iy] *= outerBlur;
+					else if (ix == 1 || ix == _tiles.GetLength(0) - 2 || iy == 1 || iy == _tiles.GetLength(1) - 2) _tiles[ix, iy] *= innerBlur;
 				}
 			}
 		}

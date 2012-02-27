@@ -8,7 +8,7 @@ namespace NNNA
 
 		public static List<ConsoleMessage> GetLast(int count = 10)
 		{
-			List<ConsoleMessage> ret = new List<ConsoleMessage>();
+			var ret = new List<ConsoleMessage>();
 			int max = Messages.Count - count > 0 ? Messages.Count - count : 0;
 			for (int i = Messages.Count - 1; i >= max; i--)
 			{ ret.Add(Messages[i]); }

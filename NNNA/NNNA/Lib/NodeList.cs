@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace NNNA
 {
     class NodeList<T> : List<T> where T : Node
     {
         public new bool Contains(T node)
-        {
-            return this[node] != null;
-        }
+        { return this[node] != null; }
 
         public T this[T node]
         {
             get
             {
-                int count = this.Count;
+                int count = Count;
                 for (int i = 0; i < count; i++)
                 {
                     if (this[i].Tile.Position == node.Tile.Position)
@@ -28,22 +23,22 @@ namespace NNNA
 
         public void PivotInsertion(T node)
         {
-            int left = 0, right = this.Count - 1, center = 0;
+        	int left = 0, right = Count - 1;
 
-            while (left <= right)
+        	while (left <= right)
             {
-                center = (left + right) / 2;
-                if (node.Manhattan_dist < this[center].Manhattan_dist)
-                    right = center - 1;
-                else if (node.Manhattan_dist > this[center].Manhattan_dist)
-                    left = center + 1;
+            	int center = (left + right) / 2;
+            	if (node.ManhattanDist < this[center].ManhattanDist)
+                { right = center - 1; }
+                else if (node.ManhattanDist > this[center].ManhattanDist)
+                { left = center + 1; }
                 else
                 {
                     left = center;
                     break;
                 }
             }
-            this.Insert(left, node);
+        	Insert(left, node);
         }
     }
 }

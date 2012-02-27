@@ -7,18 +7,18 @@ namespace NNNA
         public Ferme(int x = 0, int y = 0)
 			: base(x, y)
 		{
-            m_cost.Add("Bois", 60);
-            m_cost.Add("Bois", 30);
+            _cost.Add("Bois", 60);
+            _cost.Add("Bois", 30);
 		}
 
-		public Ferme(int x, int y, ContentManager content, Joueur joueur)
+		public Ferme(int x, int y, ContentManager content)
 			: base(x, y)
 		{
 			LoadContent(content, "Batiments/ferme");
 			Life = 100;
-			Line_sight = 4 * 64;
-			m_cost.Add("Bois", 60);
-            m_cost.Add("Bois", 30);
+			LineSight = 4 * 64;
+			_cost.Add("Bois", 60);
+            _cost.Add("Bois", 30);
 
 		}
     }

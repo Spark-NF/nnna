@@ -7,65 +7,63 @@ namespace NNNA
 {
     class Projectile : Sprite
     {
-        protected int speed;
-        protected Vector2 direction, distance_restante, Texture_Center, but, last_position;
-        protected double distance_ini;
+        protected int _speed;
+        protected Vector2 _direction, _distanceRestante, _textureCenter, _but, _lastPosition;
+        protected double _distanceIni;
         private Rectangle _rect;
-        protected float reality_offset;
+        protected float _realityOffset;
 
         #region Get / Set
         public Vector2 But
         {
-            get { return but; }
-            set { but = value; }
+            get { return _but; }
+            set { _but = value; }
         }
 
 
         public int Speed
         {
-            get { return speed; }
-            set { speed = value; }
+            get { return _speed; }
+            set { _speed = value; }
         }
         #endregion Get / Set
 
         public Projectile(ContentManager content, int x, int y, int speed, Vector2 but, string assetName)
             : base(x, y)
         {
-            last_position = m_position;
-            this.speed = speed;
-            this.but = but;
-            m_texture = content.Load<Texture2D>(assetName);
-            distance_restante = but - m_position;
-            distance_ini = distance_restante.Length();
-            reality_offset = 0;
-            Texture_Center = new Vector2(m_texture.Width / (2 * m_texture.Width), m_texture.Height / (2 * m_texture.Height));
-            _rect = new Rectangle((int)m_position.X, (int)m_position.Y, m_texture.Width, m_texture.Height);
+            _lastPosition = _position;
+            _speed = speed;
+            _but = but;
+            _texture = content.Load<Texture2D>(assetName);
+            _distanceRestante = but - _position;
+            _distanceIni = _distanceRestante.Length();
+            _realityOffset = 0;
+        	if (_texture != null)
+        	{
+        		_textureCenter = new Vector2(_texture.Width / (2 * _texture.Width), _texture.Height / (2 * _texture.Height));
+        		_rect = new Rectangle((int)_position.X, (int)_position.Y, _texture.Width, _texture.Height);
+        	}
         }
 
         protected void Mouvement()
         {
-            double angle = Math.Atan2(but.Y - m_position.Y, but.X - m_position.X);
-            direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-            last_position = m_position;
-            m_position += direction * speed;
-            _rect.X = (int)m_position.X;
-            _rect.Y = (int)m_position.Y;
-            if (reality_offset < Math.PI / 2)
-                m_position.Y -= reality_offset;
+            double angle = Math.Atan2(_but.Y - _position.Y, _but.X - _position.X);
+            _direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+            _lastPosition = _position;
+            _position += _direction * _speed;
+            _rect.X = (int)_position.X;
+            _rect.Y = (int)_position.Y;
+            if (_realityOffset < Math.PI / 2)
+                _position.Y -= _realityOffset;
             else
-                m_position.Y += reality_offset;
-            distance_restante = but - m_position;
+                _position.Y += _realityOffset;
+            _distanceRestante = _but - _position;
         }
 
         public new void Draw(SpriteBatch spritebatch)
-        {
-            spritebatch.Draw(m_texture, m_position, Color.White);
-        }
+        { spritebatch.Draw(_texture, _position, Color.White); }
 
-        public void Draw_rotation(SpriteBatch spritebatch)
-        {
-            spritebatch.Draw(m_texture, _rect, null, Color.White, (float)(Math.Atan2(m_position.Y - last_position.Y, m_position.X - last_position.X)), Texture_Center, SpriteEffects.None, 0f);
-        }
-
+        public void DrawRotation(SpriteBatch spritebatch)
+        { spritebatch.Draw(_texture, _rect, null, Color.White, (float)(Math.Atan2(_position.Y - _lastPosition.Y, _position.X - _lastPosition.X)), _textureCenter, SpriteEffects.None, 0f); }
     }
 }

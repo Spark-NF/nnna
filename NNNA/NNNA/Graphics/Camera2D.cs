@@ -5,18 +5,18 @@ namespace NNNA
 {
 	class Camera2D
 	{
-		private int m_speed;
+		private int _speed;
 		public int Speed
 		{
-			get { return m_speed; }
-			set { m_speed = value; }
+			get { return _speed; }
+			set { _speed = value; }
 		}
 
-		private Vector2 m_cameraPosition;
+		private Vector2 _cameraPosition;
 		public Vector2 Position
 		{
-			get { return m_cameraPosition; }
-			set { m_cameraPosition = value; }
+			get { return _cameraPosition; }
+			set { _cameraPosition = value; }
 		}
 
 		/// <summary>
@@ -27,8 +27,8 @@ namespace NNNA
 		/// <param name="speed">Vitesse de la caméra. Mettez à 0 pour une caméra statique.</param>
 		public Camera2D(int x, int y, int speed = 10)
 		{
-			m_cameraPosition = new Vector2(x, y);
-			m_speed = speed;
+			_cameraPosition = new Vector2(x, y);
+			_speed = speed;
 		}
 
 		/// <summary>
@@ -36,20 +36,20 @@ namespace NNNA
 		/// </summary>
 		public void Update(Sprite curseur, GraphicsDeviceManager graphics)
 		{
-			m_cameraPosition.X +=
-				(Keyboard.GetState().IsKeyDown(Keys.Right) ? m_speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.D) ? m_speed : 0) +
-				(curseur.Position.X <= graphics.PreferredBackBufferWidth && curseur.Position.X > (graphics.PreferredBackBufferWidth - 10) ? m_speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.Left) ? -m_speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.Q) ? -m_speed : 0) + 
-				(curseur.Position.X >= 0 && curseur.Position.X < 10 ? -m_speed : 0);
-			m_cameraPosition.Y +=
-				(Keyboard.GetState().IsKeyDown(Keys.Down) ? m_speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.S) ? m_speed : 0) +
-				(curseur.Position.Y <= (graphics.PreferredBackBufferHeight) && curseur.Position.Y > (graphics.PreferredBackBufferHeight - 10) && !Game1.m_smart_hud ? m_speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.Up) ? -m_speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.Z) ? -m_speed : 0) + 
-				(curseur.Position.Y >= 0 && curseur.Position.Y < 10 ? -m_speed : 0);
+			_cameraPosition.X +=
+				(Keyboard.GetState().IsKeyDown(Keys.Right) ? _speed : 0) +
+				(Keyboard.GetState().IsKeyDown(Keys.D) ? _speed : 0) +
+				(curseur.Position.X <= graphics.PreferredBackBufferWidth && curseur.Position.X > (graphics.PreferredBackBufferWidth - 10) ? _speed : 0) +
+				(Keyboard.GetState().IsKeyDown(Keys.Left) ? -_speed : 0) +
+				(Keyboard.GetState().IsKeyDown(Keys.Q) ? -_speed : 0) + 
+				(curseur.Position.X >= 0 && curseur.Position.X < 10 ? -_speed : 0);
+			_cameraPosition.Y +=
+				(Keyboard.GetState().IsKeyDown(Keys.Down) ? _speed : 0) +
+				(Keyboard.GetState().IsKeyDown(Keys.S) ? _speed : 0) +
+				(curseur.Position.Y <= (graphics.PreferredBackBufferHeight) && curseur.Position.Y > (graphics.PreferredBackBufferHeight - 10) && !Game1.SmartHud ? _speed : 0) +
+				(Keyboard.GetState().IsKeyDown(Keys.Up) ? -_speed : 0) +
+				(Keyboard.GetState().IsKeyDown(Keys.Z) ? -_speed : 0) + 
+				(curseur.Position.Y >= 0 && curseur.Position.Y < 10 ? -_speed : 0);
 		}
 	}
 }

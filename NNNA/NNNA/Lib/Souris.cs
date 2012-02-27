@@ -15,13 +15,10 @@ namespace NNNA
 	class Souris
 	{
 		// Début de la partie spécifique au pattern singleton //
-		private static Souris instance;
+		private static Souris _instance;
 		public static Souris Get()
-		{
-			if (instance == null)
-			{ instance = new Souris(); }
-			return instance;
-		}
+		{ return _instance ?? (_instance = new Souris()); }
+
 		private Souris()
 		{ }
 		// Fin de la partie spécifique au pattern singleton //
@@ -129,6 +126,7 @@ namespace NNNA
 		/// Si un bouton est resté dans un certain état.
 		/// </summary>
 		/// <param name="button">Le bouton à tester.</param>
+		/// <param name="status">Le statut à tester.</param>
 		/// <returns>Si le bouton est resté dans un certain état.</returns>
 		public bool Hold(MouseButton button, ButtonState status = ButtonState.Pressed)
 		{

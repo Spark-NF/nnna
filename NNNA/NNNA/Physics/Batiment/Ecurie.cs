@@ -8,18 +8,18 @@ namespace NNNA
         public Ecurie(int x = 0, int y = 0)
 			: base(x, y)
 		{
-            m_cost.Add("Bois", 300);
-            m_cost.Add("Pierre", 200);
+            _cost.Add("Bois", 300);
+            _cost.Add("Pierre", 200);
 		}
 
-		public Ecurie(int x, int y, ContentManager content, Joueur joueur)
+		public Ecurie(int x, int y, ContentManager content)
 			: base(x, y)
 		{
 			LoadContent(content, "Batiments/ecurie");
 			Life = 100;
-            Line_sight = 128;
-			m_cost.Add("Bois", 300);
-            m_cost.Add("Pierre", 200);
+            LineSight = 128;
+			_cost.Add("Bois", 300);
+            _cost.Add("Pierre", 200);
 
 		}
     }

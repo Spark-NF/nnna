@@ -11,7 +11,7 @@ namespace NNNA
 
         public void Update()
         {
-            reality_offset = (float)(1.5f * (Math.Sin((distance_restante.Length() * Math.PI / distance_ini) - Math.PI / 6)));
+            _realityOffset = (float)(1.5f * (Math.Sin((_distanceRestante.Length() * Math.PI / _distanceIni) - Math.PI / 6)));
             Mouvement();
         }
 

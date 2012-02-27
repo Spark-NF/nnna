@@ -1,50 +1,54 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
-	class Building : Static_Sprite
+	class Building : StaticSprite
 	{
-		protected int m_life = 0;
+		protected int _life;
 		public int Life
 		{
-			get { return m_life; }
+			get { return _life; }
 			set
 			{
-				m_life = value;
-				if (value > m_maxLife)
-				{ m_maxLife = value; }
+				_life = value;
+				if (value > _maxLife)
+				{ _maxLife = value; }
 			}
 		}
-		protected int m_maxLife = 0;
+		protected int _maxLife;
 		public int MaxLife
 		{
-			get { return m_maxLife; }
-			set { m_maxLife = value; }
+			get { return _maxLife; }
+			set { _maxLife = value; }
 		}
 
-        private int iterator;
-        public int Iterator
-        { get { return iterator; } set { iterator = value; } }
+		private int _iterator;
+		public int Iterator
+		{
+			get { return _iterator; }
+			set { _iterator = value; }
+		}
 
-        protected int m_line_sight;
-        public int Line_sight
-        {
-            get { return m_line_sight; }
-            set { m_line_sight = value; }
-        }
+		protected int _lineSight;
+		public int LineSight
+		{
+			get { return _lineSight; }
+			set { _lineSight = value; }
+		}
 
-        protected Dictionary<string, int> m_cost = new Dictionary<string, int>();
-        public Dictionary<string, int> Prix
-        { get { return m_cost; } }
+		protected Dictionary<string, int> _cost = new Dictionary<string, int>();
+		public Dictionary<string, int> Prix
+		{ get { return _cost; } }
 
 		public Building(int x, int y)
-            : base(x, y)
-        { iterator = 0; }
+			: base(x, y)
+		{ _iterator = 0; }
 
-        public void Update_ere(ContentManager content, Joueur joueur)
-        {
-            LoadContent(content, m_texture.Name.Substring(0, m_texture.Name.Length - 1) + joueur.Ere.ToString());
-        }
+		public void UpdateEre(ContentManager content, Joueur joueur)
+		{
+			LoadContent(content, _texture.Name.Substring(0, _texture.Name.Length - 1) + joueur.Ere.ToString(CultureInfo.CurrentCulture));
+		}
 	}
 }

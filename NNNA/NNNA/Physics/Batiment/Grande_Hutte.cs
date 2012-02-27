@@ -1,33 +1,34 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using System.Globalization;
+using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
 	// 1ere Ere
-	class Grande_Hutte : ProductionBuilding
+	class GrandeHutte : ProductionBuilding
 	{
-		public Grande_Hutte(int x = 0, int y = 0)
+		public GrandeHutte(int x = 0, int y = 0)
 			: base(x, y)
 		{
-            type = "forum";
-			m_cost.Add("Bois", 1000);
-			m_cost.Add("Nourriture", 500);
+			_type = "forum";
+			_cost.Add("Bois", 1000);
+			_cost.Add("Nourriture", 500);
 		}
 
-		public Grande_Hutte(int x, int y, ContentManager content, Joueur joueur)
+		public GrandeHutte(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
-            type = "forum";
-			LoadContent(content, "Batiments/forum_" + joueur.Ere.ToString());
+			_type = "forum";
+			LoadContent(content, "Batiments/forum_" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 500;
-			m_cost.Add("Bois", 1000);
-			m_cost.Add("Nourriture", 500);
-            Line_sight = 12 * 64;
-			if (joueur.Population_Max < 200)
+			_cost.Add("Bois", 1000);
+			_cost.Add("Nourriture", 500);
+			LineSight = 12 * 64;
+			if (joueur.PopulationMax < 200)
 			{
-				if (joueur.Population_Max > 185)
-				{ joueur.Population_Max += 200 - joueur.Population_Max; }
+				if (joueur.PopulationMax > 185)
+				{ joueur.PopulationMax += 200 - joueur.PopulationMax; }
 				else
-				{ joueur.Population_Max += 15; }
+				{ joueur.PopulationMax += 15; }
 			}
 		}
 	}

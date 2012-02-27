@@ -6,13 +6,10 @@ namespace NNNA
 	class Clavier
 	{
 		// Début de la partie spécifique au pattern singleton //
-		private static Clavier instance;
+		private static Clavier _instance;
 		public static Clavier Get()
-		{
-			if (instance == null)
-			{ instance = new Clavier(); }
-			return instance;
-		}
+		{ return _instance ?? (_instance = new Clavier()); }
+
 		private Clavier()
 		{ }
 		// Fin de la partie spécifique au pattern singleton //
@@ -87,7 +84,7 @@ namespace NNNA
 		/// </summary>
 		/// <returns>Si aucun bouton n'est actuellement appuyé.</returns>
 		public bool NoPress()
-		{ return _newState.GetPressedKeys().Count() == 0; }
+		{ return !_newState.GetPressedKeys().Any(); }
 
 		public override string ToString()
 		{ return _newState.ToString(); }

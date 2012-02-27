@@ -1,59 +1,58 @@
-﻿using Microsoft.Xna.Framework.Content;
-namespace NNNA
+﻿namespace NNNA
 {
-	class Unit : Movible_Sprite
+	class Unit : MovibleSprite
 	{
-		protected Joueur m_joueur;
+		protected Joueur _joueur;
 
-		protected int m_life = 0;
+		protected int _life;
 		public int Life
 		{
-			get { return m_life; }
+			get { return _life; }
 			set
 			{
-				m_life = value;
-				if (value > m_maxLife)
-				{ m_maxLife = value; }
+				_life = value;
+				if (value > _maxLife)
+				{ _maxLife = value; }
 			}
 		}
-		protected int m_maxLife = 0;
+		protected int _maxLife;
 		public int MaxLife
 		{
-			get { return m_maxLife; }
-			set { m_maxLife = value; }
+			get { return _maxLife; }
+			set { _maxLife = value; }
 		}
 
-		protected int m_attaque;
+		protected int _attaque;
 		public int Attaque
 		{
-			get { return m_attaque; }
-			set { m_attaque = value; }
+			get { return _attaque; }
+			set { _attaque = value; }
 		}
 
-		protected int m_portee;
+		protected int _portee;
 		public int Portee
 		{
-			get { return m_portee; }
-			set { m_portee = value; }
+			get { return _portee; }
+			set { _portee = value; }
 		}
 
-		protected int m_regeneration;
+		protected int _regeneration;
 		public int Regeneration
 		{
-			get { return m_regeneration; }
-			set { m_regeneration = value; }
+			get { return _regeneration; }
+			set { _regeneration = value; }
 		}
 
-        protected int m_line_sight;
-        public int Line_sight
-        {
-            get { return m_line_sight; }
-            set { m_line_sight = value; }
-        }
+		protected int _lineSight;
+		public int LineSight
+		{
+			get { return _lineSight; }
+			set { _lineSight = value; }
+		}
 
 		public Unit(int x, int y)
-            : base(x, y)
-        {
-        }
+			: base(x, y)
+		{
+		}
 	}
 }
