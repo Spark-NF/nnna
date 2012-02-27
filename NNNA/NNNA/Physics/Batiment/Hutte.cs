@@ -18,7 +18,7 @@ namespace NNNA
 			    LoadContent(content, "Batiments/maison1_" + joueur.Ere.ToString());
             else
                 LoadContent(content, "Batiments/maison2_" + joueur.Ere.ToString());
-			vie = 100;
+			Life = 100;
 			m_cost.Add("Bois", 50);
 			Line_sight = 2 * 64;
 			if (joueur.Population_Max < 200)

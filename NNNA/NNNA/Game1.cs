@@ -1046,7 +1046,7 @@ namespace NNNA
 								m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
 								mul = (m > 0 && m > mul) ? m : mul;
 							}
-							if (mul != 0)
+							if (mul > 0.25f)
 							{
 								m_pointer = "fight";
 								unitUnder = true;
@@ -1321,7 +1321,8 @@ namespace NNNA
 						m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
-					if (mul != 0)
+					mul = (mul - 0.25f) * 1.33f;
+					if (mul > 0)
 					{ uni.Draw(spriteBatch, camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
 				}
 			}
@@ -1374,15 +1375,50 @@ namespace NNNA
 			foreach (Unit unit in joueur.Units)
 			{
 				if (!m_health_hover || unit.Selected)
+				{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2((26 - unit.Texture.Width / 4) / 2, 6) - camera.Position, 28); }
+			}
+			foreach (Building build in joueur.Buildings)
+			{
+				if (!m_health_hover || build.Selected)
+				{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2((98 - build.Texture.Width) / 2, 10) - camera.Position, 100); }
+			}
+			foreach (Joueur foe in m_enemies)
+			{
+				foreach (Unit unit in foe.Units)
 				{
-					int greenLength = (unit.Life * 28) / unit.MaxLife;
-					int redLength = 28 - greenLength;
-					Vector2 pos = unit.Position - new Vector2((28 - unit.Texture.Width / 4) / 2, 6) - camera.Position;
-					spriteBatch.Draw(colors[Color.Black], new Rectangle((int)pos.X - 1, (int)pos.Y - 1, 30, 5), Color.White);
-					if (greenLength > 0)
-					{ spriteBatch.Draw(colors[Color.Green], new Rectangle((int)pos.X, (int)pos.Y, greenLength, 3), Color.White); }
-					if (redLength > 0)
-					{ spriteBatch.Draw(colors[Color.Red], new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 3), Color.White); }
+					float mul = 0.0f;
+					foreach (Unit uni in joueur.Units)
+					{
+						float m = (uni.Position_Center - unit.Position).Length();
+						m = 1.0f - (m / (uni.Line_sight + joueur.Additional_line_sight));
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					foreach (Building building in joueur.Buildings)
+					{
+						float m = (building.Position_Center - unit.Position).Length();
+						m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					if (mul > 0.25f)
+					{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2((26 - unit.Texture.Width / 4) / 2, 6) - camera.Position, 28); }
+				}
+				foreach (Building build in foe.Buildings)
+				{
+					float mul = 0.0f;
+					foreach (Unit uni in joueur.Units)
+					{
+						float m = (uni.Position_Center - build.Position).Length();
+						m = 1.0f - (m / (uni.Line_sight + joueur.Additional_line_sight));
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					foreach (Building building in joueur.Buildings)
+					{
+						float m = (building.Position_Center - build.Position).Length();
+						m = 1.0f - (m / (building.Line_sight + joueur.Additional_line_sight));
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					if (mul > 0.25f)
+					{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2((98 - build.Texture.Width) / 2, 10) - camera.Position, 100); }
 				}
 			}
 
@@ -1409,6 +1445,24 @@ namespace NNNA
 				flash_bool = false;
 				a = 1.0f;
 			}
+		}
+
+		/// <summary>
+		/// Affiche la vie d'une unité ou d'un bâtiment à l'écran.
+		/// </summary>
+		/// <param name="life">La vie actuelle.</param>
+		/// <param name="max">La vie maximale.</param>
+		/// <param name="pos">La position où afficher la barre de vie.</param>
+		/// <param name="width">La longueur de la barre de vie en pixels.</param>
+		private void DrawLife(int life, int max, Vector2 pos, int width)
+		{
+			int greenLength = (life * (width - 2)) / life;
+			int redLength = (width - 2) - greenLength;
+			spriteBatch.Draw(colors[Color.Black], new Rectangle((int)pos.X - 1, (int)pos.Y - 1, width, 5), Color.White);
+			if (greenLength > 0)
+			{ spriteBatch.Draw(colors[Color.Green], new Rectangle((int)pos.X, (int)pos.Y, greenLength, 3), Color.White); }
+			if (redLength > 0)
+			{ spriteBatch.Draw(colors[Color.Red], new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 3), Color.White); }
 		}
 		private void DrawGameMenu(GameTime gameTime)
 		{

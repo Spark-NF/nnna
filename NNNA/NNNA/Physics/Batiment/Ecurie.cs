@@ -16,7 +16,7 @@ namespace NNNA
 			: base(x, y)
 		{
 			LoadContent(content, "Batiments/ecurie");
-			vie = 100;
+			Life = 100;
             Line_sight = 128;
 			m_cost.Add("Bois", 300);
             m_cost.Add("Pierre", 200);

@@ -5,7 +5,23 @@ namespace NNNA
 {
 	class Building : Static_Sprite
 	{
-		protected int vie;
+		protected int m_life = 0;
+		public int Life
+		{
+			get { return m_life; }
+			set
+			{
+				m_life = value;
+				if (value > m_maxLife)
+				{ m_maxLife = value; }
+			}
+		}
+		protected int m_maxLife = 0;
+		public int MaxLife
+		{
+			get { return m_maxLife; }
+			set { m_maxLife = value; }
+		}
 
         private int iterator;
         public int Iterator

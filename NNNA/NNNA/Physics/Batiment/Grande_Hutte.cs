@@ -18,7 +18,7 @@ namespace NNNA
 		{
             type = "forum";
 			LoadContent(content, "Batiments/forum_" + joueur.Ere.ToString());
-			vie = 500;
+			Life = 500;
 			m_cost.Add("Bois", 1000);
 			m_cost.Add("Nourriture", 500);
             Line_sight = 12 * 64;

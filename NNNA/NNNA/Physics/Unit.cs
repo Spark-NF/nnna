@@ -5,7 +5,7 @@ namespace NNNA
 	{
 		protected Joueur m_joueur;
 
-		protected int m_life = 10;
+		protected int m_life = 0;
 		public int Life
 		{
 			get { return m_life; }
@@ -16,7 +16,7 @@ namespace NNNA
 				{ m_maxLife = value; }
 			}
 		}
-		protected int m_maxLife = 10;
+		protected int m_maxLife = 0;
 		public int MaxLife
 		{
 			get { return m_maxLife; }
