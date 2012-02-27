@@ -10,10 +10,10 @@ namespace NNNA
 
         private bool decouvert = false;
 
-		public ResourceMine(int x, int y, ContentManager content, Resource resource)
+        public ResourceMine(int x, int y, ContentManager content, Resource resource, Texture2D texture)
             : base(x, y)
         {
-            m_texture = resource.Texture(1);
+            m_texture = texture;
 			m_resource = resource;
         }
 

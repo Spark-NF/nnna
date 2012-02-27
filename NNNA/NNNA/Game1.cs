@@ -545,8 +545,8 @@ namespace NNNA
 					m_gameTime = gameTime;
 
 					//Decor
-					resource.Add(new ResourceMine((int)matrice2xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)matrice2xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, Content, joueur.Resource("Pierre")));
-					for (int i = 0; i < 15; i++)
+                    resource.Add(new ResourceMine((int)matrice2xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)matrice2xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, Content, joueur.Resource("Pierre"), joueur.Resource("Pierre").Texture(1)));
+					for (int i = 0; i < 5 + m_quick_resources * 5 * (m_quick_size + 1); i++)
 					{
 						int x = 0;
 						int y = 0;
@@ -557,7 +557,7 @@ namespace NNNA
 							x = random.Next(matrice.GetLength(0));
 							y = random.Next(matrice.GetLength(1));
 						}
-						resource.Add(new ResourceMine((int)(matrice2xy(new Vector2(x, y))).X - 44, (int)(matrice2xy(new Vector2(x, y))).Y - 152, Content, joueur.Resource("Bois")));
+                        resource.Add(new ResourceMine((int)(matrice2xy(new Vector2(x, y))).X - 44, (int)(matrice2xy(new Vector2(x, y))).Y - 152, Content, joueur.Resource("Bois"), Content.Load<Texture2D>("Resources/bois_1_sprite" + random.Next(0, 3))));
 						matrice[y, x].Crossable = false;
 					}
 
@@ -710,7 +710,7 @@ namespace NNNA
 						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur, (byte)random.Next(0,2));
 						if (joueur.Pay(b.Prix))
 						{
-                            joueur.Buildings.Add(b);
+							joueur.Buildings.Add(b);
                             buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
 							m_pointer = "pointer";
@@ -984,6 +984,7 @@ namespace NNNA
 								{
 									selectedBuilding.Iterator++;
 									joueur.Units.Add(u);
+                                    units.Add(u);
 									MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
 									m_currentAction = "";
 								}
@@ -1000,7 +1001,8 @@ namespace NNNA
 								if (joueur.Has(u1.Prix))
 								{
 									selectedBuilding.Iterator++;
-									joueur.Units.Add(u1);
+                                    joueur.Units.Add(u1);
+                                    units.Add(u1);
 									MessagesManager.Messages.Add(new Msg("Nouveau Chasseur !", Color.White, 5000));
 									m_currentAction = "";
 								}
@@ -1184,7 +1186,7 @@ namespace NNNA
 			   
 				// réseau
 				DrawString(spriteBatch, m_font_small, Réseau.Connected(), new Vector2(5, m_screen.Y -20),Color.GhostWhite,Color.Transparent,1);
-				DrawString(spriteBatch, m_font_small, "Votre adresse IP est: " + Réseau.GetIPaddresses(Environment.MachineName), new Vector2((m_screen.X - m_font_small.MeasureString("Votre adresse IP est: " + Réseau.GetIPaddresses(Environment.MachineName)).X)-35, m_screen.Y - 20), Color.GhostWhite, Color.Transparent, 1);
+				DrawString(spriteBatch, m_font_small, "Votre adresse IP est: " + Réseau.GetIPaddresses(Environment.MachineName), new Vector2((m_screen.X - m_font_small.MeasureString("Votre adresse IP est: " + Réseau.GetIPaddresses(Environment.MachineName)).X), m_screen.Y - 20), Color.GhostWhite, Color.Transparent, 1);
 			}
 
 		}
@@ -1230,7 +1232,7 @@ namespace NNNA
 		{
 			DrawCommon(gameTime);
 			string[] textures = { "min", "moyennes", "max" };
-			makeMenu(m_screen.X + "x" + m_screen.Y, (m_fullScreen ? "Plein écran" : "Fenêtré"), _("Textures")+" " + _(textures[m_textures]), (m_shadows ? "Ombres" : "Pas d'ombres"), _("Thème")+" "+(m_theme + 1), "Retour");
+			makeMenu(m_screen.X + " x " + m_screen.Y, (m_fullScreen ? "Plein écran" : "Fenêtré"), _("Textures")+" " + _(textures[m_textures]), (m_shadows ? "Ombres" : "Pas d'ombres"), _("Thème")+" "+(m_theme + 1), "Retour");
 		}
 		private void DrawOptionsSound(GameTime gameTime)
 		{
@@ -1461,7 +1463,10 @@ namespace NNNA
 			{
 				flash_bool = false;
 				a = 1.0f;
-			}
+            }
+
+            Debug(3, units.Count);
+            Debug(4, buildings.Count);
 		}
 
 		/// <summary>
