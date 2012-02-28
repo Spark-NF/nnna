@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace NNNA
 {
@@ -34,7 +37,7 @@ namespace NNNA
 		}
 
 		public Vector2 PositionCenter
-		{ get { return _position + new Vector2(_texture.Width/2, _texture.Height/2); } }
+		{ get { return _position + new Vector2((float)Math.Round((double)_texture.Width / 2), (float)Math.Round((double)_texture.Height / 2)); } }
 
 		private Vector2 _positionMatrice;
 		/// <summary>

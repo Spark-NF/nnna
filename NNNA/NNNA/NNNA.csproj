@@ -136,6 +136,7 @@
     <Compile Include="Lib\Technologies\Technologies.xaml.cs">
       <DependentUpon>Technologies.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Lib\Vector2DExtander.cs" />
     <Compile Include="Physics\Batiment\Archerie.cs" />
     <Compile Include="Physics\Batiment\Ecurie.cs" />
     <Compile Include="Physics\Batiment\Ferme.cs" />

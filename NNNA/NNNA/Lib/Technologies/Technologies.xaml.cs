@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using Microsoft.Xna.Framework;
@@ -11,14 +10,14 @@ namespace NNNA
 	/// <summary>
 	/// Interaction logic for Technologies.xaml
 	/// </summary>
-	public partial class Technologies : UserControl
+	public partial class Technologies
 	{
 		private UIElement _u;
-		private new ContentManager _content;
+		private readonly ContentManager _content;
 		internal Joueur Joueur;
 		private ElementHost _elementHost;
 		private bool _chasse, _feu, _silex, _fer, _pierrePolie, _ere1, _bronze, _outils, _agri, _torche, _irrigation;
-		private Dictionary<string, int> _prixFer = new Dictionary<string, int>(), _prixChasse = new Dictionary<string, int>(), _prixFeu = new Dictionary<string, int>(), _prixSilex = new Dictionary<string, int>(), _prixPierrePolie = new Dictionary<string, int>(), _prixBronze = new Dictionary<string, int>(), _prixOutils = new Dictionary<string, int>(), _prixAgri = new Dictionary<string, int>(), _prixTorche = new Dictionary<string, int>(), _prixIrrigation = new Dictionary<string, int>();
+		private readonly Dictionary<string, int> _prixFer = new Dictionary<string, int>(), _prixChasse = new Dictionary<string, int>(), _prixFeu = new Dictionary<string, int>(), _prixSilex = new Dictionary<string, int>(), _prixPierrePolie = new Dictionary<string, int>(), _prixBronze = new Dictionary<string, int>(), _prixOutils = new Dictionary<string, int>(), _prixAgri = new Dictionary<string, int>(), _prixTorche = new Dictionary<string, int>(), _prixIrrigation = new Dictionary<string, int>();
 		internal Technologies(Joueur joueur, ref ElementHost elementHost, ContentManager content)
 		{
 			_content = content;

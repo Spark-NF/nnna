@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,6 +18,13 @@ namespace NNNA
 				Texture.Width / 4,
 				Texture.Height
 			);
+		}
+
+		protected Unit _destination;
+		public Unit Destination
+		{
+			get { return _destination; }
+			set { _destination = value; }
 		}
 
 		protected Texture2D _icon;
@@ -145,16 +153,27 @@ namespace NNNA
 
 		public void ClickMouvement(Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, Sprite[,] matrice)
 		{
-			if (_click || _selected)
+			if (_click || _selected || Destination != null)
 			{
 				if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (_selected || !_click))
-				{ Move(curseur.Position + camera.Position - new Vector2(Texture.Width / 8, (Texture.Height * 4) / 5), sprites, buildings, matrice); }
-				if (_click == true)
+				{
+					Move(curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 8), (float)Math.Round((double)Texture.Height * 4 / 5)), sprites, buildings, matrice);
+					Destination = null;
+				}
+				else if (Destination != null)
+				{ Move(Destination.Position, sprites, buildings, matrice); }
+				if (_click)
 				{
 					if (Math.Abs(_cparcouru.X) >= Math.Abs(_cparcourir.X) && Math.Abs(_cparcouru.Y) >= Math.Abs(_cparcourir.Y))
 					{ _click = false; }
 					else
 					{
+						if (Destination != null && Destination.Position.DistanceTo(Position) < Math.Round((double)Texture.Width / 3) && Game1.Frame % 4 == 0)
+						{
+							Destination.Life--;
+							if (Destination.Life <= 0)
+							{ Destination = null; }
+						}
 						_cparcouru = _position - _positionIni;
 						Vector2 translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
 						Update(translation);
@@ -168,14 +187,14 @@ namespace NNNA
 		{
 			if (_click || _selected)
 			{
-				if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (_selected == true || _click == false))
+				if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (_selected || !_click))
 				{
 					_click = true;
 					_clickInterne = false;
 					_positionIni = _position;
-					_clickPosition = curseur.Position + camera.Position - new Vector2(Texture.Width / 8, (Texture.Height * 4) / 5);
+					_clickPosition = curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 8), (float)Math.Round((double)Texture.Height * 4 / 5));
 					Vector2 start = Game1.Xy2Matrice(_positionIni);
-					Vector2 destination = Game1.Xy2Matrice(curseur.Position + camera.Position - new Vector2(Texture.Width / 8, (Texture.Height * 4) / 5));
+					Vector2 destination = Game1.Xy2Matrice(curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 8), (float)Math.Round((double)Texture.Height * 4 / 5)));
 					_pathList = PathFinding.FindPath(map, map[(int)start.Y, (int)start.X], map[(int)destination.Y, (int)destination.X]);
 					if (_pathList != null)
 					{
@@ -187,7 +206,7 @@ namespace NNNA
 				{
 					if (_pathIterator > 0)
 					{
-						if (!_clickInterne)
+						if (!_clickInterne && _pathList != null)
 						{
 							_angle = Math.Atan2(_pathList[_pathIterator].PositionCenter.Y - _position.Y, _pathList[_pathIterator].PositionCenter.X - _position.X);
 							_direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
@@ -288,7 +307,7 @@ namespace NNNA
 				_createMaison = false;
 			}
 		}
-		public void Create_Hutte_Chasseurs(Sprite curseur, List<StaticSprite> Static_Sprite_List, ContentManager content, Joueur joueur, Camera2D camera)
+		public void Create_Hutte_Chasseurs(Sprite curseur, List<StaticSprite> staticSpriteList, ContentManager content, Joueur joueur, Camera2D camera)
 		{
 			if (joueur.Resource("Bois").Count >= 75)
 			{
@@ -317,7 +336,7 @@ namespace NNNA
 			{*/
 					curseur.Texture = content.Load<Texture2D>("pointer");
 					_createHutteChasseurs = false;
-					Static_Sprite_List.Add(new HutteDesChasseurs((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), content, joueur));
+					staticSpriteList.Add(new HutteDesChasseurs((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), content, joueur));
 					MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
 				}
 			}
@@ -369,8 +388,8 @@ namespace NNNA
 					var distance = (int)Math.Sqrt(Math.Pow((ClickPosition.X/* + m_go.Width / 2*/) - (Position.X/* + m_texture.Width / 8*/), 2) + Math.Pow((ClickPosition.Y/* + m_go.Height / 2*/) - (Position.Y/* + (m_texture.Height * 4) / 5*/), 2));
 					for (int i = 0; i < distance; i += 4)
 					{ spriteBatch.Draw(_dots, ClickPosition - camera.Position + new Vector2(_go.Width, _texture.Height - (_go.Height / 2) - 1) - new Vector2((float)(i * Math.Cos(Angle)), (float)(i * Math.Sin(Angle))), Color.White); }
-					if (_go != null)
-					{ spriteBatch.Draw(_go, ClickPosition - camera.Position + new Vector2(_go.Width / 2, _texture.Height - (_go.Height)), Color.White); }
+					if (_go != null && Destination == null)
+					{ spriteBatch.Draw(_go, ClickPosition - camera.Position + new Vector2((float)Math.Round((double)_go.Width / 2), _texture.Height - (_go.Height)), Color.White); }
 				}
 				spriteBatch.Draw(_texture, _position - camera.Position, new Rectangle(_click ? index * 32 : 0, 0, 32, 48), Color.Peru);
 			}
@@ -383,7 +402,7 @@ namespace NNNA
 		{
 			_dec = dec;
 			for (int i = 0; i <= 315; i += dec)
-			{ _textures.Add(i, content.Load<Texture2D>("Units/" + name + "/" + name + "_" + i.ToString())); }
+			{ _textures.Add(i, content.Load<Texture2D>("Units/" + name + "/" + name + "_" + i.ToString(CultureInfo.CurrentCulture))); }
 			_texture = _textures[0];
 			_go = content.Load<Texture2D>("go");
 			_dots = content.Load<Texture2D>("dots");

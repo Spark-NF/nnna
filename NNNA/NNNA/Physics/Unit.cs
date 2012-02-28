@@ -52,7 +52,9 @@
 
 		public Unit(int x, int y)
 			: base(x, y)
-		{
-		}
+		{ }
+
+		public void Attack(Unit obj)
+		{ Destination = obj; }
 	}
 }

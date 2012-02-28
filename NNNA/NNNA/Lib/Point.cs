@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace NNNA
 {
-	class Point
+	public class Point
 	{
 		public int X { get; set; }
 		public int Y { get; set; }

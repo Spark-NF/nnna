@@ -54,9 +54,9 @@ namespace NNNA
             _rect.X = (int)_position.X;
             _rect.Y = (int)_position.Y;
             if (_realityOffset < Math.PI / 2)
-                _position.Y -= _realityOffset;
+            { _position.Y -= _realityOffset; }
             else
-                _position.Y += _realityOffset;
+            { _position.Y += _realityOffset; }
             _distanceRestante = _but - _position;
         }
 

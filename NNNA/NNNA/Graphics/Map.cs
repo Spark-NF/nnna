@@ -144,7 +144,7 @@ namespace NNNA
 			_mapHeight = (maxY) / 32;
 			minimap.Texture = new Texture2D(device, map.GetLength(1) + 4, map.GetLength(0) + 4, false, SurfaceFormat.Color);
 			minimap.Texture.SetData(textureColor);
-			minimap.Base_texture = minimap.Texture;
+			minimap.BaseTexture = minimap.Texture;
 			_map = map;
 		}
 	}

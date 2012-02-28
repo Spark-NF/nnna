@@ -18,21 +18,23 @@ namespace NNNA
 	/// <summary>
 	/// This is the main type for your game
 	/// </summary>
-	public class Game1 : Microsoft.Xna.Framework.Game
+	public class Game1 : Game
 	{
 		#region Variables
 
-		private GraphicsDeviceManager _graphics;
+		public static int Frame;
+
+		private readonly GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
 		private Effect _gaussianBlur;
 		private Rectangle _selection = Rectangle.Empty;
 
 		private Texture2D _backgroundDark, _flash, _night, _console;
-		private Texture2D[] _backgrounds = new Texture2D[2];
+		private readonly Texture2D[] _backgrounds = new Texture2D[2];
 		private Dictionary<string, Texture2D> _actions = new Dictionary<string, Texture2D>(), _pointers = new Dictionary<string, Texture2D>();
 		private SpriteFont _fontMenu, _fontMenuTitle, _fontSmall, _fontCredits;
 		private Screen _currentScreen = Screen.Title;
-		private int _konami = 0, _konamiStatus = 0, _foes = 1;
+		private int _konami, _foes = 1;
 		private string _currentAction = "", _language = "fr", _pointer = "pointer";
 		private List<string> _lastState = new List<string>();
 		private string[] _currentMenus;
@@ -47,7 +49,7 @@ namespace NNNA
 		private MapType _quickType = MapType.Island;
 		private int _quickSize = 1, _quickResources = 1, _credits = 0, _theme = 0;
 		private List<string> _currentActions = new List<string>();
-		private Random _random = new Random(42);
+		private readonly Random _random = new Random();
 		private Dictionary<Color, Texture2D> _colors = new Dictionary<Color, Texture2D>();
 		
 		// Map
@@ -202,8 +204,8 @@ namespace NNNA
 		{
 			float[,] map = IslandGenerator.Generate(width, height);
 			_heightMap = map;
-			Sprite[,] matrice = new Sprite[width, height];
-			List<float> heights = new List<float>();
+			var matrice = new Sprite[width, height];
+			var heights = new List<float>();
 
 			// Calcul de la hauteur de l'eau
 			for (int x = 0; x < map.GetLength(0); x++)
@@ -269,11 +271,6 @@ namespace NNNA
 			_fontMenuTitle = Content.Load<SpriteFont>("font_menu_title");
 			_fontSmall = Content.Load<SpriteFont>("font_small");
 			_fontCredits = Content.Load<SpriteFont>("font_credits");
-
-			// Couleurs
-			_colors.Add(Color.Red, CreateRectangle(1, 1, Color.Red));
-			_colors.Add(Color.Green, CreateRectangle(1, 1, Color.Green));
-			_colors.Add(Color.Black, CreateRectangle(1, 1, Color.Black));
 
 			#region Actions
 
@@ -361,6 +358,8 @@ namespace NNNA
 		/// <param name="gameTime">Temps courant.</param>
 		protected override void Update(GameTime gameTime)
 		{
+			Frame++;
+
 			Clavier.Get().Update(Keyboard.GetState());
 			Souris.Get().Update(Mouse.GetState());
 
@@ -385,8 +384,6 @@ namespace NNNA
 			}
 
 			// Code Konami
-			if (_konami >= 10)
-			{ _konamiStatus++; }
 			if (
 				(Clavier.Get().NewPress(Keys.Up)	&& _konami == 0) ||
 				(Clavier.Get().NewPress(Keys.Up)	&& _konami == 1) ||
@@ -467,10 +464,9 @@ namespace NNNA
 				{
 					bool ok = false;
 					int[] sizes = { 50, 100, 200 };
-					double[] resources = { 0.05, 0.1, 0.2 };
 					var spawns = new List<Point>();
 					var heights = new List<float>();
-					float dist = sizes[_quickSize] / 2;
+					var dist = (float)Math.Round((double)sizes[_quickSize] / 2);
 
 					// On regénère une carte tant qu'elle est incapable d'accueillir le bon nombre de spawns
 					while (!ok)
@@ -559,7 +555,8 @@ namespace NNNA
 					}
 
 					//Le son
-					_son.MusiqueMenu.Pause();
+					if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
+					{ _son.MusiqueMenu.Pause(); }
 					_debutpartie.Play();
 					
 				}
@@ -684,14 +681,23 @@ namespace NNNA
 			var rand = new Random();
 			foreach (Joueur foe in _enemies)
 			{
-				foreach (Unit unit in foe.Units)
+				for (int i = 0; i < foe.Units.Count; i++)
 				{
-					if (++unit.Updates == 120)
+					Unit unit = (Unit)foe.Units[i];
+					if (unit.Life <= 0)
 					{
-						unit.Move(unit.Position + new Vector2(rand.Next(-40, 41), rand.Next(-40, 41)), _units, _buildings, _matrice);
-						unit.Updates = rand.Next(0, 40);
+						foe.Units.Remove(unit);
+						_units.Remove(unit);
 					}
-					unit.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _matrice);
+					else
+					{
+						if (++unit.Updates == 120)
+						{
+							unit.Move(unit.Position + new Vector2(rand.Next(-40, 41), rand.Next(-40, 41)), _units, _buildings, _matrice);
+							unit.Updates = rand.Next(0, 40);
+						}
+						unit.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _matrice);
+					}
 				}
 			}
 
@@ -1025,11 +1031,11 @@ namespace NNNA
 			}
 			foreach (Unit sprite in _joueur.Units)
 			{ sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _matrice); }
-			
+
 			// Curseur de combat
+			Unit unitUnder = null;
 			if (_currentAction == "" && _selectedList.Count > 0)
 			{
-				bool unitUnder = false;
 				foreach (Joueur foe in _enemies)
 				{
 					foreach (Unit unit in foe.Units)
@@ -1058,21 +1064,30 @@ namespace NNNA
 							if (mul > 0.25f)
 							{
 								_pointer = "fight";
-								unitUnder = true;
+								unitUnder = unit;
 							}
 						}
 					}
 				}
-				if (!unitUnder)
+				if (unitUnder == null)
 				{ _pointer = "pointer"; }
+			}
+
+			// Combat
+			if (unitUnder != null && Souris.Get().Clicked(MouseButton.Right))
+			{
+				foreach (Unit unit in _selectedList)
+				{ unit.Attack(unitUnder); }
 			}
 
 			_joueur.Units.Sort(Sprite.CompareByY);
 			_joueur.Buildings.Sort(Sprite.CompareByY);
 			 
 			//minimap.Update(units, buildings, selectedList, joueur);
-			_son.MusiqueMenu.Pause();
+			if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
+			{ _son.MusiqueMenu.Pause(); }
 		}
+
 		void UpdateGameMenu()
 		{
 			if (Clavier.Get().NewPress(Keys.Escape))
@@ -1145,18 +1160,6 @@ namespace NNNA
 				_joueur.Resource("Pierre").Add(5000);
 				_joueur.Resource("Nourriture").Add(5000);
 				_konami = 0;
-				/*if (m_konamiStatus < 300)
-				{
-					spriteBatch.DrawString(m_font_credits, "KONAMI CODE!", new Vector2(10, 10), Color.Red);
-					joueur.Resource("Bois").Add(500);
-					joueur.Resource("Pierre").Add(500);
-					joueur.Resource("Nourriture").Add(500);
-				}
-				else
-				{
-					m_konami = 0;
-					m_konamiStatus = 0;
-				}*/
 			}
 
 			if (_showConsole)
@@ -1260,14 +1263,13 @@ namespace NNNA
 		}
 		private void DrawGame()
 		{
-			int index = (int)Math.Floor(_compt / 25);
-			int compteur = 0;
+			var index = (int)Math.Floor(_compt / 25);
 			foreach (Sprite sprite in _matrice)
 			{
 				if ((sprite.Position.X - _camera.Position.X > -64
 					&& sprite.Position.Y - _camera.Position.Y > -32
 					&& sprite.Position.X - _camera.Position.X < _screenSize.X
-					&& sprite.Position.Y - _camera.Position.Y < _screenSize.Y - (_hud.Position.Height * 4 / 5))
+					&& sprite.Position.Y - _camera.Position.Y < _screenSize.Y - Math.Round((double)_hud.Position.Height * 4 / 5))
 					|| SmartHud)
 				{
 					float mul = 0.0f;
@@ -1289,7 +1291,6 @@ namespace NNNA
 					else
 					{ mul = 1.0f; }
 					sprite.DrawMap(_spriteBatch, _camera, mul, _weather);
-					compteur++;
 				}
 			}
 
@@ -1397,12 +1398,12 @@ namespace NNNA
 			foreach (Unit unit in _joueur.Units)
 			{
 				if (!_healthOver || unit.Selected)
-				{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2((26 - unit.Texture.Width / 4) / 2, 6) - _camera.Position, 28); }
+				{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 8), 6) - _camera.Position, 28); }
 			}
 			foreach (Building build in _joueur.Buildings)
 			{
 				if (!_healthOver || build.Selected)
-				{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2((98 - build.Texture.Width) / 2, 10) - _camera.Position, 100); }
+				{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100); }
 			}
 			foreach (Joueur foe in _enemies)
 			{
@@ -1422,7 +1423,7 @@ namespace NNNA
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
 					if (mul > 0.25f)
-					{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2((26 - unit.Texture.Width / 4) / 2, 6) - _camera.Position, 28); }
+					{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 8), 6) - _camera.Position, 28); }
 				}
 				foreach (Building build in foe.Buildings)
 				{
@@ -1440,7 +1441,7 @@ namespace NNNA
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
 					if (mul > 0.25f)
-					{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2((98 - build.Texture.Width) / 2, 10) - _camera.Position, 100); }
+					{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100); }
 				}
 			}
 
@@ -1483,11 +1484,11 @@ namespace NNNA
 		{
 			int greenLength = (life * (width - 2)) / max;
 			int redLength = (width - 2) - greenLength;
-			_spriteBatch.Draw(_colors[Color.Black], new Rectangle((int)pos.X - 1, (int)pos.Y - 1, width, 5), Color.White);
+			_spriteBatch.Draw(Color2Texture2D(Color.Black), new Rectangle((int)pos.X - 1, (int)pos.Y - 1, width, 5), Color.White);
 			if (greenLength > 0)
-			{ _spriteBatch.Draw(_colors[Color.Green], new Rectangle((int)pos.X, (int)pos.Y, greenLength, 3), Color.White); }
+			{ _spriteBatch.Draw(Color2Texture2D(Color.Green), new Rectangle((int)pos.X, (int)pos.Y, greenLength, 3), Color.White); }
 			if (redLength > 0)
-			{ _spriteBatch.Draw(_colors[Color.Red], new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 3), Color.White); }
+			{ _spriteBatch.Draw(Color2Texture2D(Color.Red), new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 3), Color.White); }
 		}
 		private void DrawGameMenu()
 		{
@@ -1504,7 +1505,7 @@ namespace NNNA
 
 		#region Debug
 
-		// Temprs réel
+		#region Temps Réel
 		private void Debug(int i, string value)
 		{
 			#if DEBUG
@@ -1515,7 +1516,9 @@ namespace NNNA
 		{ Debug(i, (value ? "true" : "false")); }
 		private void Debug(int i, object value)
 		{ Debug(i, value.ToString()); }
-		// Console
+		#endregion
+
+		#region Console
 		private void Debug(string value)
 		{
 			Console.Messages.Add(new ConsoleMessage(value));
@@ -1524,21 +1527,20 @@ namespace NNNA
 		private void Debug(List<Point> value)
 		{
 			string deb = "List<" + value.GetType().GetGenericArguments()[0].ToString() + ">(" + value.Count.ToString(CultureInfo.CurrentCulture) + ") { ";
-			for (int i = 0; i < value.Count; i++)
-			{ deb += value[i] + ", "; }
+			deb = value.Aggregate(deb, (current, t) => current + (t + ", "));
 			Debug(deb.Substring(0, deb.Length - 2) + " }");
 		}
 		private void Debug(object[] value)
 		{
 			string deb = value.GetType() + "[" + value.Length.ToString(CultureInfo.CurrentCulture) + "] { ";
-			for (int i = 0; i < value.Length; i++)
-			{ deb += value[i] + ", "; }
+			deb = value.Aggregate(deb, (current, t) => current + (t + ", "));
 			Debug(deb.Substring(0, deb.Length - 2) + " }");
 		}
 		private void Debug(bool value)
 		{ Debug((value ? "true" : "false")); }
 		private void Debug(object value)
 		{ Debug(value.ToString()); }
+		#endregion
 
 		#endregion
 
@@ -1674,14 +1676,8 @@ namespace NNNA
 				new Vector2(2560, 1600), 
 				new Vector2(2560, 2048)
 			};
-			var list = new List<Vector2>();
 			float w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-			foreach (Vector2 vector in l)
-			{
-				// On ne propose que les résolutions ayant à peu près le même format que l'écran, sans être plus grand que lui, sauf quelques résolutions standard
-				if ((Math.Round(vector.X / vector.Y, 2) == Math.Round(w / h, 2) && vector.X <= w && vector.Y <= h) || vector == new Vector2(800, 600))
-				{ list.Add(vector); }
-			}
+			var list = l.Where(vector => (Math.Abs(Math.Round(vector.X/vector.Y, 2) - Math.Round(w/h, 2)) < 0.1 && vector.X <= w && vector.Y <= h) || vector == new Vector2(800, 600)).ToList();
 			Vector2 next;
 			if (list.Contains(_screenSize))
 			{
@@ -1828,6 +1824,13 @@ namespace NNNA
 		/// <returns>Coordonnées losange.</returns>
 		public static Vector2 Matrice2Xy(Vector2 mouse)
 		{ return new Vector2(32 * (mouse.X - mouse.Y), 16 * (mouse.X + mouse.Y)); }
+
+		private Texture2D Color2Texture2D(Color color)
+		{
+			if (!_colors.ContainsKey(color))
+			{ _colors.Add(color, CreateRectangle(1, 1, color)); }
+			return _colors[color];
+		}
 
 		#endregion
 	}
