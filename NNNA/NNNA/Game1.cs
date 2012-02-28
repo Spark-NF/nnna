@@ -540,8 +540,7 @@ namespace NNNA
 					_minimap.LoadContent(_map);
 
 					//Decor
-					//_resources.Add(new ResourceMine((int)Matrice2Xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)Matrice2Xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, _joueur.Resource("Pierre"), _joueur.Resource("Pierre").Texture(1)));
-					for (int i = 0; i < 5 + _quickResources * 5 * (_quickSize + 1); i++)
+					for (int i = 0; i < 5 * (_quickResources + _quickSize + 1); i++)
 					{
 						int x = _random.Next(_matrice.GetLength(0));
 						int y = _random.Next(_matrice.GetLength(1));
@@ -1395,7 +1394,7 @@ namespace NNNA
 			foreach (Unit unit in _joueur.Units)
 			{
 				if (!_healthOver || unit.Selected)
-				{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 8), 6) - _camera.Position, 28); }
+				{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28); }
 			}
 			foreach (Building build in _joueur.Buildings)
 			{
@@ -1425,7 +1424,7 @@ namespace NNNA
 					else
 					{ mul = 1.0f; }
 					if (mul > 0.25f)
-					{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 8), 6) - _camera.Position, 28); }
+					{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28); }
 				}
 				foreach (Building build in foe.Buildings)
 				{

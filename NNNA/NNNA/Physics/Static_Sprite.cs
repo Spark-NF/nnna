@@ -5,16 +5,6 @@ namespace NNNA
 {
 	class StaticSprite : Sprite
 	{
-		public Rectangle Rectangle(Camera2D cam)
-		{
-			return new Rectangle(
-				(int)(Position.X - cam.Position.X),
-				(int)(Position.Y - cam.Position.Y),
-				Texture.Width,
-				Texture.Height
-			);
-		}
-
 		private bool _selected;
 		public bool Selected
 		{
@@ -34,6 +24,6 @@ namespace NNNA
 		{ _selected = false; }
 
 		public void Draw(SpriteBatch spriteBatch, Camera2D camera, Color col)
-		{ spriteBatch.Draw(Texture, Position - camera.Position, new Rectangle(0, 0, Texture.Width, Texture.Height), Selected ? Color.Peru : col); }
+		{ _texture.Draw(spriteBatch, Position - camera.Position, Selected ? Color.Peru : col); }
 	}
 }

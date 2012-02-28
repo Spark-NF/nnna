@@ -163,7 +163,7 @@ namespace NNNA
 		{
 			foreach (Building sprite in _buildings)
 			{ sprite.Draw(sb, camera, _colorMovable); }
-			foreach (MovibleSprite sprite in _units)
+			foreach (Unit sprite in _units)
 			{ sprite.Draw(sb, camera, index, _colorMovable); }
 		}
 	}

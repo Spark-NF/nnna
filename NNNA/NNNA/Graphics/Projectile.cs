@@ -34,7 +34,7 @@ namespace NNNA
             _lastPosition = _position;
             _speed = speed;
             _but = but;
-            _texture = content.Load<Texture2D>(assetName);
+            _texture = new Image(content, assetName);
             _distanceRestante = but - _position;
             _distanceIni = _distanceRestante.Length();
             _realityOffset = 0;
@@ -61,9 +61,9 @@ namespace NNNA
         }
 
         public new void Draw(SpriteBatch spritebatch)
-        { spritebatch.Draw(_texture, _position, Color.White); }
+		{ _texture.Draw(spritebatch, _position, Color.White); }
 
         public void DrawRotation(SpriteBatch spritebatch)
-        { spritebatch.Draw(_texture, _rect, null, Color.White, (float)(Math.Atan2(_position.Y - _lastPosition.Y, _position.X - _lastPosition.X)), _textureCenter, SpriteEffects.None, 0f); }
+        { spritebatch.Draw(_texture.Texture, _rect, null, Color.White, (float)(Math.Atan2(_position.Y - _lastPosition.Y, _position.X - _lastPosition.X)), _textureCenter, SpriteEffects.None, 0f); }
     }
 }

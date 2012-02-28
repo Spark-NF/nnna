@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
@@ -82,7 +83,10 @@ namespace NNNA
 				if (_click)
 				{
 					if (Math.Abs(_cparcouru.X) >= Math.Abs(_cparcourir.X) && Math.Abs(_cparcouru.Y) >= Math.Abs(_cparcourir.Y))
-					{ _click = false; }
+					{
+						_click = false;
+						_texture.Animation = false;
+					}
 					else
 					{
 						if (Destination != null && Destination.Position.DistanceTo(Position) < Math.Round((double)Texture.Width / 3) && Game1.Frame % _vitesseCombat == 0)
@@ -172,6 +176,54 @@ namespace NNNA
 					else _click = false;
 				}
 			}
+		}
+		public void Draw(SpriteBatch spriteBatch, Camera2D camera, int index, Color col)
+		{
+			int tex = 1;
+
+			//MODE 8 ANGLES
+			if (_dec == 45)
+			{
+				if (_angle > 1 * (Math.PI / 8) && _angle <= 3 * (Math.PI / 8))
+				{ tex = 2; }
+				else if (_angle > 3 * (Math.PI / 8) && _angle <= 5 * (Math.PI / 8))
+				{ tex = 3; }
+				else if (_angle > 5 * (Math.PI / 8) && _angle <= 7 * (Math.PI / 8))
+				{ tex = 4; }
+				else if (_angle > 7 * (Math.PI / 8) || _angle <= -7 * (Math.PI / 8))
+				{ tex = 5; }
+				else if (_angle > -7 * (Math.PI / 8) && _angle <= -5 * (Math.PI / 8))
+				{ tex = 6; }
+				else if (_angle > -5 * (Math.PI / 8) && _angle <= -3 * (Math.PI / 8))
+				{ tex = 7; }
+				else if (_angle > -3 * (Math.PI / 8) && _angle <= -1 * (Math.PI / 8))
+				{ tex = 8; }
+			}
+
+			//MODE 4 ANGLES
+			else
+			{
+				if (_angle > 1 * (Math.PI / 4) && _angle <= 3 * (Math.PI / 4))
+				{ tex = 2; }
+				else if (_angle > 3 * (Math.PI / 4) || _angle <= -3 * (Math.PI / 4))
+				{ tex = 3; }
+				else if (_angle > -3 * (Math.PI / 4) && _angle <= -1 * (Math.PI / 4))
+				{ tex = 4; }
+			}
+
+			if (Selected)
+			{
+				if (Click)
+				{
+					var distance = (int)Math.Sqrt(Math.Pow((ClickPosition.X/* + m_go.Width / 2*/) - (Position.X/* + m_texture.Width / 8*/), 2) + Math.Pow((ClickPosition.Y/* + m_go.Height / 2*/) - (Position.Y/* + (m_texture.Height * 4) / 5*/), 2));
+					for (int i = 0; i < distance; i += 4)
+					{ spriteBatch.Draw(_dots, ClickPosition - camera.Position + new Vector2(_go.Width, _texture.Height - (float)Math.Round((double)_go.Height / 2) - 1) - new Vector2((float)(i * Math.Cos(Angle)), (float)(i * Math.Sin(Angle))), Color.White); }
+					if (_go != null && Destination == null)
+					{ spriteBatch.Draw(_go, ClickPosition - camera.Position + new Vector2((float)Math.Round((double)_go.Width / 2), _texture.Height - (_go.Height)), Color.White); }
+				}
+				spriteBatch.Draw(_selection, _position - camera.Position + new Vector2(0, 32), _joueur.Color);
+			}
+			_texture.Draw(spriteBatch, _position - camera.Position, col, tex);
 		}
 	}
 }

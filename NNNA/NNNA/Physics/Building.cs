@@ -48,7 +48,7 @@ namespace NNNA
 
 		public void UpdateEre(ContentManager content, Joueur joueur)
 		{
-			LoadContent(content, _texture.Name.Substring(0, _texture.Name.Length - 1) + joueur.Ere.ToString(CultureInfo.CurrentCulture));
+			LoadContent(content, _assetName.Substring(0, _assetName.Length - 1) + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 		}
 	}
 }

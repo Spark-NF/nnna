@@ -91,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graphics\Camera2D.cs" />
+    <Compile Include="Graphics\Image.cs" />
     <Compile Include="Graphics\Projectiles\Fleche.cs" />
     <Compile Include="Graphics\MessagesManager.cs" />
     <Compile Include="Graphics\HUD.cs" />

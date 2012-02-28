@@ -9,17 +9,6 @@ namespace NNNA
 {
 	class MovibleSprite : Sprite
 	{
-		protected Dictionary<int, Texture2D> _textures = new Dictionary<int, Texture2D>();
-		public Rectangle Rectangle(Camera2D cam)
-		{
-			return new Rectangle(
-				(int)(Position.X - cam.Position.X),
-				(int)(Position.Y - cam.Position.Y),
-				Texture.Width / 4,
-				Texture.Height
-			);
-		}
-
 		protected Unit _destination;
 		public Unit Destination
 		{
@@ -34,9 +23,16 @@ namespace NNNA
 			set { _icon = value; }
 		}
 
+		protected Texture2D _selection;
+		public Texture2D Selection
+		{
+			get { return _selection; }
+			set { _selection = value; }
+		}
+
 		private byte _a;
 		public int Updates;
-		private int _dec = 90;
+		protected int _dec = 90;
 
 		protected bool _createMaison;
 		public bool CreateMaison
@@ -144,6 +140,7 @@ namespace NNNA
 			if (coordinates != _position)
 			{
 				_click = true;
+				_texture.Animation = true;
 				_clickPosition = coordinates;
 				_angle = Math.Atan2(_clickPosition.Y - _position.Y, _clickPosition.X - _position.X);
 				_direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
@@ -153,29 +150,17 @@ namespace NNNA
 			}
 		}
 
-		public void Create_Maison(Sprite curseur, List<StaticSprite> staticSpriteList, ContentManager content, Joueur joueur, Camera2D camera, Random random)
+		public void Create_Maison(List<StaticSprite> staticSpriteList, ContentManager content, Joueur joueur, Camera2D camera, Random random)
 		{
 			if (joueur.Resource("Bois").Count >= 50)
 			{
 				if (_createMaison == false)
 				{
-					if (random.Next(0, 2) == 1)
-					{
-						curseur.Texture = content.Load<Texture2D>("Batiments/hutte1");
-						_a = 0;
-					}
-					else
-					{
-						curseur.Texture = content.Load<Texture2D>("Batiments/hutte2");
-						_a = 1;
-					}
+					_a = (byte) (random.Next(0, 2) == 1 ? 0 : 1);
 					_createMaison = true;
 				}
 				if (Souris.Get().Clicked(MouseButton.Right))
-				{
-					_createMaison = false;
-					curseur.Texture = content.Load<Texture2D>("pointer");
-				}
+				{ _createMaison = false; }
 				else if (Souris.Get().Clicked(MouseButton.Left))
 				{/*
 				Click = true;
@@ -189,9 +174,8 @@ namespace NNNA
 			}
 			else if (create_maison == true && Click == false)
 			{*/
-					curseur.Texture = content.Load<Texture2D>("pointer");
 					_createMaison = false;
-					staticSpriteList.Add(new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), content, joueur, _a));
+					staticSpriteList.Add(new Hutte((int)(Souris.Get().X + camera.Position.X), (int)(Souris.Get().Y + camera.Position.Y), content, joueur, _a));
 					MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
 				}
 			}
@@ -201,20 +185,13 @@ namespace NNNA
 				_createMaison = false;
 			}
 		}
-		public void Create_Hutte_Chasseurs(Sprite curseur, List<StaticSprite> staticSpriteList, ContentManager content, Joueur joueur, Camera2D camera)
+		public void Create_Hutte_Chasseurs(List<StaticSprite> staticSpriteList, ContentManager content, Joueur joueur, Camera2D camera)
 		{
 			if (joueur.Resource("Bois").Count >= 75)
 			{
-				if (_createHutteChasseurs == false)
-				{
-					curseur.Texture = content.Load<Texture2D>("Batiments/hutte_des_chasseurs");
-					_createHutteChasseurs = true;
-				}
+				_createHutteChasseurs = true;
 				if (Souris.Get().Clicked(MouseButton.Right))
-				{
-					_createHutteChasseurs = false;
-					curseur.Texture = content.Load<Texture2D>("pointer");
-				}
+				{ _createHutteChasseurs = false; }
 				else if (Souris.Get().Clicked(MouseButton.Left))
 				{/*
 				Click = true;
@@ -228,9 +205,8 @@ namespace NNNA
 			}
 			else if (create_maison == true && Click == false)
 			{*/
-					curseur.Texture = content.Load<Texture2D>("pointer");
 					_createHutteChasseurs = false;
-					staticSpriteList.Add(new HutteDesChasseurs((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), content, joueur));
+					staticSpriteList.Add(new HutteDesChasseurs((int)(Souris.Get().X + camera.Position.X), (int)(Souris.Get().Y + camera.Position.Y), content, joueur));
 					MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
 				}
 			}
@@ -240,66 +216,17 @@ namespace NNNA
 				_createHutteChasseurs = false;
 			}
 		}
-		public void Draw(SpriteBatch spriteBatch, Camera2D camera, int index, Color col)
-		{
-			int tex = 0;
-
-			//MODE 8 ANGLES
-			if (_dec == 45)
-			{
-				if (_angle > 1 * (Math.PI / 8) && _angle <= 3 * (Math.PI / 8))
-				{ tex = 45; }
-				else if (_angle > 3 * (Math.PI / 8) && _angle <= 5 * (Math.PI / 8))
-				{ tex = 90; }
-				else if (_angle > 5 * (Math.PI / 8) && _angle <= 7 * (Math.PI / 8))
-				{ tex = 135; }
-				else if (_angle > 7 * (Math.PI / 8) || _angle <= -7 * (Math.PI / 8))
-				{ tex = 180; }
-				else if (_angle > -7 * (Math.PI / 8) && _angle <= -5 * (Math.PI / 8))
-				{ tex = 225; }
-				else if (_angle > -5 * (Math.PI / 8) && _angle <= -3 * (Math.PI / 8))
-				{ tex = 270; }
-				else if (_angle > -3 * (Math.PI / 8) && _angle <= -1 * (Math.PI / 8))
-				{ tex = 315; }
-			}
-
-			//MODE 4 ANGLES
-			else
-			{
-				if (_angle > 1 * (Math.PI / 4) && _angle <= 3 * (Math.PI / 4))
-				{ tex = 90; }
-				else if (_angle > 3 * (Math.PI / 4) || _angle <= -3 * (Math.PI / 4))
-				{ tex = 180; }
-				else if (_angle > -3 * (Math.PI / 4) && _angle <= -1 * (Math.PI / 4))
-				{ tex = 270; }
-			}
-
-			_texture = _textures[tex];
-			if (Selected)
-			{
-				if (Click)
-				{
-					var distance = (int)Math.Sqrt(Math.Pow((ClickPosition.X/* + m_go.Width / 2*/) - (Position.X/* + m_texture.Width / 8*/), 2) + Math.Pow((ClickPosition.Y/* + m_go.Height / 2*/) - (Position.Y/* + (m_texture.Height * 4) / 5*/), 2));
-					for (int i = 0; i < distance; i += 4)
-					{ spriteBatch.Draw(_dots, ClickPosition - camera.Position + new Vector2(_go.Width, _texture.Height - (float)Math.Round((double)_go.Height / 2) - 1) - new Vector2((float)(i * Math.Cos(Angle)), (float)(i * Math.Sin(Angle))), Color.White); }
-					if (_go != null && Destination == null)
-					{ spriteBatch.Draw(_go, ClickPosition - camera.Position + new Vector2((float)Math.Round((double)_go.Width / 2), _texture.Height - (_go.Height)), Color.White); }
-				}
-				spriteBatch.Draw(_texture, _position - camera.Position, new Rectangle(_click ? index * 32 : 0, 0, 32, 48), Color.Peru);
-			}
-			else
-			{ spriteBatch.Draw(_texture, _position - camera.Position, new Rectangle(_click ? index * 32 : 0, 0, 32, 48), col); }
-		}
 		public void DrawIcon(SpriteBatch spriteBatch, Vector2 position)
 		{ spriteBatch.Draw(_icon, position, new Rectangle(0, 0, _icon.Width, _icon.Height), Color.White); }
 		public void SetTextures(ContentManager content, string name, int dec = 90)
 		{
+			System.Diagnostics.Debug.WriteLine(name);
 			_dec = dec;
-			for (int i = 0; i <= 315; i += dec)
-			{ _textures.Add(i, content.Load<Texture2D>("Units/" + name + "/" + name + "_" + i.ToString(CultureInfo.CurrentCulture))); }
-			_texture = _textures[0];
+			_texture = new Image(content, "Units/" + name + "/" + name, 4, 360 / dec);
+			_texture.Animation = false;
 			_go = content.Load<Texture2D>("go");
 			_dots = content.Load<Texture2D>("dots");
+			_selection = content.Load<Texture2D>("selected");
 			_icon = content.Load<Texture2D>("Units/" + name + "/" + name + "_icon");
 		}
 	}

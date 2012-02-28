@@ -201,48 +201,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Units\Guerrier\guerrier_0.png">
-      <Name>guerrier_0</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Units\Guerrier\guerrier_180.png">
-      <Name>guerrier_180</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Units\Guerrier\guerrier_270.png">
-      <Name>guerrier_270</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Units\Guerrier\guerrier_90.png">
-      <Name>guerrier_90</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Units\Peon\peon_0.png">
-      <Name>peon_0</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Units\Peon\peon_180.png">
-      <Name>peon_180</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Units\Peon\peon_270.png">
-      <Name>peon_270</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Units\Peon\peon_90.png">
-      <Name>peon_90</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="HUD\hud5.png">
       <Name>hud5</Name>
       <Importer>TextureImporter</Importer>
@@ -386,28 +344,6 @@
   <ItemGroup>
     <Compile Include="dots.png">
       <Name>dots</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Units\Guerrier\guerrier_135.png">
-      <Name>guerrier_135</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Units\Guerrier\guerrier_225.png">
-      <Name>guerrier_225</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Units\Guerrier\guerrier_315.png">
-      <Name>guerrier_315</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Units\Guerrier\guerrier_45.png">
-      <Name>guerrier_45</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -824,6 +760,27 @@
   <ItemGroup>
     <Compile Include="fight.png">
       <Name>fight</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="selected.png">
+      <Name>selected</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Units\Peon\peon.png">
+      <Name>peon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Units\Guerrier\guerrier.png">
+      <Name>guerrier</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

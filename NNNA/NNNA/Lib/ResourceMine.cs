@@ -12,7 +12,7 @@ namespace NNNA
 			: base(x, y)
 		{
 			_decouvert = false;
-			_texture = texture;
+			_texture = new Image(texture);
 			_resource = resource;
 		}
 

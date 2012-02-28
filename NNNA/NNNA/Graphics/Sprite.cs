@@ -1,27 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Color = Microsoft.Xna.Framework.Color;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace NNNA
 {
 	class Sprite
 	{
-		public static int CompareByY(Sprite s1, Sprite s2)
-		{
-			if (s1.Position.Y + s1.Texture.Height > s2.Position.Y + s2.Texture.Height)
-			{ return 0; }
-			return 1;
-		}
+		protected bool _decouvert;
+		protected string _assetName;
+		protected Texture2D _go, _dots;
 
-		public virtual void RightClick(Vector2 coos, Camera2D camera)
-		{ }
-
-		private bool _decouvert;
+		protected Image _texture;
+		public Image Texture
+		{ get { return _texture; } }
 
 		protected bool _crossable;
 		public bool Crossable
@@ -29,6 +22,7 @@ namespace NNNA
 			get { return _crossable; }
 			set { _crossable = value; }
 		}
+
 		protected Vector2 _position;
 		public Vector2 Position
 		{
@@ -40,18 +34,9 @@ namespace NNNA
 		{ get { return _position + new Vector2((float)Math.Round((double)_texture.Width / 2), (float)Math.Round((double)_texture.Height / 2)); } }
 
 		private Vector2 _positionMatrice;
-		/// <summary>
-		/// Retourne la position dans la matrice. /!\ Si = (-1, -1), alors la position n'apas été assignée /!\
-		/// </summary>
 		public Vector2 PositionMatrice
 		{ get { return _positionMatrice; } }
 
-		protected Texture2D _texture, _go, _dots;
-		public Texture2D Texture
-		{
-			get { return _texture; }
-			set { _texture = value; }
-		}
 		private Char _name;
 		public Char Name
 		{
@@ -65,28 +50,27 @@ namespace NNNA
 			_decouvert = false;
 			_name = name;
 		}
-
 		public Sprite(Vector2 position)
 		{
 			_crossable = true;
 			_decouvert = false;
 			_position = position;
 		}
-
 		public Sprite(int x, int y) : this(new Vector2(x, y)) { }
 		public Sprite(ContentManager content, string assetName, int x, int y, bool crossable = true, int i = -1, int j = -1)
 		{
 			_decouvert = false;
 			_position = new Vector2(x, y);
 			_positionMatrice = new Vector2(i, j);
-			_texture = content.Load<Texture2D>(assetName);
+			_texture = new Image(content, assetName);
+			_assetName = assetName;
 			_crossable = crossable;
 		}
 
 		public void LoadContent(ContentManager content, string assetName)
 		{
-			_texture = content.Load<Texture2D>(assetName);
-			_texture.Name = assetName;
+			_texture = new Image(content, assetName);
+			_assetName = assetName;
 			_go = content.Load<Texture2D>("go");
 		}
 
@@ -94,7 +78,8 @@ namespace NNNA
 		{ _position += translation; }
 
 		public void Draw(SpriteBatch spriteBatch)
-		{ spriteBatch.Draw(_texture, _position, Color.White); }
+		{ _texture.Draw(spriteBatch, _position, Color.White); }
+
 		public void DrawMap(SpriteBatch spriteBatch, Camera2D camera, float mul, int wheather)
 		{
 			if (wheather == 1)
@@ -102,17 +87,18 @@ namespace NNNA
 				if (mul > 0.25f) _decouvert = true;
 				mul = (_decouvert && mul < 0.25f) ? 0.25f : mul;
 			}
-				spriteBatch.Draw(_texture, _position - camera.Position, new Color(mul, mul, mul));
+			_texture.Draw(spriteBatch, _position - camera.Position, new Color(mul, mul, mul));
 		}
 
 		public bool Collides(List<MovibleSprite> sprites, List<Building> buildings, Sprite[,] matrice)
 		{
-			var rec = new Rectangle((int)_position.X, (int)_position.Y + ((_texture.Height * 2) / 3), _texture.Width / 4, _texture.Height / 3);
+			var rec = new Rectangle((int)_position.X, (int)_position.Y + ((_texture.Height * 2) / 3), _texture.Width, _texture.Height / 3);
 			foreach (MovibleSprite sprite in sprites)
 			{
 				if (sprite != this)
 				{
-					var sprec = new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y + ((sprite.Texture.Height * 2) / 3), sprite.Texture.Width / 4, sprite.Texture.Height / 3);
+					var sprec = new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y + ((sprite.Texture.Height * 2) / 3), sprite.Texture.Width, sprite.Texture.Height / 3);
+					System.Diagnostics.Debug.WriteLine(sprec.ToString());
 					if (sprec.Intersects(rec))
 					{ return true; }
 				}
@@ -126,13 +112,30 @@ namespace NNNA
 					{ return true; }
 				}
 			}
-			Vector2 coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Width / 8, _position.Y + (_texture.Height * 4) / 5));
+			Vector2 coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Width, _position.Y + (_texture.Height * 4) / 5));
 			if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
 			{
 				if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
 				{ return true; }
 			}
 			return false;
+		}
+
+		public static int CompareByY(Sprite s1, Sprite s2)
+		{
+			if (s1.Position.Y + (s1.Texture == null ? 0 : s1.Texture.Height) > s2.Position.Y + (s2.Texture == null ? 0 : s2.Texture.Height))
+			{ return 0; }
+			return 1;
+		}
+
+		public Rectangle Rectangle(Camera2D cam)
+		{
+			return new Rectangle(
+				(int)(Position.X - cam.Position.X),
+				(int)(Position.Y - cam.Position.Y),
+				_texture.Width,
+				_texture.Height
+			);
 		}
 	}
 }
