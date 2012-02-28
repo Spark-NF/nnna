@@ -60,14 +60,14 @@ namespace NNNA
 			#endregion Prix
 		}
 
-		internal void Pre_Update(Joueur joueur)
+		internal void PreUpdate(Joueur joueur)
 		{
 			Joueur._resources = joueur._resources;
 			Joueur.Buildings = joueur.Buildings;
 			Joueur.Units = joueur.Units;
 		}
 
-		internal void Post_Update(Joueur joueur)
+		internal void PostUpdate(Joueur joueur)
 		{
 			joueur._resources = Joueur._resources;
 			joueur.AdditionalLineSight = Joueur.AdditionalLineSight;

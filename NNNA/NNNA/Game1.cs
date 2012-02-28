@@ -41,8 +41,8 @@ namespace NNNA
 
 		private Vector2 _screenSize = new Vector2(1680, 1050);
 		private bool _fullScreen = true, _shadows = true, _healthOver, _showConsole;
-		public static bool SmartHud = false;
-		private float _soundGeneral = 10, _soundSFX = 10, _soundMusic = 10, a = 1.0f;
+		public static bool SmartHud;
+		private float _soundGeneral = 10, _soundSFX = 10, _soundMusic = 10, _a = 1.0f;
 		private int _textures = 2, _sound = 2, _weather = 1;
 		internal static bool FlashBool = false;
 		
@@ -540,7 +540,7 @@ namespace NNNA
 					_minimap.LoadContent(_map);
 
 					//Decor
-					_resources.Add(new ResourceMine((int)Matrice2Xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)Matrice2Xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, _joueur.Resource("Pierre"), _joueur.Resource("Pierre").Texture(1)));
+					//_resources.Add(new ResourceMine((int)Matrice2Xy(new Vector2(spawns[0].X + 10, spawns[0].Y + 10)).X, (int)Matrice2Xy(new Vector2(spawns[0].X + 5, spawns[0].Y + 2)).Y, _joueur.Resource("Pierre"), _joueur.Resource("Pierre").Texture(1)));
 					for (int i = 0; i < 5 + _quickResources * 5 * (_quickSize + 1); i++)
 					{
 						int x = _random.Next(_matrice.GetLength(0));
@@ -657,9 +657,9 @@ namespace NNNA
 		float _compt;
 		private void UpdateGame(GameTime gameTime)
 		{
-			_techno.Pre_Update(_joueur);
+			_techno.PreUpdate(_joueur);
 			Forms.Control.FromHandle(Window.Handle).Controls.Add(_elementHost);
-			_techno.Post_Update(_joueur);
+			_techno.PostUpdate(_joueur);
 
 			//if (isbuilding)
 			//{
@@ -683,7 +683,7 @@ namespace NNNA
 			{
 				for (int i = 0; i < foe.Units.Count; i++)
 				{
-					Unit unit = (Unit)foe.Units[i];
+					var unit = (Unit)foe.Units[i];
 					if (unit.Life <= 0)
 					{
 						foe.Units.Remove(unit);
@@ -1384,11 +1384,8 @@ namespace NNNA
 			{ tex.Height = (int)_screenSize.Y - tex.Y; }
 			if (Math.Abs(_selection.Width) > 0 && Math.Abs(_selection.Height) > 0)
 			{
-				_spriteBatch.Draw(
-					CreateRectangle(tex.Width, tex.Height, Color.Blue, Color.DarkBlue),
-					new Vector2(tex.X, tex.Y), 
-					new Color(64, 64, 64, 64)
-				);
+				_spriteBatch.Draw(Color2Texture2D(Color.DarkBlue), tex, new Color(64, 64, 64, 64));
+				_spriteBatch.Draw(Color2Texture2D(Color.Blue), new Rectangle(tex.X + 1, tex.Y + 1, tex.Width - 2, tex.Height - 2), new Color(64, 64, 64, 64));
 			}
 
 			// La nuit
@@ -1410,36 +1407,46 @@ namespace NNNA
 				foreach (Unit unit in foe.Units)
 				{
 					float mul = 0.0f;
-					foreach (Unit uni in _joueur.Units)
+					if (_weather > 0)
 					{
-						float m = (uni.PositionCenter - unit.Position).Length();
-						m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
-						mul = (m > 0 && m > mul) ? m : mul;
+						foreach (Unit uni in _joueur.Units)
+						{
+							float m = (uni.PositionCenter - unit.Position).Length();
+							m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
+							mul = (m > 0 && m > mul) ? m : mul;
+						}
+						foreach (Building building in _joueur.Buildings)
+						{
+							float m = (building.PositionCenter - unit.Position).Length();
+							m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+							mul = (m > 0 && m > mul) ? m : mul;
+						}
 					}
-					foreach (Building building in _joueur.Buildings)
-					{
-						float m = (building.PositionCenter - unit.Position).Length();
-						m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
+					else
+					{ mul = 1.0f; }
 					if (mul > 0.25f)
 					{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 8), 6) - _camera.Position, 28); }
 				}
 				foreach (Building build in foe.Buildings)
 				{
 					float mul = 0.0f;
-					foreach (Unit uni in _joueur.Units)
+					if (_weather > 0)
 					{
-						float m = (uni.PositionCenter - build.Position).Length();
-						m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
-						mul = (m > 0 && m > mul) ? m : mul;
+						foreach (Unit uni in _joueur.Units)
+						{
+							float m = (uni.PositionCenter - build.Position).Length();
+							m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
+							mul = (m > 0 && m > mul) ? m : mul;
+						}
+						foreach (Building building in _joueur.Buildings)
+						{
+							float m = (building.PositionCenter - build.Position).Length();
+							m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+							mul = (m > 0 && m > mul) ? m : mul;
+						}
 					}
-					foreach (Building building in _joueur.Buildings)
-					{
-						float m = (building.PositionCenter - build.Position).Length();
-						m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
+					else
+					{ mul = 1.0f; }
 					if (mul > 0.25f)
 					{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100); }
 				}
@@ -1451,26 +1458,27 @@ namespace NNNA
 
 			// Unités séléctionnées
 			for (int i = 0; i < _selectedList.Count; i++)
-			{ _selectedList[i].DrawIcon(_spriteBatch, new Vector2(356 * (_screenSize.X / 1680) + (i % 10) * 36, _screenSize.Y - _hud.Position.Height + 54 * (_screenSize.Y / 1050) + (i / 10) * 36 + _hud.SmartPos)); }
+			{
+				Vector2 pos = new Vector2(356*(_screenSize.X/1680) + (i%10)*36, _screenSize.Y - _hud.Position.Height + 54*(_screenSize.Y/1050) + (i/10)*36 + _hud.SmartPos);
+				_selectedList[i].DrawIcon(_spriteBatch, pos);
+				DrawLife(_selectedList[i].Life, _selectedList[i].MaxLife, pos + new Vector2(0, 28), 33);
+			}
 
 			// List des actions
 			for (int i = 0; i < _currentActions.Count; i++)
 			{ _spriteBatch.Draw(_actions[_currentActions[i]], new Vector2(_hud.Position.X + 20 + 40 * (i % 6), _hud.Position.Y + 20 + 40 * (i / 6) + _hud.SmartPos), Color.White); }
 
 			// Flash de changement d'ère
-			if (FlashBool && a > 0f)
+			if (FlashBool && _a > 0f)
 			{
-				_spriteBatch.Draw(_flash ,new Rectangle(0, 0, (int) _screenSize.X, (int) _screenSize.Y), new Color(0f, 0f, 0f, a));
-				a -= 0.01f;
+				_spriteBatch.Draw(_flash ,new Rectangle(0, 0, (int) _screenSize.X, (int) _screenSize.Y), new Color(0f, 0f, 0f, _a));
+				_a -= 0.01f;
 			}
 			else
 			{
 				FlashBool = false;
-				a = 1.0f;
+				_a = 1.0f;
 			}
-
-			Debug(3, _units.Count);
-			Debug(4, _buildings.Count);
 		}
 
 		/// <summary>
@@ -1482,7 +1490,7 @@ namespace NNNA
 		/// <param name="width">La longueur de la barre de vie en pixels.</param>
 		private void DrawLife(int life, int max, Vector2 pos, int width)
 		{
-			int greenLength = (life * (width - 2)) / max;
+			int greenLength = (Math.Max(life, 0) * (width - 2)) / max;
 			int redLength = (width - 2) - greenLength;
 			_spriteBatch.Draw(Color2Texture2D(Color.Black), new Rectangle((int)pos.X - 1, (int)pos.Y - 1, width, 5), Color.White);
 			if (greenLength > 0)
@@ -1591,20 +1599,38 @@ namespace NNNA
 			font.Spacing = 0;
 		}
 
+		/// <summary>
+		/// Affiche un menu à l'écran.
+		/// </summary>
+		/// <param name="args">Les options du menu.</param>
 		protected void MakeMenu(params string[] args)
 		{
 			_currentMenus = args;
 			for (int i = 0; i < args.Length; i++)
 			{ DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, i * (_screenSize.Y / (11 + (_currentMenus.Length > 5 ? (_currentMenus.Length - 5) * 2 : 0))) + _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050))), (Menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", _screenSize.Y / 1050); }
 		}
+
+		/// <summary>
+		/// Retourne le menu actuellement séléctionné.
+		/// </summary>
+		/// <returns>Le menu actuellement séléctionné</returns>
 		protected int Menu()
 		{ return Souris.Get().Y > _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050)) && ((Souris.Get().Y - _screenSize.Y / 5 - (180 * (_screenSize.Y / 1050))) % (_screenSize.Y / (11 + (_currentMenus.Length > 5 ? (_currentMenus.Length - 5) * 2 : 0)))) < (_fontMenu.MeasureString("Menu").Y * _screenSize.Y) / 1050 ? (int)((Souris.Get().Y - _screenSize.Y / 5 - (180 * (_screenSize.Y / 1050))) / (_screenSize.Y / (11 + (_currentMenus.Length > 5 ? (_currentMenus.Length - 5) * 2 : 0)))) : -1; }
 
+		/// <summary>
+		/// Affiche un menu de pause à l'écran.
+		/// </summary>
+		/// <param name="args">Les options du menu.</param>
 		protected void MakePauseMenu(params string[] args)
 		{
 			for (int i = 0; i < args.Length; i++)
 			{ _spriteBatch.DrawString(_fontMenu, _(args[i]), new Vector2((668 * (_screenSize.X / 1680)), i * 80 + (180 * (_screenSize.Y / 1050))), Color.White); }
 		}
+
+		/// <summary>
+		/// Retourne le menu de pause actuellement séléctionné.
+		/// </summary>
+		/// <returns>Le menu de pause actuellement séléctionné</returns>
 		protected int PauseMenu()
 		{ return (Souris.Get().X > (654 * (_screenSize.X / 1680)) && Souris.Get().Y > (180 * (_screenSize.Y / 1050))) ? (int)((Souris.Get().Y - (180 * (_screenSize.Y / 1050))) / 80) : -1; }
 

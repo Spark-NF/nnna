@@ -3,19 +3,33 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NNNA", "NNNA\NNNA\NNNA.csproj", "{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "NNNAContent", "NNNA\NNNAContent\NNNAContent.contentproj", "{7604AFEE-17CF-4CC2-AE11-35CA86B14868}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NNNAContent", "NNNA\NNNAContent\NNNAContent.contentproj", "{7604AFEE-17CF-4CC2-AE11-35CA86B14868}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}.Debug|x86.ActiveCfg = Debug|x86
 		{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}.Debug|x86.Build.0 = Debug|x86
+		{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}.Release|Any CPU.ActiveCfg = Release|x86
+		{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}.Release|Mixed Platforms.Build.0 = Release|x86
 		{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}.Release|x86.ActiveCfg = Release|x86
 		{C2E9A826-93F2-4FC5-BE0C-7C84C3F184BA}.Release|x86.Build.0 = Release|x86
+		{7604AFEE-17CF-4CC2-AE11-35CA86B14868}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{7604AFEE-17CF-4CC2-AE11-35CA86B14868}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{7604AFEE-17CF-4CC2-AE11-35CA86B14868}.Debug|x86.ActiveCfg = Debug|x86
+		{7604AFEE-17CF-4CC2-AE11-35CA86B14868}.Release|Any CPU.ActiveCfg = Release|x86
+		{7604AFEE-17CF-4CC2-AE11-35CA86B14868}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{7604AFEE-17CF-4CC2-AE11-35CA86B14868}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution

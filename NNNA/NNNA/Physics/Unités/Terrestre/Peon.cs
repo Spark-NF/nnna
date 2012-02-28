@@ -22,7 +22,8 @@ namespace NNNA
 			if (removeResources)
 			{ joueur.Resource("Nourriture").Remove(50); }
 			Attaque = 2;
-			Life = 30;
+			VitesseCombat = 20;
+			Life = 50;
 			LineSight = 512;
 			Portee = 1;
 			Regeneration = 1;

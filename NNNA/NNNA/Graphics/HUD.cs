@@ -43,7 +43,7 @@ namespace NNNA
 				spriteBatch.Draw(_textureBackground, new Rectangle(_position.X, posY, _position.Width, _position.Height), Color.White);
 				minimap.Draw(SmartPos, spriteBatch);
 			}
-			if (Souris.Get().Position.Y < _position.Y && _position.Y + SmartPos < Height)
+			if (Souris.Get().Position.Y < _position.Y && _position.Y + SmartPos < Height && _isSmart)
 			{ SmartPos += 5; }
 
 			// Ressources

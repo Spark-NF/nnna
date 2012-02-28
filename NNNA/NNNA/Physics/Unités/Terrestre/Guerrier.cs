@@ -4,7 +4,7 @@ namespace NNNA
 {
 	class Guerrier : LandUnit
 	{
-        //SoundEffect creationguerrier;
+		// SoundEffect creationguerrier;
         public Guerrier(int x = 0, int y = 0)
             : base(x, y)
         {
@@ -18,16 +18,17 @@ namespace NNNA
 			_type = "guerrier";
 			if (removeResources)
 			{ joueur.Resource("Nourriture").Remove(70); }
-			Attaque = 8;
-			Life = 50;
+			Attaque = 10;
+			VitesseCombat = 30;
+			Life = 100;
             LineSight = 384;
 			Portee = 1;
 			Regeneration = 1;
 			Speed = 0.05f;
 			SetTextures(content, "guerrier", 45);
             _cost.Add("Nourriture", 70);
-            //creationguerrier =content.Load<SoundEffect>("sounds/creationguerrier");
-           // creationguerrier.Play();
+			// creationguerrier =content.Load<SoundEffect>("sounds/creationguerrier");
+			// creationguerrier.Play();
 		}
 	}
 }
