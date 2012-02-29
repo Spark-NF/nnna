@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,11 +8,25 @@ namespace NNNA
 {
 	class MovibleSprite : Sprite
 	{
-		protected Unit _destination;
-		public Unit Destination
+		protected string _will;
+		public string Will
 		{
-			get { return _destination; }
-			set { _destination = value; }
+			get { return _will; }
+			set { _will = value; }
+		}
+
+		protected Building _destinationBuilding;
+		public Building DestinationBuilding
+		{
+			get { return _destinationBuilding; }
+			set { _destinationBuilding = value; }
+		}
+
+		protected Unit _destinationUnit;
+		public Unit DestinationUnit
+		{
+			get { return _destinationUnit; }
+			set { _destinationUnit = value; }
 		}
 
 		protected Texture2D _icon;
@@ -224,7 +237,7 @@ namespace NNNA
 			_dec = dec;
 			_texture = new Image(content, "Units/" + name + "/" + name, 4, 360 / dec);
 			_texture.Animation = false;
-			_go = content.Load<Texture2D>("go");
+			_go = new Image(content, "go", 8, 1, 5);
 			_dots = content.Load<Texture2D>("dots");
 			_selection = content.Load<Texture2D>("selected");
 			_icon = content.Load<Texture2D>("Units/" + name + "/" + name + "_icon");

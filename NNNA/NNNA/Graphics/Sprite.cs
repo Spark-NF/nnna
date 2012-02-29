@@ -10,7 +10,8 @@ namespace NNNA
 	{
 		protected bool _decouvert;
 		protected string _assetName;
-		protected Texture2D _go, _dots;
+		protected Texture2D _dots;
+		protected Image _go;
 
 		protected Image _texture;
 		public Image Texture
@@ -67,11 +68,11 @@ namespace NNNA
 			_crossable = crossable;
 		}
 
-		public void LoadContent(ContentManager content, string assetName)
+		public void LoadContent(ContentManager content, string assetName, int columns = 1)
 		{
-			_texture = new Image(content, assetName);
+			_texture = new Image(content, assetName, columns);
 			_assetName = assetName;
-			_go = content.Load<Texture2D>("go");
+			_go = new Image(content, "go", 8, 1, 5);
 		}
 
 		public void Update(Vector2 translation)

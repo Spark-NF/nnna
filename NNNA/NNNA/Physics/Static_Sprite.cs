@@ -24,6 +24,6 @@ namespace NNNA
 		{ _selected = false; }
 
 		public void Draw(SpriteBatch spriteBatch, Camera2D camera, Color col)
-		{ _texture.Draw(spriteBatch, Position - camera.Position, Selected ? Color.Peru : col); }
+		{ Texture.Draw(spriteBatch, Position - camera.Position, Selected ? Color.Peru : col); }
 	}
 }

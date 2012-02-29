@@ -468,6 +468,9 @@ namespace NNNA
 					var heights = new List<float>();
 					var dist = (float)Math.Round((double)sizes[_quickSize] / 2);
 
+					_buildings.Clear();
+					_units.Clear();
+
 					// On regénère une carte tant qu'elle est incapable d'accueillir le bon nombre de spawns
 					while (!ok)
 					{
@@ -540,6 +543,7 @@ namespace NNNA
 					_minimap.LoadContent(_map);
 
 					//Decor
+					_resources.Clear();
 					for (int i = 0; i < 5 * (_quickResources + _quickSize + 1); i++)
 					{
 						int x = _random.Next(_matrice.GetLength(0));
@@ -709,10 +713,10 @@ namespace NNNA
 				{
 					// Ere 1 
 					case "build_hutte":
-						b = new Hutte((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, _joueur, (byte)_random.Next(0,2));
+						b = new Hutte((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, _joueur, (byte)_random.Next(0, 2));
 						if (_joueur.Pay(b.Prix))
 						{
-							_joueur.Buildings.Add(b);
+							_selectedList[0].Build(b);
 							_buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
 							_pointer = "pointer";
@@ -730,7 +734,7 @@ namespace NNNA
 						b = new HutteDesChasseurs((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, _joueur);
 						if (_joueur.Pay(b.Prix))
 						{
-							_joueur.Buildings.Add(b);
+							_selectedList[0].Build(b);
 							_buildings.Add(b);
 							MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
 							_pointer = "pointer";
@@ -949,10 +953,7 @@ namespace NNNA
 							case "build_hutte":
 								if (_joueur.Has(new Hutte().Prix))
 								{
-									if (_random.Next(0, 2) == 0)
-									{ _pointer = "Batiments/maison1_" + _joueur.Ere.ToString(CultureInfo.CurrentCulture); }
-									else
-									{ _pointer = "Batiments/maison2_" + _joueur.Ere.ToString(CultureInfo.CurrentCulture); }
+									_pointer = "Batiments/maison" + _random.Next(1, 3).ToString(CultureInfo.CurrentCulture) + "_" + _joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
 									_currentAction = "build_hutte";
 								}
 								else
@@ -962,7 +963,7 @@ namespace NNNA
 							case "build_hutteDesChasseurs":
 								if (_joueur.Has(new HutteDesChasseurs().Prix))
 								{
-									_pointer = "Batiments/caserne_" + _joueur.Ere.ToString(CultureInfo.CurrentCulture);
+									_pointer = "Batiments/caserne_" + _joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
 									_currentAction = "build_hutteDesChasseurs";
 								}
 								else

@@ -6,7 +6,6 @@ namespace NNNA
 	class ResourceMine : StaticSprite
 	{
 		private Resource _resource;
-		private bool _decouvert;
 
 		public ResourceMine(int x, int y, Resource resource, Texture2D texture)
 			: base(x, y)

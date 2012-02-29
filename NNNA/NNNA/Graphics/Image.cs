@@ -33,6 +33,14 @@ namespace NNNA
 				}
 			}
 		}
+		private bool _single;
+		public bool Single
+		{
+			get { return _single; }
+			set { _single = value; }
+		}
+		public bool Finished
+		{ get { return _single && _current == _columns - 1; } }
 
 		public Image(Texture2D texture, int columns = 1, int rows = 1, int speed = 15)
 		{
@@ -44,7 +52,7 @@ namespace NNNA
 			_frame = 0;
 			Width = _texture.Width / _columns;
 			Height = _texture.Height / _rows;
-			_animation = rows > 1 && columns > 1;
+			_animation = columns > 1;
 
 		}
 		public Image(ContentManager contentManager, string assetName, int columns = 1, int rows = 1, int speed = 15)
@@ -53,7 +61,7 @@ namespace NNNA
 
 		public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, int which = 1)
 		{
-			if (_animation)
+			if (_animation && !Finished)
 			{
 				_frame++;
 				if (_frame%_speed == 0)

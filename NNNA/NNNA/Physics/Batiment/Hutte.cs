@@ -8,14 +8,13 @@ namespace NNNA
 	{
 		public Hutte(int x = 0, int y = 0)
 			: base(x, y)
-		{
-			_cost.Add("Bois", 50);
-		}
+		{ _cost.Add("Bois", 50); }
 
 		public Hutte(int x, int y, ContentManager content, Joueur joueur, byte a)
 			: base(x, y)
 		{
-			LoadContent(content, "Batiments/maison" + (a == 0 ? 1 : 2) + "_" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
+			LoadContent(content, "Batiments/maison" + (a == 0 ? 1 : 2) + "_" + joueur.Ere.ToString(CultureInfo.CurrentCulture), 8);
+			Texture.Animation = false;
 			Life = 100;
 			_cost.Add("Bois", 50);
 			LineSight = 2 * 64;
