@@ -6,6 +6,13 @@ namespace NNNA
 {
 	class Building : StaticSprite
 	{
+		protected Joueur _joueur;
+		public Joueur Joueur
+		{
+			get { return _joueur; }
+			set { _joueur = value; }
+		}
+
 		protected int _life;
 		public int Life
 		{

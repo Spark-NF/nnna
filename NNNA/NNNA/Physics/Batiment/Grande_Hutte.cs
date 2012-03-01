@@ -17,6 +17,7 @@ namespace NNNA
 		public GrandeHutte(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
+			_joueur = joueur;
 			_type = "forum";
 			LoadContent(content, "Batiments/forum_" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 500;

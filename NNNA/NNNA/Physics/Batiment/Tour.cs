@@ -12,9 +12,10 @@ namespace NNNA
 			_cost.Add("Pierre", 200);
 		}
 
-		public Tour(int x, int y, ContentManager content)
+		public Tour(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
+			_joueur = joueur;
 			LoadContent(content, "Batiments/ecurie");
 			Life = 200;
 			LineSight = 512;

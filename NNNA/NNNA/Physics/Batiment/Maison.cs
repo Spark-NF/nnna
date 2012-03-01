@@ -14,6 +14,7 @@ namespace NNNA
 		public Maison(int x, int y, ContentManager content, Joueur joueur, byte a)
 			: base(x, y)
 		{
+			_joueur = joueur;
 			LoadContent(content, "Batiments/hutte" + (a == 0 ? 1 : 2));
 			Life = 100;
 			_cost.Add("Bois", 50);

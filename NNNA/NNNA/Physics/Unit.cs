@@ -8,6 +8,11 @@ namespace NNNA
 	class Unit : MovibleSprite
 	{
 		protected Joueur _joueur;
+		public Joueur Joueur
+		{
+			get { return _joueur; }
+			set { _joueur = value; }
+		}
 
 		protected int _life;
 		public int Life
@@ -81,7 +86,7 @@ namespace NNNA
 		{
 			if (_click || _selected || DestinationUnit != null || DestinationBuilding != null)
 			{
-				if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (_selected || !_click))
+				if (Souris.Get().Clicked(MouseButton.Right) && (curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) || hud.IsSmart) && (_selected || !_click))
 				{
 					Move(curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 2), (float)Math.Round((double)Texture.Height * 4 / 5)), sprites, buildings, matrice);
 					DestinationUnit = null;

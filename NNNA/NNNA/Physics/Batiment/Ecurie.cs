@@ -12,9 +12,10 @@ namespace NNNA
             _cost.Add("Pierre", 200);
 		}
 
-		public Ecurie(int x, int y, ContentManager content)
+		public Ecurie(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
+			_joueur = joueur;
 			LoadContent(content, "Batiments/ecurie");
 			Life = 100;
             LineSight = 128;

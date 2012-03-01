@@ -12,9 +12,10 @@ namespace NNNA
             _cost.Add("Pierre", 100);
 		}
 
-		public Archerie(int x, int y, ContentManager content)
+		public Archerie(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
+			_joueur = joueur;
 			LoadContent(content, "Batiments/archerie1");
 			Life = 100;
             LineSight = 128;

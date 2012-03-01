@@ -11,9 +11,10 @@ namespace NNNA
             _cost.Add("Bois", 30);
 		}
 
-		public Ferme(int x, int y, ContentManager content)
+		public Ferme(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
+			_joueur = joueur;
 			LoadContent(content, "Batiments/ferme");
 			Life = 100;
 			LineSight = 4 * 64;

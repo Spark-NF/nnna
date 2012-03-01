@@ -13,6 +13,7 @@ namespace NNNA
 		public Hutte(int x, int y, ContentManager content, Joueur joueur, byte a)
 			: base(x, y)
 		{
+			_joueur = joueur;
 			LoadContent(content, "Batiments/maison" + (a == 0 ? 1 : 2) + "_" + joueur.Ere.ToString(CultureInfo.CurrentCulture), 8);
 			Texture.Animation = false;
 			Life = 100;

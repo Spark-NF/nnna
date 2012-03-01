@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,7 +33,7 @@ namespace NNNA
         public void LoadContent(ContentManager content, string assetName)
         { _textureBackground = content.Load<Texture2D>(assetName); }
 
-        public void Draw(SpriteBatch spriteBatch, Minimap minimap, Joueur joueur, SpriteFont font)
+		public void Draw(SpriteBatch spriteBatch, Minimap minimap, List<MovibleSprite> units, List<Building> buildings, Joueur joueur, SpriteFont font)
         {
 			// HUD
 			if (Souris.Get().Position.Y > Height - 10)
@@ -41,7 +42,7 @@ namespace NNNA
 			if (posY < Height)
 			{
 				spriteBatch.Draw(_textureBackground, new Rectangle(_position.X, posY, _position.Width, _position.Height), Color.White);
-				minimap.Draw(SmartPos, spriteBatch);
+				minimap.Draw(units, buildings, joueur, SmartPos, spriteBatch);
 			}
 			if (Souris.Get().Position.Y < _position.Y && _position.Y + SmartPos < Height && _isSmart)
 			{ SmartPos += 5; }

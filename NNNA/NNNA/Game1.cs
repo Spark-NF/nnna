@@ -476,6 +476,7 @@ namespace NNNA
 					{
 						// Génération
 						_matrice = GenerateMap(_quickType, sizes[_quickSize], sizes[_quickSize]);
+						_minimap.Dimensions = new Vector2(sizes[_quickSize], sizes[_quickSize]);
 
 						// Spawns
 						heights.Clear();
@@ -528,10 +529,10 @@ namespace NNNA
 					for (int i = 0; i < _foes; i++)
 					{
 						_enemies[i] = new Joueur(colors[i + 1], names[i + 1], Content);
-						_enemies[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _joueur, false));
-						_enemies[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _joueur, false));
-						_enemies[i].Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _joueur, false));
-						_enemies[i].Buildings.Add(new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, _joueur));
+						_enemies[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemies[i], false));
+						_enemies[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemies[i], false));
+						_enemies[i].Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemies[i], false));
+						_enemies[i].Buildings.Add(new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, _enemies[i]));
 						_units.AddRange(_enemies[i].Units);
 						_buildings.AddRange(_enemies[i].Buildings);
 					}
@@ -788,7 +789,7 @@ namespace NNNA
 
 					/* Ere 2 
 					case "build_ferme":
-						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, joueur);
+						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, _joueur);
 						if (joueur.Pay(b.Prix))
 						{
 							joueur.buildings.Add(b);
@@ -1098,7 +1099,7 @@ namespace NNNA
 			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			_currentScreen = TestPauseMenu(Screen.Title, Screen.Game);
 			if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
-			{ _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
+			{_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
 			_son.MusiqueMenu.Resume();
 		}
 
@@ -1454,12 +1455,12 @@ namespace NNNA
 
 			// Affichage du HUD
 			MessagesManager.Draw(_spriteBatch, _fontSmall);
-			_hud.Draw(_spriteBatch, _minimap, _joueur, _fontSmall);
+			_hud.Draw(_spriteBatch, _minimap, _units, _buildings, _joueur, _fontSmall);
 
 			// Unités séléctionnées
 			for (int i = 0; i < _selectedList.Count; i++)
 			{
-				Vector2 pos = new Vector2(356*(_screenSize.X/1680) + (i%10)*36, _screenSize.Y - _hud.Position.Height + 54*(_screenSize.Y/1050) + (i/10)*36 + _hud.SmartPos);
+				var pos = new Vector2(356*(_screenSize.X/1680) + (i%10)*36, _screenSize.Y - _hud.Position.Height + 54*(_screenSize.Y/1050) + (i/10)*36 + _hud.SmartPos);
 				_selectedList[i].DrawIcon(_spriteBatch, pos);
 				DrawLife(_selectedList[i].Life, _selectedList[i].MaxLife, pos + new Vector2(0, 28), 33);
 			}

@@ -16,6 +16,7 @@ namespace NNNA
 		public HutteDesChasseurs(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
+			_joueur = joueur;
 			_type = "caserne";
 			LoadContent(content, "Batiments/caserne_" + joueur.Ere.ToString(CultureInfo.CurrentCulture), 6);
 			Texture.Animation = false;
