@@ -13,7 +13,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>HiDef</XnaProfile>
+    <XnaProfile>Reach</XnaProfile>
     <XnaCrossPlatformGroupID>23cf1458-f18d-42e9-b0bc-2a4565990f9f</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
@@ -91,6 +91,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graphics\Camera2D.cs" />
+    <Compile Include="Graphics\Form\Button.cs" />
+    <Compile Include="Graphics\Form\Control.cs" />
+    <Compile Include="Graphics\Form\Window.cs" />
     <Compile Include="Graphics\Image.cs" />
     <Compile Include="Graphics\Projectiles\Fleche.cs" />
     <Compile Include="Graphics\MessagesManager.cs" />

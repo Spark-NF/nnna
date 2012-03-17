@@ -140,6 +140,21 @@ namespace NNNA
 			_clickInterne = false;
 			Updates = 0;
 		}
+        public void Move(Vector2 coordinates)
+        {
+            if (coordinates != _position)
+            {
+                _click = true;
+                _texture.Animation = true;
+                _clickPosition = coordinates;
+                _angle = Math.Atan2(_clickPosition.Y - _position.Y, _clickPosition.X - _position.X);
+                _direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
+                _cparcourir = new Vector2(_clickPosition.X - _position.X, _clickPosition.Y - _position.Y);
+                _cparcouru = Vector2.Zero;
+                _positionIni = _position;
+            }
+        }
+
 
 		/// <summary>
 		/// Initialise le déplacement de l'objet.

@@ -88,14 +88,14 @@ namespace NNNA
 			{
 				if (Souris.Get().Clicked(MouseButton.Right) && (curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) || hud.IsSmart) && (_selected || !_click))
 				{
-					Move(curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 2), (float)Math.Round((double)Texture.Height * 4 / 5)), sprites, buildings, matrice);
+					Move(curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 2), (float)Math.Round((double)Texture.Height * 4 / 5)));//, sprites, buildings, matrice);
 					DestinationUnit = null;
 					DestinationBuilding = null;
 				}
-				else if (DestinationUnit != null)
-				{ Move(DestinationUnit.Position, sprites, buildings, matrice); }
-				else if (DestinationBuilding != null)
-				{ Move(DestinationBuilding.Position + new Vector2((float)Math.Round((double)DestinationBuilding.Texture.Width / 2), 0), sprites, buildings, matrice); }
+                else if (DestinationUnit != null)
+                { Move(DestinationUnit.Position); }//, sprites, buildings, matrice); }
+                else if (DestinationBuilding != null)
+                { Move(DestinationBuilding.Position + new Vector2((float)Math.Round((double)DestinationBuilding.Texture.Width / 2), 0)); }//, sprites, buildings, matrice); }
 				if (_click)
 				{
 					Vector2 translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;

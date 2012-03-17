@@ -24,7 +24,7 @@ namespace NNNA
 
 		public static int Frame;
 
-		private readonly GraphicsDeviceManager _graphics;
+		public static GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
 		private Effect _gaussianBlur;
 		private Rectangle _selection = Rectangle.Empty;
