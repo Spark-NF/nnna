@@ -25,9 +25,9 @@ namespace NNNA.Form
         #endregion GET/SET
 
         public Button(Rectangle zone, string name, Delegate click)
-            : base(new Control[] {}, zone, name)
+            : base(zone, name)
         {
-            _text = click.Method.Name;
+            _text = click.Method.Name; 
             _backgroundColor = Color.Gray;
             _click = click;
         }

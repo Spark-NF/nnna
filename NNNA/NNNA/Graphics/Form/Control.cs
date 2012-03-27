@@ -11,7 +11,6 @@ namespace NNNA.Form
     abstract class Control
     {
         #region ATTRIBUTS
-        private Control[] _children;
         private string _name;
         protected Color _textColor;
         protected Rectangle _zone;
@@ -21,9 +20,6 @@ namespace NNNA.Form
         #endregion ATTRIBUTS
 
         #region GET/SET
-        public Control[] Children
-        { get { return _children; } set { _children = value; } }
-
         protected string Name
         { get { return _name; } set { _name = value; } }
 
@@ -43,9 +39,8 @@ namespace NNNA.Form
         { get { return _background; } set { _background = value; } }
         #endregion GET/SET
 
-        public Control(Control[] children, Rectangle zone, string name)
+        public Control(Rectangle zone, string name)
         {
-            _children = children;
             _zone = zone;
             _name = name;
             _textColor = Color.Silver;
@@ -55,8 +50,8 @@ namespace NNNA.Form
             _background.SetData(new Color[] { _backgroundColor });
         }
 
-        public virtual void Update(Souris s) { }
+        public abstract void Update(Souris s);
 
-        public virtual void Draw(SpriteBatch sb, SpriteFont sf) { }
+        public abstract void Draw(SpriteBatch sb, SpriteFont sf);
     }
 }

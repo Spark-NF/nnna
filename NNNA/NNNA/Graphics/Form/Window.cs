@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA.Form
 {
-    class Window : Control
+    class Window : Containing
     {
         #region ATTRIBUTS
         private string _title;

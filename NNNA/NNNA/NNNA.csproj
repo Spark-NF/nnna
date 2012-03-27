@@ -92,7 +92,11 @@
   <ItemGroup>
     <Compile Include="Graphics\Camera2D.cs" />
     <Compile Include="Graphics\Form\Button.cs" />
+    <Compile Include="Graphics\Form\Containing.cs" />
     <Compile Include="Graphics\Form\Control.cs" />
+    <Compile Include="Graphics\Form\TabControl.cs" />
+    <Compile Include="Graphics\Form\TabItem.cs" />
+    <Compile Include="Graphics\Form\TextBox.cs" />
     <Compile Include="Graphics\Form\Window.cs" />
     <Compile Include="Graphics\Image.cs" />
     <Compile Include="Graphics\Projectiles\Fleche.cs" />
