@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA.Form
 {
-    class TabItem : Control
+    class TabItem : Containing
     {
         #region ATTRIBUTS
         #endregion ATTRIBUTS
@@ -11,8 +11,8 @@ namespace NNNA.Form
         #region GET/SET
         #endregion GET/SET
 
-        public TabItem(Rectangle zone, string name)
-            : base(zone, name) { }
+        public TabItem(Control[] children, Rectangle zone, string name)
+            : base(children, zone, name) { }
 
         public override void Update(Souris s)
         {
