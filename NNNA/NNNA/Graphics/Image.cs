@@ -16,7 +16,6 @@ namespace NNNA
 		private readonly int _rows;
 		private readonly int _speed;
 		private int _current;
-		private int _frame;
 		public readonly int Width;
 		public readonly int Height;
 		private bool _animation;
@@ -27,10 +26,7 @@ namespace NNNA
 			{
 				_animation = value;
 				if (!_animation)
-				{
-					_frame = 0;
-					_current = 0;
-				}
+				{ _current = 0; }
 			}
 		}
 		private bool _single;
@@ -49,7 +45,6 @@ namespace NNNA
 			_rows = rows;
 			_speed = speed;
 			_current = 0;
-			_frame = 0;
 			Width = _texture.Width / _columns;
 			Height = _texture.Height / _rows;
 			_animation = columns > 1;
@@ -61,12 +56,8 @@ namespace NNNA
 
 		public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, int which = 1)
 		{
-			if (_animation && !Finished)
-			{
-				_frame++;
-				if (_frame%_speed == 0)
-				{ _current = (_current + 1) % _columns; }
-			}
+			if (_animation && !Finished && Game1.Frame % _speed == 0)
+			{ _current = (_current + 1) % _columns; }
 			spriteBatch.Draw(_texture, position, new Rectangle(_current * Width, (which - 1) * Height, Width, Height), color);
 		}
 	}

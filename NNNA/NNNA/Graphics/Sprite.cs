@@ -99,7 +99,6 @@ namespace NNNA
 				if (sprite != this)
 				{
 					var sprec = new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y + ((sprite.Texture.Height * 2) / 3), sprite.Texture.Width, sprite.Texture.Height / 3);
-					System.Diagnostics.Debug.WriteLine(sprec.ToString());
 					if (sprec.Intersects(rec))
 					{ return true; }
 				}

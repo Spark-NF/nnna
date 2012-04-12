@@ -13,6 +13,8 @@ using Color = Microsoft.Xna.Framework.Color;
 using Forms = System.Windows.Forms;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
+//#define SOUND
+
 namespace NNNA
 {
 	/// <summary>
@@ -182,8 +184,10 @@ namespace NNNA
 			_joueur = new Joueur(Color.Red, "NNNNA", Content);
 
 			 // son
-			_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
-			_debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
+			#if SOUND
+				_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
+				_debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
+			#endif
 			
 			//menu technologie
 			_elementHost= new ElementHost();
@@ -439,9 +443,11 @@ namespace NNNA
 			}
 
 			//Son 
-			_son.EngineMenu.Update();
-			if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
-			{ _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
+			#if SOUND
+				_son.EngineMenu.Update();
+				if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
+				{ _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
+			#endif
 
 			base.Update(gameTime);
 		}
@@ -559,10 +565,11 @@ namespace NNNA
 					}
 
 					//Le son
-					if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
-					{ _son.MusiqueMenu.Pause(); }
-					_debutpartie.Play();
-					
+					#if SOUND
+						if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
+						{ _son.MusiqueMenu.Pause(); }
+						_debutpartie.Play();
+					#endif
 				}
 				_currentScreen = s;
 			}
@@ -649,8 +656,9 @@ namespace NNNA
 					case 3: _sound = Variate(0, 2, _sound); break;
 				}
 			}
-			_son.MusicCategory.SetVolume(MusicVolume * _soundMusic * (_soundGeneral / 10));
-
+			#if SOUND
+				_son.MusicCategory.SetVolume(MusicVolume * _soundMusic * (_soundGeneral / 10));
+			#endif
 		}
 		private void UpdateCredits()
 		{
@@ -1085,8 +1093,11 @@ namespace NNNA
 			_joueur.Buildings.Sort(Sprite.CompareByY);
 			 
 			//minimap.Update(units, buildings, selectedList, joueur);
-			if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
-			{ _son.MusiqueMenu.Pause(); }
+
+			#if SOUND
+				if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
+				{ _son.MusiqueMenu.Pause(); }
+			#endif
 		}
 
 		void UpdateGameMenu()
@@ -1098,9 +1109,12 @@ namespace NNNA
 			}
 			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			_currentScreen = TestPauseMenu(Screen.Title, Screen.Game);
-			if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
-			{_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
-			_son.MusiqueMenu.Resume();
+
+			#if SOUND
+				if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
+				{_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
+				_son.MusiqueMenu.Resume();
+			#endif
 		}
 
 		#endregion
@@ -1368,6 +1382,7 @@ namespace NNNA
 					sprite.Draw(_spriteBatch, 1, _camera, mul, _weather);
 				}
 			}
+
 			// Rectangle de séléction
 			Vector2 coos = new Vector2(
 				_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0),
