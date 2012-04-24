@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NNNA.Form;
@@ -72,11 +73,12 @@ namespace NNNA
 		private Sons _son = new Sons();
 		private SoundEffect _debutpartie;
         private Technologies_Window techno;
-
-        //MediaPlayer
-        MediaLibrary sampleMediaLibrary;
-        Random rand;
         
+        // Recuperation des dossier de lútilisateur
+
+     // StorageDevice device;
+      // StorageContainer container;
+     
 
 		#endregion
 
@@ -107,26 +109,26 @@ namespace NNNA
 
 		#endregion
 
-		public Game1()
-		{
-			Window.Title = "NNNA - " + GetType().Assembly.GetName().Version;
+        public Game1()
+        {
+            Window.Title = "NNNA - " + GetType().Assembly.GetName().Version;
 
-			LoadSettings();
-			_showConsole = false;
+            LoadSettings();
+            _showConsole = false;
 
-			_graphics = new GraphicsDeviceManager(this)
-			{
-			    PreferredBackBufferWidth = (int)_screenSize.X,
-			    PreferredBackBufferHeight = (int)_screenSize.Y,
-			    IsFullScreen = _fullScreen
-			};
+            _graphics = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferWidth = (int)_screenSize.X,
+                PreferredBackBufferHeight = (int)_screenSize.Y,
+                IsFullScreen = _fullScreen
+            };
 
-			Content.RootDirectory = "Content";
+            Content.RootDirectory = "Content";
 
-            // MediaPlayer
-            sampleMediaLibrary = new MediaLibrary();
-            rand = new Random();
-		}
+            // Dossier Utilisateur
+          // this.Components.Add(new GamerServicesComponent(this));
+
+        }
 
 		#region Settings
 
@@ -188,20 +190,37 @@ namespace NNNA
 			_map = new Map();
 			_camera = new Camera2D(0, 0);
 			_curseur = new Sprite(0, 0);
-			_joueur = new Joueur(Color.Red, "NNNNA", Content);
-
-            // MediaPlayer
-            int i = rand.Next(0, sampleMediaLibrary.Albums.Count - 1);
-            MediaPlayer.Play(sampleMediaLibrary.Albums[i].Songs[0]);
+			_joueur = new Joueur(Color.Red, "NNNA", Content);
 
             // réseau
             _ipWan = Réseau.IpWan();
 
 			base.Initialize();
-
+            //Guide.ShowSignIn(1, false);
+            // Guide.BeginShowStorageDeviceSelector(new AsyncCallback(GetDevice), null);
 		}
+        /* private void GetDevice(IAsyncResult result)
+             {
+                 if (result.IsCompleted)
+                 {
+                 try
+                     {
+                     device = Guide.EndShowStorageDeviceSelector(result);
+                     container = device.OpenContainer("ChapitreHuit");
+                     }
+                 catch (Exception e)
+                     {
+                     Guide.BeginShowMessageBox(PlayerIndex.One, "Erreur", e.Message, new string[] { "Ok" }, 0, MessageBoxIcon.Error, new AsyncCallback(EndShowMessageBox), null);
+                     }
+                 }
+            }
+         private void EndShowMessageBox(IAsyncResult result)
+         {
+             if (result.IsCompleted)
+                 Guide.EndShowMessageBox(result);
+         } */
 
-		/// <summary>
+        /// <summary>
 		/// Génère une carte aléatoire.
 		/// </summary>
 		/// <param name="mt">Le type de carte à générer.</param>
@@ -691,6 +710,7 @@ namespace NNNA
 		private void UpdateGame(GameTime gameTime)
 		{
             techno.Update(Souris.Get());
+
 			//if (isbuilding)
 			//{
 			//	Vector2 xy = matrice2xy(xy2matrice(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)));
