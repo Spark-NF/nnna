@@ -1,9 +1,10 @@
-﻿using System.Net;
+﻿  using System.Net;
 using System.Runtime.InteropServices;
 using System.Net.Sockets;
 using System;
 using System.Text;
 using System.IO;
+using Microsoft.Xna.Framework;
 
 namespace NNNA
 {
@@ -16,22 +17,31 @@ namespace NNNA
         /// <returns>L'IP du PC.</returns>
         public static string GetIPaddresses(string computername)
         {
-            IPHostEntry iphe = Dns.GetHostEntry(computername);//Dns.Resolve(computername);
+            IPHostEntry iphe =Dns.Resolve(computername);
             string ip = iphe.AddressList[0].ToString();
             return ip;
+            
         }
-        /*public string IpWan()
+        public static string IpWan()
          {
-            string ip;
             string ipexterne;
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            s.Connect("http://whatismyipaddress.com/",80);
-            Stream st = new NetworkStream(s);
+            try
+            {
+                Uri uri = new Uri("http://www.whatismyip.fr/raw/");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+                WebResponse response = request.GetResponse();
+                StreamReader read = new StreamReader(response.GetResponseStream());
+                ipexterne = read.ReadToEnd();
+                return ipexterne;
+            }
+            catch
+            {
+                return GetIPaddresses(Environment.MachineName);
+            }
             
-            //<a href="/ip/
-              //  ">
-            return ipexterne;
-         }*/
+            
+         }
         /// <summary>
         /// Fonction qui verifie si l'ordinateur est connecté a internet.
         /// </summary>
@@ -52,15 +62,6 @@ namespace NNNA
             { return "Vous etes connecte"; }
             return "Vous etes deconnecte";
         }
-        public static void Mapsender(IPAddress ipAdress, char[,] mapInByte)
-        {
-            Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            NetworkStream ns = new NetworkStream(s);
-            StreamWriter sw = new StreamWriter(ns);
-            sw.Write(mapInByte);
-
-
-        }
         public static char[,] MapInBytes(Sprite[,] _matrice)
         {
             char[,] mapInBytes = new char[_matrice.GetLength(0), _matrice.GetLength(1)];
@@ -73,5 +74,51 @@ namespace NNNA
             }
             return mapInBytes;
         }
+        public static void Mapsender(IPAddress destinataire,int port, char[,] mapInByte)
+        {
+            Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            s.Connect(destinataire, port);
+            if (s.Connected)
+            {
+                NetworkStream ns = new NetworkStream(s);
+                StreamWriter sw = new StreamWriter(ns);
+                sw.Write(Math.Log10( (double)mapInByte.GetLength(0)));
+                sw.Write(mapInByte.GetLength(0));
+                sw.Write(mapInByte);
+            }
+            else
+            {
+                MessagesManager.Messages.Add(new Msg("Error 418 I'm a Teapot",Color.Red, 5000));
+            }
+        }
+        public static char[,] Mapreceived(IPAddress expediteur, int port)
+        {
+            Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                s.Connect(expediteur, port);
+                s.Listen(4);
+                NetworkStream ns = new NetworkStream(s);
+                StreamReader sr = new StreamReader(ns);
+                char[] ligne = new char[sr.Read()];
+                int nbrligne = sr.Read(ligne, 1, ligne.Length);
+                char[] mapinarray = sr.ReadToEnd().ToCharArray();
+                char[,] mapreceived = new char[nbrligne, mapinarray.Length / nbrligne];
+                for (int i = 0; i <= mapreceived.GetLength(0); i++)
+                {
+                    for (int j = 0; j <= mapreceived.GetLength(1); j++)
+                    {
+                        mapreceived[i, j] = mapinarray[i * j];
+                    }
+                }
+                return mapreceived;  
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+        }
+        
     }
 }

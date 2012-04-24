@@ -34,7 +34,7 @@ namespace NNNA
 		private SpriteFont _fontMenu, _fontMenuTitle, _fontSmall, _fontCredits;
 		private Screen _currentScreen = Screen.Title;
 		private int _konami, _foes = 1;
-		private string _currentAction = "", _language = "fr", _pointer = "pointer";
+		private string _currentAction = "", _language = "fr", _pointer = "pointer", _ipWan;
 		private List<string> _lastState = new List<string>();
 		private string[] _currentMenus;
 
@@ -89,6 +89,9 @@ namespace NNNA
 			PlayCampain,
 			PlayQuick,
 			PlayMultiplayer,
+            Local,
+            Internet,
+            OptionsReseau,
 			Options,
 			OptionsGraphics,
 			OptionsSound,
@@ -190,6 +193,9 @@ namespace NNNA
             // MediaPlayer
             int i = rand.Next(0, sampleMediaLibrary.Albums.Count - 1);
             MediaPlayer.Play(sampleMediaLibrary.Albums[i].Songs[0]);
+
+            // réseau
+            _ipWan = Réseau.IpWan();
 
 			base.Initialize();
 
@@ -415,7 +421,9 @@ namespace NNNA
 				case Screen.PlayQuick:
 					UpdatePlayQuick();
 					break;
-
+                case Screen.PlayMultiplayer:
+                    UpdateMulti();
+                    break;
 				case Screen.Options:
 					UpdateOptions();
 					break;
@@ -471,6 +479,8 @@ namespace NNNA
 		}
 		private void UpdatePlay()
 		{ _currentScreen = TestMenu(Screen.PlayQuick, Screen.Title); }
+        private void UpdateMulti()
+        { _currentScreen = TestMenu(Screen.OptionsReseau, Screen.Local, Screen.Internet,Screen.Title); }
 		private void UpdatePlayQuick()
 		{
 			Screen s = TestMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.Game, Screen.Play);
@@ -492,6 +502,9 @@ namespace NNNA
 					{
 						// Génération
 						_matrice = GenerateMap(_quickType, sizes[_quickSize], sizes[_quickSize]);
+                        /*
+                         * envoie de la map si partie multi
+                         */
 						_minimap.Dimensions = new Vector2(sizes[_quickSize], sizes[_quickSize]);
 
 						// Spawns
@@ -1212,7 +1225,7 @@ namespace NNNA
 			   
 				// réseau
 				DrawString(_spriteBatch, _fontSmall, _(Réseau.Connected()), new Vector2(5, _screenSize.Y -20),Color.GhostWhite,Color.Transparent,1);
-				DrawString(_spriteBatch, _fontSmall, _("Votre adresse IP est :") + " " + Réseau.GetIPaddresses(Environment.MachineName), new Vector2((_screenSize.X - _fontSmall.MeasureString(_("Votre adresse IP est :") + " " + Réseau.GetIPaddresses(Environment.MachineName)).X), _screenSize.Y - 20), Color.GhostWhite, Color.Transparent, 1);
+				DrawString(_spriteBatch, _fontSmall, _("Votre adresse IP est :") + " " + _ipWan, new Vector2((_screenSize.X - _fontSmall.MeasureString(_("Votre adresse IP est :") + " " + _ipWan).X), _screenSize.Y - 20), Color.GhostWhite, Color.Transparent, 1);
 			}
 
 		}
@@ -1230,7 +1243,7 @@ namespace NNNA
 		private void DrawPlay()
 		{
 			DrawCommon();
-			MakeMenu("Escarmouche", "Retour");
+			MakeMenu("Escarmouche","Multijoueur", "Retour");
 		}
 		private void DrawPlayQuick()
 		{
@@ -1241,6 +1254,11 @@ namespace NNNA
 			string[] weathers = { "Ensoleillé", "Nuageux", "Pluvieux" };
 			MakeMenu(types[(int)_quickType], tailles[_quickSize], _("Ressources") + " " + _(ressources[_quickResources]), _("Ennemis :") + " " + _foes.ToString(CultureInfo.CurrentCulture), weathers[_weather], "Jouer", "Retour");
 		}
+        private void DrawMultiplayer()
+        {
+            DrawCommon();
+            MakeMenu("Local", "Internet", "Options","Retour");
+        }
 		private void DrawOptions()
 		{
 			DrawCommon();
