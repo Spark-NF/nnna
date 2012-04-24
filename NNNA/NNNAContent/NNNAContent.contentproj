@@ -42,13 +42,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fog.png">
-      <Name>fog</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="font_menu.spritefont">
       <Name>font_menu</Name>
       <Importer>FontDescriptionImporter</Importer>
@@ -800,6 +793,13 @@
   <ItemGroup>
     <Compile Include="Batiments\caserne_1_c.png">
       <Name>caserne_1_c</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="mine.png">
+      <Name>mine</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

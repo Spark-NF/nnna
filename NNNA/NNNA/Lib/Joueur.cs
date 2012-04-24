@@ -102,13 +102,13 @@ namespace NNNA
 		/// <summary>
 		/// Récupère une ressource du joueur en fonction de son identifiant.
 		/// </summary>
-		/// <param name="name">L'identifiant de la ressource.</param>
+		/// <param name="id">L'identifiant de la ressource.</param>
 		/// <returns>La ressource correspondant à cet identifiant.</returns>
-		public Resource Resource(string name)
+		public Resource Resource(string id)
 		{
 			foreach (Resource res in _resources)
 			{
-				if (res.Id == name)
+				if (res.Id == id)
 				{ return res; }
 			}
 			return NNNA.Resource.Empty;

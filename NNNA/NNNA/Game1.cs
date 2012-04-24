@@ -1,3 +1,5 @@
+#define SOUND
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,8 +13,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NNNA.Form;
 
-//#define SOUND
-
 namespace NNNA
 {
 	/// <summary>
@@ -24,12 +24,12 @@ namespace NNNA
 
 		public static int Frame;
 
-		public static GraphicsDeviceManager _graphics;
+		public static GraphicsDeviceManager Graphics;
 		private SpriteBatch _spriteBatch;
 		private Effect _gaussianBlur;
 		private Rectangle _selection = Rectangle.Empty;
 
-		private Texture2D _backgroundDark, _flash, _night, _console;
+		private Texture2D _backgroundDark, _flash, _console;
 		private readonly Texture2D[] _backgrounds = new Texture2D[2];
 		private Dictionary<string, Texture2D> _actions = new Dictionary<string, Texture2D>(), _pointers = new Dictionary<string, Texture2D>();
 		private SpriteFont _fontMenu, _fontMenuTitle, _fontSmall, _fontCredits;
@@ -47,7 +47,7 @@ namespace NNNA
 		internal static bool FlashBool = false;
 		
 		private MapType _quickType = MapType.Island;
-		private int _quickSize = 1, _quickResources = 1, _credits = 0, _theme = 0;
+		private int _quickSize = 1, _quickResources = 1, _credits = 0, _creditsElapsed = 0, _theme = 0;
 		private List<string> _currentActions = new List<string>();
 		private readonly Random _random = new Random();
 		private Dictionary<Color, Texture2D> _colors = new Dictionary<Color, Texture2D>();
@@ -116,12 +116,14 @@ namespace NNNA
             LoadSettings();
             _showConsole = false;
 
-            _graphics = new GraphicsDeviceManager(this)
-            {
+			Graphics = new GraphicsDeviceManager(this)
+			{
                 PreferredBackBufferWidth = (int)_screenSize.X,
                 PreferredBackBufferHeight = (int)_screenSize.Y,
-                IsFullScreen = _fullScreen
-            };
+                IsFullScreen = _fullScreen,
+				SynchronizeWithVerticalRetrace = false
+			};
+			IsFixedTimeStep = true;
 
             Content.RootDirectory = "Content";
 
@@ -303,7 +305,7 @@ namespace NNNA
 
 			#region Actions Unités
 			_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
-			_actions.Add("gather", Content.Load<Texture2D>("Actions/gather"));
+			_actions.Add("mine", Content.Load<Texture2D>("Actions/gather"));
 			_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
 			_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
 			_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
@@ -346,13 +348,12 @@ namespace NNNA
 			_backgrounds[0] = Content.Load<Texture2D>("background/" + ratio + "_0");
 			_backgrounds[1] = Content.Load<Texture2D>("background/" + ratio + "_1");
 			_backgroundDark = CreateRectangle((int)_screenSize.X, (int)_screenSize.Y, new Color(0, 0, 0, 170));
-			_night = CreateRectangle((int)_screenSize.X, (int)_screenSize.Y, new Color(0,0,10));
 			_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
 			//Fenetre des technologies
             techno = new Technologies_Window(new Rectangle((int)(_screenSize.X / 4), (int)(_screenSize.Y / 4), (int)(_screenSize.X / 2), (int)(_screenSize.Y / 2)), "Technologies", Content);
 
-			_hud = new HUD(0, ((_graphics.PreferredBackBufferHeight * 5) / 6) - 10, SmartHud, _graphics);
+			_hud = new HUD(0, ((Graphics.PreferredBackBufferHeight * 5) / 6) - 10, SmartHud, Graphics);
 			_minimap = new Minimap((_hud.Position.Width * 7) / 8 - _hud.Position.Width / 150, _hud.Position.Y + _hud.Position.Height / 15, (_hud.Position.Height * 9) / 10, (_hud.Position.Height * 9) / 10);
 
 			MessagesManager.X = (uint)_screenSize.X - 400;
@@ -457,7 +458,7 @@ namespace NNNA
 					break;
 
 				case Screen.Credits:
-					UpdateCredits();
+					UpdateCredits(gameTime);
 					break;
 
 				case Screen.Game:
@@ -587,7 +588,7 @@ namespace NNNA
 
 					//Le reste
 					techno.Reset();
-					_map.LoadContent(_matrice, Content, _minimap, _graphics.GraphicsDevice);
+					_map.LoadContent(_matrice, Content, _minimap, Graphics.GraphicsDevice);
 					_hud.LoadContent(Content, "HUD/hud2");
 					_minimap.LoadContent(_map);
 
@@ -602,7 +603,7 @@ namespace NNNA
 							x = _random.Next(_matrice.GetLength(0));
 							y = _random.Next(_matrice.GetLength(1));
 						}
-						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, _joueur.Resource("Bois"), Content.Load<Texture2D>("Resources/bois_1_sprite" + _random.Next(0, 3))));
+						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, _joueur.Resource("Bois"), 1000, Content.Load<Texture2D>("Resources/bois_1_sprite" + _random.Next(0, 3))));
 						_matrice[y, x].Crossable = false;
 					}
 
@@ -644,7 +645,7 @@ namespace NNNA
 				int m = Menu();
 				switch (m)
 				{
-					case 0: _language = (_language == "en" ? "fr" : "en"); break;
+					case 0: _language = (_language == "en" ? "es" : (_language == "es" ? "fr" : "en")); break;
 					case 1: _healthOver = !_healthOver; break;
 					case 2: SmartHud = !SmartHud; break;
 				}
@@ -662,16 +663,16 @@ namespace NNNA
 				{
 					case 0:
 						_screenSize = GetNextResolution(Souris.Get().Clicked(MouseButton.Right));
-						_graphics.PreferredBackBufferWidth = (int)_screenSize.X;
-						_graphics.PreferredBackBufferHeight = (int)_screenSize.Y;
+						Graphics.PreferredBackBufferWidth = (int)_screenSize.X;
+						Graphics.PreferredBackBufferHeight = (int)_screenSize.Y;
 						LoadScreenSizeDependantContent();
-						_graphics.ApplyChanges();
+						Graphics.ApplyChanges();
 						break;
 
 					case 1:
 						_fullScreen = !_fullScreen;
-						_graphics.IsFullScreen = _fullScreen;
-						_graphics.ApplyChanges();
+						Graphics.IsFullScreen = _fullScreen;
+						Graphics.ApplyChanges();
 						break;
 
 					case 2: _textures = Variate(0, 2, _textures); break;
@@ -700,11 +701,11 @@ namespace NNNA
 				_son.MusicCategory.SetVolume(MusicVolume * _soundMusic * (_soundGeneral / 10));
 			#endif
 		}
-		private void UpdateCredits()
+		private void UpdateCredits(GameTime gameTime)
 		{
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{ _currentScreen = Screen.Title; }
-			_credits += (Keyboard.GetState().IsKeyDown(Keys.LeftControl) || Keyboard.GetState().IsKeyDown(Keys.RightControl) ? 10 : 1);
+			_credits += (Keyboard.GetState().IsKeyDown(Keys.LeftControl) || Keyboard.GetState().IsKeyDown(Keys.RightControl) ? 10 : 1) * gameTime.ElapsedGameTime.Milliseconds;
 		}
 		float _compt;
 		private void UpdateGame(GameTime gameTime)
@@ -725,7 +726,10 @@ namespace NNNA
 
 			_compt = (_compt + gameTime.ElapsedGameTime.Milliseconds * 0.1f) % 100;
 			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-			_camera.Update(_curseur, _graphics);
+			_camera.Update(_curseur, Graphics);
+
+			// On vire les ressources vides
+			_resources.RemoveAll(delegate(ResourceMine r) { return r.Quantity <= 0; });
 
 			// Intelligence artificielle
 			var rand = new Random();
@@ -746,7 +750,7 @@ namespace NNNA
 							unit.Move(unit.Position + new Vector2(rand.Next(-40, 41), rand.Next(-40, 41)), _units, _buildings, _matrice);
 							unit.Updates = rand.Next(0, 40);
 						}
-						unit.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _matrice);
+						unit.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice);
 					}
 				}
 			}
@@ -765,13 +769,13 @@ namespace NNNA
 						{
 							_selectedList[0].Build(b);
 							_buildings.Add(b);
-							MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
+							MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte !"), Color.White, 5000));
 							_pointer = "pointer";
 							_currentAction = "";
 						}
 						else
 						{
-							MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
 							_pointer = "pointer";
 							_currentAction = "";
 						}
@@ -783,13 +787,13 @@ namespace NNNA
 						{
 							_selectedList[0].Build(b);
 							_buildings.Add(b);
-							MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
+							MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"), Color.White, 5000));
 							_pointer = "pointer";
 							_currentAction = "";
 						}
 						else
 						{
-							MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
 							_pointer = "pointer";
 							_currentAction = "";
 						}
@@ -802,12 +806,12 @@ namespace NNNA
 							_selectedBuilding.Iterator++;
 							_joueur.Units.Add(u);
 							_units.Add(u);
-							MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
+							MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
 							_currentAction = "";
 						}
 						else
 						{
-							MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
 							_joueur.Population--;
 							_currentAction = "";
 						}
@@ -820,12 +824,12 @@ namespace NNNA
 							_selectedBuilding.Iterator++;
 							_joueur.Units.Add(u);
 							_units.Add(u);
-							MessagesManager.Messages.Add(new Msg("Nouveau Guerrier !", Color.White, 5000));
+							MessagesManager.Messages.Add(new Msg(_("Nouveau guerrier !"), Color.White, 5000));
 							_currentAction = "";
 						}
 						else
 						{
-							MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
 							_joueur.Population--;
 							_currentAction = "";
 						}
@@ -839,14 +843,14 @@ namespace NNNA
 						if (joueur.Pay(b.Prix))
 						{
 							joueur.buildings.Add(b);
-							MessagesManager.Messages.Add(new Msg("Nouvelle ferme !", Color.White, 5000));
+							MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"), Color.White, 5000));
 							m_pointer = Content.Load<Texture2D>("pointer");
 							isbuilding = false;
 							m_currentAction = "";
 						}
 						else
 						{
-							MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
 							m_pointer = Content.Load<Texture2D>("pointer");
 							m_currentAction = "";
 						}
@@ -932,7 +936,7 @@ namespace NNNA
 							type = sprite.Type;
 							if (sprite.Type == "peon" && !_currentActions.Contains("build"))
 							{
-								_currentActions.Add("gather");
+								_currentActions.Add("mine");
 								_currentActions.Add("build");
 							}
 						}
@@ -994,7 +998,7 @@ namespace NNNA
 								_currentActions.Add("retour");
 								break;
 
-							case "gather":
+							case "mine":
 								break;
 
 							case "build_hutte":
@@ -1004,7 +1008,7 @@ namespace NNNA
 									_currentAction = "build_hutte";
 								}
 								else
-								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+								{ MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
 								break;
 
 							case "build_hutteDesChasseurs":
@@ -1014,7 +1018,7 @@ namespace NNNA
 									_currentAction = "build_hutteDesChasseurs";
 								}
 								else
-								{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+								{ MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
 								break;
 
 							case "retour":
@@ -1032,11 +1036,11 @@ namespace NNNA
 										_selectedBuilding.Iterator++;
 										_joueur.Units.Add(u);
 										_units.Add(u);
-										MessagesManager.Messages.Add(new Msg("Nouveau Peon !", Color.White, 5000));
+										MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
 										_currentAction = "";
 									}
 									else
-									{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+									{ MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
 								}
 								break;
 
@@ -1053,11 +1057,11 @@ namespace NNNA
 										_selectedBuilding.Iterator++;
 										_joueur.Units.Add(u1);
 										_units.Add(u1);
-										MessagesManager.Messages.Add(new Msg("Nouveau Chasseur !", Color.White, 5000));
+										MessagesManager.Messages.Add(new Msg(_("Nouveau chasseur !"), Color.White, 5000));
 										_currentAction = "";
 									}
 									else
-									{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+									{ MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
 								}
 								break;
 
@@ -1070,14 +1074,14 @@ namespace NNNA
 								m_currentAction = "build_ferme";
 							}
 							else
-							{ MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000)); }
+							{ MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
 							break;*/
 						}
 					}
 				}
 			}
 			foreach (Unit sprite in _joueur.Units)
-			{ sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _matrice); }
+			{ sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice); }
 
 			// Curseur de combat
 			Unit unitUnder = null;
@@ -1120,11 +1124,55 @@ namespace NNNA
 				{ _pointer = "pointer"; }
 			}
 
+			// Curseur de minage
+			ResourceMine resourceUnder = null;
+			if (_currentAction == "" && _selectedList.Count > 0 && _currentActions.Contains("mine"))
+			{
+				foreach (ResourceMine resource in _resources)
+				{
+					// Si une unité ennemie se trouve sous le curseur
+					if (resource.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
+					{
+						float mul = 0.0f;
+						if (_weather > 0)
+						{
+							foreach (Unit uni in _joueur.Units)
+							{
+								float m = (uni.PositionCenter - resource.Position).Length();
+								m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
+								mul = (m > 0 && m > mul) ? m : mul;
+							}
+							foreach (Building building in _joueur.Buildings)
+							{
+								float m = (building.PositionCenter - resource.Position).Length();
+								m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+								mul = (m > 0 && m > mul) ? m : mul;
+							}
+						}
+						else
+						{ mul = 1.0f; }
+						if (mul > 0.25f)
+						{
+							_pointer = "mine";
+							resourceUnder = resource;
+						}
+					}
+				}
+				if (resourceUnder == null)
+				{ _pointer = "pointer"; }
+			}
+
 			// Combat
 			if (unitUnder != null && Souris.Get().Clicked(MouseButton.Right))
 			{
 				foreach (Unit unit in _selectedList)
 				{ unit.Attack(unitUnder); }
+			}
+			// Minage
+			else if (resourceUnder != null && Souris.Get().Clicked(MouseButton.Right))
+			{
+				foreach (Unit unit in _selectedList)
+				{ unit.Mine(resourceUnder); }
 			}
 
 			_joueur.Units.Sort(Sprite.CompareByY);
@@ -1289,6 +1337,7 @@ namespace NNNA
 			DrawCommon();
 			var languages = new Dictionary<string, string>();
 			languages["en"] = "English";
+			languages["es"] = "Español";
 			languages["fr"] = "Français";
 			MakeMenu(languages[_language], (_healthOver ? "Vie au survol" : "Vie constante"), (SmartHud ? "HUD intelligent" : "HUD classique"), "Retour");
 		}
@@ -1309,15 +1358,15 @@ namespace NNNA
 			DrawCommon(false);
 
 			// Crédits
-			int y = _credits / 2;
-			if (y > _screenSize.Y + 200 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2))
-			{ y = (int)(_screenSize.Y + 200 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2)); }
+			int y = _credits / 20;
+			if (y > _screenSize.Y + 240 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2))
+			{ y = (int)(_screenSize.Y + 240 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2)); }
 
 			_spriteBatch.DrawString(_fontCredits, "Nicolas Allain", new Vector2((_screenSize.X - _fontCredits.MeasureString("Nicolas Allain").X) / 2, _screenSize.Y - y), Color.White);
 			_spriteBatch.DrawString(_fontCredits, "Nicolas Faure", new Vector2((_screenSize.X - _fontCredits.MeasureString("Nicolas Faure").X) / 2, _screenSize.Y + 60 - y), Color.White);
 			_spriteBatch.DrawString(_fontCredits, "Nicolas Mouton-Besson", new Vector2((_screenSize.X - _fontCredits.MeasureString("Nicolas Mouton-Besson").X) / 2, _screenSize.Y + 120 - y), Color.White);
 			_spriteBatch.DrawString(_fontCredits, "Arnaud Weiss", new Vector2((_screenSize.X - _fontCredits.MeasureString("Arnaud Weiss").X) / 2, _screenSize.Y + 180 - y), Color.White);
-			_spriteBatch.DrawString(_fontCredits, _("Merci d'avoir joué !"), new Vector2((_screenSize.X - _fontCredits.MeasureString(_("Merci d'avoir joué !")).X) / 2, _screenSize.Y + (_screenSize.Y / 2) + 180 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2) - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, _("Merci d'avoir joué !"), new Vector2((_screenSize.X - _fontCredits.MeasureString(_("Merci d'avoir joué !")).X) / 2, (_screenSize.Y * 3 + _fontCredits.MeasureString(_("Merci d'avoir joué !")).Y) / 2 + 180 - y), Color.White);
 		}
 		private void DrawGame()
 		{
@@ -1446,9 +1495,6 @@ namespace NNNA
 				_spriteBatch.Draw(Color2Texture2D(Color.DarkBlue), tex, new Color(64, 64, 64, 64));
 				_spriteBatch.Draw(Color2Texture2D(Color.Blue), new Rectangle(tex.X + 1, tex.Y + 1, tex.Width - 2, tex.Height - 2), new Color(64, 64, 64, 64));
 			}
-
-			// La nuit
-			//spriteBatch.Draw(m_night, Vector2.Zero, new Color(0, 0, 220, (int)(64 - 64 * Math.Cos((m_gameTime.TotalGameTime.TotalMilliseconds - m_elapsed) / 50000))));
 
 			// Barres de vie
 			foreach (Unit unit in _joueur.Units)
@@ -1595,7 +1641,7 @@ namespace NNNA
 		}
 		private void Debug(List<Point> value)
 		{
-			string deb = "List<" + value.GetType().GetGenericArguments()[0].ToString() + ">(" + value.Count.ToString(CultureInfo.CurrentCulture) + ") { ";
+			string deb = "List<" + value.GetType().GetGenericArguments()[0] + ">(" + value.Count.ToString(CultureInfo.CurrentCulture) + ") { ";
 			deb = value.Aggregate(deb, (current, t) => current + (t + ", "));
 			Debug(deb.Substring(0, deb.Length - 2) + " }");
 		}
@@ -1828,7 +1874,7 @@ namespace NNNA
 			translations["en"]["abondantes"] = "abundant";
 			translations["en"]["Ressources"] = "Resources";
 			translations["en"]["Pluvieux"] = "Rainy";
-			translations["en"]["Nuageux"] = "Couldy";
+			translations["en"]["Nuageux"] = "Cloudy";
 			translations["en"]["Ensoleillé"] = "Sunny";
 			translations["en"]["Ennemis :"] = "Enemies:";
 			translations["en"]["Jouabilité"] = "Playability";
@@ -1854,8 +1900,64 @@ namespace NNNA
 			translations["en"]["Qualité"] = "Quality";
 			translations["en"]["Merci d'avoir joué !"] = "Thanks for playing!";
 			translations["en"]["Votre adresse IP est :"] = "Your IP adress is:";
-			translations["en"]["Vous etes connecte"] = "Your are connected";
-			translations["en"]["Vous etes deconnecte"] = "Your are not connected";
+			translations["en"]["Vous êtes connecté"] = "Your are connected";
+			translations["en"]["Vous êtes déconnecté"] = "Your are not connected";
+			translations["en"]["Vous n'avez pas assez de ressources."] = "You do not have enough resources.";
+			translations["en"]["Nouvelle hutte !"] = "New hut!";
+			translations["en"]["Nouvelle hutte des chasseurs !"] = "New hunters' hut!";
+			translations["en"]["Nouveau peon !"] = "New peon!";
+			translations["en"]["Nouveau guerrier !"] = "New fighter!";
+			translations["en"]["Nouveau chasseur !"] = "New hunter!";
+			translations["es"] = new Dictionary<string, string>();
+			translations["es"]["Jouer"] = "Jugar";
+			translations["es"]["Options"] = "Opciones";
+			translations["es"]["Crédits"] = "Créditos";
+			translations["es"]["Quitter"] = "Salir";
+			translations["es"]["Escarmouche"] = "Escaramuza";
+			translations["es"]["Retour"] = "Volver";
+			translations["es"]["Île"] = "Isla";
+			translations["es"]["Petite"] = "Pequeño";
+			translations["es"]["Moyenne"] = "Medio";
+			translations["es"]["Grande"] = "Grande";
+			translations["es"]["rares"] = "raras";
+			translations["es"]["normales"] = "normal";
+			translations["es"]["abondantes"] = "abundante";
+			translations["es"]["Ressources"] = "Recursos";
+			translations["es"]["Pluvieux"] = "lluvioso";
+			translations["es"]["Nuageux"] = "Nublado";
+			translations["es"]["Ensoleillé"] = "Soleado";
+			translations["es"]["Ennemis :"] = "Enemigos:";
+			translations["es"]["Jouabilité"] = "Jugabilidad";
+			translations["es"]["Graphismes"] = "Gráficos";
+			translations["es"]["Son"] = "Sonido";
+			translations["es"]["Vie au survol"] = "Sobre la Vida";
+			translations["es"]["Vie constante"] = "Siempre la vida";
+			translations["es"]["HUD intelligent"] = "Inteligente HUD";
+			translations["es"]["HUD classique"] = "Clásica de HUD";
+			translations["es"]["min"] = "min";
+			translations["es"]["moyennes"] = "medio";
+			translations["es"]["max"] = "max";
+			translations["es"]["Plein écran"] = "Pantalla completa";
+			translations["es"]["Fenêtré"] = "Ventanad";
+			translations["es"]["Textures"] = "Texturas";
+			translations["es"]["Ombres"] = "Sombras";
+			translations["es"]["Pas d'ombres"] = "No sombras";
+			translations["es"]["Thème"] = "Tema";
+			translations["es"]["moy"] = "med";
+			translations["es"]["Général :"] = "General:";
+			translations["es"]["Musique :"] = "Música:";
+			translations["es"]["Effets :"] = "Efectos:";
+			translations["es"]["Qualité"] = "Calidad";
+			translations["es"]["Merci d'avoir joué !"] = "Gracias por jugar!";
+			translations["es"]["Votre adresse IP est :"] = "Tu IP dirección es:";
+			translations["es"]["Vous êtes connecté"] = "Usted están conectado";
+			translations["es"]["Vous êtes déconnecté"] = "Usted no están conectado";
+			translations["es"]["Vous n'avez pas assez de ressources."] = "Usted no tiene suficientes recursos.";
+			translations["es"]["Nouvelle hutte !"] = "Nueva cabaña!";
+			translations["es"]["Nouvelle hutte des chasseurs !"] = "Nueva cabaña de cazadores!";
+			translations["es"]["Nouveau peon !"] = "Nueva peón!";
+			translations["es"]["Nouveau guerrier !"] = "Nueva guerrero!";
+			translations["es"]["Nouveau chasseur !"] = "Nuevo caza!";
 
 			if (lang == "")
 			{ lang = _language; }

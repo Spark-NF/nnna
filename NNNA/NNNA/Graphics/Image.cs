@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -18,6 +19,7 @@ namespace NNNA
 		private int _current;
 		public readonly int Width;
 		public readonly int Height;
+		public readonly int CollisionHeight;
 		private bool _animation;
 		public bool Animation
 		{
@@ -38,7 +40,7 @@ namespace NNNA
 		public bool Finished
 		{ get { return _single && _current == _columns - 1; } }
 
-		public Image(Texture2D texture, int columns = 1, int rows = 1, int speed = 15)
+		public Image(Texture2D texture, int columns = 1, int rows = 1, int speed = 15, float collision = 1.0f)
 		{
 			_texture = texture;
 			_columns = columns;
@@ -47,6 +49,7 @@ namespace NNNA
 			_current = 0;
 			Width = _texture.Width / _columns;
 			Height = _texture.Height / _rows;
+			CollisionHeight = (int)Math.Round(collision * Height);
 			_animation = columns > 1;
 
 		}

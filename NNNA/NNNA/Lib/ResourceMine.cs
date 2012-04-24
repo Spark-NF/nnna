@@ -7,12 +7,17 @@ namespace NNNA
 	{
 		private Resource _resource;
 
-		public ResourceMine(int x, int y, Resource resource, Texture2D texture)
+		private int _quantity;
+		public int Quantity
+		{ get { return _quantity; } }
+
+		public ResourceMine(int x, int y, Resource resource, int quantity, Texture2D texture)
 			: base(x, y)
 		{
 			_decouvert = false;
 			_texture = new Image(texture);
 			_resource = resource;
+			_quantity = quantity;
 		}
 
 		/// <summary>
@@ -25,13 +30,28 @@ namespace NNNA
 		/// <param name="weather">La météo actuelle.</param>
 		public void Draw(SpriteBatch spritebatch, int ere, Camera2D camera, float mul, int weather)
 		{
-			if (weather == 1)
+			if (_quantity > 0)
 			{
-				if (mul > 0.25f)
-				{ _decouvert = true; }
-				mul = (_decouvert && mul < 0.25f) ? 0.25f : mul;
+				if (weather == 1)
+				{
+					if (mul > 0.25f)
+					{ _decouvert = true; }
+					mul = (_decouvert && mul < 0.25f) ? 0.25f : mul;
+				}
+				spritebatch.Draw(_resource.Texture(ere), _position - camera.Position, new Color(mul, mul, mul));
 			}
-			spritebatch.Draw(_resource.Texture(ere), _position - camera.Position, new Color(mul, mul, mul));
+		}
+
+		/// <summary>
+		/// Mine la ressource.
+		/// </summary>
+		/// <param name="joueur">Le joueur minant la ressource.</param>
+		/// <param name="unit">L'unité minant la ressource.</param>
+		public void Mine(Joueur joueur, Unit unit)
+		{
+			int qtty = _quantity >= 1 ? 1 : _quantity;
+			joueur.Resource(_resource.Id).Add(qtty);
+			_quantity -= qtty;
 		}
 	}
 }

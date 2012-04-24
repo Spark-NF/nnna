@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -91,42 +92,39 @@ namespace NNNA
 			_texture.Draw(spriteBatch, _position - camera.Position, new Color(mul, mul, mul));
 		}
 
-		public bool Collides(List<MovibleSprite> sprites, List<Building> buildings, Sprite[,] matrice)
+		/// <summary>
+		/// Détermine si le sprite actuel est en collision avec d'autres chose sur la carte.
+		/// </summary>
+		/// <param name="sprites">La liste des sprites de la carte.</param>
+		/// <param name="buildings">La liste des bâtiments de la carte.</param>
+		/// <param name="resources">La liste des ressources minables de la carte.</param>
+		/// <param name="matrice">La matrice de la carte.</param>
+		/// <returns>Un booléen indiquant si l'on est en collision ou non.</returns>
+		public bool Collides(List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice)
 		{
+			// On teste la collision entre notre rectangle et celui de tous les autres sprites (syntaxe LINQ)
 			var rec = new Rectangle((int)_position.X, (int)_position.Y + ((_texture.Height * 2) / 3), _texture.Width, _texture.Height / 3);
-			foreach (MovibleSprite sprite in sprites)
-			{
-				if (sprite != this)
-				{
-					var sprec = new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y + ((sprite.Texture.Height * 2) / 3), sprite.Texture.Width, sprite.Texture.Height / 3);
-					if (sprec.Intersects(rec))
-					{ return true; }
-				}
-			}
-			foreach (Building sprite in buildings)
-			{
-				if (sprite != this)
-				{
-					var sprec = new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y, sprite.Texture.Width, sprite.Texture.Height);
-					if (sprec.Intersects(rec))
-					{ return true; }
-				}
-			}
-			Vector2 coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Width, _position.Y + (_texture.Height * 4) / 5));
+			if ((from sprite in sprites.Cast<Sprite>().ToList().Concat(buildings.Cast<Sprite>().ToList()).Concat(resources.Cast<Sprite>().ToList())
+				 where	sprite != this
+				 select new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y + (sprite.Texture.Height - sprite.Texture.CollisionHeight), sprite.Texture.Width, sprite.Texture.CollisionHeight))
+				 .Any(sprec => sprec.Intersects(rec)))
+			{ return true; }
+
+			// On teste la collision avec la carte
+			var coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Width, _position.Y + _texture.Height * 4 / 5));
 			if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
 			{
 				if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
 				{ return true; }
 			}
+
+			// Si aucune collision n'a été détéctée jusqu'ici, alors c'est que l'on est pas en collision
 			return false;
 		}
 
+		// Comparateur de Sprite selon leur coordonnées en Y
 		public static int CompareByY(Sprite s1, Sprite s2)
-		{
-			if (s1.Position.Y + (s1.Texture == null ? 0 : s1.Texture.Height) > s2.Position.Y + (s2.Texture == null ? 0 : s2.Texture.Height))
-			{ return 0; }
-			return 1;
-		}
+		{ return s1.Position.Y + (s1.Texture == null ? 0 : s1.Texture.Height) > s2.Position.Y + (s2.Texture == null ? 0 : s2.Texture.Height) ? 0 : 1; }
 
 		public Rectangle Rectangle(Camera2D cam)
 		{

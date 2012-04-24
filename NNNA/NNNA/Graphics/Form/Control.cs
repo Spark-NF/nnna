@@ -41,7 +41,7 @@ namespace NNNA.Form
             _textColor = Color.Silver;
             _visible = false;
             _backgroundColor = Color.White;
-            _background = new Texture2D(Game1._graphics.GraphicsDevice, 1, 1);
+            _background = new Texture2D(Game1.Graphics.GraphicsDevice, 1, 1);
             _background.SetData(new Color[] { _backgroundColor });
         }
 

@@ -59,9 +59,10 @@ namespace NNNA
         public static string Connected()
         {
             if (IsConnected())
-            { return "Vous etes connecte"; }
-            return "Vous etes deconnecte";
+            { return "Vous êtes connecté"; }
+            return "Vous êtes déconnecté";
         }
+		
         public static char[,] MapInBytes(Sprite[,] _matrice)
         {
             char[,] mapInBytes = new char[_matrice.GetLength(0), _matrice.GetLength(1)];

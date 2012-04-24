@@ -21,12 +21,17 @@ namespace NNNA
 			get { return _destinationBuilding; }
 			set { _destinationBuilding = value; }
 		}
-
 		protected Unit _destinationUnit;
 		public Unit DestinationUnit
 		{
 			get { return _destinationUnit; }
 			set { _destinationUnit = value; }
+		}
+		protected ResourceMine _destinationResource;
+		public ResourceMine DestinationResource
+		{
+			get { return _destinationResource; }
+			set { _destinationResource = value; }
 		}
 
 		protected Texture2D _icon;
