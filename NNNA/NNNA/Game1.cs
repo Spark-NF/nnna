@@ -1,17 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms.Integration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Color = Microsoft.Xna.Framework.Color;
-using Forms = System.Windows.Forms;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using NNNA.Form;
 
 //#define SOUND
 
@@ -61,7 +57,7 @@ namespace NNNA
 		private Minimap _minimap;
 		private HUD _hud;
 		private Camera2D _camera;
-		private Joueur _joueur;
+		internal static Joueur _joueur;
 		private Joueur[] _enemies;
 		private Building _selectedBuilding;
 		private float[,] _heightMap;
@@ -74,8 +70,7 @@ namespace NNNA
 		private const float MusicVolume = 2.0f;
 		private Sons _son = new Sons();
 		private SoundEffect _debutpartie;
-		private ElementHost _elementHost;
-		private Technologies _techno;
+        private Technologies_Window techno;
 
 
 		#endregion
@@ -188,10 +183,6 @@ namespace NNNA
 				_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
 				_debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
 			#endif
-			
-			//menu technologie
-			_elementHost= new ElementHost();
-			_techno = new Technologies(_joueur, ref _elementHost, Content);
 
 			base.Initialize();
 
@@ -322,11 +313,7 @@ namespace NNNA
 			_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
 			//Fenetre des technologies
-			_elementHost.Location = new System.Drawing.Point((int) _screenSize.X/2 - 150, (int) _screenSize.Y/2 - 150);
-			_elementHost.Size = new Size(300, 300);
-			_elementHost.Child = _techno;
-			_elementHost.BackColor = System.Drawing.Color.Transparent;
-			_elementHost.BackColorTransparent = true;
+            techno = new Technologies_Window(new Rectangle((int)(_screenSize.X / 4), (int)(_screenSize.Y / 4), (int)(_screenSize.X / 2), (int)(_screenSize.Y / 2)), "Technologies", Content);
 
 			_hud = new HUD(0, ((_graphics.PreferredBackBufferHeight * 5) / 6) - 10, SmartHud, _graphics);
 			_minimap = new Minimap((_hud.Position.Width * 7) / 8 - _hud.Position.Width / 150, _hud.Position.Y + _hud.Position.Height / 15, (_hud.Position.Height * 9) / 10, (_hud.Position.Height * 9) / 10);
@@ -544,7 +531,7 @@ namespace NNNA
 					}
 
 					//Le reste
-					_techno.Reset();
+					techno.Reset();
 					_map.LoadContent(_matrice, Content, _minimap, _graphics.GraphicsDevice);
 					_hud.LoadContent(Content, "HUD/hud2");
 					_minimap.LoadContent(_map);
@@ -628,8 +615,6 @@ namespace NNNA
 
 					case 1:
 						_fullScreen = !_fullScreen;
-						if (!_fullScreen)
-						{ Forms.Application.EnableVisualStyles(); }
 						_graphics.IsFullScreen = _fullScreen;
 						_graphics.ApplyChanges();
 						break;
@@ -669,10 +654,7 @@ namespace NNNA
 		float _compt;
 		private void UpdateGame(GameTime gameTime)
 		{
-			_techno.PreUpdate(_joueur);
-			Forms.Control.FromHandle(Window.Handle).Controls.Add(_elementHost);
-			_techno.PostUpdate(_joueur);
-
+            techno.Update(Souris.Get());
 			//if (isbuilding)
 			//{
 			//	Vector2 xy = matrice2xy(xy2matrice(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)));
@@ -681,7 +663,7 @@ namespace NNNA
 
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{
-				_elementHost.Visible = false;
+				techno.Win_Visible = false;
 				_currentScreen = Screen.GameMenu;
 			}
 
@@ -1003,7 +985,7 @@ namespace NNNA
 								break;
 
 							case "technologies":
-								_elementHost.Visible = true;
+								techno.Win_Visible = true;
 								break;
 
 							case "create_guerrier":
@@ -1495,6 +1477,8 @@ namespace NNNA
 				FlashBool = false;
 				_a = 1.0f;
 			}
+
+            techno.Draw(_spriteBatch, _fontSmall);
 		}
 
 		/// <summary>

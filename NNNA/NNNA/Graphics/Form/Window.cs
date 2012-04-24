@@ -33,7 +33,7 @@ namespace NNNA.Form
             if (_visible)
             {
                 sb.Draw(_background, _zone, null, _backgroundColor);
-                sb.DrawString(sf, _title, new Vector2(_zone.X, _zone.Y), _textColor);
+                sb.DrawString(sf, _title, new Vector2(_zone.X + _zone.Width / 2 - sf.MeasureString(_title).X / 2, _zone.Y + _zone.Height / 26), _textColor);
                 for (int i = 0; i < Children.Length; i++)
                 {
                     Children[i].Draw(sb, sf);

@@ -16,7 +16,7 @@ namespace NNNA
         /// <returns>L'IP du PC.</returns>
         public static string GetIPaddresses(string computername)
         {
-            IPHostEntry iphe = Dns.Resolve(computername);
+            IPHostEntry iphe = Dns.GetHostEntry(computername);//Dns.Resolve(computername);
             string ip = iphe.AddressList[0].ToString();
             return ip;
         }

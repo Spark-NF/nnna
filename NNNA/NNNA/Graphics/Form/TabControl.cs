@@ -6,13 +6,17 @@ namespace NNNA.Form
     class TabControl : Containing
     {
         #region ATTRIBUTS
+        private int current;
         #endregion ATTRIBUTS
 
         #region GET/SET
         #endregion GET/SET
 
         public TabControl(TabItem[] children, Rectangle zone, string name)
-            : base(children, zone, name) { }
+            : base(children, zone, name) 
+        {
+            current = 0;
+        }
 
         public override void Update(Souris s)
         {

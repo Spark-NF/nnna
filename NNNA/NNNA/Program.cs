@@ -8,7 +8,6 @@ namespace NNNA
         /// Point d'entrée principal de l'application.
         /// </summary>
         /// 
-        [STAThread]
         static void Main(string[] args)
         {
             using (var game = new Game1())

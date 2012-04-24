@@ -20,17 +20,17 @@ namespace NNNA.Form
         { get { return _borderEffect; } set { _borderEffect = value; } }
         #endregion GET/SET
 
-        public Button(Rectangle zone, string name, Delegate click)
+        public Button(Rectangle zone, string name, Delegate click, bool visible = false)
             : base(zone, name)
         {
-            _text = click.Method.Name; 
-            _backgroundColor = Color.Gray;
+            _text = click.Method.Name;
             _click = click;
+            _visible = visible;
         }
 
         public override void Update(Souris s)
         {
-            if (s.Clicked(MouseButton.Left) && _zone.Intersects(new Rectangle(s.X,s.Y,1,1)))
+            if (_visible && s.Clicked(MouseButton.Left) && _zone.Intersects(new Rectangle(s.X,s.Y,1,1)))
             {
                 _click();
             }
@@ -41,7 +41,7 @@ namespace NNNA.Form
             if (_visible)
             {
                 sb.Draw(_background, _zone, null, _backgroundColor);
-                sb.DrawString(sf, _text, new Vector2(_zone.X, _zone.Y), _textColor);
+                //sb.DrawString(sf, _text, new Vector2(_zone.X, _zone.Y), _textColor);
             }
         }
     }
