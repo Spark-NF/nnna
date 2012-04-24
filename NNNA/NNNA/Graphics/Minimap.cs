@@ -48,7 +48,7 @@ namespace NNNA
 			_reducedMap = new Rectangle(_reducedMap.X, _reducedMap.Y, (int)(map.MapWidth * _ratio), (int)(map.MapHeight * _ratio));
 		}
 
-		public void Draw(List<MovibleSprite> units, List<Building> buildings, Joueur joueur, int decay, SpriteBatch spriteBatch)
+		public void Draw(List<MovibleSprite> units, List<Building> buildings, Joueur joueur, Vector2 camera_centered_pos, int decay, SpriteBatch spriteBatch)
 		{
 			var textureColor = new Color[_texture.Width * _texture.Height];
 			_baseTexture.GetData(textureColor);
@@ -62,6 +62,21 @@ namespace NNNA
 				Vector2 m = Game1.Xy2Matrice(building.PositionCenter);
 				textureColor[(int)((m.X * _texture.Width) / _dimensions.X) + _texture.Width * (int)((m.Y * _texture.Height) / _dimensions.Y)] = building.Joueur.Color;
 			}
+            Vector2 vect = Game1.Xy2Matrice(camera_centered_pos);
+            if (vect.X >= 0)
+            {
+                if (vect.Y >= 0)
+                {
+                    if (vect.X < _dimensions.X)
+                    {
+                        if (vect.Y < _dimensions.Y)
+                        {
+                            textureColor[(int)((vect.X * _texture.Width) / _dimensions.X) + _texture.Width * (int)((vect.Y * _texture.Height) / _dimensions.Y)] = Color.White;
+                        }
+                    }
+                }
+            }
+
 			var texture = new Texture2D(_texture.GraphicsDevice, _texture.Width, _texture.Height);
 			texture.SetData(textureColor);
 			spriteBatch.Draw(texture, new Rectangle(_reducedMap.X, _reducedMap.Y + decay, _reducedMap.Width, _reducedMap.Height), null, Color.White, (float)(Math.PI / 4), Vector2.Zero, SpriteEffects.None, 0f);

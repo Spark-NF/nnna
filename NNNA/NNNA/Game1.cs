@@ -1493,7 +1493,7 @@ namespace NNNA
 
 			// Affichage du HUD
 			MessagesManager.Draw(_spriteBatch, _fontSmall);
-			_hud.Draw(_spriteBatch, _minimap, _units, _buildings, _joueur, _fontSmall);
+			_hud.Draw(_spriteBatch, _minimap, _units, _buildings, _joueur, _camera.Position + _screenSize / 2, _fontSmall);
 
 			// Unités séléctionnées
 			for (int i = 0; i < _selectedList.Count; i++)
