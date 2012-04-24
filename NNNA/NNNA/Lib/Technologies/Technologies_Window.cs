@@ -198,7 +198,7 @@ namespace NNNA
             }
             else
             {
-                MessagesManager.Messages.Add(new Msg("Technologie déjà aquise.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
             }
 		}
 
@@ -218,7 +218,7 @@ namespace NNNA
 			}
             else
             {
-                MessagesManager.Messages.Add(new Msg("Technologie déjà aquise.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
             }
 		}
 
@@ -237,7 +237,7 @@ namespace NNNA
 			}
             else
             {
-                MessagesManager.Messages.Add(new Msg("Technologie déjà aquise.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
             }
 		}
 
@@ -256,7 +256,7 @@ namespace NNNA
 			}
             else
             {
-                MessagesManager.Messages.Add(new Msg("Technologie déjà aquise.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
             }
 		}
 
@@ -275,7 +275,7 @@ namespace NNNA
 			}
             else
             {
-                MessagesManager.Messages.Add(new Msg("Technologie déjà aquise.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
             }
 		}
 
@@ -283,29 +283,29 @@ namespace NNNA
 		{
 			if (!_outils && Game1._joueur.Pay(_prixOutils))
 			{
+                if (_agri)
+                    irrigation.Visible = true;
 				fer.Visible = true;
 				_outils = true;
 				//outils.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Outils » aquise !", Color.White, 5000));
 			}
-			if (_agri)
-				irrigation.Visible = true;
 			else if (!_outils)
 			{
 				MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
 			}
             else
             {
-                MessagesManager.Messages.Add(new Msg("Technologie déjà aquise.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
             }
 		}
 
 		private void agri_MouseLeftButtonDown()
 		{
-			if (_outils)
-				irrigation.Visible = true;
 			if (!_agri && Game1._joueur.Pay(_prixAgri))
 			{
+                if (_outils)
+                    irrigation.Visible = true;
 				_agri = true;
 				//agri.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Agriculture » aquise !", Color.White, 5000));
@@ -316,7 +316,7 @@ namespace NNNA
 			}
             else
             {
-                MessagesManager.Messages.Add(new Msg("Technologie déjà aquise.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
             }
 		}
 
@@ -335,16 +335,16 @@ namespace NNNA
 			}
             else
             {
-                MessagesManager.Messages.Add(new Msg("Technologie déjà aquise.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
             }
 		}
 
 		private void irrigation_MouseLeftButtonDown()
 		{
-            if (_fer)
-                evolution.Visible = true;
 			if (!_irrigation && Game1._joueur.Pay(_prixIrrigation))
 			{
+                if (_fer)
+                    evolution.Visible = true;
 				//irrigation.OpacityMask = null;
 				_irrigation = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Irrigation » aquise !", Color.White, 5000));
@@ -355,16 +355,16 @@ namespace NNNA
 			}
             else
             {
-                MessagesManager.Messages.Add(new Msg("Technologie déjà aquise.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
             }
 		}
 
 		private void fer_MouseLeftButtonDown()
 		{
-            if (_irrigation)
-                evolution.Visible = true;
 			if (_outils && Game1._joueur.Pay(_prixFer))
 			{
+                if (_irrigation)
+                    evolution.Visible = true;
 				//fer.OpacityMask = null;
 				_fer = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Fer » aquise !", Color.White, 5000));
@@ -375,7 +375,7 @@ namespace NNNA
 			}
             else
             {
-                MessagesManager.Messages.Add(new Msg("Technologie déjà aquise.", Color.Red, 5000));
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
             }
 		}
 
