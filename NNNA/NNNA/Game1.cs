@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NNNA.Form;
@@ -72,6 +73,10 @@ namespace NNNA
 		private SoundEffect _debutpartie;
         private Technologies_Window techno;
 
+        //MediaPlayer
+        MediaLibrary sampleMediaLibrary;
+        Random rand;
+        
 
 		#endregion
 
@@ -114,6 +119,10 @@ namespace NNNA
 			};
 
 			Content.RootDirectory = "Content";
+
+            // MediaPlayer
+            sampleMediaLibrary = new MediaLibrary();
+            rand = new Random();
 		}
 
 		#region Settings
@@ -178,11 +187,9 @@ namespace NNNA
 			_curseur = new Sprite(0, 0);
 			_joueur = new Joueur(Color.Red, "NNNNA", Content);
 
-			 // son
-			#if SOUND
-				_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
-				_debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
-			#endif
+            // MediaPlayer
+            int i = rand.Next(0, sampleMediaLibrary.Albums.Count - 1);
+            MediaPlayer.Play(sampleMediaLibrary.Albums[i].Songs[0]);
 
 			base.Initialize();
 
@@ -293,8 +300,13 @@ namespace NNNA
 			// Shaders
 			_gaussianBlur = Content.Load<Effect>("Shaders/GaussianBlur");
 			_gaussianBlur.CurrentTechnique = _gaussianBlur.Techniques["Blur"];
-
 			LoadScreenSizeDependantContent();
+
+            // Sons
+            
+                _debutpartie = Content.Load<SoundEffect>("sounds/debutpartie3");
+           //     _debutpartie.Play();
+            
 		}
 		/// <summary>
 		/// Charge tous les contenus du jeu dépendant de la résolution de l'écran.
@@ -436,7 +448,18 @@ namespace NNNA
 				{ _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
 			#endif
 
+            // MediaPlayer
+            if (Clavier.Get().NewPress(Keys.Space))
+            {
+                if (MediaPlayer.State == MediaState.Playing)
+                    MediaPlayer.Pause();
+                else
+                    MediaPlayer.Resume();
+            }
+
 			base.Update(gameTime);
+
+
 		}
 		private void UpdateTitle()
 		{
