@@ -71,15 +71,8 @@ namespace NNNA
 		// Audio objects		
 		private const float MusicVolume = 2.0f;
 		private Sons _son = new Sons();
-		private SoundEffect _debutpartie;
+	 //   private SoundEffect _debutpartie;
         private Technologies_Window techno;
-        
-        // Recuperation des dossier de lútilisateur
-
-     // StorageDevice device;
-      // StorageContainer container;
-     
-
 		#endregion
 
 		#region Enums
@@ -128,7 +121,7 @@ namespace NNNA
             Content.RootDirectory = "Content";
 
             // Dossier Utilisateur
-          // this.Components.Add(new GamerServicesComponent(this));
+          this.Components.Add(new GamerServicesComponent(this));
 
         }
 
@@ -198,30 +191,7 @@ namespace NNNA
             _ipWan = Réseau.IpWan();
 
 			base.Initialize();
-            //Guide.ShowSignIn(1, false);
-            // Guide.BeginShowStorageDeviceSelector(new AsyncCallback(GetDevice), null);
 		}
-        /* private void GetDevice(IAsyncResult result)
-             {
-                 if (result.IsCompleted)
-                 {
-                 try
-                     {
-                     device = Guide.EndShowStorageDeviceSelector(result);
-                     container = device.OpenContainer("ChapitreHuit");
-                     }
-                 catch (Exception e)
-                     {
-                     Guide.BeginShowMessageBox(PlayerIndex.One, "Erreur", e.Message, new string[] { "Ok" }, 0, MessageBoxIcon.Error, new AsyncCallback(EndShowMessageBox), null);
-                     }
-                 }
-            }
-         private void EndShowMessageBox(IAsyncResult result)
-         {
-             if (result.IsCompleted)
-                 Guide.EndShowMessageBox(result);
-         } */
-
         /// <summary>
 		/// Génère une carte aléatoire.
 		/// </summary>
@@ -387,6 +357,7 @@ namespace NNNA
 		/// <param name="gameTime">Temps courant.</param>
 		protected override void Update(GameTime gameTime)
 		{
+
 			Frame++;
 
 			Clavier.Get().Update(Keyboard.GetState());
@@ -470,11 +441,11 @@ namespace NNNA
 			}
 
 			//Son 
-			#if SOUND
+		/*	#if SOUND
 				_son.EngineMenu.Update();
 				if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
 				{ _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
-			#endif
+			#endif */
 
             // MediaPlayer
             if (Clavier.Get().NewPress(Keys.Space))
@@ -608,11 +579,11 @@ namespace NNNA
 					}
 
 					//Le son
-					#if SOUND
+			/*		#if SOUND
 						if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
 						{ _son.MusiqueMenu.Pause(); }
-						_debutpartie.Play();
-					#endif
+						//_debutpartie.Play();
+					#endif*/
 				}
 				_currentScreen = s;
 			}
@@ -1180,10 +1151,10 @@ namespace NNNA
 			 
 			//minimap.Update(units, buildings, selectedList, joueur);
 
-			#if SOUND
+		/*	#if SOUND
 				if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
 				{ _son.MusiqueMenu.Pause(); }
-			#endif
+			#endif */
 		}
 
 		void UpdateGameMenu()
@@ -1196,11 +1167,11 @@ namespace NNNA
 			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			_currentScreen = TestPauseMenu(Screen.Title, Screen.Game);
 
-			#if SOUND
+			/*#if SOUND
 				if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
 				{_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
-				_son.MusiqueMenu.Resume();
-			#endif
+				_son.MusiqueMenu.Resume(); 
+			#endif */
 		}
 
 		#endregion

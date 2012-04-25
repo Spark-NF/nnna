@@ -159,8 +159,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NNNAContent\NNNAContent.contentproj">
-      <Name>NNNAContent</Name>
+      <Name>NNNAContent %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
+      <Project>{7604AFEE-17CF-4CC2-AE11-35CA86B14868}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
