@@ -441,11 +441,11 @@ namespace NNNA
 			}
 
 			//Son 
-		/*	#if SOUND
+			#if SOUND
 				_son.EngineMenu.Update();
 				if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
 				{ _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
-			#endif */
+			#endif
 
             // MediaPlayer
             if (Clavier.Get().NewPress(Keys.Space))
@@ -579,11 +579,11 @@ namespace NNNA
 					}
 
 					//Le son
-			/*		#if SOUND
+					#if SOUND
 						if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
 						{ _son.MusiqueMenu.Pause(); }
 						//_debutpartie.Play();
-					#endif*/
+					#endif
 				}
 				_currentScreen = s;
 			}
@@ -1151,10 +1151,10 @@ namespace NNNA
 			 
 			//minimap.Update(units, buildings, selectedList, joueur);
 
-		/*	#if SOUND
+			#if SOUND
 				if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
 				{ _son.MusiqueMenu.Pause(); }
-			#endif */
+			#endif
 		}
 
 		void UpdateGameMenu()
@@ -1167,11 +1167,11 @@ namespace NNNA
 			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			_currentScreen = TestPauseMenu(Screen.Title, Screen.Game);
 
-			/*#if SOUND
+			#if SOUND
 				if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
 				{_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
 				_son.MusiqueMenu.Resume(); 
-			#endif */
+			#endif
 		}
 
 		#endregion
