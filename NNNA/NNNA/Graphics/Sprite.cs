@@ -25,6 +25,13 @@ namespace NNNA
 			set { _crossable = value; }
 		}
 
+		protected bool _visible;
+		public bool Visible
+		{
+			get { return _visible; }
+			set { _visible = value; }
+		}
+
 		protected Vector2 _position;
 		public Vector2 Position
 		{

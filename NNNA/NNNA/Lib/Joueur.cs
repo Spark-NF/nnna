@@ -162,9 +162,15 @@ namespace NNNA
 		public void Draw(SpriteBatch sb, Camera2D camera, int index)
 		{
 			foreach (Building sprite in _buildings)
-			{ sprite.Draw(sb, camera, _colorMovable); }
+			{
+				sprite.Visible = true;
+				sprite.Draw(sb, camera, _colorMovable);
+			}
 			foreach (Unit sprite in _units)
-			{ sprite.Draw(sb, camera, index, _colorMovable); }
+			{
+				sprite.Visible = true;
+				sprite.Draw(sb, camera, index, _colorMovable);
+			}
 		}
 	}
 }

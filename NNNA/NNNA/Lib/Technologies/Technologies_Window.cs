@@ -183,7 +183,7 @@ namespace NNNA
 
 		private void chasse_MouseLeftButtonDown()
 		{
-			if (!_chasse && Game1._joueur.Pay(_prixChasse))
+			if (!_chasse && Game1.Joueur.Pay(_prixChasse))
 			{
 				silex.Visible = true;
 				agri.Visible = true;
@@ -204,10 +204,10 @@ namespace NNNA
 
 		private void feu_MouseLeftButtonDown()
 		{
-			if (!_feu && Game1._joueur.Pay(_prixFeu))
+			if (!_feu && Game1.Joueur.Pay(_prixFeu))
 			{
 				torche.Visible = true;
-				Game1._joueur.AdditionalLineSight += 128;
+				Game1.Joueur.AdditionalLineSight += 128;
 				_feu = true;
 				//feu.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Feu » aquise !", Color.White, 5000));
@@ -224,7 +224,7 @@ namespace NNNA
 
 		private void silex_MouseLeftButtonDown()
 		{
-			if (!_silex && Game1._joueur.Pay(_prixSilex))
+			if (!_silex && Game1.Joueur.Pay(_prixSilex))
 			{
 				pierre_polie.Visible = true;
 				_silex = true;
@@ -243,7 +243,7 @@ namespace NNNA
 
 		private void pierre_polie_MouseLeftButtonDown()
 		{
-			if (!_pierrePolie && Game1._joueur.Pay(_prixPierrePolie))
+			if (!_pierrePolie && Game1.Joueur.Pay(_prixPierrePolie))
 			{
 				bronze.Visible = true;
 				_pierrePolie = true;
@@ -262,7 +262,7 @@ namespace NNNA
 
 		private void bronze_MouseLeftButtonDown()
 		{
-			if (!_bronze && Game1._joueur.Pay(_prixBronze))
+			if (!_bronze && Game1.Joueur.Pay(_prixBronze))
 			{
 				outils.Visible = true;
 				_bronze = true;
@@ -281,7 +281,7 @@ namespace NNNA
 
 		private void outils_MouseLeftButtonDown()
 		{
-			if (!_outils && Game1._joueur.Pay(_prixOutils))
+			if (!_outils && Game1.Joueur.Pay(_prixOutils))
 			{
                 if (_agri)
                     irrigation.Visible = true;
@@ -302,7 +302,7 @@ namespace NNNA
 
 		private void agri_MouseLeftButtonDown()
 		{
-			if (!_agri && Game1._joueur.Pay(_prixAgri))
+			if (!_agri && Game1.Joueur.Pay(_prixAgri))
 			{
                 if (_outils)
                     irrigation.Visible = true;
@@ -322,11 +322,11 @@ namespace NNNA
 
 		private void torche_MouseLeftButtonDown()
 		{
-			if (!_torche && Game1._joueur.Pay(_prixTorche))
+			if (!_torche && Game1.Joueur.Pay(_prixTorche))
 			{
 				_torche = true;
 				//torche.OpacityMask = null;
-				Game1._joueur.AdditionalLineSight += 128;
+				Game1.Joueur.AdditionalLineSight += 128;
 				MessagesManager.Messages.Add(new Msg("Technologie « Torche » aquise !", Color.White, 5000));
 			}
 			else if (!_torche)
@@ -341,7 +341,7 @@ namespace NNNA
 
 		private void irrigation_MouseLeftButtonDown()
 		{
-			if (!_irrigation && Game1._joueur.Pay(_prixIrrigation))
+			if (!_irrigation && Game1.Joueur.Pay(_prixIrrigation))
 			{
                 if (_fer)
                     evolution.Visible = true;
@@ -361,7 +361,7 @@ namespace NNNA
 
 		private void fer_MouseLeftButtonDown()
 		{
-			if (_outils && Game1._joueur.Pay(_prixFer))
+			if (_outils && Game1.Joueur.Pay(_prixFer))
 			{
                 if (_irrigation)
                     evolution.Visible = true;
@@ -385,13 +385,13 @@ namespace NNNA
 			{
 				_ere1 = true;
 				//evolution.OpacityMask = null;
-				Game1._joueur.Ere = 2;
+				Game1.Joueur.Ere = 2;
 				tabItem2.Visible = true;
 				Game1.FlashBool = true;
 				MessagesManager.Messages.Add(new Msg("ERE MEDIEVALE ATTEINTE !!", Color.Red, 5000));
-				foreach (Building build in Game1._joueur.Buildings)
+				foreach (Building build in Game1.Joueur.Buildings)
 				{
-					build.UpdateEre(_content, Game1._joueur);
+					build.UpdateEre(_content, Game1.Joueur);
 				}
 			}
 			//else if (!m_ere2)

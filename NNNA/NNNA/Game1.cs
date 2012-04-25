@@ -1,4 +1,4 @@
-#define SOUND
+//#define SOUND
 
 using System;
 using System.Collections.Generic;
@@ -59,7 +59,7 @@ namespace NNNA
 		private Minimap _minimap;
 		private HUD _hud;
 		private Camera2D _camera;
-		internal static Joueur _joueur;
+		internal static Joueur Joueur;
 		private Joueur[] _enemies;
 		private Building _selectedBuilding;
 		private float[,] _heightMap;
@@ -71,8 +71,8 @@ namespace NNNA
 		// Audio objects		
 		private const float MusicVolume = 2.0f;
 		private Sons _son = new Sons();
-	 //   private SoundEffect _debutpartie;
-        private Technologies_Window techno;
+		// private SoundEffect _debutpartie;
+        private Technologies_Window _techno;
 		#endregion
 
 		#region Enums
@@ -121,8 +121,7 @@ namespace NNNA
             Content.RootDirectory = "Content";
 
             // Dossier Utilisateur
-          this.Components.Add(new GamerServicesComponent(this));
-
+			Components.Add(new GamerServicesComponent(this));
         }
 
 		#region Settings
@@ -185,7 +184,7 @@ namespace NNNA
 			_map = new Map();
 			_camera = new Camera2D(0, 0);
 			_curseur = new Sprite(0, 0);
-			_joueur = new Joueur(Color.Red, "NNNA", Content);
+			Joueur = new Joueur(Color.Red, "NNNA", Content);
 
             // réseau
             _ipWan = Réseau.IpWan();
@@ -321,7 +320,7 @@ namespace NNNA
 			_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
 			//Fenetre des technologies
-            techno = new Technologies_Window(new Rectangle((int)(_screenSize.X / 4), (int)(_screenSize.Y / 4), (int)(_screenSize.X / 2), (int)(_screenSize.Y / 2)), "Technologies", Content);
+            _techno = new Technologies_Window(new Rectangle((int)(_screenSize.X / 4), (int)(_screenSize.Y / 4), (int)(_screenSize.X / 2), (int)(_screenSize.Y / 2)), "Technologies", Content);
 
 			_hud = new HUD(0, ((Graphics.PreferredBackBufferHeight * 5) / 6) - 10, SmartHud, Graphics);
 			_minimap = new Minimap((_hud.Position.Width * 7) / 8 - _hud.Position.Width / 150, _hud.Position.Y + _hud.Position.Height / 15, (_hud.Position.Height * 9) / 10, (_hud.Position.Height * 9) / 10);
@@ -535,14 +534,14 @@ namespace NNNA
 					string[] names = { Environment.UserName, "Lord Lard", "Herr von Speck", "Monsieur Martin" };
 
 					//Joueur
-					_joueur = new Joueur(colors[0], names[0], Content);
-					_joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, _joueur, false));
-					_joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, _joueur, false));
-					_joueur.Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, _joueur, false));
-					_joueur.Buildings.Add(new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, _joueur));
+					Joueur = new Joueur(colors[0], names[0], Content);
+					Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
+					Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
+					Joueur.Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
+					Joueur.Buildings.Add(new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, Joueur));
 					_camera.Position = Matrice2Xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - _screenSize / 2;
-					_units.AddRange(_joueur.Units);
-					_buildings.AddRange(_joueur.Buildings);
+					_units.AddRange(Joueur.Units);
+					_buildings.AddRange(Joueur.Buildings);
 
 					// Ennemis
 					_enemies = new Joueur[_foes];
@@ -558,7 +557,7 @@ namespace NNNA
 					}
 
 					//Le reste
-					techno.Reset();
+					_techno.Reset();
 					_map.LoadContent(_matrice, Content, _minimap, Graphics.GraphicsDevice);
 					_hud.LoadContent(Content, "HUD/hud2");
 					_minimap.LoadContent(_map);
@@ -574,7 +573,7 @@ namespace NNNA
 							x = _random.Next(_matrice.GetLength(0));
 							y = _random.Next(_matrice.GetLength(1));
 						}
-						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, _joueur.Resource("Bois"), 1000, Content.Load<Texture2D>("Resources/bois_1_sprite" + _random.Next(0, 3))));
+						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 1000, Content.Load<Texture2D>("Resources/bois_1_sprite" + _random.Next(0, 3))));
 						_matrice[y, x].Crossable = false;
 					}
 
@@ -618,7 +617,11 @@ namespace NNNA
 				{
 					case 0: _language = (_language == "en" ? "es" : (_language == "es" ? "fr" : "en")); break;
 					case 1: _healthOver = !_healthOver; break;
-					case 2: SmartHud = !SmartHud; break;
+
+					case 2:
+						SmartHud = !SmartHud;
+						_hud = new HUD(0, ((Graphics.PreferredBackBufferHeight * 5) / 6) - 10, SmartHud, Graphics);
+						break;
 				}
 			}
 		}
@@ -681,7 +684,7 @@ namespace NNNA
 		float _compt;
 		private void UpdateGame(GameTime gameTime)
 		{
-            techno.Update(Souris.Get());
+            _techno.Update(Souris.Get());
 
 			//if (isbuilding)
 			//{
@@ -691,7 +694,7 @@ namespace NNNA
 
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{
-				techno.Win_Visible = false;
+				_techno.Win_Visible = false;
 				_currentScreen = Screen.GameMenu;
 			}
 
@@ -700,7 +703,7 @@ namespace NNNA
 			_camera.Update(_curseur, Graphics);
 
 			// On vire les ressources vides
-			_resources.RemoveAll(delegate(ResourceMine r) { return r.Quantity <= 0; });
+			_resources.RemoveAll(resource => resource.Quantity <= 0);
 
 			// Intelligence artificielle
 			var rand = new Random();
@@ -735,8 +738,8 @@ namespace NNNA
 				{
 					// Ere 1 
 					case "build_hutte":
-						b = new Hutte((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, _joueur, (byte)_random.Next(0, 2));
-						if (_joueur.Pay(b.Prix))
+						b = new Hutte((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, Joueur, (byte)_random.Next(0, 2));
+						if (Joueur.Pay(b.Prix))
 						{
 							_selectedList[0].Build(b);
 							_buildings.Add(b);
@@ -753,8 +756,8 @@ namespace NNNA
 						break;
 
 					case "build_hutteDesChasseurs":
-						b = new HutteDesChasseurs((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, _joueur);
-						if (_joueur.Pay(b.Prix))
+						b = new HutteDesChasseurs((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, Joueur);
+						if (Joueur.Pay(b.Prix))
 						{
 							_selectedList[0].Build(b);
 							_buildings.Add(b);
@@ -771,11 +774,11 @@ namespace NNNA
 						break;
 
 					case "create_peon" :
-						u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, _joueur, false);
-						if (_joueur.Population + 1 > _joueur.PopulationMax && _joueur.Pay(u.Prix))
+						u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, Joueur, false);
+						if (Joueur.Population + 1 > Joueur.PopulationMax && Joueur.Pay(u.Prix))
 						{
 							_selectedBuilding.Iterator++;
-							_joueur.Units.Add(u);
+							Joueur.Units.Add(u);
 							_units.Add(u);
 							MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
 							_currentAction = "";
@@ -783,17 +786,17 @@ namespace NNNA
 						else
 						{
 							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-							_joueur.Population--;
+							Joueur.Population--;
 							_currentAction = "";
 						}
 						break;
 
 					case "create_guerrier":
-						u = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, _joueur, false);
-						if (_joueur.Population + 1 > _joueur.PopulationMax && _joueur.Pay(u.Prix))
+						u = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur, false);
+						if (Joueur.Population + 1 > Joueur.PopulationMax && Joueur.Pay(u.Prix))
 						{
 							_selectedBuilding.Iterator++;
-							_joueur.Units.Add(u);
+							Joueur.Units.Add(u);
 							_units.Add(u);
 							MessagesManager.Messages.Add(new Msg(_("Nouveau guerrier !"), Color.White, 5000));
 							_currentAction = "";
@@ -801,7 +804,7 @@ namespace NNNA
 						else
 						{
 							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-							_joueur.Population--;
+							Joueur.Population--;
 							_currentAction = "";
 						}
 						break;
@@ -855,7 +858,7 @@ namespace NNNA
 					{ _selectedBuilding.Selected = false; }
 					_selectedBuilding = null;
 				}
-				foreach (Unit sprite in _joueur.Units)
+				foreach (Unit sprite in Joueur.Units)
 				{
 					var csel = new Rectangle((int)(_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0)), (int)(_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)), Math.Abs(_selection.Width), Math.Abs(_selection.Height));
 					if (!sprite.Selected && csel.Intersects(sprite.Rectangle(_camera)))
@@ -871,7 +874,7 @@ namespace NNNA
 					{ sprite.Selected = false; }
 					_selectedList.Clear();
 
-					foreach (Building sprite in _joueur.Buildings)
+					foreach (Building sprite in Joueur.Buildings)
 					{
 						var csel = new Rectangle((int)(_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0)), (int)(_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)), Math.Abs(_selection.Width), Math.Abs(_selection.Height));
 						if (!sprite.Selected && csel.Intersects(sprite.Rectangle(_camera)))
@@ -973,9 +976,9 @@ namespace NNNA
 								break;
 
 							case "build_hutte":
-								if (_joueur.Has(new Hutte().Prix))
+								if (Joueur.Has(new Hutte().Prix))
 								{
-									_pointer = "Batiments/maison" + _random.Next(1, 3).ToString(CultureInfo.CurrentCulture) + "_" + _joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+									_pointer = "Batiments/maison" + _random.Next(1, 3).ToString(CultureInfo.CurrentCulture) + "_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
 									_currentAction = "build_hutte";
 								}
 								else
@@ -983,9 +986,9 @@ namespace NNNA
 								break;
 
 							case "build_hutteDesChasseurs":
-								if (_joueur.Has(new HutteDesChasseurs().Prix))
+								if (Joueur.Has(new HutteDesChasseurs().Prix))
 								{
-									_pointer = "Batiments/caserne_" + _joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+									_pointer = "Batiments/caserne_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
 									_currentAction = "build_hutteDesChasseurs";
 								}
 								else
@@ -1001,11 +1004,11 @@ namespace NNNA
 							case "create_peon":
 								if (_selectedBuilding != null)
 								{
-									var u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, _joueur);
-									if (_joueur.Pay(u.Prix))
+									var u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, Joueur);
+									if (Joueur.Pay(u.Prix))
 									{
 										_selectedBuilding.Iterator++;
-										_joueur.Units.Add(u);
+										Joueur.Units.Add(u);
 										_units.Add(u);
 										MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
 										_currentAction = "";
@@ -1016,17 +1019,17 @@ namespace NNNA
 								break;
 
 							case "technologies":
-								techno.Win_Visible = true;
+								_techno.Win_Visible = true;
 								break;
 
 							case "create_guerrier":
 								if (_selectedBuilding != null)
 								{
-									var u1 = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, _joueur);
-									if (_joueur.Has(u1.Prix))
+									var u1 = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur);
+									if (Joueur.Has(u1.Prix))
 									{
 										_selectedBuilding.Iterator++;
-										_joueur.Units.Add(u1);
+										Joueur.Units.Add(u1);
 										_units.Add(u1);
 										MessagesManager.Messages.Add(new Msg(_("Nouveau chasseur !"), Color.White, 5000));
 										_currentAction = "";
@@ -1051,7 +1054,7 @@ namespace NNNA
 					}
 				}
 			}
-			foreach (Unit sprite in _joueur.Units)
+			foreach (Unit sprite in Joueur.Units)
 			{ sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice); }
 
 			// Curseur de combat
@@ -1068,16 +1071,16 @@ namespace NNNA
 							float mul = 0.0f;
 							if (_weather > 0)
 							{
-								foreach (Unit uni in _joueur.Units)
+								foreach (Unit uni in Joueur.Units)
 								{
 									float m = (uni.PositionCenter - unit.Position).Length();
-									m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
+									m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
 									mul = (m > 0 && m > mul) ? m : mul;
 								}
-								foreach (Building building in _joueur.Buildings)
+								foreach (Building building in Joueur.Buildings)
 								{
 									float m = (building.PositionCenter - unit.Position).Length();
-									m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+									m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
 									mul = (m > 0 && m > mul) ? m : mul;
 								}
 							}
@@ -1107,16 +1110,16 @@ namespace NNNA
 						float mul = 0.0f;
 						if (_weather > 0)
 						{
-							foreach (Unit uni in _joueur.Units)
+							foreach (Unit uni in Joueur.Units)
 							{
 								float m = (uni.PositionCenter - resource.Position).Length();
-								m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
+								m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
 								mul = (m > 0 && m > mul) ? m : mul;
 							}
-							foreach (Building building in _joueur.Buildings)
+							foreach (Building building in Joueur.Buildings)
 							{
 								float m = (building.PositionCenter - resource.Position).Length();
-								m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+								m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
 								mul = (m > 0 && m > mul) ? m : mul;
 							}
 						}
@@ -1146,8 +1149,8 @@ namespace NNNA
 				{ unit.Mine(resourceUnder); }
 			}
 
-			_joueur.Units.Sort(Sprite.CompareByY);
-			_joueur.Buildings.Sort(Sprite.CompareByY);
+			Joueur.Units.Sort(Sprite.CompareByY);
+			Joueur.Buildings.Sort(Sprite.CompareByY);
 			 
 			//minimap.Update(units, buildings, selectedList, joueur);
 
@@ -1228,9 +1231,9 @@ namespace NNNA
 			// Code Konami
 			if (_konami >= 10)
 			{
-				_joueur.Resource("Bois").Add(5000);
-				_joueur.Resource("Pierre").Add(5000);
-				_joueur.Resource("Nourriture").Add(5000);
+				Joueur.Resource("Bois").Add(5000);
+				Joueur.Resource("Pierre").Add(5000);
+				Joueur.Resource("Nourriture").Add(5000);
 				_konami = 0;
 			}
 
@@ -1344,25 +1347,25 @@ namespace NNNA
 			var index = (int)Math.Floor(_compt / 25);
 			foreach (Sprite sprite in _matrice)
 			{
-				if ((sprite.Position.X - _camera.Position.X > -64
-					&& sprite.Position.Y - _camera.Position.Y > -32
-					&& sprite.Position.X - _camera.Position.X < _screenSize.X
-					&& sprite.Position.Y - _camera.Position.Y < _screenSize.Y - Math.Round((double)_hud.Position.Height * 4 / 5))
-					|| SmartHud)
+				if (sprite.Position.X - _camera.Position.X > -64 && 
+					sprite.Position.Y - _camera.Position.Y > -32 && 
+					sprite.Position.X - _camera.Position.X < _screenSize.X &&
+					(sprite.Position.Y - _camera.Position.Y < _screenSize.Y - Math.Round((double)_hud.Position.Height * 4 / 5) || 
+					sprite.Position.Y - _camera.Position.Y < _screenSize.Y && SmartHud))
 				{
 					float mul = 0.0f;
 					if (_weather > 0)
 					{
-						foreach (Unit unit in _joueur.Units)
+						foreach (Unit unit in Joueur.Units)
 						{
 							float m = (unit.PositionCenter - sprite.PositionCenter).Length();
-							m = 1.0f - (m / (unit.LineSight + _joueur.AdditionalLineSight));
+							m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
-						foreach (Building building in _joueur.Buildings)
+						foreach (Building building in Joueur.Buildings)
 						{
 							float m = (building.PositionCenter - sprite.PositionCenter).Length();
-							m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
 					}
@@ -1378,22 +1381,26 @@ namespace NNNA
 				foreach (Building build in foe.Buildings)
 				{
 					if (_weather == 0)
-					{ build.Draw(_spriteBatch, _camera, foe.ColorMovable); }
+					{
+						build.Visible = true;
+						build.Draw(_spriteBatch, _camera, foe.ColorMovable);
+					}
 					else
 					{
 						float mul = 0.0f;
-						foreach (Unit unit in _joueur.Units)
+						foreach (Unit unit in Joueur.Units)
 						{
 							float m = (unit.PositionCenter - build.Position).Length();
-							m = 1.0f - (m / (unit.LineSight + _joueur.AdditionalLineSight));
+							m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
-						foreach (Building building in _joueur.Buildings)
+						foreach (Building building in Joueur.Buildings)
 						{
 							float m = (building.PositionCenter - build.Position).Length();
-							m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
+						build.Visible = mul > 0;
 						if (mul > 0)
 						{ build.Draw(_spriteBatch, _camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
 					}
@@ -1401,57 +1408,66 @@ namespace NNNA
 				foreach (Unit uni in foe.Units)
 				{
 					if (_weather == 0)
-					{ uni.Draw(_spriteBatch, _camera, index, foe.ColorMovable); }
+					{
+						uni.Visible = true;
+						uni.Draw(_spriteBatch, _camera, index, foe.ColorMovable);
+					}
 					else
 					{
 						float mul = 0.0f;
-						foreach (Unit unit in _joueur.Units)
+						foreach (Unit unit in Joueur.Units)
 						{
 							float m = (unit.PositionCenter - uni.Position).Length();
-							m = 1.0f - (m / (unit.LineSight + _joueur.AdditionalLineSight));
+							m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
-						foreach (Building building in _joueur.Buildings)
+						foreach (Building building in Joueur.Buildings)
 						{
 							float m = (building.PositionCenter - uni.Position).Length();
-							m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
+						uni.Visible = mul > 0;
 						if (mul > 0f)
 						{ uni.Draw(_spriteBatch, _camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
 					}
 				}
 			}
-			_joueur.Draw(_spriteBatch, _camera, index);
+			Joueur.Draw(_spriteBatch, _camera, index);
 			foreach (ResourceMine sprite in _resources)
 			{
 				if (_weather == 0)
-				{ sprite.Draw(_spriteBatch, 1, _camera, 1.0f, _weather); }
+				{
+					sprite.Visible = true;
+					sprite.Draw(_spriteBatch, 1, _camera, 1.0f, _weather);
+				}
 				else
 				{
 					float mul = 0.0f;
-					foreach (Unit unit in _joueur.Units)
+					foreach (Unit unit in Joueur.Units)
 					{
 						float m = (unit.PositionCenter - sprite.PositionCenter).Length();
-						m = 1.0f - (m / (unit.LineSight + _joueur.AdditionalLineSight));
+						m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
-					foreach (Building building in _joueur.Buildings)
+					foreach (Building building in Joueur.Buildings)
 					{
 						float m = (building.PositionCenter - sprite.PositionCenter).Length();
-						m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+						m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
 						mul = (m > 0 && m > mul) ? m : mul;
 					}
-					sprite.Draw(_spriteBatch, 1, _camera, mul, _weather);
+					sprite.Visible = mul > 0;
+					if (mul > 0f)
+					{ sprite.Draw(_spriteBatch, 1, _camera, mul, _weather); }
 				}
 			}
 
 			// Rectangle de séléction
-			Vector2 coos = new Vector2(
+			var coos = new Vector2(
 				_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0),
 				_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)
 			);
-			Rectangle tex = new Rectangle(
+			var tex = new Rectangle(
 				coos.X < 0 ? 0 : (int)coos.X,
 				coos.Y < 0 ? 0 : (int)coos.Y, 
 				(int)(Math.Abs(_selection.Width) + (coos.X < 0 ? coos.X : 0)),
@@ -1468,12 +1484,12 @@ namespace NNNA
 			}
 
 			// Barres de vie
-			foreach (Unit unit in _joueur.Units)
+			foreach (Unit unit in Joueur.Units)
 			{
 				if (!_healthOver || unit.Selected)
 				{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28); }
 			}
-			foreach (Building build in _joueur.Buildings)
+			foreach (Building build in Joueur.Buildings)
 			{
 				if (!_healthOver || build.Selected)
 				{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100); }
@@ -1485,16 +1501,16 @@ namespace NNNA
 					float mul = 0.0f;
 					if (_weather > 0)
 					{
-						foreach (Unit uni in _joueur.Units)
+						foreach (Unit uni in Joueur.Units)
 						{
 							float m = (uni.PositionCenter - unit.Position).Length();
-							m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
+							m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
-						foreach (Building building in _joueur.Buildings)
+						foreach (Building building in Joueur.Buildings)
 						{
 							float m = (building.PositionCenter - unit.Position).Length();
-							m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
 					}
@@ -1508,16 +1524,16 @@ namespace NNNA
 					float mul = 0.0f;
 					if (_weather > 0)
 					{
-						foreach (Unit uni in _joueur.Units)
+						foreach (Unit uni in Joueur.Units)
 						{
 							float m = (uni.PositionCenter - build.Position).Length();
-							m = 1.0f - (m / (uni.LineSight + _joueur.AdditionalLineSight));
+							m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
-						foreach (Building building in _joueur.Buildings)
+						foreach (Building building in Joueur.Buildings)
 						{
 							float m = (building.PositionCenter - build.Position).Length();
-							m = 1.0f - (m / (building.LineSight + _joueur.AdditionalLineSight));
+							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
 					}
@@ -1530,7 +1546,7 @@ namespace NNNA
 
 			// Affichage du HUD
 			MessagesManager.Draw(_spriteBatch, _fontSmall);
-			_hud.Draw(_spriteBatch, _minimap, _units, _buildings, _joueur, _camera.Position + _screenSize / 2, _fontSmall);
+			_hud.Draw(_spriteBatch, _minimap, _units, _buildings, Joueur, _camera.Position + _screenSize / 2, _fontSmall);
 
 			// Unités séléctionnées
 			for (int i = 0; i < _selectedList.Count; i++)
@@ -1556,7 +1572,7 @@ namespace NNNA
 				_a = 1.0f;
 			}
 
-            techno.Draw(_spriteBatch, _fontSmall);
+            _techno.Draw(_spriteBatch, _fontSmall);
 		}
 
 		/// <summary>

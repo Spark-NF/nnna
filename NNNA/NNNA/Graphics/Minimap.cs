@@ -52,34 +52,42 @@ namespace NNNA
 		{
 			var textureColor = new Color[_texture.Width * _texture.Height];
 			_baseTexture.GetData(textureColor);
+
+			// Affichage des unités et des bâtiments sur la carte
 			foreach (Unit unit in units)
 			{
-				Vector2 m = Game1.Xy2Matrice(unit.PositionCenter);
-				textureColor[(int)((m.X * _texture.Width) / _dimensions.X) + _texture.Width * (int)((m.Y * _texture.Height) / _dimensions.Y)] = unit.Joueur.Color;
+				if (unit.Visible)
+				{
+					Vector2 m = Game1.Xy2Matrice(unit.PositionCenter);
+					textureColor[(int) ((m.X*_texture.Width)/_dimensions.X) + _texture.Width*(int) ((m.Y*_texture.Height)/_dimensions.Y)] = unit.Joueur.Color;
+				}
 			}
 			foreach (Building building in buildings)
 			{
-				Vector2 m = Game1.Xy2Matrice(building.PositionCenter);
-				textureColor[(int)((m.X * _texture.Width) / _dimensions.X) + _texture.Width * (int)((m.Y * _texture.Height) / _dimensions.Y)] = building.Joueur.Color;
+				if (building.Visible)
+				{
+					Vector2 m = Game1.Xy2Matrice(building.PositionCenter);
+					textureColor[(int) ((m.X*_texture.Width)/_dimensions.X) + _texture.Width*(int) ((m.Y*_texture.Height)/_dimensions.Y)] = building.Joueur.Color;
+				}
 			}
-            Vector2 vect = Game1.Xy2Matrice(camera_centered_pos);
-            if (vect.X >= 0)
-            {
-                if (vect.Y >= 0)
-                {
-                    if (vect.X < _dimensions.X)
-                    {
-                        if (vect.Y < _dimensions.Y)
-                        {
-                            textureColor[(int)((vect.X * _texture.Width) / _dimensions.X) + _texture.Width * (int)((vect.Y * _texture.Height) / _dimensions.Y)] = Color.White;
-                        }
-                    }
-                }
-            }
 
+			// Position de la caméra
+			Vector2 vect = Game1.Xy2Matrice(camera_centered_pos);
+			if (vect.X >= 0 && vect.Y >= 0 && vect.X < _dimensions.X && vect.Y < _dimensions.Y)
+			{ textureColor[(int)((vect.X * _texture.Width) / _dimensions.X) + _texture.Width * (int)((vect.Y * _texture.Height) / _dimensions.Y)] = Color.White; }
+
+			// Mise à jour de la texture
 			var texture = new Texture2D(_texture.GraphicsDevice, _texture.Width, _texture.Height);
 			texture.SetData(textureColor);
 			spriteBatch.Draw(texture, new Rectangle(_reducedMap.X, _reducedMap.Y + decay, _reducedMap.Width, _reducedMap.Height), null, Color.White, (float)(Math.PI / 4), Vector2.Zero, SpriteEffects.None, 0f);
+		}
+
+		public static Vector2 Rotate(Vector2 position, Vector2 pivot, double radians)
+		{
+			var offset = new Vector2(position.X - pivot.X, position.Y - pivot.Y);
+			double nx = Math.Cos(radians) * offset.X - Math.Sin(radians) * offset.Y;
+			double ny = Math.Sin(radians) * offset.X + Math.Cos(radians) * offset.Y;
+			return new Vector2((float)nx * 1.2f + pivot.X, (float)ny * 1.2f + pivot.Y);
 		}
 	}
 }
