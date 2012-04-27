@@ -253,10 +253,8 @@ namespace NNNA
 		{ spriteBatch.Draw(_icon, position, new Rectangle(0, 0, _icon.Width, _icon.Height), Color.White); }
 		public void SetTextures(ContentManager content, string name, int dec = 90)
 		{
-			System.Diagnostics.Debug.WriteLine(name);
 			_dec = dec;
-			_texture = new Image(content, "Units/" + name + "/" + name, 4, 360 / dec);
-			_texture.Animation = false;
+			_texture = new Image(content, "Units/" + name + "/" + name, 4, 360/dec, 15, 1.0f/3.0f) { Animation = false };
 			_go = new Image(content, "go", 8, 1, 5);
 			_dots = content.Load<Texture2D>("dots");
 			_selection = content.Load<Texture2D>("selected");

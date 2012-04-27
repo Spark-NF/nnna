@@ -53,8 +53,8 @@ namespace NNNA
 			_animation = columns > 1;
 
 		}
-		public Image(ContentManager contentManager, string assetName, int columns = 1, int rows = 1, int speed = 15)
-			: this(contentManager.Load<Texture2D>(assetName), columns, rows, speed)
+		public Image(ContentManager contentManager, string assetName, int columns = 1, int rows = 1, int speed = 15, float collision = 1.0f)
+			: this(contentManager.Load<Texture2D>(assetName), columns, rows, speed, collision)
 		{ }
 
 		public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, int which = 1)

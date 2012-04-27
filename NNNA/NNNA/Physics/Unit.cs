@@ -14,6 +14,13 @@ namespace NNNA
 			set { _joueur = value; }
 		}
 
+		protected Building _affiliate;
+		public Building Affiliate
+		{
+			get { return _affiliate; }
+			set { _affiliate = value; }
+		}
+
 		protected int _life;
 		public int Life
 		{
@@ -39,7 +46,7 @@ namespace NNNA
 			set { _attaque = value; }
 		}
 
-		private int _vitesseCombat;
+		protected int _vitesseCombat;
 		public int VitesseCombat
 		{
 			get { return _vitesseCombat; }
@@ -141,7 +148,7 @@ namespace NNNA
 						}
 						else
 						{
-							if (DestinationUnit != null && Will == "attaque" && Game1.Frame % _vitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), matrice))
+							if (DestinationUnit != null && Will == "attack" && Game1.Frame % _vitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), matrice))
 							{
 								DestinationUnit.Life -= _attaque;
 								if (DestinationUnit.Life <= 0)
