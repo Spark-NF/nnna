@@ -35,7 +35,7 @@ namespace NNNA
 		private SpriteFont _fontMenu, _fontMenuTitle, _fontSmall, _fontCredits;
 		private Screen _currentScreen = Screen.Title;
 		private int _konami, _foes = 1;
-		private string _currentAction = "", _language = "fr", _pointer = "pointer", _ipWan;
+		private string _currentAction = "", _language = "fr", _pointer = "pointer", _pointerOld = "pointer", _ipWan;
 		private List<string> _lastState = new List<string>();
 		private string[] _currentMenus;
 
@@ -47,7 +47,7 @@ namespace NNNA
 		internal static bool FlashBool = false;
 		
 		private MapType _quickType = MapType.Island;
-		private int _quickSize = 1, _quickResources = 1, _credits = 0, _creditsElapsed = 0, _theme = 0;
+		private int _quickSize = 1, _quickResources = 1, _credits = 0, _theme = 0;
 		private List<string> _currentActions = new List<string>();
 		private readonly Random _random = new Random();
 		private Dictionary<Color, Texture2D> _colors = new Dictionary<Color, Texture2D>();
@@ -492,6 +492,7 @@ namespace NNNA
 					{
 						// Génération
 						_matrice = GenerateMap(_quickType, sizes[_quickSize], sizes[_quickSize]);
+
                         /*
                          * envoie de la map si partie multi
                          */
@@ -694,8 +695,15 @@ namespace NNNA
 
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{
-				_techno.Win_Visible = false;
-				_currentScreen = Screen.GameMenu;
+				_pointer = "pointer";
+				if (_currentAction.StartsWith("build_"))
+				{ _currentAction = ""; }
+				else
+				{
+					_pointerOld = _pointer;
+					_techno.Win_Visible = false;
+					_currentScreen = Screen.GameMenu;
+				}
 			}
 
 			_compt = (_compt + gameTime.ElapsedGameTime.Milliseconds * 0.1f) % 100;
@@ -1163,12 +1171,11 @@ namespace NNNA
 		void UpdateGameMenu()
 		{
 			if (Clavier.Get().NewPress(Keys.Escape))
-			{
-				_pointer = "pointer";
-				_currentScreen = Screen.Game;
-			}
+			{ _currentScreen = Screen.Game; }
 			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			_currentScreen = TestPauseMenu(Screen.Title, Screen.Game);
+			if (_currentScreen == Screen.Game)
+			{ _pointer = _pointerOld; }
 
 			#if SOUND
 				if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
@@ -1345,6 +1352,7 @@ namespace NNNA
 		private void DrawGame()
 		{
 			var index = (int)Math.Floor(_compt / 25);
+			bool bui = _currentAction.StartsWith("build_");
 			foreach (Sprite sprite in _matrice)
 			{
 				if (sprite.Position.X - _camera.Position.X > -64 && 
@@ -1371,7 +1379,7 @@ namespace NNNA
 					}
 					else
 					{ mul = 1.0f; }
-					sprite.DrawMap(_spriteBatch, _camera, mul, _weather);
+					sprite.DrawMap(_spriteBatch, _camera, mul, _weather, bui ? (sprite.Liquid ? new Color(255, 80, 80) : new Color(80, 255, 80)) : Color.Transparent);
 				}
 			}
 

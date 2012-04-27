@@ -42,91 +42,96 @@ namespace NNNA
 				i++;
 				for (int c = 0; c < map.GetLength(0); c++)
 				{
-					if ((map[l, c]).Name == 'h')
+					char name = map[l, c].Name;
+					switch (name)
 					{
-						(map[l, c]) = new Sprite(content, "Map/herbe3", x, y, true, l, c);
-						textureColor[i] = new Color(46, 180, 4);
-					}
-					else if ((map[l, c]).Name == 'i')
-					{
-						(map[l, c]) = new Sprite(content, "Map/herbe2", x, y, true, l, c);
-						textureColor[i] = new Color(136, 188, 10);
-					}
-					else if ((map[l, c]).Name == 'p')
-					{
-						(map[l, c]) = new Sprite(content, "Map/pave", x, y, true, l, c);
-						textureColor[i] = Color.Gray;
-					}
-					else if ((map[l, c]).Name == 's')
-					{
-						(map[l, c]) = new Sprite(content, "Map/sable2", x, y, true, l, c);
-						textureColor[i] = new Color(196, 196, 150);
-					}
-					else if ((map[l, c]).Name == 'e')
-					{
-						(map[l, c]) = new Sprite(content, "Map/eau2", x, y, false, l, c);
-						textureColor[i] = new Color(23, 115, 154);
-					}
-					else if ((map[l, c]).Name == 't')
-					{
-						if ((c + 1) < map.GetLength(0) && (c - 1) >= 0 && (l + 1) < map.GetLength(1) && (l - 1) >= 0)
-						{
-							if ((map[l, c + 1]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c - 1]).Name != 's' && (map[l - 1, c]).Name != 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_(-90)", x, y, true, l, c);
-							else if ((map[l, c - 1]).Name == 's' && (map[l - 1, c]).Name == 's' && (map[l, c + 1]).Name != 's' && (map[l + 1, c]).Name != 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_(90)", x, y, true, l, c);
-							else if ((map[l, c - 1]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name != 's' && (map[l - 1, c]).Name != 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_(180)", x, y, true, l, c);
-							else if ((map[l, c + 1]).Name == 's' && (map[l - 1, c]).Name == 's' && (map[l, c - 1]).Name != 's' && (map[l + 1, c]).Name != 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_(0)", x, y, true, l, c);
-							else if ((map[l - 1, c]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c - 1]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_U(45)", x, y, true, l, c);
-							else if ((map[l - 1, c]).Name == 's' && (map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_U(-45)", x, y, true, l, c);
-							else if ((map[l - 1, c]).Name == 's' && (map[l, c + 1]).Name == 's' && (map[l, c - 1]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_U(135)", x, y, true, l, c);
-							else if ((map[l + 1, c]).Name == 's' && (map[l, c + 1]).Name == 's' && (map[l, c - 1]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_U(-135)", x, y, true, l, c);
-							//else if (((map[l, c + 1]).Name != 't' && (map[l, c + 1]).Name != 'e') && ((map[l, c - 1]).Name != 't' && (map[l, c - 1]).Name != 'e') && ((map[l + 1, c]).Name != 't' && (map[l + 1, c]).Name != 'e') && ((map[l - 1, c]).Name != 't' && (map[l - 1, c]).Name != 'e'))
-							//(map[l, c]) = new Sprite(content, "Map/flaque", x, y, true, l, c);
-							else if ((map[l + 1, c]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_(-135)", x, y, true, l, c);
-							else if ((map[l - 1, c]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_(45)", x, y, true, l, c);
-							else if ((map[l, c + 1]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_(-45)", x, y, true, l, c);
-							else if ((map[l, c - 1]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_(135)", x, y, true, l, c);
-							else if ((map[l - 1, c - 1]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_coin(90)", x, y, true, l, c);
-							else if ((map[l + 1, c + 1]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_coin(-90)", x, y, true, l, c);
-							else if ((map[l - 1, c + 1]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_coin(0)", x, y, true, l, c);
-							else if ((map[l + 1, c - 1]).Name == 's')
-								(map[l, c]) = new Sprite(content, "Map/sable_coin(180)", x, y, true, l, c);
-							else
-								(map[l, c]) = new Sprite(content, "Map/eau3", x, y, false, l, c);
-						}
-						else
-							(map[l, c]) = new Sprite(content, "Map/eau3", x, y, false, l, c);
+						case 'h':
+							map[l, c] = new Sprite(content, "Map/herbe3", x, y, true, l, c, name);
+							textureColor[i] = new Color(46, 180, 4);
+							break;
 
-						textureColor[i] = new Color(18, 147, 166);
+						case 'i':
+							map[l, c] = new Sprite(content, "Map/herbe2", x, y, true, l, c, name);
+							textureColor[i] = new Color(136, 188, 10);
+							break;
+
+						case 'p':
+							map[l, c] = new Sprite(content, "Map/pave", x, y, true, l, c, name);
+							textureColor[i] = Color.Gray;
+							break;
+
+						case 's':
+							map[l, c] = new Sprite(content, "Map/sable2", x, y, true, l, c, name);
+							textureColor[i] = new Color(196, 196, 150);
+							break;
+
+						case 'e':
+							map[l, c] = new Sprite(content, "Map/eau2", x, y, false, l, c, name);
+							textureColor[i] = new Color(23, 115, 154);
+							break;
+
+						case 't':
+							string texture = "eau3";
+							if (c < map.GetLength(0) - 1 && c >= 1 && l < map.GetLength(1) - 1 && l >= 1)
+							{
+								// Entouré de sable
+								if (!map[l + 1, c].Liquid && !map[l - 1, c].Liquid && !map[l, c + 1].Liquid && !map[l, c - 1].Liquid)
+								{ texture = "flaque"; }
+								// En U
+								else if (!map[l - 1, c].Liquid && !map[l + 1, c].Liquid && !map[l, c - 1].Liquid)
+								{ texture = "sable_U(135)"; }
+								else if (!map[l - 1, c].Liquid && !map[l + 1, c].Liquid && !map[l, c + 1].Liquid)
+								{ texture = "sable_U(-45)"; }
+								else if (!map[l - 1, c].Liquid && !map[l, c + 1].Liquid && !map[l, c - 1].Liquid)
+								{ texture = "sable_U(45)"; }
+								else if (!map[l + 1, c].Liquid && !map[l, c + 1].Liquid && !map[l, c - 1].Liquid)
+								{ texture = "sable_U(-135)"; }
+								// Les angles
+								else if (!map[l, c + 1].Liquid && !map[l + 1, c].Liquid)
+								{ texture = "sable_(-90)"; }
+								else if (!map[l, c - 1].Liquid && !map[l - 1, c].Liquid)
+								{ texture = "sable_(90)"; }
+								else if (!map[l, c - 1].Liquid && !map[l + 1, c].Liquid)
+								{ texture = "sable_(180)"; }
+								else if (!map[l, c + 1].Liquid && !map[l - 1, c].Liquid)
+								{ texture = "sable_(0)"; }
+								// Les côtés
+								else if (!map[l + 1, c].Liquid)
+								{ texture = "sable_(-135)"; }
+								else if (!map[l - 1, c].Liquid)
+								{ texture = "sable_(45)"; }
+								else if (!map[l, c + 1].Liquid)
+								{ texture = "sable_(-45)"; }
+								else if (!map[l, c - 1].Liquid)
+								{ texture = "sable_(135)"; }
+								// Les coins
+								else if (!map[l - 1, c - 1].Liquid)
+								{ texture = "sable_coin(90)"; }
+								else if (!map[l + 1, c + 1].Liquid)
+								{ texture = "sable_coin(-90)"; }
+								else if (!map[l - 1, c + 1].Liquid)
+								{ texture = "sable_coin(0)"; }
+								else if (!map[l + 1, c - 1].Liquid)
+								{ texture = "sable_coin(180)"; }
+							}
+							map[l, c] = new Sprite(content, "Map/"+texture, x, y, false, l, c, name);
+							textureColor[i] = new Color(18, 147, 166);
+							break;
 					}
-					x += (map[l, c]).Texture.Width / 2;
-					y += (map[l, c]).Texture.Height / 2;
+					x += map[l, c].Texture.Width / 2;
+					y += map[l, c].Texture.Height / 2;
 					if ((c + 1) == map.GetLength(1))
 					{
 						if (x > maxX)
-							maxX = x + ((map[l, c]).Texture.Width / 2);
+						{ maxX = x + (map[l, c].Texture.Width / 2); }
 						if (y > maxY)
-							maxY = y + ((map[l, c]).Texture.Height / 2);
+						{ maxY = y + (map[l, c].Texture.Height / 2); }
 
-						x -= ((map.GetLength(1) + 1) * ((map[l, c]).Texture.Width / 2));
-						y -= ((map.GetLength(1) - 1) * ((map[l, c]).Texture.Height / 2));
+						x -= ((map.GetLength(1) + 1) * (map[l, c].Texture.Width / 2));
+						y -= ((map.GetLength(1) - 1) * (map[l, c].Texture.Height / 2));
 
 						if (x < minX)
-							minX = x + ((map[l, c]).Texture.Width / 2);
+						{ minX = x + (map[l, c].Texture.Width / 2); }
 					}
 					i++;
 				}

@@ -52,12 +52,14 @@ namespace NNNA
 			get { return _name; }
 			set { _name = value; }
 		}
+		public bool Liquid;
 
 		public Sprite(Char name)
 		{
 			_crossable = true;
 			_decouvert = false;
 			_name = name;
+			Liquid = name == 'e' || name == 't';
 		}
 		public Sprite(Vector2 position)
 		{
@@ -66,7 +68,7 @@ namespace NNNA
 			_position = position;
 		}
 		public Sprite(int x, int y) : this(new Vector2(x, y)) { }
-		public Sprite(ContentManager content, string assetName, int x, int y, bool crossable = true, int i = -1, int j = -1)
+		public Sprite(ContentManager content, string assetName, int x, int y, bool crossable = true, int i = -1, int j = -1, char name = '\0')
 		{
 			_decouvert = false;
 			_position = new Vector2(x, y);
@@ -74,6 +76,8 @@ namespace NNNA
 			_texture = new Image(content, assetName);
 			_assetName = assetName;
 			_crossable = crossable;
+			_name = name;
+			Liquid = name == 'e' || name == 't';
 		}
 
 		public void LoadContent(ContentManager content, string assetName, int columns = 1)
@@ -89,15 +93,20 @@ namespace NNNA
 		public void Draw(SpriteBatch spriteBatch)
 		{ _texture.Draw(spriteBatch, _position, Color.White); }
 
-		public void DrawMap(SpriteBatch spriteBatch, Camera2D camera, float mul, int wheather)
+		public void DrawMap(SpriteBatch spriteBatch, Camera2D camera, float mul, int weather, Color color)
 		{
-			if (wheather == 1)
+			if (weather == 1)
 			{
 				if (mul > 0.25f) _decouvert = true;
 				mul = (_decouvert && mul < 0.25f) ? 0.25f : mul;
 			}
-			_texture.Draw(spriteBatch, _position - camera.Position, new Color(mul, mul, mul));
+			if (mul <= 0 || color == Color.Transparent)
+			{ _texture.Draw(spriteBatch, _position - camera.Position, new Color(mul, mul, mul)); }
+			else
+			{ _texture.Draw(spriteBatch, _position - camera.Position, color); }
 		}
+		public void DrawMap(SpriteBatch spriteBatch, Camera2D camera, float mul, int weather)
+		{ DrawMap(spriteBatch, camera, mul, weather, Color.Transparent); }
 
 		/// <summary>
 		/// Détermine si le sprite actuel est en collision avec d'autres chose sur la carte.
