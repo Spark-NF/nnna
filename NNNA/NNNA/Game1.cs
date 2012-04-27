@@ -67,6 +67,7 @@ namespace NNNA
 		private List<Unit> _selectedList = new List<Unit>();
 		private List<Building> _buildings = new List<Building>();
 		private List<MovibleSprite> _units = new List<MovibleSprite>();
+		private Vector2 _dimensions;
 
 		// Audio objects		
 		private const float MusicVolume = 2.0f;
@@ -683,13 +684,14 @@ namespace NNNA
 			_credits += (Keyboard.GetState().IsKeyDown(Keys.LeftControl) || Keyboard.GetState().IsKeyDown(Keys.RightControl) ? 10 : 1) * gameTime.ElapsedGameTime.Milliseconds;
 		}
 		float _compt;
+
 		private void UpdateGame(GameTime gameTime)
 		{
             _techno.Update(Souris.Get());
 
 			//if (isbuilding)
 			//{
-			//	Vector2 xy = matrice2xy(xy2matrice(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)));
+			//	Vector2 xy = matrice2xy(xy2matrice(Souris.Get().Position));
 			//	Mouse.SetPosition((int) xy.X, (int) xy.Y);
 			//}
 
@@ -741,80 +743,58 @@ namespace NNNA
 			if (Souris.Get().Clicked(MouseButton.Left))
 			{
 				Building b;
-				Unit u;
+				Vector2 pos;
 				switch (_currentAction)
 				{
 					// Ere 1 
 					case "build_hutte":
-						b = new Hutte((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, Joueur, (byte)_random.Next(0, 2));
-						if (Joueur.Pay(b.Prix))
+						pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+						if (ValidSpawn(pos, _dimensions))
 						{
-							_selectedList[0].Build(b);
-							_buildings.Add(b);
-							MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte !"), Color.White, 5000));
-							_pointer = "pointer";
-							_currentAction = "";
+							var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+							b = new Hutte((int)position.X, (int)position.Y, Content, Joueur, (byte)_random.Next(0, 2));
+							if (Joueur.Pay(b.Prix))
+							{
+								_selectedList[0].Build(b);
+								_buildings.Add(b);
+								MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte !"), Color.White, 5000));
+								_pointer = "pointer";
+								_currentAction = "";
+							}
+							else
+							{
+								MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+								_pointer = "pointer";
+								_currentAction = "";
+							}
 						}
 						else
-						{
-							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-							_pointer = "pointer";
-							_currentAction = "";
-						}
+						{ MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
 						break;
 
 					case "build_hutteDesChasseurs":
-						b = new HutteDesChasseurs((int)(_curseur.Position.X + _camera.Position.X), (int)(_curseur.Position.Y + _camera.Position.Y), Content, Joueur);
-						if (Joueur.Pay(b.Prix))
+						pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+						if (ValidSpawn(pos, _dimensions))
 						{
-							_selectedList[0].Build(b);
-							_buildings.Add(b);
-							MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"), Color.White, 5000));
-							_pointer = "pointer";
-							_currentAction = "";
+							var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+							b = new HutteDesChasseurs((int)position.X, (int)position.Y, Content, Joueur);
+							if (Joueur.Pay(b.Prix))
+							{
+								_selectedList[0].Build(b);
+								_buildings.Add(b);
+								MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"), Color.White, 5000));
+								_pointer = "pointer";
+								_currentAction = "";
+							}
+							else
+							{
+								MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+								_pointer = "pointer";
+								_currentAction = "";
+							}
 						}
 						else
-						{
-							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-							_pointer = "pointer";
-							_currentAction = "";
-						}
-						break;
-
-					case "create_peon" :
-						u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, Joueur, false);
-						if (Joueur.Population + 1 > Joueur.PopulationMax && Joueur.Pay(u.Prix))
-						{
-							_selectedBuilding.Iterator++;
-							Joueur.Units.Add(u);
-							_units.Add(u);
-							MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
-							_currentAction = "";
-						}
-						else
-						{
-							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-							Joueur.Population--;
-							_currentAction = "";
-						}
-						break;
-
-					case "create_guerrier":
-						u = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur, false);
-						if (Joueur.Population + 1 > Joueur.PopulationMax && Joueur.Pay(u.Prix))
-						{
-							_selectedBuilding.Iterator++;
-							Joueur.Units.Add(u);
-							_units.Add(u);
-							MessagesManager.Messages.Add(new Msg(_("Nouveau guerrier !"), Color.White, 5000));
-							_currentAction = "";
-						}
-						else
-						{
-							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-							Joueur.Population--;
-							_currentAction = "";
-						}
+						{ MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
 						break;
 
 						// Fin Ere 1 
@@ -984,23 +964,15 @@ namespace NNNA
 								break;
 
 							case "build_hutte":
-								if (Joueur.Has(new Hutte().Prix))
-								{
-									_pointer = "Batiments/maison" + _random.Next(1, 3).ToString(CultureInfo.CurrentCulture) + "_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
-									_currentAction = "build_hutte";
-								}
-								else
-								{ MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
+								_pointer = "Batiments/maison" + _random.Next(1, 3).ToString(CultureInfo.CurrentCulture) + "_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+								_currentAction = "build_hutte";
+								_dimensions = new Vector2(4, 4);
 								break;
 
 							case "build_hutteDesChasseurs":
-								if (Joueur.Has(new HutteDesChasseurs().Prix))
-								{
-									_pointer = "Batiments/caserne_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
-									_currentAction = "build_hutteDesChasseurs";
-								}
-								else
-								{ MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
+								_pointer = "Batiments/caserne_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+								_currentAction = "build_hutteDesChasseurs";
+								_dimensions = new Vector2(2, 2);
 								break;
 
 							case "retour":
@@ -1102,7 +1074,7 @@ namespace NNNA
 						}
 					}
 				}
-				if (unitUnder == null)
+				if (_pointer == "fight" && unitUnder == null)
 				{ _pointer = "pointer"; }
 			}
 
@@ -1140,7 +1112,7 @@ namespace NNNA
 						}
 					}
 				}
-				if (resourceUnder == null)
+				if (_pointer == "mine" && resourceUnder == null)
 				{ _pointer = "pointer"; }
 			}
 
@@ -1278,12 +1250,48 @@ namespace NNNA
 			}
 
 		}
+
+		/// <summary>
+		/// Affiche le pointeur actuel à l'écran, et le charge en mémoire si ce n'est pas déjà fait.
+		/// </summary>
 		private void DrawPointer()
 		{
 			if (!_pointers.ContainsKey(_pointer))
 			{ _pointers.Add(_pointer, Content.Load<Texture2D>(_pointer)); }
-			_spriteBatch.Draw(_pointers[_pointer], new Vector2(Souris.Get().X, Souris.Get().Y), Color.White);
+
+			Color color = Color.White;
+			var position = new Vector2(Souris.Get().X, Souris.Get().Y);
+
+			if (_currentAction.StartsWith("build_"))
+			{
+				Vector2 pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+				position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16) - _camera.Position;
+				color = ValidSpawn(pos, _dimensions) ? new Color(80, 255, 80) : new Color(255, 80, 80);
+			}
+
+			_spriteBatch.Draw(_pointers[_pointer], position, color);
 		}
+		private bool ValidSpawn(Vector2 pos, Vector2 dimensions)
+		{
+			if (pos.X < 0 || pos.Y < 0 || pos.X >= _matrice.GetLength(0) || pos.Y >= _matrice.GetLength(1))
+			{ return false; }
+			/*
+			!_matrice[(int)pos.Y, (int)pos.X].Liquid &&
+			!_matrice[(int)pos.Y, (int)pos.X + 1].Liquid &&
+			!_matrice[(int)pos.Y - 1, (int)pos.X].Liquid &&
+			!_matrice[(int)pos.Y - 1, (int)pos.X + 1].Liquid;
+			*/
+			for (int x = 0; x < dimensions.X; x++)
+			{
+				for (int y = 0; y < dimensions.Y; y++)
+				{
+					if (_matrice[(int)pos.Y - y, (int)pos.X + x].Liquid)
+					{ return false; }
+				}
+			}
+			return true;
+		}
+
 		private void DrawTitle()
 		{
 			DrawCommon();
@@ -1898,6 +1906,7 @@ namespace NNNA
 			translations["en"]["Vous êtes connecté"] = "Your are connected";
 			translations["en"]["Vous êtes déconnecté"] = "Your are not connected";
 			translations["en"]["Vous n'avez pas assez de ressources."] = "You do not have enough resources.";
+			translations["en"]["Vous ne pouvez pas construire ici"] = "You cannot build here.";
 			translations["en"]["Nouvelle hutte !"] = "New hut!";
 			translations["en"]["Nouvelle hutte des chasseurs !"] = "New hunters' hut!";
 			translations["en"]["Nouveau peon !"] = "New peon!";
