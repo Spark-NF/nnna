@@ -68,6 +68,8 @@ namespace NNNA
 		private List<Building> _buildings = new List<Building>();
 		private List<MovibleSprite> _units = new List<MovibleSprite>();
 		private Vector2 _dimensions;
+		private int[] _players;
+		private Color[] _playersColors;
 
 		// Audio objects		
 		private const float MusicVolume = 2.0f;
@@ -84,6 +86,7 @@ namespace NNNA
 			Play,
 			PlayCampain,
 			PlayQuick,
+			PlayQuick2,
 			PlayMultiplayer,
             Local,
             Internet,
@@ -186,6 +189,8 @@ namespace NNNA
 			_camera = new Camera2D(0, 0);
 			_curseur = new Sprite(0, 0);
 			Joueur = new Joueur(Color.Red, "NNNA", Content);
+			_players = new[] { 2, 1, 0, 0 };
+			_playersColors = new[] { Color.Blue, Color.Red, Color.Green, Color.Yellow };
 
             // réseau
             _ipWan = Réseau.IpWan();
@@ -412,6 +417,9 @@ namespace NNNA
 				case Screen.PlayQuick:
 					UpdatePlayQuick();
 					break;
+				case Screen.PlayQuick2:
+					UpdatePlayQuick2();
+					break;
                 case Screen.PlayMultiplayer:
                     UpdateMulti();
                     break;
@@ -469,13 +477,30 @@ namespace NNNA
 			{ Exit(); }
 		}
 		private void UpdatePlay()
-		{ _currentScreen = TestMenu(Screen.PlayQuick, Screen.Title); }
-        private void UpdateMulti()
-        { _currentScreen = TestMenu(Screen.OptionsReseau, Screen.Local, Screen.Internet,Screen.Title); }
+        { _currentScreen = TestMenu(Screen.PlayQuick, Screen.PlayMultiplayer, Screen.Title); }
+        private void UpdateMultiplayer()
+		{ _currentScreen = TestMenu(Screen.PlayMultiplayer, Screen.PlayMultiplayer, Screen.PlayMultiplayer, Screen.Play); }
 		private void UpdatePlayQuick()
 		{
-			Screen s = TestMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.Game, Screen.Play);
+			Screen s = TestMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick2, Screen.Play);
 			if (s != Screen.PlayQuick)
+			{ _currentScreen = s; }
+			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
+			{
+				int m = Menu();
+				switch (m)
+				{
+					case 0: _quickType = (MapType)Variate(0, Enum.GetValues(typeof(MapType)).Length - 1, (int)_quickType); break;
+					case 1: _quickSize = Variate(0, 2, _quickSize); break;
+					case 2: _quickResources = Variate(0, 2, _quickResources); break;
+					case 3: _weather = Variate(0, 2, _weather); break;
+				}
+			}
+		}
+		private void UpdatePlayQuick2()
+		{
+			Screen s = TestMenu(Screen.PlayQuick2, Screen.PlayQuick2, Screen.PlayQuick2, Screen.PlayQuick2, Screen.Game, Screen.PlayQuick);
+			if (s != Screen.PlayQuick2)
 			{
 				if (s == Screen.Game)
 				{
@@ -487,6 +512,20 @@ namespace NNNA
 
 					_buildings.Clear();
 					_units.Clear();
+
+					// Les couleurs, noms et compte des joueurs
+					var colors = new List<Color> { _playersColors[0] };
+					string[] names = { Environment.UserName, "Lord Lard", "Herr von Speck", "Monsieur Martin" };
+					//int users = _players.Count(t => t > 0);
+					_foes = 0;
+					for (int i = 1; i < _players.Length; i++)
+					{
+						if (_players[i] > 0)
+						{
+							colors.Add(_playersColors[i]);
+							_foes++;
+						}
+					}
 
 					// On regénère une carte tant qu'elle est incapable d'accueillir le bon nombre de spawns
 					while (!ok)
@@ -512,7 +551,7 @@ namespace NNNA
 						spawns.Clear();
 						int j = 0;
 
-						// On génère $m_foes + 1 spawns, chacun espacés d'au moins $dist
+						// On génère autant de spawns qu'il y aura de joueurs, chacun espacés d'au moins $dist
 						while (spawns.Count < _foes + 1 && j < heights.IndexOf(waterline))
 						{
 							var point = new Point(heightsOr.IndexOf(heights[j]) % _heightMap.GetLength(1), heightsOr.IndexOf(heights[j]) / _heightMap.GetLength(1));
@@ -530,10 +569,6 @@ namespace NNNA
 						if (spawns.Count == _foes + 1)
 						{ ok = true; }
 					}
-
-					// Les couleurs et noms des joueurs
-					Color[] colors = { Color.Blue, Color.Red, Color.Green, Color.Yellow };
-					string[] names = { Environment.UserName, "Lord Lard", "Herr von Speck", "Monsieur Martin" };
 
 					//Joueur
 					Joueur = new Joueur(colors[0], names[0], Content);
@@ -593,11 +628,16 @@ namespace NNNA
 				int m = Menu();
 				switch (m)
 				{
-					case 0: _quickType = (MapType)Variate(0, Enum.GetValues(typeof(MapType)).Length - 1, (int)_quickType); break;
-					case 1: _quickSize = Variate(0, 2, _quickSize); break;
-					case 2: _quickResources = Variate(0, 2, _quickResources); break;
-					case 3: _foes = Variate(1, 3, _foes); break;
-					case 4: _weather = Variate(0, 2, _weather); break;
+					case 0:
+					case 1:
+					case 2:
+					case 3:
+						var colors = new List<Color>(new[] { Color.Blue, Color.Red, Color.Green, Color.Yellow, Color.Pink, Color.Purple, Color.Gray, Color.DeepPink, Color.Lime, Color.DarkOrange, Color.SaddleBrown, Color.Cyan });
+						if (Souris.Get().X >= _screenSize.X * 3 / 7 - 60 && Souris.Get().X <= _screenSize.X * 3 / 7 - 20)
+						{ _playersColors[m] = colors[(colors.IndexOf(_playersColors[m]) + (Souris.Get().Clicked(MouseButton.Left) ? 1 : -1) + colors.Count) % colors.Count]; }
+						else
+						{ _players[m] = Variate(0, 2, _players[m]); }
+						break;
 				}
 			}
 		}
@@ -1181,6 +1221,9 @@ namespace NNNA
 				case Screen.PlayQuick:
 					DrawPlayQuick();
 					break;
+				case Screen.PlayQuick2:
+					DrawPlayQuick2();
+					break;
 
 				case Screen.Options:
 					DrawOptions();
@@ -1309,7 +1352,13 @@ namespace NNNA
 			string[] tailles = { "Petite", "Moyenne", "Grande" };
 			string[] ressources = { "rares", "normales", "abondantes" };
 			string[] weathers = { "Ensoleillé", "Nuageux", "Pluvieux" };
-			MakeMenu(types[(int)_quickType], tailles[_quickSize], _("Ressources") + " " + _(ressources[_quickResources]), _("Ennemis :") + " " + _foes.ToString(CultureInfo.CurrentCulture), weathers[_weather], "Jouer", "Retour");
+			MakeMenu(types[(int)_quickType], tailles[_quickSize], _("Ressources") + " " + _(ressources[_quickResources]), weathers[_weather], "Suite", "Retour");
+		}
+		private void DrawPlayQuick2()
+		{
+			DrawCommon();
+			string[] texts = { "N/A", "Ordinateur", "Humain" };
+			MakeMenuFoes(_playersColors, texts[_players[0]], texts[_players[1]], texts[_players[2]], texts[_players[3]], "Jouer", "Retour");
 		}
         private void DrawMultiplayer()
         {
@@ -1676,7 +1725,7 @@ namespace NNNA
 		/// <param name="border">La taille de la bordure.</param>
 		/// <param name="spec">L'alignement du text. Valeurs possibles : "Left", "Right", "Center". Laissez vide pour ne rien changer.</param>
 		/// <param name="scale">La déformation en taille du texte.</param>
-		protected void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border = 0, string spec = "", float scale = 1)
+		protected void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border, string spec, float scale, Vector2 origin)
 		{
 			while (font.MeasureString(text).X * scale > _screenSize.X * 0.36)
 			{ font.Spacing--; }
@@ -1684,11 +1733,11 @@ namespace NNNA
 			switch (spec)
 			{
 				case "Left":
-					coos.X = 0;
+					coos.X = origin.X;
 					break;
 
 				case "Right":
-					coos.X = _screenSize.X - font.MeasureString(text).X * scale;
+					coos.X = _screenSize.X - font.MeasureString(text).X * scale - origin.X;
 					break;
 
 				case "Center":
@@ -1708,6 +1757,8 @@ namespace NNNA
 
 			font.Spacing = 0;
 		}
+		protected void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border = 0, string spec = "", float scale = 1)
+		{ DrawString(spriteBatch, font, text, coos, color, borderCol, border, spec, scale, Vector2.Zero); }
 
 		/// <summary>
 		/// Affiche un menu à l'écran.
@@ -1717,6 +1768,24 @@ namespace NNNA
 		{
 			_currentMenus = args;
 			for (int i = 0; i < args.Length; i++)
+			{ DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, i * (_screenSize.Y / (11 + (_currentMenus.Length > 5 ? (_currentMenus.Length - 5) * 2 : 0))) + _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050))), (Menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", _screenSize.Y / 1050); }
+		}
+
+		/// <summary>
+		/// Affiche un menu avec un choix de couleur à l'écran.
+		/// </summary>
+		/// <param name="colors">Les couleurs des joueurs.</param>
+		/// <param name="args">Les options du menu.</param>
+		protected void MakeMenuFoes(Color[] colors, params string[] args)
+		{
+			_currentMenus = args;
+			for (int i = 0; i < Math.Min(args.Length, 4); i++)
+			{
+				float y = i * (_screenSize.Y / (11 + (_currentMenus.Length > 5 ? (_currentMenus.Length - 5) * 2 : 0))) + _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050));
+				_spriteBatch.Draw(CreateRectangle(40, 40, colors[i], new Color(24, 24, 24), 3), new Vector2(_screenSize.X * 3 / 7 - 60, y + 21), Color.White);
+				DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, y), (Menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Left", _screenSize.Y / 1050, new Vector2(_screenSize.X * 3 / 7, 0));
+			}
+			for (int i = 4; i < args.Length; i++)
 			{ DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, i * (_screenSize.Y / (11 + (_currentMenus.Length > 5 ? (_currentMenus.Length - 5) * 2 : 0))) + _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050))), (Menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", _screenSize.Y / 1050); }
 		}
 
@@ -1832,13 +1901,14 @@ namespace NNNA
 		/// <param name="height">La hauteur du rectangle.</param>
 		/// <param name="col">La couleur du rectangle (peut avoir un canal alpha).</param>
 		/// <param name="border">La couleur de la bordure du rectangle (peut avoir un canal alpha).</param>
+		/// <param name="size">La taille de la bordure à générer.</param>
 		/// <returns>La Texture2D générée.</returns>
-		private Texture2D CreateRectangle(int width, int height, Color col, Color border)
+		private Texture2D CreateRectangle(int width, int height, Color col, Color border, int size = 1)
 		{
 			var rectangleTexture = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);
 			var color = new Color[width * height];
 			for (int i = 0; i < color.Length; i++)
-			{ color[i] = (i < width || i >= color.Length - width || i % width == 0 || i % width == width - 1 ? border : col); }
+			{ color[i] = (i < width * size || i >= color.Length - width * size || i % width < size || i % width >= width - size ? border : col); }
 			rectangleTexture.SetData(color);
 			return rectangleTexture;
 		}
