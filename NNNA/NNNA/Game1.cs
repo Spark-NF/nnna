@@ -1113,7 +1113,7 @@ namespace NNNA
 								break;
 
 							case "poches":
-								break;
+								break; 
 
 							case "build_hutte":
 								_pointer = "Batiments/maison" + _random.Next(1, 3).ToString(CultureInfo.CurrentCulture) + "_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
@@ -1186,8 +1186,15 @@ namespace NNNA
 					}
 				}
 			}
+			bool update = false;
 			foreach (Unit sprite in Joueur.Units)
-			{ sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice); }
+			{
+				sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice);
+				if (sprite.Will == "poches" || sprite.Will == "mine")
+				{ update = true; }
+			}
+			if (update)
+			{ UpdateActions(); }
 
 			// Curseur de combat
 			Unit unitUnder = null;
@@ -1232,7 +1239,7 @@ namespace NNNA
 
 			// Curseur de minage
 			ResourceMine resourceUnder = null;
-			if (_selectedList.Count > 0 && _currentActions.Contains("mine"))
+			if (_selectedList.Count > 0 && (_currentActions.Contains("mine") || _currentActions.Contains("retour")))
 			{
 				foreach (ResourceMine resource in _resources)
 				{
@@ -1270,7 +1277,7 @@ namespace NNNA
 
 			// Vidage de poches
 			Building buildingUnder = null;
-			if (_selectedList.Count > 0 && _currentActions.Contains("poches"))
+			if (_selectedList.Count > 0 && (_currentActions.Contains("poches") || _currentActions.Contains("retour")))
 			{
 				foreach (Unit unit in _selectedList)
 				{
@@ -1304,8 +1311,6 @@ namespace NNNA
 				foreach (Unit unit in _selectedList)
 				{ unit.Mine(resourceUnder); }
 			}
-
-			UpdateActions();
 
 			Joueur.Units.Sort(Sprite.CompareByY);
 			Joueur.Buildings.Sort(Sprite.CompareByY);
