@@ -116,11 +116,11 @@ namespace NNNA
 		/// <param name="resources">La liste des ressources minables de la carte.</param>
 		/// <param name="matrice">La matrice de la carte.</param>
 		/// <returns>Un booléen indiquant si l'on est en collision ou non.</returns>
-		public bool Collides(List<MovibleSprite> units, List<Building> buildings, Sprite[,] matrice)
+		public bool Collides(List<MovibleSprite> units, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice)
 		{
 			// On teste la collision entre notre rectangle et celui de tous les autres sprites
 			var rec = new Rectangle((int)_position.X, (int)_position.Y + (_texture.Height - _texture.CollisionHeight), _texture.Width, _texture.CollisionHeight);
-			if ((from sprite in units.Cast<Sprite>().ToList().Concat(buildings.Cast<Sprite>().ToList())
+			if ((from sprite in units.Cast<Sprite>().ToList().Concat(buildings.Cast<Sprite>().ToList()).Concat(resources.Cast<Sprite>().ToList())
 				 where	sprite != this
 				 select new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y + (sprite.Texture.Height - sprite.Texture.CollisionHeight), sprite.Texture.Width, sprite.Texture.CollisionHeight))
 				 .Any(sprec => sprec.Intersects(rec)))

@@ -112,11 +112,11 @@ namespace NNNA
 								if (DestinationResource != null)
 								{
 									Will = "mine";
-									Move(DestinationResource.Position + new Vector2((float)Math.Round((double)DestinationResource.Texture.Width / 2), (float)Math.Round((double)DestinationResource.Texture.Height / 2)));
+									Move(DestinationResource.Position + new Vector2((float)Math.Round((double)DestinationResource.Texture.Width / 2), (float)Math.Round((double)DestinationResource.Texture.Height * 0.95f)) - new Vector2(this.Texture.Width / 2, this.Texture.Height));
 								}
 							}
 						}
-						else if (DestinationResource != null && Will == "mine" && Collides(new List<MovibleSprite>(), new List<Building>(), matrice))
+						else if (DestinationResource != null && Will == "mine" && Collides(new List<MovibleSprite>(), new List<Building>(), new List<ResourceMine> { DestinationResource }, matrice))
 						{
 							if (DestinationResource.Quantity <= 0)
 							{ DestinationResource = null; }
@@ -147,7 +147,7 @@ namespace NNNA
 								if (DestinationUnit.Life <= 0)
 								{ DestinationUnit = null; }
 							}
-							if (Collides(sprites, buildings, matrice))
+							if (Collides(sprites, buildings, resources, matrice))
 							{ _position -= translation; }
 						}
 					}
@@ -194,7 +194,7 @@ namespace NNNA
 							_cparcouru = _position - _positionIni;
 							Vector2 translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
 							Update(translation);
-							if (Collides(sprites, buildings, matrice))
+							if (Collides(sprites, buildings, resources, matrice))
 							{ _position -= translation; }
 						}
 					}
@@ -219,7 +219,7 @@ namespace NNNA
 							_cparcouru = _position - _positionIni;
 							Vector2 translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
 							Update(translation);
-							if (Collides(sprites, buildings, matrice))
+							if (Collides(sprites, buildings, resources, matrice))
 							{ _position -= translation; }
 						}
 					}
