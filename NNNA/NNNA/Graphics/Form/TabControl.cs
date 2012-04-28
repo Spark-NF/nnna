@@ -6,7 +6,7 @@ namespace NNNA.Form
     class TabControl : Containing
     {
         #region ATTRIBUTS
-        private int current;
+        private int selectedTab;
         #endregion ATTRIBUTS
 
         #region GET/SET
@@ -15,7 +15,7 @@ namespace NNNA.Form
         public TabControl(TabItem[] children, Rectangle zone, string name)
             : base(children, zone, name) 
         {
-            current = 0;
+            selectedTab = 0;
         }
 
         public override void Update(Souris s)
