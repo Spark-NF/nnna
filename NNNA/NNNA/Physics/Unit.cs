@@ -75,7 +75,7 @@ namespace NNNA
 				else if (DestinationBuilding != null)
 				{ Move(DestinationBuilding.Position + new Vector2((float)Math.Round((double)DestinationBuilding.Texture.Width / 2), 0)); }//, sprites, buildings, matrice); }
 				else if (DestinationResource != null)
-				{ Move(DestinationResource.Position + new Vector2((float)Math.Round((double)DestinationResource.Texture.Width / 2), (float)Math.Round((double)DestinationResource.Texture.Height * 0.95f)) - new Vector2(this.Texture.Width/2,this.Texture.Height)); }//, sprites, buildings, matrice); }
+				{ Move(DestinationResource.Position + new Vector2((float)Math.Round((double)DestinationResource.Texture.Width / 2), (float)Math.Round((double)DestinationResource.Texture.Height * 0.95f)) - new Vector2((float)Math.Round(Texture.Width / 2.0f),Texture.Height)); }//, sprites, buildings, matrice); }
 				if (_click)
 				{
 					Vector2 translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
@@ -112,7 +112,7 @@ namespace NNNA
 								if (DestinationResource != null)
 								{
 									Will = "mine";
-									Move(DestinationResource.Position + new Vector2((float)Math.Round((double)DestinationResource.Texture.Width / 2), (float)Math.Round((double)DestinationResource.Texture.Height * 0.95f)) - new Vector2(this.Texture.Width / 2, this.Texture.Height));
+									Move(DestinationResource.Position + new Vector2((float)Math.Round((double)DestinationResource.Texture.Width / 2), (float)Math.Round((double)DestinationResource.Texture.Height * 0.95f)) - new Vector2((float)Math.Round(Texture.Width / 2.0f), Texture.Height));
 								}
 							}
 						}
@@ -133,8 +133,8 @@ namespace NNNA
 								// Si l'unité a les poches pleines, on doit aller les vider à la base affiliée à l'unité
 								if (Poches >= PochesMax)
 								{
-									DestinationBuilding = Affiliate;
 									Will = "poches";
+									DestinationBuilding = Affiliate;
 									Move(DestinationBuilding.Position + new Vector2((float)Math.Round((double)DestinationBuilding.Texture.Width / 2), 0)); //, sprites, buildings, matrice);
 								}
 							}

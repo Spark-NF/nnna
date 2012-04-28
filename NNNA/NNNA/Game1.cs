@@ -120,7 +120,7 @@ namespace NNNA
                 IsFullScreen = _fullScreen,
 				SynchronizeWithVerticalRetrace = false
 			};
-			IsFixedTimeStep = true;
+			IsFixedTimeStep = false;
 
             Content.RootDirectory = "Content";
 
@@ -281,6 +281,7 @@ namespace NNNA
 			#region Actions Unités
 			_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
 			_actions.Add("mine", Content.Load<Texture2D>("Actions/gather"));
+			_actions.Add("poches", Content.Load<Texture2D>("Actions/poches"));
 			_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
 			_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
 			_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
@@ -305,9 +306,8 @@ namespace NNNA
 			LoadScreenSizeDependantContent();
 
             // Sons
-            
-                _debutpartie = Content.Load<SoundEffect>("sounds/debutpartie3");
-           //     _debutpartie.Play();
+			// _debutpartie = Content.Load<SoundEffect>("sounds/debutpartie3");
+			// _debutpartie.Play();
             
 		}
 		/// <summary>
@@ -613,7 +613,6 @@ namespace NNNA
 							y = _random.Next(_matrice.GetLength(1));
 						}
 						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 1000, new Image(Content, "Resources/bois_1_sprite" + _random.Next(0, 3), 1, 1, 15, 1.0f/4.0f)));
-						_matrice[y, x].Crossable = false;
 					}
 
 					//Le son
@@ -728,26 +727,74 @@ namespace NNNA
 		}
 		float _compt;
 
+		/// <summary>
+		/// Met à jour la liste des actions des unités.
+		/// </summary>
+		private void UpdateActions()
+		{
+			_currentActions.Clear();
+			if (_selectedList.Count > 0)
+			{
+				bool allSame = true;
+				string type = "";
+				_currentActions.Add("attack");
+				foreach (Unit sprite in _selectedList)
+				{
+					if (sprite.Type != type)
+					{
+						if (type != "")
+						{ allSame = false; }
+						type = sprite.Type;
+						if (type == "peon" && !_currentActions.Contains("build"))
+						{
+							_currentActions.Add("mine");
+							_currentActions.Add("build");
+						}
+					}
+					if (sprite.Type == "peon" && sprite.Poches > 0 && !_currentActions.Contains("poches"))
+					{ _currentActions.Add("poches"); }
+				}
+				if (!allSame)
+				{
+					_currentActions.Clear();
+					_currentActions.Add("attack");
+				}
+			}
+			else if (_selectedBuilding != null)
+			{
+				switch (_selectedBuilding.Type)
+				{
+					case "forum":
+						_currentActions.Add("create_peon");
+						_currentActions.Add("technologies");
+						break;
+
+					case "caserne":
+						_currentActions.Add("create_guerrier");
+						break;
+				}
+			}
+			_lastState.Clear();
+			foreach (string t in _currentActions)
+			{ _lastState.Add(t); }
+		}
+
 		private void UpdateGame(GameTime gameTime)
 		{
             _techno.Update(Souris.Get());
-
-			//if (isbuilding)
-			//{
-			//	Vector2 xy = matrice2xy(xy2matrice(Souris.Get().Position));
-			//	Mouse.SetPosition((int) xy.X, (int) xy.Y);
-			//}
 
 			if (Clavier.Get().NewPress(Keys.Escape))
 			{
 				_pointer = "pointer";
 				if (_currentAction.StartsWith("build_"))
 				{ _currentAction = ""; }
+				else if (_techno.Win_Visible)
+				{ _techno.Win_Visible = false; }
 				else
 				{
 					_pointerOld = _pointer;
-					_techno.Win_Visible = false;
 					_currentScreen = Screen.GameMenu;
+					return;
 				}
 			}
 
@@ -756,15 +803,7 @@ namespace NNNA
 			_camera.Update(_curseur, Graphics);
 
 			// On vire les ressources vides
-            for (int i = 0; i < _resources.Count; i++)
-            {
-                if (_resources[i].Quantity <= 0)
-                {
-                    _matrice[(int) _resources[i].PositionMatrice.X, (int) _resources[i].PositionMatrice.Y].Crossable = true;
-                    _resources.RemoveAt(i);
-                    continue;
-                }
-            }
+			_resources.RemoveAll(res => res.Quantity <= 0);
 
 			// Intelligence artificielle
 			var rand = new Random();
@@ -934,50 +973,8 @@ namespace NNNA
 				}
 
 				// On met à jour les actions
-				_currentActions.Clear();
-				if (_selectedList.Count > 0)
-				{
-					bool allSame = true;
-					string type = "";
-					_currentActions.Add("attack");
-					foreach (Unit sprite in _selectedList)
-					{
-						if (sprite.Type != type)
-						{
-							if (type != "")
-							{ allSame = false; }
-							type = sprite.Type;
-							if (sprite.Type == "peon" && !_currentActions.Contains("build"))
-							{
-								_currentActions.Add("mine");
-								_currentActions.Add("build");
-							}
-						}
-					}
-					if (!allSame)
-					{
-						_currentActions.Clear();
-						_currentActions.Add("attack");
-					}
-				}
-				else if (_selectedBuilding != null)
-				{
-					switch (_selectedBuilding.Type)
-					{
-						case "forum" :
-							_currentActions.Add("create_peon");
-							_currentActions.Add("technologies");
-							break;
-
-						case "caserne" :
-							_currentActions.Add("create_guerrier");
-							break;
-					}
-				}
+				UpdateActions();
 				_currentAction = "";
-				_lastState.Clear();
-				foreach (string t in _currentActions)
-				{ _lastState.Add(t); }
 			}
 
 			// Actions
@@ -1012,6 +1009,9 @@ namespace NNNA
 								break;
 
 							case "mine":
+								break;
+
+							case "poches":
 								break;
 
 							case "build_hutte":
@@ -1090,7 +1090,7 @@ namespace NNNA
 
 			// Curseur de combat
 			Unit unitUnder = null;
-			if (_currentAction == "" && _selectedList.Count > 0)
+			if (_selectedList.Count > 0)
 			{
 				foreach (Joueur foe in _enemies)
 				{
@@ -1131,7 +1131,7 @@ namespace NNNA
 
 			// Curseur de minage
 			ResourceMine resourceUnder = null;
-			if (_currentAction == "" && _selectedList.Count > 0 && _currentActions.Contains("mine"))
+			if (_selectedList.Count > 0 && _currentActions.Contains("mine"))
 			{
 				foreach (ResourceMine resource in _resources)
 				{
@@ -1167,6 +1167,30 @@ namespace NNNA
 			if (_pointer == "mine" && resourceUnder == null)
 			{ _pointer = "pointer"; }
 
+			// Vidage de poches
+			Building buildingUnder = null;
+			if (_selectedList.Count > 0 && _currentActions.Contains("poches"))
+			{
+				foreach (Unit unit in _selectedList)
+				{
+					// Si le bâtiment affilié se trouve sous le curseur
+					if (unit.Poches > 0 && unit.Affiliate.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
+					{
+						_pointer = "poches";
+						buildingUnder = unit.Affiliate;
+						// Si l'utilisateur a fait un clic droit, on lance la commande de vidage de poches
+						if (Souris.Get().Clicked(MouseButton.Right))
+						{
+							unit.Will = "poches";
+							unit.DestinationBuilding = unit.Affiliate;
+							unit.Move(unit.DestinationBuilding.Position + new Vector2((float)Math.Round((double)unit.DestinationBuilding.Texture.Width / 2), 0)); //, sprites, buildings, matrice);
+						}
+					}
+				}
+			}
+			if (_pointer == "poches" && buildingUnder == null)
+			{ _pointer = "pointer"; }
+
 			// Combat
 			if (unitUnder != null && Souris.Get().Clicked(MouseButton.Right))
 			{
@@ -1179,6 +1203,8 @@ namespace NNNA
 				foreach (Unit unit in _selectedList)
 				{ unit.Mine(resourceUnder); }
 			}
+
+			UpdateActions();
 
 			Joueur.Units.Sort(Sprite.CompareByY);
 			Joueur.Buildings.Sort(Sprite.CompareByY);
