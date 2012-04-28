@@ -2102,6 +2102,8 @@ namespace NNNA
             translations["en"]["Ordinateur"] = "Computer";
             translations["en"]["Humain"] = "Human";
             translations["en"]["Suite"] = "Next";
+            translations["en"]["Nouvelle tour !"] = "New tower!";
+            translations["en"]["Nouvelle écurie !"] = "New stable!";
 
 			translations["es"] = new Dictionary<string, string>();
 			translations["es"]["Jouer"] = "Jugar";
@@ -2156,6 +2158,8 @@ namespace NNNA
             translations["es"]["Ordinateur"] = "Ordenador";
             translations["es"]["Humain"] = "Humano";
             translations["es"]["Suite"] = "Continuación";
+            translations["en"]["Nouvelle tour !"] = "Nueva torre!";
+            translations["en"]["Nouvelle écurie !"] = "Nuevo Establo!";
 
 			if (lang == "")
 			{ lang = _language; }
