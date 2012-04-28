@@ -2048,6 +2048,10 @@ namespace NNNA
 			translations["en"]["Nouveau peon !"] = "New peon!";
 			translations["en"]["Nouveau guerrier !"] = "New fighter!";
 			translations["en"]["Nouveau chasseur !"] = "New hunter!";
+            translations["en"]["Ordinateur"] = "Computer";
+            translations["en"]["Humain"] = "Human";
+            translations["en"]["Suite"] = "Next";
+
 			translations["es"] = new Dictionary<string, string>();
 			translations["es"]["Jouer"] = "Jugar";
 			translations["es"]["Options"] = "Opciones";
@@ -2098,6 +2102,9 @@ namespace NNNA
 			translations["es"]["Nouveau peon !"] = "Nueva peón!";
 			translations["es"]["Nouveau guerrier !"] = "Nueva guerrero!";
 			translations["es"]["Nouveau chasseur !"] = "Nuevo caza!";
+            translations["es"]["Ordinateur"] = "Ordenador";
+            translations["es"]["Humain"] = "Humano";
+            translations["es"]["Suite"] = "Continuación";
 
 			if (lang == "")
 			{ lang = _language; }
