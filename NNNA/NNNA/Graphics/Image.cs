@@ -19,7 +19,7 @@ namespace NNNA
 		private int _current;
 		public readonly int Width;
 		public readonly int Height;
-		public readonly int CollisionHeight;
+		public readonly Rectangle Collision;
 		private bool _animation;
 		public bool Animation
 		{
@@ -40,21 +40,59 @@ namespace NNNA
 		public bool Finished
 		{ get { return _single && _current == _columns - 1; } }
 
-		public Image(Texture2D texture, int columns = 1, int rows = 1, int speed = 15, float collision = 1.0f)
+		public Image(Texture2D texture, int columns = 1, int rows = 1, int speed = 15)
 		{
-			_texture = texture;
+			_texture = new Texture2D(texture.GraphicsDevice, texture.Width, texture.Height);
 			_columns = columns;
 			_rows = rows;
 			_speed = speed;
 			_current = 0;
 			Width = _texture.Width / _columns;
 			Height = _texture.Height / _rows;
-			CollisionHeight = (int)Math.Round(collision * Height);
 			_animation = columns > 1;
 
+			// Copie de la texture
+			if (_rows > 1 || _columns > 1)
+			{
+				var dta = new Color[texture.Width * texture.Height];
+				texture.GetData(dta);
+				_texture.SetData(dta);
+			}
+
+			// Détection du rectangle de collision
+			Collision = new Rectangle(0, 0, Width, Height);
+			var data = new Color[Width * Height];
+			texture.GetData(0, new Rectangle(0, 0, Width, Height), data, 0, Width * Height);
+			var coll = new Color(254, 0, 254, 254);
+			bool origin = false, dest = false;
+			for (int y = 0; y < Height; y++)
+			{
+				for (int x = 0; x < Width; x++)
+				{
+					if (!origin && x < Width - 1 && y < Height - 1 && data[y * Width + x] == coll && data[y * Width + x + 1] == coll && data[(y + 1) * Width + x] == coll)
+					{
+						Collision.X = x;
+						Collision.Y = y;
+						data[y * Width + x] = Color.Transparent;
+						data[y * Width + x + 1] = Color.Transparent;
+						data[(y + 1) * Width + x] = Color.Transparent;
+						origin = true;
+					}
+					else if (origin && !dest && x > Collision.X && y > Collision.Y && data[y * Width + x] == coll && data[y * Width + x - 1] == coll && data[(y - 1) * Width + x] == coll)
+					{
+						Collision.Width = x - Collision.X + 1;
+						Collision.Height = y - Collision.Y + 1;
+						data[y * Width + x] = Color.Transparent;
+						data[y * Width + x - 1] = Color.Transparent;
+						data[(y - 1) * Width + x] = Color.Transparent;
+						dest = true;
+					}
+				}
+			}
+			_texture.SetData(0, new Rectangle(0, 0, Width, Height), data, 0, Width * Height);
 		}
-		public Image(ContentManager contentManager, string assetName, int columns = 1, int rows = 1, int speed = 15, float collision = 1.0f)
-			: this(contentManager.Load<Texture2D>(assetName), columns, rows, speed, collision)
+		public Image(ContentManager contentManager, string assetName, int columns = 1, int rows = 1, int speed = 15)
+			: this(contentManager.Load<Texture2D>(assetName), columns, rows, speed)
 		{ }
 
 		public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, int which = 1)

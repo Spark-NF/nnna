@@ -80,9 +80,9 @@ namespace NNNA
 			Liquid = name == 'e' || name == 't';
 		}
 
-		public void LoadContent(ContentManager content, string assetName, int columns = 1, float collision = 1.0f)
+		public void LoadContent(ContentManager content, string assetName, int columns = 1)
 		{
-			_texture = new Image(content, assetName, columns, collision:collision);
+			_texture = new Image(content, assetName, columns);
 			_assetName = assetName;
 			_go = new Image(content, "go", 8, 1, 5);
 		}
@@ -119,10 +119,10 @@ namespace NNNA
 		public bool Collides(List<MovibleSprite> units, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice)
 		{
 			// On teste la collision entre notre rectangle et celui de tous les autres sprites
-			var rec = new Rectangle((int)_position.X, (int)_position.Y + (_texture.Height - _texture.CollisionHeight), _texture.Width, _texture.CollisionHeight);
+			var rec = new Rectangle((int)_position.X + Texture.Collision.X, (int)_position.Y + Texture.Collision.Y, Texture.Collision.Width, Texture.Collision.Height);
 			if ((from sprite in units.Cast<Sprite>().ToList().Concat(buildings.Cast<Sprite>().ToList()).Concat(resources.Cast<Sprite>().ToList())
 				 where	sprite != this
-				 select new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y + (sprite.Texture.Height - sprite.Texture.CollisionHeight), sprite.Texture.Width, sprite.Texture.CollisionHeight))
+				 select new Rectangle((int)sprite.Position.X + sprite.Texture.Collision.X, (int)sprite.Position.Y + sprite.Texture.Collision.Y, sprite.Texture.Collision.Width, sprite.Texture.Collision.Height))
 				 .Any(sprec => sprec.Intersects(rec)))
 			{ return true; }
 

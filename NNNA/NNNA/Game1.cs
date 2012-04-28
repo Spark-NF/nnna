@@ -120,7 +120,7 @@ namespace NNNA
                 IsFullScreen = _fullScreen,
 				SynchronizeWithVerticalRetrace = false
 			};
-			IsFixedTimeStep = false;
+			IsFixedTimeStep = true;
 
             Content.RootDirectory = "Content";
 
@@ -616,7 +616,7 @@ namespace NNNA
 							x = _random.Next(_matrice.GetLength(0));
 							y = _random.Next(_matrice.GetLength(1));
 						}
-						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 1000, new Image(Content, "Resources/bois_1_sprite" + _random.Next(0, 3), 1, 1, 15, 1.0f/4.0f)));
+						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 1000, new Image(Content, "Resources/bois_1_sprite" + _random.Next(0, 3))));
 					}
 
 					//Le son
@@ -1309,6 +1309,7 @@ namespace NNNA
 
 			Joueur.Units.Sort(Sprite.CompareByY);
 			Joueur.Buildings.Sort(Sprite.CompareByY);
+			_resources.Sort(Sprite.CompareByY);
 			 
 			//minimap.Update(units, buildings, selectedList, joueur);
 

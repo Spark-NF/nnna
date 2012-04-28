@@ -147,16 +147,17 @@ namespace NNNA
 		}
         public void Move(Vector2 coordinates)
         {
-            if (coordinates != _position)
+        	Vector2 pos = _position + new Vector2(Texture.Collision.X + Texture.Collision.Width/2.0f, Texture.Collision.Y + Texture.Collision.Height/2.0f);
+			if (coordinates != pos)
             {
                 _click = true;
                 _texture.Animation = true;
-                _clickPosition = coordinates;
-                _angle = Math.Atan2(_clickPosition.Y - _position.Y, _clickPosition.X - _position.X);
+				_clickPosition = coordinates;
+				_cparcourir = _clickPosition - pos;
+				_angle = Math.Atan2(_cparcourir.Y, _cparcourir.X);
                 _direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
-                _cparcourir = new Vector2(_clickPosition.X - _position.X, _clickPosition.Y - _position.Y);
                 _cparcouru = Vector2.Zero;
-                _positionIni = _position;
+				_positionIni = pos;
             }
         }
 
@@ -254,7 +255,7 @@ namespace NNNA
 		public void SetTextures(ContentManager content, string name, int dec = 90)
 		{
 			_dec = dec;
-			_texture = new Image(content, "Units/" + name + "/" + name, 4, 360/dec, 15, 1.0f/3.0f) { Animation = false };
+			_texture = new Image(content.Load<Texture2D>("Units/" + name + "/" + name), 4, 360/dec) { Animation = false };
 			_go = new Image(content, "go", 8, 1, 5);
 			_dots = content.Load<Texture2D>("dots");
 			_selection = content.Load<Texture2D>("selected");

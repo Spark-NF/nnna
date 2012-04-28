@@ -10,7 +10,7 @@ namespace NNNA
 		{
 			var rand = new Random();
 			int ra = rand.Next(3);
-			LoadContent(content, "Decors/palmier"+(ra+1), 1, 1.0f/4.0f);
+			LoadContent(content, "Decors/palmier"+(ra+1));
 		}
 	}
 }
