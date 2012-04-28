@@ -62,7 +62,7 @@ namespace NNNA
             arme_de_siege = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "arme_de_siege", arme_de_siege_MouseLeftButtonDown);
             alchimie = new Button(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 + zone.Height / 24, zone.Height / 15, zone.Height / 15), "alchimie", alchimie_MouseLeftButtonDown);
             bucheron = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "bucheron", bucheron_MouseLeftButtonDown);
-            charpente = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + (zone.Height * 3) / 4, zone.Height / 15, zone.Height / 15), "charpente", charpente_MouseLeftButtonDown);
+            charpente = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "charpente", charpente_MouseLeftButtonDown);
             route = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "route", route_MouseLeftButtonDown);
             evolution2 = new Button(new Rectangle(zone.X + (zone.Width * 5 / 12), zone.Y + (zone.Height * 4) / 5, zone.Height / 15, zone.Height / 15), "evolution", evolution_MouseLeftButtonDown);
 

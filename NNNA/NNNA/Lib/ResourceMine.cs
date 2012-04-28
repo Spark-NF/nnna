@@ -36,7 +36,7 @@ namespace NNNA
 					{ _decouvert = true; }
 					mul = (_decouvert && mul < 0.25f) ? 0.25f : mul;
 				}
-				spritebatch.Draw(Resource.Texture(ere), _position - camera.Position, new Color(mul, mul, mul));
+				spritebatch.Draw(_texture.Texture, _position - camera.Position, new Color(mul, mul, mul));
 			}
 		}
 
