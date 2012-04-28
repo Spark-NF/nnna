@@ -92,6 +92,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompteurFPS.cs" />
     <Compile Include="Graphics\Camera2D.cs" />
     <Compile Include="Graphics\Form\Button.cs" />
     <Compile Include="Graphics\Form\Containing.cs" />
@@ -140,7 +141,6 @@
     <Compile Include="Map\IslandGenerator.cs" />
     <Compile Include="Map\PerlinNoise.cs" />
     <Compile Include="Map\RollingParticle.cs" />
-    <Compile Include="Physics\Obstacle.cs" />
     <Compile Include="Physics\ProductionBuilding.cs" />
     <Compile Include="Physics\Static_Sprite.cs" />
     <Compile Include="Physics\Unit.cs" />

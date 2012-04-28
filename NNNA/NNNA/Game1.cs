@@ -28,6 +28,7 @@ namespace NNNA
 		private SpriteBatch _spriteBatch;
 		private Effect _gaussianBlur;
 		private Rectangle _selection = Rectangle.Empty;
+        private CompteurFPS fps;
 
 		private Texture2D _backgroundDark, _flash, _console;
 		private readonly Texture2D[] _backgrounds = new Texture2D[2];
@@ -123,9 +124,12 @@ namespace NNNA
 			IsFixedTimeStep = true;
 
             Content.RootDirectory = "Content";
+            fps = new CompteurFPS(this);
+            Components.Add(fps);
 
             // Dossier Utilisateur
 			Components.Add(new GamerServicesComponent(this));
+            
         }
 
 		#region Settings
@@ -618,6 +622,7 @@ namespace NNNA
 						}
 						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 1000, new Image(Content, "Resources/bois_1_sprite" + _random.Next(0, 3))));
 					}
+                    _resources.Sort(Sprite.CompareByY);
 
 					//Le son
 					#if SOUND
@@ -1306,7 +1311,6 @@ namespace NNNA
 
 			Joueur.Units.Sort(Sprite.CompareByY);
 			Joueur.Buildings.Sort(Sprite.CompareByY);
-			_resources.Sort(Sprite.CompareByY);
 			 
 			//minimap.Update(units, buildings, selectedList, joueur);
 
@@ -1777,6 +1781,9 @@ namespace NNNA
 				_a = 1.0f;
 			}
 
+            //Affichage des fps
+            Debug(4, fps.FPS);
+
             _techno.Draw(_spriteBatch, _fontSmall);
 		}
 
@@ -1813,7 +1820,7 @@ namespace NNNA
 		#endregion
 
 		#region Debug
-
+        
 		#region Temps Réel
 		private void Debug(int i, string value)
 		{
