@@ -612,7 +612,7 @@ namespace NNNA
 							x = _random.Next(_matrice.GetLength(0));
 							y = _random.Next(_matrice.GetLength(1));
 						}
-						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 1000, Content.Load<Texture2D>("Resources/bois_1_sprite" + _random.Next(0, 3)), y, x));
+						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 1000, new Image(Content, "Resources/bois_1_sprite" + _random.Next(0, 3), 1, 1, 15, 1.0f/4.0f)));
 						_matrice[y, x].Crossable = false;
 					}
 
@@ -1125,9 +1125,9 @@ namespace NNNA
 						}
 					}
 				}
-				if (_pointer == "fight" && unitUnder == null)
-				{ _pointer = "pointer"; }
 			}
+			if (_pointer == "fight" && unitUnder == null)
+			{ _pointer = "pointer"; }
 
 			// Curseur de minage
 			ResourceMine resourceUnder = null;
@@ -1163,9 +1163,9 @@ namespace NNNA
 						}
 					}
 				}
-				if (_pointer == "mine" && resourceUnder == null)
-				{ _pointer = "pointer"; }
 			}
+			if (_pointer == "mine" && resourceUnder == null)
+			{ _pointer = "pointer"; }
 
 			// Combat
 			if (unitUnder != null && Souris.Get().Clicked(MouseButton.Right))
@@ -1559,16 +1559,20 @@ namespace NNNA
 				_spriteBatch.Draw(Color2Texture2D(Color.Blue), new Rectangle(tex.X + 1, tex.Y + 1, tex.Width - 2, tex.Height - 2), new Color(64, 64, 64, 64));
 			}
 
-			// Barres de vie
+			// Barres de vie et de poches
 			foreach (Unit unit in Joueur.Units)
 			{
 				if (!_healthOver || unit.Selected)
-				{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28); }
+				{
+					DrawBar(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28, Color.Green, Color.Red);
+					if (unit.Poches > 0)
+					{ DrawBar(unit.Poches, unit.PochesMax, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 10) - _camera.Position, 28, Color.Cyan, Color.DarkBlue); }
+				}
 			}
 			foreach (Building build in Joueur.Buildings)
 			{
 				if (!_healthOver || build.Selected)
-				{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100); }
+				{ DrawBar(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100, Color.Green, Color.Red); }
 			}
 			foreach (Joueur foe in _enemies)
 			{
@@ -1593,7 +1597,7 @@ namespace NNNA
 					else
 					{ mul = 1.0f; }
 					if (mul > 0.25f)
-					{ DrawLife(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28); }
+					{ DrawBar(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28, Color.Green, Color.Red); }
 				}
 				foreach (Building build in foe.Buildings)
 				{
@@ -1616,7 +1620,7 @@ namespace NNNA
 					else
 					{ mul = 1.0f; }
 					if (mul > 0.25f)
-					{ DrawLife(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100); }
+					{ DrawBar(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100, Color.Green, Color.Red); }
 				}
 			}
 
@@ -1629,7 +1633,7 @@ namespace NNNA
 			{
 				var pos = new Vector2(356*(_screenSize.X/1680) + (i%10)*36, _screenSize.Y - _hud.Position.Height + 54*(_screenSize.Y/1050) + (i/10)*36 + _hud.SmartPos);
 				_selectedList[i].DrawIcon(_spriteBatch, pos);
-				DrawLife(_selectedList[i].Life, _selectedList[i].MaxLife, pos + new Vector2(0, 28), 33);
+				DrawBar(_selectedList[i].Life, _selectedList[i].MaxLife, pos + new Vector2(0, 28), 33, Color.Green, Color.Red);
 			}
 
 			// List des actions
@@ -1652,21 +1656,23 @@ namespace NNNA
 		}
 
 		/// <summary>
-		/// Affiche la vie d'une unité ou d'un bâtiment à l'écran.
+		/// Affiche d'une barre colorée à l'écran.
 		/// </summary>
-		/// <param name="life">La vie actuelle.</param>
-		/// <param name="max">La vie maximale.</param>
-		/// <param name="pos">La position où afficher la barre de vie.</param>
-		/// <param name="width">La longueur de la barre de vie en pixels.</param>
-		private void DrawLife(int life, int max, Vector2 pos, int width)
+		/// <param name="life">La valeur actuelle.</param>
+		/// <param name="max">La valeur maximale.</param>
+		/// <param name="pos">La position où afficher la barre.</param>
+		/// <param name="width">La longueur de la barre en pixels.</param>
+		/// <param name="c1">La couleur de la partie de la barre qui est remplie.</param>
+		/// <param name="c2">La couleur de la partie de la barre qui est vide.</param>
+		private void DrawBar(int life, int max, Vector2 pos, int width, Color c1, Color c2)
 		{
 			int greenLength = (Math.Max(life, 0) * (width - 2)) / max;
 			int redLength = (width - 2) - greenLength;
 			_spriteBatch.Draw(Color2Texture2D(Color.Black), new Rectangle((int)pos.X - 1, (int)pos.Y - 1, width, 5), Color.White);
 			if (greenLength > 0)
-			{ _spriteBatch.Draw(Color2Texture2D(Color.Green), new Rectangle((int)pos.X, (int)pos.Y, greenLength, 3), Color.White); }
+			{ _spriteBatch.Draw(Color2Texture2D(c1), new Rectangle((int)pos.X, (int)pos.Y, greenLength, 3), Color.White); }
 			if (redLength > 0)
-			{ _spriteBatch.Draw(Color2Texture2D(Color.Red), new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 3), Color.White); }
+			{ _spriteBatch.Draw(Color2Texture2D(c2), new Rectangle((int)pos.X + greenLength, (int)pos.Y, redLength, 3), Color.White); }
 		}
 		private void DrawGameMenu()
 		{

@@ -80,9 +80,9 @@ namespace NNNA
 			Liquid = name == 'e' || name == 't';
 		}
 
-		public void LoadContent(ContentManager content, string assetName, int columns = 1)
+		public void LoadContent(ContentManager content, string assetName, int columns = 1, float collision = 1.0f)
 		{
-			_texture = new Image(content, assetName, columns);
+			_texture = new Image(content, assetName, columns, collision:collision);
 			_assetName = assetName;
 			_go = new Image(content, "go", 8, 1, 5);
 		}

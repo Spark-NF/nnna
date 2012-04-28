@@ -16,7 +16,7 @@ namespace NNNA
 			: base(x, y)
 		{
 			_createMaison = false;
-			_joueur = joueur;
+			Joueur = joueur;
 			joueur.Population++;
 			_type = "peon";
 			if (removeResources)
@@ -30,7 +30,7 @@ namespace NNNA
 			Speed = 0.06f;
 			SetTextures(content, "peon");
 			_cost.Add("Nourriture", 50);
-			_affiliate = affiliate;
+			Affiliate = affiliate;
 			//creationPeon = content.Load<SoundEffect>("sounds/creationpeon");
 			//creationPeon.Play();
 		}
@@ -40,7 +40,7 @@ namespace NNNA
 			if ((time.TotalGameTime.Seconds % 5) == 0)
 			{
 				ressource.Remove(5);
-				_joueur.Resource(ressource.Name(ere)).Add(5);
+				Joueur.Resource(ressource.Name(ere)).Add(5);
 			}
 		}
 	}

@@ -5,19 +5,16 @@ namespace NNNA
 {
 	class ResourceMine : StaticSprite
 	{
-		private Resource _resource;
+		public Resource Resource { get; private set; }
+		public int Quantity { get; private set; }
 
-		private int _quantity;
-		public int Quantity
-		{ get { return _quantity; } }
-
-		public ResourceMine(int x, int y, Resource resource, int quantity, Texture2D texture, int matriceX = - 1, int matriceY = -1)
+		public ResourceMine(int x, int y, Resource resource, int quantity, Image texture, int matriceX = - 1, int matriceY = -1)
 			: base(x, y)
 		{
 			_decouvert = false;
-			_texture = new Image(texture);
-			_resource = resource;
-			_quantity = quantity;
+			_texture = texture;
+			Resource = resource;
+			Quantity = quantity;
             _positionMatrice = new Vector2(matriceX, matriceY);
 		}
 
@@ -31,7 +28,7 @@ namespace NNNA
 		/// <param name="weather">La météo actuelle.</param>
 		public void Draw(SpriteBatch spritebatch, int ere, Camera2D camera, float mul, int weather)
 		{
-			if (_quantity > 0)
+			if (Quantity > 0)
 			{
 				if (weather == 1)
 				{
@@ -39,7 +36,7 @@ namespace NNNA
 					{ _decouvert = true; }
 					mul = (_decouvert && mul < 0.25f) ? 0.25f : mul;
 				}
-				spritebatch.Draw(_resource.Texture(ere), _position - camera.Position, new Color(mul, mul, mul));
+				spritebatch.Draw(Resource.Texture(ere), _position - camera.Position, new Color(mul, mul, mul));
 			}
 		}
 
@@ -48,11 +45,13 @@ namespace NNNA
 		/// </summary>
 		/// <param name="joueur">Le joueur minant la ressource.</param>
 		/// <param name="unit">L'unité minant la ressource.</param>
-		public void Mine(Joueur joueur, Unit unit)
+		/// <returns>La quantité venant d'être minée.</returns>
+		public int Mine(int max, Unit unit)
 		{
-			int qtty = _quantity >= 1 ? 1 : _quantity;
-			joueur.Resource(_resource.Id).Add(qtty);
-			_quantity -= qtty;
+			int qtty = Quantity >= max ? max : Quantity;
+			qtty = qtty >= 1 ? 1 : qtty;
+			Quantity -= qtty;
+			return qtty;
 		}
 	}
 }

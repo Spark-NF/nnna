@@ -7,19 +7,16 @@ namespace NNNA
 {
 	class Unit : MovibleSprite
 	{
-		protected Joueur _joueur;
-		public Joueur Joueur
-		{
-			get { return _joueur; }
-			set { _joueur = value; }
-		}
-
-		protected Building _affiliate;
-		public Building Affiliate
-		{
-			get { return _affiliate; }
-			set { _affiliate = value; }
-		}
+		public Joueur Joueur { get; set; }
+		public Building Affiliate { get; set; }
+		public int PochesMax { get; set; }
+		public string PochesContent { get; set; }
+		public int MaxLife { get; set; }
+		public int Attaque { get; set; }
+		public int VitesseCombat { get; set; }
+		public int Portee { get; set; }
+		public int Regeneration { get; set; }
+		public int LineSight { get; set; }
 
 		protected int _life;
 		public int Life
@@ -28,55 +25,23 @@ namespace NNNA
 			set
 			{
 				_life = value;
-				if (value > _maxLife)
-				{ _maxLife = value; }
+				if (value > MaxLife)
+				{ MaxLife = value; }
 			}
 		}
-		protected int _maxLife;
-		public int MaxLife
+		protected int _poches;
+		public int Poches
 		{
-			get { return _maxLife; }
-			set { _maxLife = value; }
-		}
-
-		protected int _attaque;
-		public int Attaque
-		{
-			get { return _attaque; }
-			set { _attaque = value; }
-		}
-
-		protected int _vitesseCombat;
-		public int VitesseCombat
-		{
-			get { return _vitesseCombat; }
-			set { _vitesseCombat = value; }
-		}
-
-		protected int _portee;
-		public int Portee
-		{
-			get { return _portee; }
-			set { _portee = value; }
-		}
-
-		protected int _regeneration;
-		public int Regeneration
-		{
-			get { return _regeneration; }
-			set { _regeneration = value; }
-		}
-
-		protected int _lineSight;
-		public int LineSight
-		{
-			get { return _lineSight; }
-			set { _lineSight = value; }
+			get { return _poches; }
+			set { _poches = value >= PochesMax ? PochesMax : value; }
 		}
 
 		public Unit(int x, int y)
 			: base(x, y)
-		{ }
+		{
+			PochesMax = 100;
+			Poches = 0;
+		}
 
 		public void Attack(Unit obj)
 		{
@@ -124,17 +89,32 @@ namespace NNNA
 					}
 					else
 					{
-						if (DestinationBuilding != null && Will == "build" && Collides(new List<MovibleSprite>(), new List<Building> { DestinationBuilding }, matrice))
+						if (DestinationBuilding != null && (Will == "build" || Will == "poches") && Collides(new List<MovibleSprite>(), new List<Building> { DestinationBuilding }, new List<ResourceMine>(), matrice))
 						{
 							_position -= translation;
-							if (DestinationBuilding.Texture.Animation == false)
+							if (Will == "build")
 							{
-								_joueur.Buildings.Add(DestinationBuilding);
-								DestinationBuilding.Texture.Animation = true;
-								DestinationBuilding.Texture.Single = true;
+								if (DestinationBuilding.Texture.Animation == false)
+								{
+									Joueur.Buildings.Add(DestinationBuilding);
+									DestinationBuilding.Texture.Animation = true;
+									DestinationBuilding.Texture.Single = true;
+								}
+								else if (DestinationBuilding.Texture.Finished)
+								{ DestinationBuilding = null; }
 							}
-							else if (DestinationBuilding.Texture.Finished)
-							{ DestinationBuilding = null; }
+							else // Will == "mine"
+							{
+								Joueur.Resource(PochesContent).Add(Poches);
+								DestinationBuilding = null;
+								Poches = 0;
+								PochesContent = "";
+								if (DestinationResource != null)
+								{
+									Will = "mine";
+									Move(DestinationResource.Position + new Vector2((float)Math.Round((double)DestinationResource.Texture.Width / 2), (float)Math.Round((double)DestinationResource.Texture.Height / 2)));
+								}
+							}
 						}
 						else if (DestinationResource != null && Will == "mine" && Collides(new List<MovibleSprite>(), new List<Building>(), matrice))
 						{
@@ -143,14 +123,27 @@ namespace NNNA
 							else
 							{
 								_position -= translation;
-								DestinationResource.Mine(_joueur, this);
+								// Si on change de type de ressource à miner, on vide ses poches d'abord
+								if (DestinationResource.Resource.Id != PochesContent)
+								{
+									Poches = 0;
+									PochesContent = DestinationResource.Resource.Id;
+								}
+								Poches += DestinationResource.Mine(PochesMax - Poches, this);
+								// Si l'unité a les poches pleines, on doit aller les vider à la base affiliée à l'unité
+								if (Poches >= PochesMax)
+								{
+									DestinationBuilding = Affiliate;
+									Will = "poches";
+									Move(DestinationBuilding.Position + new Vector2((float)Math.Round((double)DestinationBuilding.Texture.Width / 2), 0)); //, sprites, buildings, matrice);
+								}
 							}
 						}
 						else
 						{
-							if (DestinationUnit != null && Will == "attack" && Game1.Frame % _vitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), matrice))
+							if (DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), matrice))
 							{
-								DestinationUnit.Life -= _attaque;
+								DestinationUnit.Life -= Attaque;
 								if (DestinationUnit.Life <= 0)
 								{ DestinationUnit = null; }
 							}
@@ -278,7 +271,7 @@ namespace NNNA
 					if (_go != null && DestinationUnit == null && DestinationResource == null)
 					{ _go.Draw(spriteBatch, ClickPosition - camera.Position + new Vector2((float)Math.Round((double)_go.Width / 2), _texture.Height - _go.Height), Color.White); }
 				}
-				spriteBatch.Draw(_selection, _position - camera.Position + new Vector2(0, 32), _joueur.Color);
+				spriteBatch.Draw(_selection, _position - camera.Position + new Vector2(0, 32), Joueur.Color);
 			}
 			_texture.Draw(spriteBatch, _position - camera.Position, col, tex);
 		}

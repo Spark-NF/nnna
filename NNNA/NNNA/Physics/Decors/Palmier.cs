@@ -8,15 +8,9 @@ namespace NNNA
 		public Palmier(int x, int y, ContentManager content)
 			: base (x,y)
 		{
-			int ra = 0;
-			Random rand = new Random();
-			ra = rand.Next(2);
-			if (ra == 0)			
-			LoadContent(content, "Decors/palmier1");
-			else if (ra == 1)
-			LoadContent(content, "Decors/palmier2");
-			else
-			LoadContent(content, "Decors/palmier3");
+			var rand = new Random();
+			int ra = rand.Next(3);
+			LoadContent(content, "Decors/palmier"+(ra+1), 1, 1.0f/4.0f);
 		}
 	}
 }
