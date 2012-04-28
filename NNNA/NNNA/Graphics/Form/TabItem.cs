@@ -6,20 +6,35 @@ namespace NNNA.Form
     class TabItem : Containing
     {
         #region ATTRIBUTS
+        private bool selected;
         #endregion ATTRIBUTS
 
         #region GET/SET
+        public bool Selected
+        { get { return selected; } set { selected = value; } }
         #endregion GET/SET
 
         public TabItem(Control[] children, Rectangle zone, string name)
-            : base(children, zone, name) { }
+            : base(children, zone, name) 
+        {
+            selected = false;
+        }
+
+        public bool Select(Souris s)
+        {
+            if (_visible && s.Clicked(MouseButton.Left) && _zone.Intersects(new Rectangle(s.X, s.Y, 1, 1)))
+                return true;
+            else return false;
+        }
 
         public override void Update(Souris s)
         {
-            //a ajouter
-            for (int i = 0; i < Children.Length; i++)
+            if (selected)
             {
-                Children[i].Update(s);
+                for (int i = 0; i < Children.Length; i++)
+                {
+                    Children[i].Update(s);
+                }
             }
         }
 
@@ -27,11 +42,14 @@ namespace NNNA.Form
         {
             if (_visible)
             {
-                sb.Draw(_background, _zone, null, _backgroundColor);
+                sb.Draw(_background, _zone, null, selected ? _backgroundColor : Color.Gray);
                 sb.DrawString(sf, Name, new Vector2(_zone.X, _zone.Y), _textColor);
-                for (int i = 0; i < Children.Length; i++)
+                if (selected)
                 {
-                    Children[i].Draw(sb, sf);
+                    for (int i = 0; i < Children.Length; i++)
+                    {
+                        Children[i].Draw(sb, sf);
+                    }
                 }
             }
         }

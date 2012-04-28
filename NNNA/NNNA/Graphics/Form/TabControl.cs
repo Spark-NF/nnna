@@ -7,6 +7,7 @@ namespace NNNA.Form
     {
         #region ATTRIBUTS
         private int selectedTab;
+        private TabItem[] children;
         #endregion ATTRIBUTS
 
         #region GET/SET
@@ -15,15 +16,22 @@ namespace NNNA.Form
         public TabControl(TabItem[] children, Rectangle zone, string name)
             : base(children, zone, name) 
         {
+            this.children = children;
             selectedTab = 0;
+            children[selectedTab].Selected = true;
         }
 
         public override void Update(Souris s)
         {
-            //a ajouter
             for (int i = 0; i < Children.Length; i++)
             {
-                Children[i].Update(s);
+                if (children[i].Select(s))
+                {
+                    children[selectedTab].Selected = false;
+                    selectedTab = i;
+                    children[selectedTab].Selected = true;
+                }
+                children[i].Update(s);
             }
         }
 
