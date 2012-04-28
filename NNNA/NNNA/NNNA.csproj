@@ -126,6 +126,7 @@
     <Compile Include="Physics\Batiment\Ferme.cs" />
     <Compile Include="Physics\Batiment\Maison.cs" />
     <Compile Include="Physics\Batiment\Tour.cs" />
+    <Compile Include="Physics\Batiment\Usine.cs" />
     <Compile Include="Physics\Building.cs" />
     <Compile Include="Physics\Batiment\Grande_Hutte.cs" />
     <Compile Include="Physics\Batiment\Hutte.cs" />
