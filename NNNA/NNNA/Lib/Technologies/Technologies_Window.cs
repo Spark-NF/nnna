@@ -88,7 +88,7 @@ namespace NNNA
                                                   torche,
                                                   fer,
                                                   evolution
-                                                  }, new Rectangle(zone.X + zone.Width / 26, zone.Y + zone.Height / 10, (zone.Width - zone.Width / 13) / 4, zone.Height / 10), "ERE 1");
+                                                  }, new Rectangle(zone.X + zone.Width / 14, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 4, zone.Height / 10), "ERE 1");
 
             tabItem2 = new TabItem(new Control[] {
                                                   engrenage,
@@ -101,13 +101,18 @@ namespace NNNA
                                                   bucheron,
                                                   charpentier,
                                                   route
-                                                  }, new Rectangle(zone.X + zone.Width / 26 + (zone.Width - zone.Width / 13) / 4, zone.Y + zone.Height / 10, (zone.Width - zone.Width / 13) / 4, zone.Height / 10), "ERE 2");
+                                                  }, new Rectangle(zone.X + zone.Width / 14 + (zone.Width - zone.Width / 7) / 4, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 4, zone.Height / 10), "ERE 2");
 
             tabItem3 = new TabItem(new Control[] {
-                                                  }, new Rectangle(zone.X + zone.Width / 26 + (zone.Width - zone.Width / 13) / 2, zone.Y + zone.Height / 10, (zone.Width - zone.Width / 13) / 4, zone.Height / 10), "ERE 3");
+                                                  }, new Rectangle(zone.X + zone.Width / 14 + (zone.Width - zone.Width / 7) / 2, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 4, zone.Height / 10), "ERE 3");
 
             tabItem4 = new TabItem(new Control[] {
-                                                  }, new Rectangle(zone.X + zone.Width / 26 + ((zone.Width - zone.Width / 13) * 3) / 4, zone.Y + zone.Height / 10, (zone.Width - zone.Width / 13) / 4, zone.Height / 10), "ERE 4");
+                                                  }, new Rectangle(zone.X + zone.Width / 14 + ((zone.Width - zone.Width / 7) * 3) / 4, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 4, zone.Height / 10), "ERE 4");
+
+            tabItem1.Background = content.Load<Texture2D>(@"Technologies/onglet");
+            tabItem2.Background = content.Load<Texture2D>(@"Technologies/onglet");
+            tabItem3.Background = content.Load<Texture2D>(@"Technologies/onglet");
+            tabItem4.Background = content.Load<Texture2D>(@"Technologies/onglet");
 
             tabcontrol = new TabControl(new TabItem[] {
                                                         tabItem1,

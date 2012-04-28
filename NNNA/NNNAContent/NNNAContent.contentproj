@@ -938,6 +938,20 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\build_archerie.png">
+      <Name>build_archerie</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\build_ferme.png">
+      <Name>build_ferme</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Technologies\arme_de_siege.png">
       <Name>arme_de_siege</Name>
       <Importer>TextureImporter</Importer>
@@ -1006,15 +1020,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\build_archerie.png">
-      <Name>build_archerie</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Actions\build_ferme.png">
-      <Name>build_ferme</Name>
+    <Compile Include="Technologies\onglet.png">
+      <Name>onglet</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
