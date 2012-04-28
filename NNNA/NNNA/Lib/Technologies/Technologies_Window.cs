@@ -21,8 +21,8 @@ namespace NNNA
         private TabControl tabcontrol;
         private TabItem tabItem1, tabItem2, tabItem3, tabItem4;
         private Button close, chasse, silex, agri, pierre_polie, irrigation, bronze, outils, feu, torche, fer, evolution, engrenage, forge, scierie, arme_de_siege, navigation, gouvernail, chimie, bucheron, charpentier, route;
-		private bool _chasse, _feu, _silex, _fer, _pierrePolie, _ere1, _ere2, _bronze, _outils, _agri, _torche, _irrigation, _engrenage, _forge, _scierie, _arme_de_siege, _navigation, _gouvernail, _chimie, _bucheron, _charpentier, _route;
-		private readonly Dictionary<string, int> _prixFer = new Dictionary<string, int>(), _prixChasse = new Dictionary<string, int>(), _prixFeu = new Dictionary<string, int>(), _prixSilex = new Dictionary<string, int>(), _prixPierrePolie = new Dictionary<string, int>(), _prixBronze = new Dictionary<string, int>(), _prixOutils = new Dictionary<string, int>(), _prixAgri = new Dictionary<string, int>(), _prixTorche = new Dictionary<string, int>(), _prixIrrigation = new Dictionary<string, int>();
+		private bool _chasse, _feu, _silex, _fer, _pierrePolie, _ere1, _ere2, _ere3, _bronze, _outils, _agri, _torche, _irrigation, _engrenage, _forge, _scierie, _arme_de_siege, _navigation, _gouvernail, _chimie, _bucheron, _charpentier, _route;
+        private readonly Dictionary<string, int> _prixFer = new Dictionary<string, int>(), _prixChasse = new Dictionary<string, int>(), _prixFeu = new Dictionary<string, int>(), _prixSilex = new Dictionary<string, int>(), _prixPierrePolie = new Dictionary<string, int>(), _prixBronze = new Dictionary<string, int>(), _prixOutils = new Dictionary<string, int>(), _prixAgri = new Dictionary<string, int>(), _prixTorche = new Dictionary<string, int>(), _prixIrrigation = new Dictionary<string, int>(), _prixEngrenage = new Dictionary<string, int>(), _prixForge = new Dictionary<string, int>(), _prixBucheron = new Dictionary<string, int>(), _prixNavigation = new Dictionary<string, int>(), _prixGouvernail = new Dictionary<string, int>(), _prixArme_de_siege = new Dictionary<string, int>(), _prixCharpente = new Dictionary<string, int>(), _prixRoute = new Dictionary<string, int>(), _prixChimie = new Dictionary<string, int>(), _prixScierie = new Dictionary<string,int>();
 		
         public Technologies_Window(Rectangle zone, string name, Microsoft.Xna.Framework.Content.ContentManager content)
 		{
@@ -54,7 +54,7 @@ namespace NNNA
             fer.Background = content.Load<Texture2D>(@"Technologies/fer");
             evolution.Background = content.Load<Texture2D>(@"Technologies/evolution");
 
-            engrenage = new Button(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4, zone.Height / 15, zone.Height / 15), "engrenage", chasse_MouseLeftButtonDown);
+            engrenage = new Button(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4, zone.Height / 15, zone.Height / 15), "engrenage", engrenage_MouseLeftButtonDown);
             forge = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "forge", silex_MouseLeftButtonDown);
             navigation = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "navigation", agri_MouseLeftButtonDown);
             scierie = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "scierie", pierre_polie_MouseLeftButtonDown);
@@ -65,16 +65,16 @@ namespace NNNA
             charpentier = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "charpentier", torche_MouseLeftButtonDown);
             route = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "route", torche_MouseLeftButtonDown);
 
-            engrenage.Background = content.Load<Texture2D>(@"Technologies/button_close");
-            forge.Background = content.Load<Texture2D>(@"Technologies/button_close");
-            navigation.Background = content.Load<Texture2D>(@"Technologies/button_close");
-            scierie.Background = content.Load<Texture2D>(@"Technologies/button_close");
-            gouvernail.Background = content.Load<Texture2D>(@"Technologies/button_close");
-            arme_de_siege.Background = content.Load<Texture2D>(@"Technologies/button_close");
-            chimie.Background = content.Load<Texture2D>(@"Technologies/button_close");
-            bucheron.Background = content.Load<Texture2D>(@"Technologies/button_close");
-            charpentier.Background = content.Load<Texture2D>(@"Technologies/button_close");
-            route.Background = content.Load<Texture2D>(@"Technologies/button_close");
+            engrenage.Background = content.Load<Texture2D>(@"Technologies/engrenage");
+            forge.Background = content.Load<Texture2D>(@"Technologies/forge");
+            navigation.Background = content.Load<Texture2D>(@"Technologies/navigation");
+            scierie.Background = content.Load<Texture2D>(@"Technologies/scierie");
+            gouvernail.Background = content.Load<Texture2D>(@"Technologies/gouvernail");
+            arme_de_siege.Background = content.Load<Texture2D>(@"Technologies/arme_de_siege");
+            chimie.Background = content.Load<Texture2D>(@"Technologies/chimie");
+            bucheron.Background = content.Load<Texture2D>(@"Technologies/bucheron");
+            charpentier.Background = content.Load<Texture2D>(@"Technologies/charpente");
+            route.Background = content.Load<Texture2D>(@"Technologies/route");
             
             tabItem1 = new TabItem(new Control[] {
                                                   chasse,
@@ -154,6 +154,29 @@ namespace NNNA
 
 			_prixFer.Add("Pierre", 500);
 
+            _prixEngrenage.Add("Bois", 700);
+
+            _prixBucheron.Add("Bois", 100);
+            _prixBucheron.Add("Fer", 300);
+
+            _prixCharpente.Add("Bois", 800);
+
+            _prixRoute.Add("Pierre", 1000);
+
+            _prixArme_de_siege.Add("Bois", 1000);
+            _prixArme_de_siege.Add("Fer", 500);
+
+            _prixChimie.Add("Nourriture", 500);
+            _prixChimie.Add("Or", 500);
+
+            _prixForge.Add("Fer", 300);
+
+            _prixGouvernail.Add("Bois", 1000);
+            _prixGouvernail.Add("Fer", 100);
+
+            _prixScierie.Add("Bois", 500);
+            _prixScierie.Add("Fer", 300);
+
 			#endregion Prix
 		}
 
@@ -171,6 +194,7 @@ namespace NNNA
         {
             _ere1 = false;
             _ere2 = false;
+            _ere3 = false;
 
             _fer = false;
             _chasse = false;
@@ -422,7 +446,7 @@ namespace NNNA
 
 		private void fer_MouseLeftButtonDown()
 		{
-			if (_outils && Game1.Joueur.Pay(_prixFer))
+			if (!_fer && Game1.Joueur.Pay(_prixFer))
 			{
                 if (_irrigation)
                     evolution.Visible = true;
@@ -442,16 +466,16 @@ namespace NNNA
 
         private void engrenage_MouseLeftButtonDown()
         {
-            if (!_engrenage && Game1.Joueur.Pay(_prixChasse))
+            if (!_engrenage && Game1.Joueur.Pay(_prixEngrenage))
             {
-                silex.Visible = true;
-                agri.Visible = true;
-                feu.Visible = true;
-                _chasse = true;
+                forge.Visible = true;
+                navigation.Visible = true;
+                bucheron.Visible = true;
+                _engrenage = true;
                 //chasse.OpacityMask = null;
                 MessagesManager.Messages.Add(new Msg("Technologie « Engrenage » aquise !", Color.White, 5000));
             }
-            else if (!_chasse)
+            else if (!_engrenage)
             {
                 MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
             }
@@ -477,13 +501,21 @@ namespace NNNA
 					build.UpdateEre(_content, Game1.Joueur);
 				}
 			}
-            else if (!_ere2)
+            else if (_chimie && _gouvernail && !_ere2)
             {
                 _ere2 = true;
                 Game1.Joueur.Ere = 3;
                 tabItem4.Visible = true;
                 Game1.FlashBool = true;
                 MessagesManager.Messages.Add(new Msg("ERE IMPERIALE ATTEINTE !!", Color.Red, 5000));
+                // Modif des sprites a faire içi
+            }
+            else if (_ere2 && !_ere3)
+            {
+                _ere3 = true;
+                Game1.Joueur.Ere = 4;
+                Game1.FlashBool = true;
+                MessagesManager.Messages.Add(new Msg("ERE MODERNE ATTEINTE !!", Color.Red, 5000));
                 // Modif des sprites a faire içi
             }
 		}
