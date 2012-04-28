@@ -103,7 +103,7 @@ namespace NNNA
 								else if (DestinationBuilding.Texture.Finished)
 								{ DestinationBuilding = null; }
 							}
-							else // Will == "mine"
+							else // Will == "poches"
 							{
 								Joueur.Resource(PochesContent).Add(Poches);
 								DestinationBuilding = null;

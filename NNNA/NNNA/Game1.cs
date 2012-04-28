@@ -734,7 +734,7 @@ namespace NNNA
 		/// <summary>
 		/// Met à jour la liste des actions des unités.
 		/// </summary>
-		private void UpdateActions()
+		public void UpdateActions()
 		{
 			_currentActions.Clear();
 			if (_selectedList.Count > 0)
@@ -753,10 +753,9 @@ namespace NNNA
 						{
 							_currentActions.Add("mine");
 							_currentActions.Add("build");
+							_currentActions.Add("poches");
 						}
 					}
-					if (sprite.Type == "peon" && sprite.Poches > 0 && !_currentActions.Contains("poches"))
-					{ _currentActions.Add("poches"); }
 				}
 				if (!allSame)
 				{
@@ -1186,15 +1185,8 @@ namespace NNNA
 					}
 				}
 			}
-			bool update = false;
 			foreach (Unit sprite in Joueur.Units)
-			{
-				sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice);
-				if (sprite.Will == "poches" || sprite.Will == "mine")
-				{ update = true; }
-			}
-			if (update)
-			{ UpdateActions(); }
+			{ sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice); }
 
 			// Curseur de combat
 			Unit unitUnder = null;
