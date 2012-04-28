@@ -20,9 +20,9 @@ namespace NNNA
         private Microsoft.Xna.Framework.Content.ContentManager _content;
         private TabControl tabcontrol;
         private TabItem tabItem1, tabItem2, tabItem3, tabItem4;
-        private Button close, chasse, silex, agri, pierre_polie, irrigation, bronze, outils, feu, torche, fer, evolution, engrenage, forge, scierie, arme_de_siege, navigation, gouvernail, chimie, bucheron, charpentier, route;
-		private bool _chasse, _feu, _silex, _fer, _pierrePolie, _ere1, _ere2, _ere3, _bronze, _outils, _agri, _torche, _irrigation, _engrenage, _forge, _scierie, _arme_de_siege, _navigation, _gouvernail, _chimie, _bucheron, _charpentier, _route;
-        private readonly Dictionary<string, int> _prixFer = new Dictionary<string, int>(), _prixChasse = new Dictionary<string, int>(), _prixFeu = new Dictionary<string, int>(), _prixSilex = new Dictionary<string, int>(), _prixPierrePolie = new Dictionary<string, int>(), _prixBronze = new Dictionary<string, int>(), _prixOutils = new Dictionary<string, int>(), _prixAgri = new Dictionary<string, int>(), _prixTorche = new Dictionary<string, int>(), _prixIrrigation = new Dictionary<string, int>(), _prixEngrenage = new Dictionary<string, int>(), _prixForge = new Dictionary<string, int>(), _prixBucheron = new Dictionary<string, int>(), _prixNavigation = new Dictionary<string, int>(), _prixGouvernail = new Dictionary<string, int>(), _prixArme_de_siege = new Dictionary<string, int>(), _prixCharpente = new Dictionary<string, int>(), _prixRoute = new Dictionary<string, int>(), _prixChimie = new Dictionary<string, int>(), _prixScierie = new Dictionary<string,int>();
+        private Button close, chasse, silex, agri, pierre_polie, irrigation, bronze, outils, feu, torche, fer, evolution1, evolution2, evolution3, evolution4, engrenage, forge, scierie, arme_de_siege, navigation, gouvernail, alchimie, bucheron, charpente, route;
+		private bool _chasse, _feu, _silex, _fer, _pierrePolie, _ere1, _ere2, _ere3, _bronze, _outils, _agri, _torche, _irrigation, _engrenage, _forge, _scierie, _arme_de_siege, _navigation, _gouvernail, _alchimie, _bucheron, _charpente, _route;
+        private readonly Dictionary<string, int> _prixFer = new Dictionary<string, int>(), _prixChasse = new Dictionary<string, int>(), _prixFeu = new Dictionary<string, int>(), _prixSilex = new Dictionary<string, int>(), _prixPierrePolie = new Dictionary<string, int>(), _prixBronze = new Dictionary<string, int>(), _prixOutils = new Dictionary<string, int>(), _prixAgri = new Dictionary<string, int>(), _prixTorche = new Dictionary<string, int>(), _prixIrrigation = new Dictionary<string, int>(), _prixEngrenage = new Dictionary<string, int>(), _prixForge = new Dictionary<string, int>(), _prixBucheron = new Dictionary<string, int>(), _prixNavigation = new Dictionary<string, int>(), _prixGouvernail = new Dictionary<string, int>(), _prixArme_de_siege = new Dictionary<string, int>(), _prixCharpente = new Dictionary<string, int>(), _prixRoute = new Dictionary<string, int>(), _prixAlchimie = new Dictionary<string, int>(), _prixScierie = new Dictionary<string,int>();
 		
         public Technologies_Window(Rectangle zone, string name, Microsoft.Xna.Framework.Content.ContentManager content)
 		{
@@ -39,7 +39,7 @@ namespace NNNA
             feu = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "feu", feu_MouseLeftButtonDown);
             torche = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "torche", torche_MouseLeftButtonDown);
             fer = new Button(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "fer", fer_MouseLeftButtonDown);
-            evolution = new Button(new Rectangle(zone.X + (zone.Width * 5 / 12), zone.Y + (zone.Height * 4) / 5, zone.Height / 15, zone.Height / 15), "evolution", evolution_MouseLeftButtonDown);
+            evolution1 = new Button(new Rectangle(zone.X + (zone.Width * 5 / 12), zone.Y + (zone.Height * 4) / 5, zone.Height / 15, zone.Height / 15), "evolution", evolution_MouseLeftButtonDown);
 
             close.Background = content.Load<Texture2D>(@"Technologies/button_close");
             chasse.Background = content.Load<Texture2D>(@"Technologies/chasse");
@@ -52,18 +52,19 @@ namespace NNNA
             feu.Background = content.Load<Texture2D>(@"Technologies/feu");
             torche.Background = content.Load<Texture2D>(@"Technologies/torche");
             fer.Background = content.Load<Texture2D>(@"Technologies/fer");
-            evolution.Background = content.Load<Texture2D>(@"Technologies/evolution");
+            evolution1.Background = content.Load<Texture2D>(@"Technologies/evolution");
 
             engrenage = new Button(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4, zone.Height / 15, zone.Height / 15), "engrenage", engrenage_MouseLeftButtonDown);
-            forge = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "forge", silex_MouseLeftButtonDown);
-            navigation = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "navigation", agri_MouseLeftButtonDown);
-            scierie = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "scierie", pierre_polie_MouseLeftButtonDown);
-            gouvernail = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "gouvernail", irrigation_MouseLeftButtonDown);
-            arme_de_siege = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "arme_de_siege", bronze_MouseLeftButtonDown);
-            chimie = new Button(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 + zone.Height / 24, zone.Height / 15, zone.Height / 15), "chimie", outils_MouseLeftButtonDown);
-            bucheron = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "bucheron", feu_MouseLeftButtonDown);
-            charpentier = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "charpentier", torche_MouseLeftButtonDown);
-            route = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "route", torche_MouseLeftButtonDown);
+            forge = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "forge", forge_MouseLeftButtonDown);
+            navigation = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "navigation", navigation_MouseLeftButtonDown);
+            scierie = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "scierie", scierie_MouseLeftButtonDown);
+            gouvernail = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "gouvernail", gouvernail_MouseLeftButtonDown);
+            arme_de_siege = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "arme_de_siege", arme_de_siege_MouseLeftButtonDown);
+            alchimie = new Button(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 + zone.Height / 24, zone.Height / 15, zone.Height / 15), "alchimie", alchimie_MouseLeftButtonDown);
+            bucheron = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "bucheron", bucheron_MouseLeftButtonDown);
+            charpente = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "charpente", charpente_MouseLeftButtonDown);
+            route = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "route", route_MouseLeftButtonDown);
+            evolution2 = new Button(new Rectangle(zone.X + (zone.Width * 5 / 12), zone.Y + (zone.Height * 4) / 5, zone.Height / 15, zone.Height / 15), "evolution", evolution_MouseLeftButtonDown);
 
             engrenage.Background = content.Load<Texture2D>(@"Technologies/engrenage");
             forge.Background = content.Load<Texture2D>(@"Technologies/forge");
@@ -71,10 +72,11 @@ namespace NNNA
             scierie.Background = content.Load<Texture2D>(@"Technologies/scierie");
             gouvernail.Background = content.Load<Texture2D>(@"Technologies/gouvernail");
             arme_de_siege.Background = content.Load<Texture2D>(@"Technologies/arme_de_siege");
-            chimie.Background = content.Load<Texture2D>(@"Technologies/chimie");
+            alchimie.Background = content.Load<Texture2D>(@"Technologies/chimie");
             bucheron.Background = content.Load<Texture2D>(@"Technologies/bucheron");
-            charpentier.Background = content.Load<Texture2D>(@"Technologies/charpente");
+            charpente.Background = content.Load<Texture2D>(@"Technologies/charpente");
             route.Background = content.Load<Texture2D>(@"Technologies/route");
+            evolution2.Background = content.Load<Texture2D>(@"Technologies/evolution");
             
             tabItem1 = new TabItem(new Control[] {
                                                   chasse,
@@ -87,7 +89,7 @@ namespace NNNA
                                                   feu,
                                                   torche,
                                                   fer,
-                                                  evolution
+                                                  evolution1
                                                   }, new Rectangle(zone.X + zone.Width / 14, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 4, zone.Height / 10), "ERE 1");
 
             tabItem2 = new TabItem(new Control[] {
@@ -97,10 +99,11 @@ namespace NNNA
                                                   scierie,
                                                   gouvernail,
                                                   arme_de_siege,
-                                                  chimie,
+                                                  alchimie,
                                                   bucheron,
-                                                  charpentier,
-                                                  route
+                                                  charpente,
+                                                  route,
+                                                  evolution2
                                                   }, new Rectangle(zone.X + zone.Width / 14 + (zone.Width - zone.Width / 7) / 4, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 4, zone.Height / 10), "ERE 2");
 
             tabItem3 = new TabItem(new Control[] {
@@ -171,8 +174,8 @@ namespace NNNA
             _prixArme_de_siege.Add("Bois", 1000);
             _prixArme_de_siege.Add("Fer", 500);
 
-            _prixChimie.Add("Nourriture", 500);
-            _prixChimie.Add("Or", 500);
+            _prixAlchimie.Add("Nourriture", 500);
+            _prixAlchimie.Add("Or", 500);
 
             _prixForge.Add("Fer", 300);
 
@@ -215,7 +218,7 @@ namespace NNNA
             tabcontrol.Visible = true;
             tabItem1.Visible = true;
             chasse.Visible = true;
-            evolution.Visible = false;
+            evolution1.Visible = false;
             silex.Visible = false;
             agri.Visible = false;
             feu.Visible = false;
@@ -232,9 +235,9 @@ namespace NNNA
             _scierie = false;
             _gouvernail = false;
             _arme_de_siege = false;
-            _chimie = false;
+            _alchimie = false;
             _bucheron = false;
-            _charpentier = false;
+            _charpente = false;
             _route = false;
 
             tabItem2.Visible = true;
@@ -244,9 +247,9 @@ namespace NNNA
             scierie.Visible = false;
             gouvernail.Visible = false;
             arme_de_siege.Visible = false;
-            chimie.Visible = false;
+            alchimie.Visible = false;
             bucheron.Visible = false;
-            charpentier.Visible = false;
+            charpente.Visible = false;
             route.Visible = false;
 
             tabItem3.Visible = false;
@@ -434,7 +437,7 @@ namespace NNNA
 			if (!_irrigation && Game1.Joueur.Pay(_prixIrrigation))
 			{
                 if (_fer)
-                    evolution.Visible = true;
+                    evolution1.Visible = true;
 				//irrigation.OpacityMask = null;
 				_irrigation = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Irrigation » aquise !", Color.White, 5000));
@@ -454,7 +457,7 @@ namespace NNNA
 			if (!_fer && Game1.Joueur.Pay(_prixFer))
 			{
                 if (_irrigation)
-                    evolution.Visible = true;
+                    evolution1.Visible = true;
 				//fer.OpacityMask = null;
 				_fer = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Fer » aquise !", Color.White, 5000));
@@ -490,6 +493,182 @@ namespace NNNA
             }
         }
 
+        private void forge_MouseLeftButtonDown()
+        {
+            if (!_forge && Game1.Joueur.Pay(_prixEngrenage))
+            {
+                scierie.Visible = true;
+                _forge = true;
+                //chasse.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Forge » aquise !", Color.White, 5000));
+            }
+            else if (!_forge)
+            {
+                MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+            }
+            else
+            {
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
+            }
+        }
+
+        private void scierie_MouseLeftButtonDown()
+        {
+            if (!_scierie && Game1.Joueur.Pay(_prixEngrenage))
+            {
+                arme_de_siege.Visible = true;
+                _scierie = true;
+                //chasse.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Scierie » aquise !", Color.White, 5000));
+            }
+            else if (!_scierie)
+            {
+                MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+            }
+            else
+            {
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
+            }
+        }
+
+        private void arme_de_siege_MouseLeftButtonDown()
+        {
+            if (!_arme_de_siege && Game1.Joueur.Pay(_prixEngrenage))
+            {
+                alchimie.Visible = true;
+                _arme_de_siege = true;
+                //chasse.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Arme de siege » aquise !", Color.White, 5000));
+            }
+            else if (!_arme_de_siege)
+            {
+                MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+            }
+            else
+            {
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
+            }
+        }
+
+        private void alchimie_MouseLeftButtonDown()
+        {
+            if (!_alchimie && Game1.Joueur.Pay(_prixEngrenage))
+            {
+                if (_gouvernail)
+                {
+                    evolution2.Visible = true;
+                }
+                _alchimie = true;
+                //chasse.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Alchimie » aquise !", Color.White, 5000));
+            }
+            else if (!_alchimie)
+            {
+                MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+            }
+            else
+            {
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
+            }
+        }
+
+        private void navigation_MouseLeftButtonDown()
+        {
+            if (!_navigation && Game1.Joueur.Pay(_prixEngrenage))
+            {
+                gouvernail.Visible = true;
+                _navigation = true;
+                //chasse.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Navigation » aquise !", Color.White, 5000));
+            }
+            else if (!_navigation)
+            {
+                MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+            }
+            else
+            {
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
+            }
+        }
+
+        private void gouvernail_MouseLeftButtonDown()
+        {
+            if (!_gouvernail && Game1.Joueur.Pay(_prixEngrenage))
+            {
+                if (_alchimie)
+                {
+                    evolution2.Visible = true;
+                }
+                _gouvernail = true;
+                //chasse.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Gouvernail » aquise !", Color.White, 5000));
+            }
+            else if (!_gouvernail)
+            {
+                MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+            }
+            else
+            {
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
+            }
+        }
+
+        private void bucheron_MouseLeftButtonDown()
+        {
+            if (!_bucheron && Game1.Joueur.Pay(_prixEngrenage))
+            {
+                charpente.Visible = true;
+                _bucheron = true;
+                //chasse.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Bucheron » aquise !", Color.White, 5000));
+            }
+            else if (!_bucheron)
+            {
+                MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+            }
+            else
+            {
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
+            }
+        }
+
+        private void charpente_MouseLeftButtonDown()
+        {
+            if (!_charpente && Game1.Joueur.Pay(_prixEngrenage))
+            {
+                route.Visible = true;
+                _charpente = true;
+                //chasse.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Charpente » aquise !", Color.White, 5000));
+            }
+            else if (!_charpente)
+            {
+                MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+            }
+            else
+            {
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
+            }
+        }
+
+        private void route_MouseLeftButtonDown()
+        {
+            if (!_route && Game1.Joueur.Pay(_prixEngrenage))
+            {
+                _route = true;
+                //chasse.OpacityMask = null;
+                MessagesManager.Messages.Add(new Msg("Technologie « Route » aquise !", Color.White, 5000));
+            }
+            else if (!_route)
+            {
+                MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de ressources.", Color.Red, 5000));
+            }
+            else
+            {
+                MessagesManager.Messages.Add(new Msg("Technologie deja aquise.", Color.Red, 5000));
+            }
+        }
+
 		private void evolution_MouseLeftButtonDown()
 		{
 			if (_fer && _irrigation && !_ere1)
@@ -506,7 +685,7 @@ namespace NNNA
 					build.UpdateEre(_content, Game1.Joueur);
 				}
 			}
-            else if (_chimie && _gouvernail && !_ere2)
+            else if (_alchimie && _gouvernail && !_ere2)
             {
                 _ere2 = true;
                 Game1.Joueur.Ere = 3;
