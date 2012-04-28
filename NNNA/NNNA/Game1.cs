@@ -50,7 +50,7 @@ namespace NNNA
 		private int _quickSize = 1, _quickResources = 1, _credits = 0, _theme = 0;
 		private List<string> _currentActions = new List<string>();
 		private readonly Random _random = new Random();
-		private Dictionary<Color, Texture2D> _colors = new Dictionary<Color, Texture2D>();
+        private Dictionary<Color, Texture2D> _colors = new Dictionary<Color, Texture2D>();
 		
 		// Map
 		private Sprite _h, _e, _p, _t, _s, _i, _curseur;
@@ -1400,7 +1400,7 @@ namespace NNNA
         private void DrawMultiplayer()
         {
             DrawCommon();
-            MakeMenu("Local", "Internet", "Options","Retour");
+            MakeMenu("Créer un partie", "Rejoindre une partie", "Options", "Retour");
         }
 		private void DrawOptions()
 		{

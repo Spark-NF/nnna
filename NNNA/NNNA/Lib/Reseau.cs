@@ -2,16 +2,24 @@
 using System.Runtime.InteropServices;
 using System.Net.Sockets;
 using System;
-using System.Text;
 using System.IO;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework.Net;
 
 namespace NNNA
 {
     class Réseau
     {
+        static bool jeuMulti;
+        public bool JeuMulti
+        {
+            get { return jeuMulti; }
+            set { jeuMulti = value; }
+        }
+        private List<Socket> connexions = new List<Socket>();
         /// <summary>
-        /// Fonction qui donne l'adresse ip d'un ordinateur d'on le nom est pcé en parametre
+        /// Fonction qui donne l'adresse ip d'un ordinateur d'on le nom est placé en parametre
         /// </summary>
         /// <param name="computername">Nom du PC.</param>
         /// <returns>L'IP du PC.</returns>
@@ -83,9 +91,11 @@ namespace NNNA
             {
                 NetworkStream ns = new NetworkStream(s);
                 StreamWriter sw = new StreamWriter(ns);
-                sw.Write(Math.Log10( (double)mapInByte.GetLength(0)));
+                sw.Write(Math.Log( (double) mapInByte.GetLength(0),(double)255));
                 sw.Write(mapInByte.GetLength(0));
                 sw.Write(mapInByte);
+                jeuMulti = true;
+                
             }
             else
             {
@@ -105,7 +115,7 @@ namespace NNNA
                 int nbrligne = sr.Read(ligne, 1, ligne.Length);
                 char[] mapinarray = sr.ReadToEnd().ToCharArray();
                 char[,] mapreceived = new char[nbrligne, mapinarray.Length / nbrligne];
-                for (int i = 0; i <= mapreceived.GetLength(0); i++)
+                for (int i = 1; i <= mapreceived.GetLength(0); i++)
                 {
                     for (int j = 0; j <= mapreceived.GetLength(1); j++)
                     {
@@ -114,12 +124,40 @@ namespace NNNA
                 }
                 return mapreceived;  
             }
-            catch (Exception)
+            catch 
             {
-                
+                MessagesManager.Messages.Add(new Msg("Carte non reçut",Color.Red,5000));
                 throw;
             }
         }
-        
+        public static void RecherchePartie(int nbrJoueurs)
+        {
+            AvailableNetworkSessionCollection partiesDisponibles = NetworkSession.Find(NetworkSessionType.Local, nbrJoueurs, null);
+            partiesDisponibles.ToString();
+        }
+        public void CréePartie(int nbrJoueur)
+        {
+            NetworkSession partie = NetworkSession.Create(NetworkSessionType.Local, nbrJoueur, nbrJoueur);
+        }
+        public void lancerpartie(NetworkSession partie,char[] _matrice)
+        {
+            PacketWriter donné =new PacketWriter() ;
+            donné.Write(_matrice);
+            partie.LocalGamers[0].SendData(donné, SendDataOptions.ReliableInOrder);
+            partie.StartGame();
+        }
+        public void RecevoirDonnées(NetworkSession partie)
+        {
+            PacketReader donné = new PacketReader();
+            LocalNetworkGamer gamer = partie.LocalGamers[0];
+            if (gamer.IsDataAvailable)
+            {
+                NetworkGamer sender;
+                gamer.ReceiveData(donné, out sender);
+            }
+            
+
+
+        }
     }
 }
