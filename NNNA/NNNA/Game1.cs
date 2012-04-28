@@ -285,6 +285,8 @@ namespace NNNA
 			_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
 			_actions.Add("build_hutte", Content.Load<Texture2D>("Actions/build_hutte"));
 			_actions.Add("build_hutteDesChasseurs", Content.Load<Texture2D>("Actions/build_hutteDesChasseurs"));
+            _actions.Add("build_tour", Content.Load<Texture2D>("Actions/build_tour"));
+            _actions.Add("build_ecurie", Content.Load<Texture2D>("Actions/build_ecurie"));
 			// m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
 			#endregion Actions Unités
 
@@ -885,7 +887,56 @@ namespace NNNA
 						}
 						else
 						{ MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                        break;
+
+                    case "build_tour":
+                        pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                        if (ValidSpawn(pos, _dimensions))
+                        {
+                            var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                            b = new Tour((int)position.X, (int)position.Y, Content, Joueur);
+                            if (Joueur.Pay(b.Prix))
+                            {
+                                _selectedList[0].Build(b);
+                                _buildings.Add(b);
+                                MessagesManager.Messages.Add(new Msg(_("Nouvelle tour !"), Color.White, 5000));
+                                _pointer = "pointer";
+                                _currentAction = "";
+                            }
+                            else
+                            {
+                                MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                _pointer = "pointer";
+                                _currentAction = "";
+                            }
+                        }
+                        else
+                        { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
 						break;
+                    case "build_ecurie":
+                        pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                        if (ValidSpawn(pos, _dimensions))
+                        {
+                            var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                            b = new Ecurie((int)position.X, (int)position.Y, Content, Joueur);
+                            if (Joueur.Pay(b.Prix))
+                            {
+                                _selectedList[0].Build(b);
+                                _buildings.Add(b);
+                                MessagesManager.Messages.Add(new Msg(_("Nouvelle écurie !"), Color.White, 5000));
+                                _pointer = "pointer";
+                                _currentAction = "";
+                            }
+                            else
+                            {
+                                MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                _pointer = "pointer";
+                                _currentAction = "";
+                            }
+                        }
+                        else
+                        { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                        break;
 
 						// Fin Ere 1 
 
