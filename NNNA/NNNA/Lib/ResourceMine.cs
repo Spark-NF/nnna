@@ -11,13 +11,14 @@ namespace NNNA
 		public int Quantity
 		{ get { return _quantity; } }
 
-		public ResourceMine(int x, int y, Resource resource, int quantity, Texture2D texture)
+		public ResourceMine(int x, int y, Resource resource, int quantity, Texture2D texture, int matriceX = - 1, int matriceY = -1)
 			: base(x, y)
 		{
 			_decouvert = false;
 			_texture = new Image(texture);
 			_resource = resource;
 			_quantity = quantity;
+            _positionMatrice = new Vector2(matriceX, matriceY);
 		}
 
 		/// <summary>

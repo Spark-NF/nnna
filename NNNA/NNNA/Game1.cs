@@ -612,7 +612,7 @@ namespace NNNA
 							x = _random.Next(_matrice.GetLength(0));
 							y = _random.Next(_matrice.GetLength(1));
 						}
-						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 1000, Content.Load<Texture2D>("Resources/bois_1_sprite" + _random.Next(0, 3))));
+						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 1000, Content.Load<Texture2D>("Resources/bois_1_sprite" + _random.Next(0, 3)), y, x));
 						_matrice[y, x].Crossable = false;
 					}
 
@@ -756,7 +756,15 @@ namespace NNNA
 			_camera.Update(_curseur, Graphics);
 
 			// On vire les ressources vides
-			_resources.RemoveAll(resource => resource.Quantity <= 0);
+            for (int i = 0; i < _resources.Count; i++)
+            {
+                if (_resources[i].Quantity <= 0)
+                {
+                    _matrice[(int) _resources[i].PositionMatrice.X, (int) _resources[i].PositionMatrice.Y].Crossable = true;
+                    _resources.RemoveAt(i);
+                    continue;
+                }
+            }
 
 			// Intelligence artificielle
 			var rand = new Random();

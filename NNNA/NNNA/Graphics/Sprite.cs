@@ -42,7 +42,7 @@ namespace NNNA
 		public Vector2 PositionCenter
 		{ get { return _position + new Vector2((float)Math.Round((double)_texture.Width / 2), (float)Math.Round((double)_texture.Height / 2)); } }
 
-		private Vector2 _positionMatrice;
+		protected Vector2 _positionMatrice;
 		public Vector2 PositionMatrice
 		{ get { return _positionMatrice; } }
 
