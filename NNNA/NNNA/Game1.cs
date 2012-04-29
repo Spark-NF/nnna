@@ -1,4 +1,4 @@
-//#define SOUND
+// #define SOUND
 
 using System;
 using System.Collections.Generic;
@@ -6,12 +6,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using NNNA.Form;
+#if SOUND
+	using Microsoft.Xna.Framework.Audio;
+	using Microsoft.Xna.Framework.Media;
+#endif
 
 namespace NNNA
 {
@@ -32,12 +33,12 @@ namespace NNNA
 
 		private Texture2D _backgroundDark, _flash, _console;
 		private readonly Texture2D[] _backgrounds = new Texture2D[2];
-		private Dictionary<string, Texture2D> _actions = new Dictionary<string, Texture2D>(), _pointers = new Dictionary<string, Texture2D>();
+		private readonly Dictionary<string, Texture2D> _actions = new Dictionary<string, Texture2D>(),  _pointers = new Dictionary<string, Texture2D>();
 		private SpriteFont _fontMenu, _fontMenuTitle, _fontSmall, _fontCredits;
 		private Screen _currentScreen = Screen.Title;
 		private int _konami, _foes = 1;
 		private string _currentAction = "", _language = "fr", _pointer = "pointer", _pointerOld = "pointer", _ipWan;
-		private List<string> _lastState = new List<string>();
+		private readonly List<string> _lastState = new List<string>();
 		private string[] _currentMenus;
 
 		private Vector2 _screenSize = new Vector2(1680, 1050);
@@ -45,13 +46,13 @@ namespace NNNA
 		public static bool SmartHud;
 		private float _soundGeneral = 10, _soundSFX = 10, _soundMusic = 10, _a = 1.0f;
 		private int _textures = 2, _sound = 2, _weather = 1;
-		internal static bool FlashBool = false;
+		internal static bool FlashBool;
 		
 		private MapType _quickType = MapType.Island;
-		private int _quickSize = 1, _quickResources = 1, _credits = 0, _theme = 0;
-		private List<string> _currentActions = new List<string>();
+		private int _quickSize = 1, _quickResources = 1, _credits, _theme;
+		private readonly List<string> _currentActions = new List<string>();
 		private readonly Random _random = new Random();
-        private Dictionary<Color, Texture2D> _colors = new Dictionary<Color, Texture2D>();
+        private readonly Dictionary<Color, Texture2D> _colors = new Dictionary<Color, Texture2D>();
 		
 		// Map
 		private Sprite _h, _e, _p, _t, _s, _i, _curseur;
@@ -64,17 +65,19 @@ namespace NNNA
 		private Joueur[] _enemies;
 		private Building _selectedBuilding;
 		private float[,] _heightMap;
-		private List<ResourceMine> _resources = new List<ResourceMine>();
-		private List<Unit> _selectedList = new List<Unit>();
-		private List<Building> _buildings = new List<Building>();
-		private List<MovibleSprite> _units = new List<MovibleSprite>();
+		private readonly List<ResourceMine> _resources = new List<ResourceMine>();
+		private readonly List<Unit> _selectedList = new List<Unit>();
+		private readonly List<Building> _buildings = new List<Building>();
+		private readonly List<MovibleSprite> _units = new List<MovibleSprite>();
 		private Vector2 _dimensions;
 		private int[] _players;
 		private Color[] _playersColors;
 
 		// Audio objects		
-		private const float MusicVolume = 2.0f;
-		private Sons _son = new Sons();
+		#if SOUND
+			private const float MusicVolume = 2.0f;
+			private Sons _son = new Sons();
+		#endif
 		// private SoundEffect _debutpartie;
         private Technologies_Window _techno;
 		#endregion
@@ -102,7 +105,8 @@ namespace NNNA
 		};
 		public enum MapType
 		{
-			Island
+			Island,
+			Flat
 		}
 
 		#endregion
@@ -210,52 +214,72 @@ namespace NNNA
 		/// <returns>Un tableau correspondant à la carte.</returns>
 		private Sprite[,] GenerateMap(MapType mt, int width, int height)
 		{
-			float[,] map = IslandGenerator.Generate(width, height);
-			_heightMap = map;
 			var matrice = new Sprite[width, height];
-			var heights = new List<float>();
 
-			// Calcul de la hauteur de l'eau
-			for (int x = 0; x < map.GetLength(0); x++)
+			switch (mt)
 			{
-				for (int y = 0; y < map.GetLength(1); y++)
-				{ heights.Add(map[x, y] * 255); }
-			}
-			
-			heights.Sort();
-			float waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
-			// On transforme les hauteurs en sprites
-			for (int x = 0; x < map.GetLength(0); x++)
-			{
-				for (int y = 0; y < map.GetLength(1); y++)
-				{
-					Sprite sp = _h;
-					float m = map[x, y] * 255;
-					if (m < waterline - 40)
-					{ sp = _e; }
-					else if (m < waterline)
-					{ sp = _t; }
-					else if (m < waterline + 15)
-					{ sp = _s; }
-					else if (m < waterline + 35)
-					{ sp = _i; }
-					matrice[x, y] = sp;
-				}
-			}
+				case MapType.Island:
 
-			// On met du sable à côté de l'eau
-			for (int x = 0; x < matrice.GetLength(0); x++)
-			{
-				for (int y = 0; y < matrice.GetLength(1); y++)
-				{
-					if (matrice[x, y] == _h)
+					float[,] map = IslandGenerator.Generate(width, height);
+					_heightMap = map;
+					var heights = new List<float>();
+
+					// Calcul de la hauteur de l'eau
+					for (int x = 0; x < map.GetLength(0); x++)
 					{
-						bool waternear = (x > 0 && matrice[x - 1, y] == _e) || (y > 0 && matrice[x, y - 1] == _e) || (x < matrice.GetLength(0) - 1 && matrice[x + 1, y] == _e) || (y < matrice.GetLength(1) - 1 && matrice[x, y + 1] == _e);
-						matrice[x, y] = waternear ? _p : _h;
+						for (int y = 0; y < map.GetLength(1); y++)
+						{ heights.Add(map[x, y] * 255); }
 					}
-				}
-			}
 			
+					heights.Sort();
+					float waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
+					// On transforme les hauteurs en sprites
+					for (int x = 0; x < width; x++)
+					{
+						for (int y = 0; y < height; y++)
+						{
+							Sprite sp = _h;
+							float m = map[x, y] * 255;
+							if (m < waterline - 40)
+							{ sp = _e; }
+							else if (m < waterline)
+							{ sp = _t; }
+							else if (m < waterline + 15)
+							{ sp = _s; }
+							else if (m < waterline + 35)
+							{ sp = _i; }
+							matrice[x, y] = sp;
+						}
+					}
+
+					// On met du sable à côté de l'eau
+					for (int x = 0; x < width; x++)
+					{
+						for (int y = 0; y < height; y++)
+						{
+							if (matrice[x, y] == _h)
+							{
+								bool waternear = (x > 0 && matrice[x - 1, y] == _e) || (y > 0 && matrice[x, y - 1] == _e) || (x < matrice.GetLength(0) - 1 && matrice[x + 1, y] == _e) || (y < matrice.GetLength(1) - 1 && matrice[x, y + 1] == _e);
+								matrice[x, y] = waternear ? _p : _h;
+							}
+						}
+					}
+					break;
+
+				case MapType.Flat:
+					_heightMap = new float[width, height];
+					var rand = new Random();
+					for (int x = 0; x < width; x++)
+					{
+						for (int y = 0; y < height; y++)
+						{
+							_heightMap[x, y] = (float)rand.NextDouble() / 10.0f;
+							matrice[x, y] = _h;
+						}
+					}
+					break;
+			}
+
 			return matrice;
 		}
 
@@ -541,10 +565,6 @@ namespace NNNA
 					{
 						// Génération
 						_matrice = GenerateMap(_quickType, sizes[_quickSize], sizes[_quickSize]);
-
-                        /*
-                         * envoie de la map si partie multi
-                         */
 						_minimap.Dimensions = new Vector2(sizes[_quickSize], sizes[_quickSize]);
 
 						// Spawns
@@ -555,15 +575,18 @@ namespace NNNA
 							{ heights.Add(_heightMap[x, y] * 255); }
 						}
 						float waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
+						int last = heights.IndexOf(waterline) > 0 ? heights.IndexOf(waterline) : heights.Count;
 						var heightsOr = new List<float>(heights);
 						heights.Sort((x, y) => (y.CompareTo(x)));
 						spawns.Clear();
 						int j = 0;
 
 						// On génère autant de spawns qu'il y aura de joueurs, chacun espacés d'au moins $dist
-						while (spawns.Count < _foes + 1 && j < heights.IndexOf(waterline))
+						while (spawns.Count < _foes + 1 && j < last)
 						{
-							var point = new Point(heightsOr.IndexOf(heights[j]) % _heightMap.GetLength(1), heightsOr.IndexOf(heights[j]) / _heightMap.GetLength(1));
+							int index = heightsOr.IndexOf(heights[j]);
+							heightsOr[index] = -1;
+							var point = new Point(index % _heightMap.GetLength(1), index / _heightMap.GetLength(1));
 							bool isNear = false;
 							foreach (Point p in spawns)
 							{
@@ -578,6 +601,10 @@ namespace NNNA
 						if (spawns.Count == _foes + 1)
 						{ ok = true; }
 					}
+
+					/*
+					 * envoie de la map si partie multi
+					 */
 
 					//Joueur
 					Joueur = new Joueur(colors[0], names[0], Content);
@@ -738,7 +765,7 @@ namespace NNNA
 		float _compt;
 
 		/// <summary>
-		/// Met à jour la liste des actions des unités.
+		/// Met à jour la liste des actions des unités. C'est ici que doivent être mises toutes les actions du menu de gauche dans le HUD.
 		/// </summary>
 		public void UpdateActions()
 		{
@@ -1513,7 +1540,7 @@ namespace NNNA
 		private void DrawPlayQuick()
 		{
 			DrawCommon();
-			string[] types = { "Île" };
+			string[] types = { "Île", "Plaine" };
 			string[] tailles = { "Petite", "Moyenne", "Grande" };
 			string[] ressources = { "rares", "normales", "abondantes" };
 			string[] weathers = { "Ensoleillé", "Nuageux", "Pluvieux" };
@@ -1863,7 +1890,9 @@ namespace NNNA
 		private void Debug(string value)
 		{
 			Console.Messages.Add(new ConsoleMessage(value));
-			System.Diagnostics.Debug.WriteLine(value);
+			#if DEBUG
+				System.Diagnostics.Debug.WriteLine(value);
+			#endif
 		}
 		private void Debug(List<Point> value)
 		{
@@ -2135,7 +2164,11 @@ namespace NNNA
 			translations["en"]["Quitter"] = "Quit";
 			translations["en"]["Escarmouche"] = "Skirmish";
 			translations["en"]["Retour"] = "Back";
+            translations["en"]["Multijoueur"] = "MultiPlayer";
+            translations["en"]["Local"] = "Local";
+			translations["en"]["Internet"] = "Internet";
 			translations["en"]["Île"] = "Island";
+			translations["en"]["Plaine"] = "Flat";
 			translations["en"]["Petite"] = "Small";
 			translations["en"]["Moyenne"] = "Medium";
 			translations["en"]["Grande"] = "Big";
@@ -2193,6 +2226,7 @@ namespace NNNA
 			translations["es"]["Escarmouche"] = "Escaramuza";
 			translations["es"]["Retour"] = "Vuelta";
 			translations["es"]["Île"] = "Isla";
+			translations["en"]["Plaine"] = "Llanura";
 			translations["es"]["Petite"] = "Pequeño";
 			translations["es"]["Moyenne"] = "Medio";
 			translations["es"]["Grande"] = "Grande";
