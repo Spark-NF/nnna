@@ -1418,9 +1418,9 @@ namespace NNNA
 			// Code Konami
 			if (_konami >= 10)
 			{
-				Joueur.Resource("Bois").Add(5000);
-				Joueur.Resource("Pierre").Add(5000);
-				Joueur.Resource("Nourriture").Add(5000);
+				Joueur.Resource("Bois").Add(10000);
+				Joueur.Resource("Pierre").Add(10000);
+				Joueur.Resource("Nourriture").Add(10000);
 				_konami = 0;
 			}
 
