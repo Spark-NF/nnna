@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
@@ -43,6 +44,9 @@ namespace NNNA
 			Poches = 0;
 		}
 
+        public virtual void Tirer(Unit cible, ContentManager content)
+        { }
+
 		public void Attack(Unit obj)
 		{
 			DestinationUnit = obj;
@@ -59,7 +63,7 @@ namespace NNNA
 			Will = "mine";
 		}
 
-		public void ClickMouvement(Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice)
+		public void ClickMouvement(Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice, ContentManager content)
 		{
 			if (_click || _selected || DestinationUnit != null || DestinationBuilding != null)
 			{
@@ -141,6 +145,10 @@ namespace NNNA
 						}
 						else
 						{
+                            if (this.Type == "archer" && DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && (DestinationUnit.PositionCenter - this.PositionCenter).LengthSquared() < this.Portee)
+                            {
+                                this.Tirer(DestinationUnit, content);
+                            }
 							if (DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), matrice))
 							{
 								DestinationUnit.Life -= Attaque;

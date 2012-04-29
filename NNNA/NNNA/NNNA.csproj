@@ -149,6 +149,7 @@
     <Compile Include="Physics\Static_Sprite.cs" />
     <Compile Include="Physics\Unit.cs" />
     <Compile Include="Physics\Unités\LandUnit.cs" />
+    <Compile Include="Physics\Unités\Terrestre\Archer.cs" />
     <Compile Include="Physics\Unités\Terrestre\Peon.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

@@ -60,10 +60,14 @@ namespace NNNA
             _distanceRestante = _but - _position;
         }
 
-        public new void Draw(SpriteBatch spritebatch)
-		{ _texture.Draw(spritebatch, _position, Color.White); }
+        public new void Draw(SpriteBatch spritebatch, Camera2D camera)
+		{ _texture.Draw(spritebatch, _position - camera.Position, Color.White); }
 
-        public void DrawRotation(SpriteBatch spritebatch)
-        { spritebatch.Draw(_texture.Texture, _rect, null, Color.White, (float)(Math.Atan2(_position.Y - _lastPosition.Y, _position.X - _lastPosition.X)), _textureCenter, SpriteEffects.None, 0f); }
+        public void DrawRotation(SpriteBatch spritebatch, Camera2D camera)
+        {
+            _rect.X -= (int) camera.Position.X;
+            _rect.Y -= (int)camera.Position.Y;
+            spritebatch.Draw(_texture.Texture, _rect, null, Color.White, (float)(Math.Atan2(_position.Y - _lastPosition.Y, _position.X - _lastPosition.X)), _textureCenter, SpriteEffects.None, 0f);
+        }
     }
 }

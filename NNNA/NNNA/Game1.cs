@@ -69,6 +69,7 @@ namespace NNNA
 		private readonly List<Unit> _selectedList = new List<Unit>();
 		private readonly List<Building> _buildings = new List<Building>();
 		private readonly List<MovibleSprite> _units = new List<MovibleSprite>();
+        private List<Sprite> _drawList = new List<Sprite>();
 		private Vector2 _dimensions;
 		private int[] _players;
 		private Color[] _playersColors;
@@ -126,6 +127,8 @@ namespace NNNA
 				SynchronizeWithVerticalRetrace = false
 			};
 			IsFixedTimeStep = true;
+            Graphics.SynchronizeWithVerticalRetrace = false;
+            Graphics.ApplyChanges();
 
             Content.RootDirectory = "Content";
             fps = new CompteurFPS(this);
@@ -325,6 +328,7 @@ namespace NNNA
 			_actions.Add("create_peon", Content.Load<Texture2D>("Actions/create_peon"));
 			_actions.Add("technologies", Content.Load<Texture2D>("Actions/technologies"));
 			_actions.Add("create_guerrier", Content.Load<Texture2D>("Actions/create_guerrier"));
+            _actions.Add("create_archer", Content.Load<Texture2D>("Actions/create_archer"));
 			#endregion Actions Batiments
 
 			#region Actions Communes
@@ -807,6 +811,8 @@ namespace NNNA
 
 					case "caserne":
 						_currentActions.Add("create_guerrier");
+                        if (Joueur.Ere > 1)
+                            _currentActions.Add("create_archer");
 						break;
 				}
 			}
@@ -833,6 +839,8 @@ namespace NNNA
 					return;
 				}
 			}
+            if ((Clavier.Get().Pressed(Keys.LeftControl) || Clavier.Get().Pressed(Keys.RightControl)) && Clavier.Get().Pressed(Keys.T))
+            { _techno.Win_Visible = true; }
 
 			_compt = (_compt + gameTime.ElapsedGameTime.Milliseconds * 0.1f) % 100;
 			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
@@ -860,507 +868,505 @@ namespace NNNA
 							unit.Move(unit.Position + new Vector2(rand.Next(-40, 41), rand.Next(-40, 41)), _units, _buildings, _matrice);
 							unit.Updates = rand.Next(0, 40);
 						}
-						unit.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice);
+						unit.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, Content);
 					}
 				}
 			}
 
 			// Rectangle de séléction
-			if (Souris.Get().Clicked(MouseButton.Left))
-			{
-				Building b;
-				Vector2 pos;
-				switch (_currentAction)
-				{
-					// Ere 1 
-					case "build_hutte":
-						pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
-						if (ValidSpawn(pos, _dimensions))
-						{
-							var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-							b = new Hutte((int)position.X, (int)position.Y, Content, Joueur, (byte)_random.Next(0, 2));
-							if (Joueur.Pay(b.Prix))
-							{
-								_selectedList[0].Build(b);
-								_buildings.Add(b);
-								MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte !"), Color.White, 5000));
-								_pointer = "pointer";
-								_currentAction = "";
-							}
-							else
-							{
-								MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-								_pointer = "pointer";
-								_currentAction = "";
-							}
-						}
-						else
-						{ MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
-						break;
-
-					case "build_hutteDesChasseurs":
-						pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
-						if (ValidSpawn(pos, _dimensions))
-						{
-							var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-							b = new HutteDesChasseurs((int)position.X, (int)position.Y, Content, Joueur);
-							if (Joueur.Pay(b.Prix))
-							{
-								_selectedList[0].Build(b);
-								_buildings.Add(b);
-								MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"), Color.White, 5000));
-								_pointer = "pointer";
-								_currentAction = "";
-							}
-							else
-							{
-								MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-								_pointer = "pointer";
-								_currentAction = "";
-							}
-						}
-						else
-						{ MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
-                        break;
-
-                    case "build_tour":
-                        pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
-                        if (ValidSpawn(pos, _dimensions))
-                        {
-                            var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                            b = new Tour((int)position.X, (int)position.Y, Content, Joueur);
-                            if (Joueur.Pay(b.Prix))
+            if (!_techno.Win_Visible)
+            {
+                if (Souris.Get().Clicked(MouseButton.Left))
+                {
+                    Building b;
+                    Vector2 pos;
+                    switch (_currentAction)
+                    {
+                        // Ere 1 
+                        case "build_hutte":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
                             {
-                                _selectedList[0].Build(b);
-                                _buildings.Add(b);
-                                MessagesManager.Messages.Add(new Msg(_("Nouvelle tour !"), Color.White, 5000));
-                                _pointer = "pointer";
-                                _currentAction = "";
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Hutte((int)position.X, (int)position.Y, Content, Joueur, (byte)_random.Next(0, 2));
+                                if (Joueur.Pay(b.Prix))
+                                {
+                                    _selectedList[0].Build(b);
+                                    _buildings.Add(b);
+                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte !"), Color.White, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
                             }
                             else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
+
+                        case "build_hutteDesChasseurs":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
                             {
-                                MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-                                _pointer = "pointer";
-                                _currentAction = "";
-                            }
-                        }
-                        else
-                        { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
-						break;
-                    case "build_ecurie":
-                        pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
-                        if (ValidSpawn(pos, _dimensions))
-                        {
-                            var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                            b = new Ecurie((int)position.X, (int)position.Y, Content, Joueur);
-                            if (Joueur.Pay(b.Prix))
-                            {
-                                _selectedList[0].Build(b);
-                                _buildings.Add(b);
-                                MessagesManager.Messages.Add(new Msg(_("Nouvelle écurie !"), Color.White, 5000));
-                                _pointer = "pointer";
-                                _currentAction = "";
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new HutteDesChasseurs((int)position.X, (int)position.Y, Content, Joueur);
+                                if (Joueur.Pay(b.Prix))
+                                {
+                                    _selectedList[0].Build(b);
+                                    _buildings.Add(b);
+                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"), Color.White, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
                             }
                             else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
+
+                        case "build_tour":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
                             {
-                                MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-                                _pointer = "pointer";
-                                _currentAction = "";
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Tour((int)position.X, (int)position.Y, Content, Joueur);
+                                if (Joueur.Pay(b.Prix))
+                                {
+                                    _selectedList[0].Build(b);
+                                    _buildings.Add(b);
+                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle tour !"), Color.White, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
                             }
-                        }
-                        else
-                        { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
-                        break;
-                    case "build_ferme":
-                        pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
-                        if (ValidSpawn(pos, _dimensions))
-                        {
-                            var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                            b = new Ferme((int)position.X, (int)position.Y, Content, Joueur);
-                            if (Joueur.Pay(b.Prix))
+                            else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
+                        case "build_ecurie":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
                             {
-                                _selectedList[0].Build(b);
-                                _buildings.Add(b);
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Ecurie((int)position.X, (int)position.Y, Content, Joueur);
+                                if (Joueur.Pay(b.Prix))
+                                {
+                                    _selectedList[0].Build(b);
+                                    _buildings.Add(b);
+                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle écurie !"), Color.White, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                            }
+                            else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
+                        case "build_ferme":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
+                            {
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Ferme((int)position.X, (int)position.Y, Content, Joueur);
+                                if (Joueur.Pay(b.Prix))
+                                {
+                                    _selectedList[0].Build(b);
+                                    _buildings.Add(b);
+                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"), Color.White, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                            }
+                            else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
+                        case "build_archerie":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
+                            {
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Archerie((int)position.X, (int)position.Y, Content, Joueur);
+                                if (Joueur.Pay(b.Prix))
+                                {
+                                    _selectedList[0].Build(b);
+                                    _buildings.Add(b);
+                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle archerie !"), Color.White, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                            }
+                            else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
+
+                        // Fin Ere 1 
+
+                        /* Ere 2 
+                        case "build_ferme":
+                            b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, _joueur);
+                            if (joueur.Pay(b.Prix))
+                            {
+                                joueur.buildings.Add(b);
                                 MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"), Color.White, 5000));
-                                _pointer = "pointer";
-                                _currentAction = "";
+                                m_pointer = Content.Load<Texture2D>("pointer");
+                                isbuilding = false;
+                                m_currentAction = "";
                             }
                             else
                             {
                                 MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-                                _pointer = "pointer";
-                                _currentAction = "";
+                                m_pointer = Content.Load<Texture2D>("pointer");
+                                m_currentAction = "";
                             }
-                        }
-                        else
-                        { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
-                        break;
-                    case "build_archerie":
-                        pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
-                        if (ValidSpawn(pos, _dimensions))
+                            break;
+                        Fin Ere 2 */
+
+                        default:
+                            _selection = new Rectangle(Souris.Get().X + (int)_camera.Position.X, Souris.Get().Y + (int)_camera.Position.Y, 0, 0);
+                            _currentAction = "select";
+                            break;
+                    }
+                }
+                else if (Souris.Get().Hold(MouseButton.Left) && _currentAction == "select")
+                {
+                    _selection.Width = Souris.Get().X + (int)_camera.Position.X - _selection.X;
+                    _selection.Height = Souris.Get().Y + (int)_camera.Position.Y - _selection.Y;
+                }
+                else if (Souris.Get().Hold(MouseButton.Left, ButtonState.Released))
+                { _selection = Rectangle.Empty; }
+
+                if (!_selection.IsEmpty && Souris.Get().Released(MouseButton.Left) && (_curseur.Position.Y <= _hud.Position.Y + 20 || _selection.Y - _camera.Position.Y <= _hud.Position.Y + 20))
+                {
+                    // On met à jour les séléctions
+                    bool change = false;
+                    if (!Keyboard.GetState().IsKeyDown(Keys.LeftControl) && !Keyboard.GetState().IsKeyDown(Keys.RightControl))
+                    {
+                        foreach (Unit sprite in _selectedList)
+                        { sprite.Selected = false; }
+                        _selectedList.Clear();
+                        if (_selectedBuilding != null)
+                        { _selectedBuilding.Selected = false; }
+                        _selectedBuilding = null;
+                    }
+                    foreach (Unit sprite in Joueur.Units)
+                    {
+                        var csel = new Rectangle((int)(_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0)), (int)(_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)), Math.Abs(_selection.Width), Math.Abs(_selection.Height));
+                        if (!sprite.Selected && csel.Intersects(sprite.Rectangle(_camera)))
                         {
-                            var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                            b = new Archerie((int)position.X, (int)position.Y, Content, Joueur);
-                            if (Joueur.Pay(b.Prix))
-                            {
-                                _selectedList[0].Build(b);
-                                _buildings.Add(b);
-                                MessagesManager.Messages.Add(new Msg(_("Nouvelle archerie !"), Color.White, 5000));
-                                _pointer = "pointer";
-                                _currentAction = "";
-                            }
-                            else
-                            {
-                                MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-                                _pointer = "pointer";
-                                _currentAction = "";
-                            }
+                            sprite.Selected = true;
+                            _selectedList.Add(sprite);
+                            change = true;
                         }
-                        else
-                        { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
-                        break;
-                    case "build_usine":
-                        pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
-                        if (ValidSpawn(pos, _dimensions))
+                    }
+                    if (!change)
+                    {
+                        foreach (Unit sprite in _selectedList)
+                        { sprite.Selected = false; }
+                        _selectedList.Clear();
+
+                        foreach (Building sprite in Joueur.Buildings)
                         {
-                            var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                            b = new Usine((int)position.X, (int)position.Y, Content, Joueur);
-                            if (Joueur.Pay(b.Prix))
+                            var csel = new Rectangle((int)(_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0)), (int)(_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)), Math.Abs(_selection.Width), Math.Abs(_selection.Height));
+                            if (!sprite.Selected && csel.Intersects(sprite.Rectangle(_camera)))
                             {
-                                _selectedList[0].Build(b);
-                                _buildings.Add(b);
-                                MessagesManager.Messages.Add(new Msg(_("Nouvelle Usine !"), Color.White, 5000));
-                                _pointer = "pointer";
-                                _currentAction = "";
-                            }
-                            else
-                            {
-                                MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-                                _pointer = "pointer";
-                                _currentAction = "";
+                                sprite.Selected = true;
+                                _selectedBuilding = sprite;
+                                change = true;
+                                break;
                             }
                         }
-                        else
-                        { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
-                        break;
+                   
 
-						// Fin Ere 1 
+                        if (!change)
+                        {
+                            if (_selectedBuilding != null)
+                            { _selectedBuilding.Selected = false; }
+                            _selectedBuilding = null;
+                        }
+                    }
 
-					/* Ere 2 
-					case "build_ferme":
-						b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, _joueur);
-						if (joueur.Pay(b.Prix))
-						{
-							joueur.buildings.Add(b);
-							MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"), Color.White, 5000));
-							m_pointer = Content.Load<Texture2D>("pointer");
-							isbuilding = false;
-							m_currentAction = "";
-						}
-						else
-						{
-							MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-							m_pointer = Content.Load<Texture2D>("pointer");
-							m_currentAction = "";
-						}
-						break;
-					Fin Ere 2 */
+                    // On met à jour les actions
+                    UpdateActions();
+                    _currentAction = "";
+                }
 
-					default:
-						_selection = new Rectangle(Souris.Get().X + (int)_camera.Position.X, Souris.Get().Y + (int)_camera.Position.Y, 0, 0);
-						_currentAction = "select";
-						break;
-				}
-			}
-			else if (Souris.Get().Hold(MouseButton.Left) && _currentAction == "select")
-			{
-				_selection.Width = Souris.Get().X + (int)_camera.Position.X - _selection.X;
-				_selection.Height = Souris.Get().Y + (int)_camera.Position.Y - _selection.Y;
-			}
-			else if (Souris.Get().Hold(MouseButton.Left, ButtonState.Released))
-			{ _selection = Rectangle.Empty; }
+                // Actions
+                if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= _hud.Position.X + 20 && Souris.Get().Y >= _hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+                {
+                    int x = Souris.Get().X - _hud.Position.X - 20, y = Souris.Get().Y - _hud.Position.Y - 20;
+                    if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+                    {
+                        x /= 40;
+                        y /= 40;
+                        int pos = x + 6 * y;
+                        if (pos < _currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+                        {
+                            string act;
+                            if (Clavier.Get().NewPress(Keys.C))
+                            { act = "build_hutte"; }
+                            else if (Clavier.Get().NewPress(Keys.V))
+                            { act = "build_hutteDesChasseurs"; }
+                            else
+                            { act = _currentActions[pos]; }
+                            Debug(act);
+                            switch (act)
+                            {
+                                case "attack":
+                                    break;
 
-			if (!_selection.IsEmpty && Souris.Get().Released(MouseButton.Left) && (_curseur.Position.Y <= _hud.Position.Y + 20 || _selection.Y - _camera.Position.Y <= _hud.Position.Y + 20))
-			{
-				// On met à jour les séléctions
-				bool change = false;
-				if (!Keyboard.GetState().IsKeyDown(Keys.LeftControl) && !Keyboard.GetState().IsKeyDown(Keys.RightControl))
-				{
-					foreach (Unit sprite in _selectedList)
-					{ sprite.Selected = false; }
-					_selectedList.Clear();
-					if (_selectedBuilding != null)
-					{ _selectedBuilding.Selected = false; }
-					_selectedBuilding = null;
-				}
-				foreach (Unit sprite in Joueur.Units)
-				{
-					var csel = new Rectangle((int)(_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0)), (int)(_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)), Math.Abs(_selection.Width), Math.Abs(_selection.Height));
-					if (!sprite.Selected && csel.Intersects(sprite.Rectangle(_camera)))
-					{
-						sprite.Selected = true;
-						_selectedList.Add(sprite);
-						change = true;
-					}
-				}
-				if (!change)
-				{
-					foreach (Unit sprite in _selectedList)
-					{ sprite.Selected = false; }
-					_selectedList.Clear();
+                                case "build":
+                                    _currentActions.Clear();
+                                    _currentActions.Add("build_hutte");
+                                    _currentActions.Add("build_hutteDesChasseurs");
+                                    _currentActions.Add("retour");
+                                    break;
 
-					foreach (Building sprite in Joueur.Buildings)
-					{
-						var csel = new Rectangle((int)(_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0)), (int)(_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)), Math.Abs(_selection.Width), Math.Abs(_selection.Height));
-						if (!sprite.Selected && csel.Intersects(sprite.Rectangle(_camera)))
-						{
-							sprite.Selected = true;
-							_selectedBuilding = sprite;
-							change = true;
-							break;
-						}
-					}
+                                case "mine":
+                                    break;
 
-					if (!change)
-					{
-						if (_selectedBuilding != null)
-						{ _selectedBuilding.Selected = false; }
-						_selectedBuilding = null;
-					}
-				}
+                                case "poches":
+                                    break;
 
-				// On met à jour les actions
-				UpdateActions();
-				_currentAction = "";
-			}
+                                case "build_hutte":
+                                    _pointer = "Batiments/maison" + _random.Next(1, 3).ToString(CultureInfo.CurrentCulture) + "_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _currentAction = "build_hutte";
+                                    _dimensions = new Vector2(4, 4);
+                                    break;
 
-			// Actions
-			if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= _hud.Position.X + 20 && Souris.Get().Y >= _hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
-			{
-				int x = Souris.Get().X - _hud.Position.X - 20, y = Souris.Get().Y - _hud.Position.Y - 20;
-				if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
-				{
-					x /= 40;
-					y /= 40;
-					int pos = x + 6 * y;
-					if (pos < _currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
-					{
-						string act;
-						if (Clavier.Get().NewPress(Keys.C))
-						{ act = "build_hutte"; }
-						else if (Clavier.Get().NewPress(Keys.V))
-						{ act = "build_hutteDesChasseurs"; }
-						else
-						{ act = _currentActions[pos]; }
-						Debug(act);
-						switch (act)
-						{
-							case "attack":
-								break;
+                                case "build_hutteDesChasseurs":
+                                    _pointer = "Batiments/caserne_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _currentAction = "build_hutteDesChasseurs";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
 
-							case "build":
-								_currentActions.Clear();
-								_currentActions.Add("build_hutte");
-								_currentActions.Add("build_hutteDesChasseurs");
-								_currentActions.Add("retour");
-								break;
+                                case "retour":
+                                    _currentActions.Clear();
+                                    foreach (string t in _lastState)
+                                    { _currentActions.Add(t); }
+                                    break;
 
-							case "mine":
-								break;
+                                case "create_peon":
+                                    if (_selectedBuilding != null)
+                                    {
+                                        var u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, Joueur, _selectedBuilding);
+                                        if (Joueur.Pay(u.Prix))
+                                        {
+                                            _selectedBuilding.Iterator++;
+                                            Joueur.Units.Add(u);
+                                            _units.Add(u);
+                                            MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
+                                            _currentAction = "";
+                                        }
+                                        else
+                                        { MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
+                                    }
+                                    break;
 
-							case "poches":
-								break; 
+                                case "technologies":
+                                    _techno.Win_Visible = true;
+                                    break;
 
-							case "build_hutte":
-								_pointer = "Batiments/maison" + _random.Next(1, 3).ToString(CultureInfo.CurrentCulture) + "_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
-								_currentAction = "build_hutte";
-								_dimensions = new Vector2(4, 4);
-								break;
+                                case "create_guerrier":
+                                    if (_selectedBuilding != null)
+                                    {
+                                        var u1 = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur);
+                                        if (Joueur.Has(u1.Prix))
+                                        {
+                                            _selectedBuilding.Iterator++;
+                                            Joueur.Units.Add(u1);
+                                            _units.Add(u1);
+                                            MessagesManager.Messages.Add(new Msg(_("Nouveau chasseur !"), Color.White, 5000));
+                                            _currentAction = "";
+                                        }
+                                        else
+                                        { MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
+                                    }
+                                    break;
+                                case "create_archer":
+                                    if (_selectedBuilding != null)
+                                    {
+                                        var u1 = new Archer((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur);
+                                        if (Joueur.Has(u1.Prix))
+                                        {
+                                            _selectedBuilding.Iterator++;
+                                            Joueur.Units.Add(u1);
+                                            _units.Add(u1);
+                                            MessagesManager.Messages.Add(new Msg(_("Nouvel archer !"), Color.White, 5000));
+                                            _currentAction = "";
+                                        }
+                                        else
+                                        { MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
+                                    }
+                                    break;
 
-							case "build_hutteDesChasseurs":
-								_pointer = "Batiments/caserne_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
-								_currentAction = "build_hutteDesChasseurs";
-								_dimensions = new Vector2(2, 2);
-								break;
-
-							case "retour":
-								_currentActions.Clear();
-								foreach (string t in _lastState)
-								{ _currentActions.Add(t); }
-								break;
-
-							case "create_peon":
-								if (_selectedBuilding != null)
-								{
-									var u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, Joueur, _selectedBuilding);
-									if (Joueur.Pay(u.Prix))
-									{
-										_selectedBuilding.Iterator++;
-										Joueur.Units.Add(u);
-										_units.Add(u);
-										MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
-										_currentAction = "";
-									}
-									else
-									{ MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
-								}
-								break;
-
-							case "technologies":
-								_techno.Win_Visible = true;
-								break;
-
-							case "create_guerrier":
-								if (_selectedBuilding != null)
-								{
-									var u1 = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur);
-									if (Joueur.Has(u1.Prix))
-									{
-										_selectedBuilding.Iterator++;
-										Joueur.Units.Add(u1);
-										_units.Add(u1);
-										MessagesManager.Messages.Add(new Msg(_("Nouveau chasseur !"), Color.White, 5000));
-										_currentAction = "";
-									}
-									else
-									{ MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
-								}
-								break;
-
-							/* Ere 2 
-						case "build_ferme":
-							if (joueur.Has(new Ferme().Prix))
-							{
-								m_pointer = "Batiments/ferme";
-								isbuilding = true;
-								m_currentAction = "build_ferme";
-							}
-							else
-							{ MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
-							break;*/
-						}
-					}
-				}
-			}
+                                /* Ere 2 
+                            case "build_ferme":
+                                if (joueur.Has(new Ferme().Prix))
+                                {
+                                    m_pointer = "Batiments/ferme";
+                                    isbuilding = true;
+                                    m_currentAction = "build_ferme";
+                                }
+                                else
+                                { MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
+                                break;*/
+                            }
+                        }
+                    }
+                }
+            }
 			foreach (Unit sprite in Joueur.Units)
-			{ sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice); }
+			{ sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, Content); }
 
 			// Curseur de combat
 			Unit unitUnder = null;
-			if (_selectedList.Count > 0)
-			{
-				foreach (Joueur foe in _enemies)
-				{
-					foreach (Unit unit in foe.Units)
-					{
-						// Si une unité ennemie se trouve sous le curseur
-						if (unit.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
-						{
-							float mul = 0.0f;
-							if (_weather > 0)
-							{
-								foreach (Unit uni in Joueur.Units)
-								{
-									float m = (uni.PositionCenter - unit.Position).Length();
-									m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
-									mul = (m > 0 && m > mul) ? m : mul;
-								}
-								foreach (Building building in Joueur.Buildings)
-								{
-									float m = (building.PositionCenter - unit.Position).Length();
-									m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
-									mul = (m > 0 && m > mul) ? m : mul;
-								}
-							}
-							else
-							{ mul = 1.0f; }
-							if (mul > 0.25f)
-							{
-								_pointer = "fight";
-								unitUnder = unit;
-							}
-						}
-					}
-				}
-			}
-			if (_pointer == "fight" && unitUnder == null)
-			{ _pointer = "pointer"; }
+            if (!_techno.Win_Visible)
+            {
+                if (_selectedList.Count > 0)
+                {
+                    foreach (Joueur foe in _enemies)
+                    {
+                        foreach (Unit unit in foe.Units)
+                        {
+                            // Si une unité ennemie se trouve sous le curseur
+                            if (unit.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
+                            {
+                                float mul = 0.0f;
+                                if (_weather > 0)
+                                {
+                                    foreach (Unit uni in Joueur.Units)
+                                    {
+                                        float m = (uni.PositionCenter - unit.Position).Length();
+                                        m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
+                                        mul = (m > 0 && m > mul) ? m : mul;
+                                    }
+                                    foreach (Building building in Joueur.Buildings)
+                                    {
+                                        float m = (building.PositionCenter - unit.Position).Length();
+                                        m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                                        mul = (m > 0 && m > mul) ? m : mul;
+                                    }
+                                }
+                                else
+                                { mul = 1.0f; }
+                                if (mul > 0.25f)
+                                {
+                                    _pointer = "fight";
+                                    unitUnder = unit;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (_pointer == "fight" && unitUnder == null)
+                { _pointer = "pointer"; }
 
-			// Curseur de minage
-			ResourceMine resourceUnder = null;
-			if (_selectedList.Count > 0 && (_currentActions.Contains("mine") || _currentActions.Contains("retour")))
-			{
-				foreach (ResourceMine resource in _resources)
-				{
-					// Si une unité ennemie se trouve sous le curseur
-					if (resource.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
-					{
-						float mul = 0.0f;
-						if (_weather > 0)
-						{
-							foreach (Unit uni in Joueur.Units)
-							{
-								float m = (uni.PositionCenter - resource.Position).Length();
-								m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
-								mul = (m > 0 && m > mul) ? m : mul;
-							}
-							foreach (Building building in Joueur.Buildings)
-							{
-								float m = (building.PositionCenter - resource.Position).Length();
-								m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
-								mul = (m > 0 && m > mul) ? m : mul;
-							}
-						}
-						else
-						{ mul = 1.0f; }
-						if (mul > 0.25f)
-						{
-							_pointer = "mine";
-							resourceUnder = resource;
-						}
-					}
-				}
-			}
-			if (_pointer == "mine" && resourceUnder == null)
-			{ _pointer = "pointer"; }
+                // Curseur de minage
+                ResourceMine resourceUnder = null;
+                if (_selectedList.Count > 0 && (_currentActions.Contains("mine") || _currentActions.Contains("retour")))
+                {
+                    foreach (ResourceMine resource in _resources)
+                    {
+                        // Si une unité ennemie se trouve sous le curseur
+                        if (resource.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
+                        {
+                            float mul = 0.0f;
+                            if (_weather > 0)
+                            {
+                                foreach (Unit uni in Joueur.Units)
+                                {
+                                    float m = (uni.PositionCenter - resource.Position).Length();
+                                    m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
+                                    mul = (m > 0 && m > mul) ? m : mul;
+                                }
+                                foreach (Building building in Joueur.Buildings)
+                                {
+                                    float m = (building.PositionCenter - resource.Position).Length();
+                                    m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                                    mul = (m > 0 && m > mul) ? m : mul;
+                                }
+                            }
+                            else
+                            { mul = 1.0f; }
+                            if (mul > 0.25f)
+                            {
+                                _pointer = "mine";
+                                resourceUnder = resource;
+                            }
+                        }
+                    }
+                }
+                if (_pointer == "mine" && resourceUnder == null)
+                { _pointer = "pointer"; }
 
-			// Vidage de poches
-			Building buildingUnder = null;
-			if (_selectedList.Count > 0 && (_currentActions.Contains("poches") || _currentActions.Contains("retour")))
-			{
-				foreach (Unit unit in _selectedList)
-				{
-					// Si le bâtiment affilié se trouve sous le curseur
-					if (unit.Poches > 0 && unit.Affiliate.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
-					{
-						_pointer = "poches";
-						buildingUnder = unit.Affiliate;
-						// Si l'utilisateur a fait un clic droit, on lance la commande de vidage de poches
-						if (Souris.Get().Clicked(MouseButton.Right))
-						{
-							unit.Will = "poches";
-							unit.DestinationBuilding = unit.Affiliate;
-							unit.Move(unit.DestinationBuilding.Position + new Vector2((float)Math.Round((double)unit.DestinationBuilding.Texture.Width / 2), 0)); //, sprites, buildings, matrice);
-						}
-					}
-				}
-			}
-			if (_pointer == "poches" && buildingUnder == null)
-			{ _pointer = "pointer"; }
+                // Vidage de poches
+                Building buildingUnder = null;
+                if (_selectedList.Count > 0 && (_currentActions.Contains("poches") || _currentActions.Contains("retour")))
+                {
+                    foreach (Unit unit in _selectedList)
+                    {
+                        // Si le bâtiment affilié se trouve sous le curseur
+                        if (unit.Poches > 0 && unit.Affiliate.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
+                        {
+                            _pointer = "poches";
+                            buildingUnder = unit.Affiliate;
+                            // Si l'utilisateur a fait un clic droit, on lance la commande de vidage de poches
+                            if (Souris.Get().Clicked(MouseButton.Right))
+                            {
+                                unit.Will = "poches";
+                                unit.DestinationBuilding = unit.Affiliate;
+                                unit.Move(unit.DestinationBuilding.Position + new Vector2((float)Math.Round((double)unit.DestinationBuilding.Texture.Width / 2), 0)); //, sprites, buildings, matrice);
+                            }
+                        }
+                    }
+                }
+                if (_pointer == "poches" && buildingUnder == null)
+                { _pointer = "pointer"; }
 
-			// Combat
-			if (unitUnder != null && Souris.Get().Clicked(MouseButton.Right))
-			{
-				foreach (Unit unit in _selectedList)
-				{ unit.Attack(unitUnder); }
-			}
-			// Minage
-			else if (resourceUnder != null && Souris.Get().Clicked(MouseButton.Right))
-			{
-				foreach (Unit unit in _selectedList)
-				{ unit.Mine(resourceUnder); }
-			}
-
+                // Combat
+                if (unitUnder != null && Souris.Get().Clicked(MouseButton.Right))
+                {
+                    foreach (Unit unit in _selectedList)
+                    { unit.Attack(unitUnder); }
+                }
+                // Minage
+                else if (resourceUnder != null && Souris.Get().Clicked(MouseButton.Right))
+                {
+                    foreach (Unit unit in _selectedList)
+                    { unit.Mine(resourceUnder); }
+                }
+            }
 			Joueur.Units.Sort(Sprite.CompareByY);
 			Joueur.Buildings.Sort(Sprite.CompareByY);
 			 
@@ -1633,91 +1639,110 @@ namespace NNNA
 			}
 
 			// Affichage des objets sur la carte
-			foreach (Joueur foe in _enemies)
-			{
-				foreach (Building build in foe.Buildings)
-				{
-					if (_weather == 0)
-					{
-						build.Visible = true;
-						build.Draw(_spriteBatch, _camera, foe.ColorMovable);
-					}
-					else
-					{
-						float mul = 0.0f;
-						foreach (Unit unit in Joueur.Units)
-						{
-							float m = (unit.PositionCenter - build.Position).Length();
-							m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
-							mul = (m > 0 && m > mul) ? m : mul;
-						}
-						foreach (Building building in Joueur.Buildings)
-						{
-							float m = (building.PositionCenter - build.Position).Length();
-							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
-							mul = (m > 0 && m > mul) ? m : mul;
-						}
-						build.Visible = mul > 0;
-						if (mul > 0)
-						{ build.Draw(_spriteBatch, _camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
-					}
-				}
-				foreach (Unit uni in foe.Units)
-				{
-					if (_weather == 0)
-					{
-						uni.Visible = true;
-						uni.Draw(_spriteBatch, _camera, index, foe.ColorMovable);
-					}
-					else
-					{
-						float mul = 0.0f;
-						foreach (Unit unit in Joueur.Units)
-						{
-							float m = (unit.PositionCenter - uni.Position).Length();
-							m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
-							mul = (m > 0 && m > mul) ? m : mul;
-						}
-						foreach (Building building in Joueur.Buildings)
-						{
-							float m = (building.PositionCenter - uni.Position).Length();
-							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
-							mul = (m > 0 && m > mul) ? m : mul;
-						}
-						uni.Visible = mul > 0;
-						if (mul > 0f)
-						{ uni.Draw(_spriteBatch, _camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
-					}
-				}
-			}
-			Joueur.Draw(_spriteBatch, _camera, index);
-			foreach (ResourceMine sprite in _resources)
-			{
-				if (_weather == 0)
-				{
-					sprite.Visible = true;
-					sprite.Draw(_spriteBatch, 1, _camera, 1.0f, _weather);
-				}
-				else
-				{
-					float mul = 0.0f;
-					foreach (Unit unit in Joueur.Units)
-					{
-						float m = (unit.PositionCenter - sprite.PositionCenter).Length();
-						m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					foreach (Building building in Joueur.Buildings)
-					{
-						float m = (building.PositionCenter - sprite.PositionCenter).Length();
-						m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					sprite.Visible = mul > 0;
-					if (mul > 0f)
-					{ sprite.Draw(_spriteBatch, 1, _camera, mul, _weather); }
-				}
-			}
+            foreach (Joueur foe in _enemies)
+            {
+                foreach (Building build in foe.Buildings)
+                {
+                    if (_weather == 0)
+                    {
+                        build.Visible = true;
+                        build.Draw(_spriteBatch, _camera, foe.ColorMovable);
+                    }
+                    else
+                    {
+                        float mul = 0.0f;
+                        foreach (Unit unit in Joueur.Units)
+                        {
+                            float m = (unit.PositionCenter - build.Position).Length();
+                            m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
+                            mul = (m > 0 && m > mul) ? m : mul;
+                        }
+                        foreach (Building building in Joueur.Buildings)
+                        {
+                            float m = (building.PositionCenter - build.Position).Length();
+                            m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                            mul = (m > 0 && m > mul) ? m : mul;
+                        }
+                        build.Visible = mul > 0;
+                        if (mul > 0)
+                        { build.Draw(_spriteBatch, _camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
+                    }
+                }
+                foreach (Unit uni in foe.Units)
+                {
+                    if (_weather == 0)
+                    {
+                        uni.Visible = true;
+                        uni.Draw(_spriteBatch, _camera, index, foe.ColorMovable);
+                    }
+                    else
+                    {
+                        float mul = 0.0f;
+                        foreach (Unit unit in Joueur.Units)
+                        {
+                            float m = (unit.PositionCenter - uni.Position).Length();
+                            m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
+                            mul = (m > 0 && m > mul) ? m : mul;
+                        }
+                        foreach (Building building in Joueur.Buildings)
+                        {
+                            float m = (building.PositionCenter - uni.Position).Length();
+                            m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                            mul = (m > 0 && m > mul) ? m : mul;
+                        }
+                        uni.Visible = mul > 0;
+                        if (mul > 0f)
+                        { uni.Draw(_spriteBatch, _camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
+                    }
+                }
+            }
+            //_drawList.Clear();
+            //foreach (MovibleSprite sprite in _units)
+            //{
+            //    _drawList.Add(sprite);
+            //}
+            //foreach (Building sprite in _buildings)
+            //{
+            //    _drawList.Add(sprite);
+            //}
+            //foreach (ResourceMine sprite in _resources)
+            //{
+            //    _drawList.Add(sprite);
+            //}
+            //_drawList.Sort(Sprite.CompareByY);
+            //foreach (Sprite sprite in _drawList)
+            //{
+            //    sprite.DrawMap(_spriteBatch, _camera, 1.0f, _weather);
+            //}
+
+            Joueur.Draw(_spriteBatch, _camera, index);
+            foreach (ResourceMine sprite in _resources)
+            {
+                if (_weather == 0)
+                {
+                    sprite.Visible = true;
+                    sprite.Draw(_spriteBatch, 1, _camera, 1.0f, _weather);
+                }
+                else
+                {
+                    float mul = 0.0f;
+                    foreach (Unit unit in Joueur.Units)
+                    {
+                        float m = (unit.PositionCenter - sprite.PositionCenter).Length();
+                        m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
+                        mul = (m > 0 && m > mul) ? m : mul;
+                    }
+                    foreach (Building building in Joueur.Buildings)
+                    {
+                        float m = (building.PositionCenter - sprite.PositionCenter).Length();
+                        m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                        mul = (m > 0 && m > mul) ? m : mul;
+                    }
+                    sprite.Visible = mul > 0;
+                    if (mul > 0f)
+                    { sprite.Draw(_spriteBatch, 1, _camera, mul, _weather); }
+                }
+            }
 
 			// Rectangle de séléction
 			var coos = new Vector2(
@@ -1833,8 +1858,8 @@ namespace NNNA
 				_a = 1.0f;
 			}
 
-            //Affichage des fps
-            Debug(4, fps.FPS);
+            // Affichage les fps
+            //Debug(4, Math.Truncate(fps.FPS));
 
             _techno.Draw(_spriteBatch, _fontSmall);
 		}
