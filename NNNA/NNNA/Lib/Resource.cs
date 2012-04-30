@@ -47,13 +47,13 @@ namespace NNNA
 		{
 			_icons = new Texture2D[4];
 			_textures = new Texture2D[4];
-			for (int i = 1; i <= 1; i++)
+			for (int i = 1; i <= 4; i++)
 			{
 				if (Name(i) != "")
 				{ 
 					_icons[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + i);
-					if (Name(i) == "Bois") _textures[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + i + "_sprite" + (rand.Next(1000) % 3));
-					else _textures[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + i + "_sprite");
+					if (Name(i) == "Bois") _textures[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + 1 + "_sprite" + (rand.Next(1000) % 3));
+					else _textures[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + 1 + "_sprite");
 				}
 			}
 		}
