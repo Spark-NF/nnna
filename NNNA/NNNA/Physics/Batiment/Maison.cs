@@ -16,7 +16,6 @@ namespace NNNA
 		{
 			_joueur = joueur;
 			LoadContent(content, "Batiments/hutte" + (a == 0 ? 1 : 2));
-			Texture.Animation = false;
 			Life = 100;
 			_cost.Add("Bois", 50);
             LineSight = 128;

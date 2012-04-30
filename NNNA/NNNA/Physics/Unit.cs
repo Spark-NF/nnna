@@ -40,7 +40,7 @@ namespace NNNA
 		public Unit(int x, int y)
 			: base(x, y)
 		{
-			PochesMax = 100;
+			PochesMax = 50;
 			Poches = 0;
 		}
 
@@ -55,6 +55,7 @@ namespace NNNA
 		public void Build(Building building)
 		{
 			DestinationBuilding = building;
+			DestinationBuilding.Texture.Part = 0;
 			Will = "build";
 		}
 		public void Mine(ResourceMine resource)
@@ -98,13 +99,11 @@ namespace NNNA
 							_position -= translation;
 							if (Will == "build")
 							{
-								if (DestinationBuilding.Texture.Animation == false)
-								{
-									Joueur.Buildings.Add(DestinationBuilding);
-									DestinationBuilding.Texture.Animation = true;
-									DestinationBuilding.Texture.Single = true;
-								}
-								else if (DestinationBuilding.Texture.Finished)
+								if (DestinationBuilding.Texture.Part == 0)
+								{ Joueur.Buildings.Add(DestinationBuilding); }
+								if (DestinationBuilding.Texture.Part < DestinationBuilding.Texture.Height)
+								{ DestinationBuilding.Texture.Part++; }
+								else
 								{ DestinationBuilding = null; }
 							}
 							else // Will == "poches"
@@ -145,7 +144,7 @@ namespace NNNA
 						}
 						else
 						{
-                            if (Type == "archer" && DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && (DestinationUnit.PositionCenter - this.PositionCenter).LengthSquared() < Portee)
+                            if (Type == "archer" && DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && (DestinationUnit.PositionCenter - PositionCenter).LengthSquared() < Portee)
                             { Tirer(DestinationUnit, content); }
                             if (DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), new Sprite[,] { }))
 							{
@@ -274,7 +273,7 @@ namespace NNNA
 					var distance = (ClickPosition - Position - new Vector2(Texture.Collision.X + Texture.Collision.Width / 2.0f, Texture.Collision.Y + Texture.Collision.Height / 2.0f)).Length();
 					for (int i = 0; i < distance; i += 4)
 					{ spriteBatch.Draw(_dots, ClickPosition - camera.Position - new Vector2((float)(i * Math.Cos(Angle)), (float)(i * Math.Sin(Angle))), Color.White); }
-					if (_go != null && DestinationUnit == null && DestinationResource == null)
+					if (_go != null && DestinationUnit == null && DestinationResource == null && (DestinationBuilding == null || Will != "poches"))
 					{ _go.Draw(spriteBatch, ClickPosition - camera.Position - new Vector2(_go.Width, _go.Height) / 2.0f, Color.White); }
 				}
 				spriteBatch.Draw(_selection, _position - camera.Position + new Vector2(0, 32), Joueur.Color);

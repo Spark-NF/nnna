@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using System.Globalization;
+using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
@@ -16,8 +17,7 @@ namespace NNNA
 			: base(x, y)
 		{
 			_joueur = joueur;
-			LoadContent(content, "Batiments/tour");
-			Texture.Animation = false;
+			LoadContent(content, "Batiments/tour" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 200;
 			LineSight = 512;
 			_cost.Add("Bois", 50);

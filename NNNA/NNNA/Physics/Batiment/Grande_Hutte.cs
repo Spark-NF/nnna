@@ -20,7 +20,6 @@ namespace NNNA
 			_joueur = joueur;
 			_type = "forum";
 			LoadContent(content, "Batiments/forum_" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
-			Texture.Animation = false;
 			Life = 500;
 			_cost.Add("Bois", 1000);
 			_cost.Add("Nourriture", 500);

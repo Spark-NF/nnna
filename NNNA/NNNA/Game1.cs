@@ -33,7 +33,7 @@ namespace NNNA
 		private SpriteBatch _spriteBatch;
 		private Effect _gaussianBlur;
 		private Rectangle _selection = Rectangle.Empty;
-        private CompteurFPS fps;
+        private readonly CompteurFPS _fps;
 
 		private Texture2D _backgroundDark, _flash, _console;
 		private readonly Texture2D[] _backgrounds = new Texture2D[2];
@@ -41,7 +41,7 @@ namespace NNNA
 		private SpriteFont _fontMenu, _fontMenuTitle, _fontSmall, _fontCredits;
 		private Screen _currentScreen = Screen.Title;
 		private int _konami, _foes = 1;
-		private string _currentAction = "", _language = "fr", _pointer = "pointer", _pointerOld = "pointer", _ipWan;
+		private string _currentAction = "", _language = "fr", _pointer = "pointer", _pointerOld = "pointer";
 		private readonly List<string> _lastState = new List<string>();
 		private List<string> _currentMenus = new List<string>();
 
@@ -73,7 +73,7 @@ namespace NNNA
 		private readonly List<Unit> _selectedList = new List<Unit>();
 		private readonly List<Building> _buildings = new List<Building>();
 		private readonly List<MovibleSprite> _units = new List<MovibleSprite>();
-        private List<Sprite> _drawList = new List<Sprite>();
+		private IEnumerable<Sprite> _drawList;
 		private Vector2 _dimensions;
 		private int[] _players;
 		private Color[] _playersColors;
@@ -82,9 +82,9 @@ namespace NNNA
 		#if SOUND
 			private const float MusicVolume = 2.0f;
 			private Sons _son = new Sons();
+			private SoundEffect _debutpartie;
 		#endif
-		private SoundEffect _debutpartie;
-        private Technologies_Window _techno;
+		private Technologies_Window _techno;
 		#endregion
 
 		#region Enums
@@ -135,8 +135,8 @@ namespace NNNA
             Graphics.ApplyChanges();
 
             Content.RootDirectory = "Content";
-            fps = new CompteurFPS(this);
-            Components.Add(fps);
+            _fps = new CompteurFPS(this);
+            Components.Add(_fps);
 
             // Dossier Utilisateur
 			#if LIVE
@@ -354,7 +354,9 @@ namespace NNNA
 			LoadScreenSizeDependantContent();
 
             // Sons
-			 _debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
+			#if SOUND
+				 _debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
+			#endif
             
 		}
 		/// <summary>
@@ -646,7 +648,7 @@ namespace NNNA
 
 					//Decor
 					_resources.Clear();
-					for (int i = 0; i < 5 * (_quickResources + _quickSize + 1); i++)
+					for (int i = 0; i < 20 * (_quickResources + _quickSize + 1); i++)
 					{
 						int x = _random.Next(_matrice.GetLength(0));
 						int y = _random.Next(_matrice.GetLength(1));
@@ -655,7 +657,7 @@ namespace NNNA
 							x = _random.Next(_matrice.GetLength(0));
 							y = _random.Next(_matrice.GetLength(1));
 						}
-						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 1000, new Image(Content, "Resources/bois_1_sprite" + _random.Next(0, 3))));
+						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 250, new Image(Content, "Resources/bois_1_sprite_small")));
 					}
                     _resources.Sort(Sprite.CompareByY);
 
@@ -1198,42 +1200,43 @@ namespace NNNA
                                     break;
 
                                 case "build_hutte":
-                                    _pointer = "Batiments/maison" + _random.Next(1, 3).ToString(CultureInfo.CurrentCulture) + "_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _pointer = "Batiments/maison" + _random.Next(1, 3).ToString(CultureInfo.CurrentCulture) + "_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
                                     _currentAction = "build_hutte";
                                     _dimensions = new Vector2(4, 4);
                                     break;
 
                                 case "build_hutteDesChasseurs":
-                                    _pointer = "Batiments/caserne_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _pointer = "Batiments/caserne_" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
                                     _currentAction = "build_hutteDesChasseurs";
                                     _dimensions = new Vector2(2, 2);
                                     break;
+
                                 case "build_archerie":
-                                    _pointer = "Batiments/archerie" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _pointer = "Batiments/archerie" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
                                     _currentAction = "build_archerie";
                                     _dimensions = new Vector2(2, 2);
                                     break;
 
                                 case "build_tour":
-                                    _pointer = "Batiments/tour" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _pointer = "Batiments/tour" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
                                     _currentAction = "build_tour";
                                     _dimensions = new Vector2(2, 2);
                                     break;
 
                                 case "build_ferme":
-                                    _pointer = "Batiments/ferme" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _pointer = "Batiments/ferme" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
                                     _currentAction = "build_ferme";
                                     _dimensions = new Vector2(2, 2);
                                     break;
 
                                 case "build_ecurie":
-                                    _pointer = "Batiments/ecurie" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _pointer = "Batiments/ecurie" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
                                     _currentAction = "build_ecurie";
                                     _dimensions = new Vector2(2, 2);
                                     break;
 
                                 case "build_forge": 
-                                    _pointer = "Batiments/forge" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _pointer = "Batiments/forge" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
                                     _currentAction = "build_forge";
                                     _dimensions = new Vector2(2, 2);
                                     break;
@@ -1783,24 +1786,37 @@ namespace NNNA
                     }
                 }
             }
-            //_drawList.Clear();
-            //foreach (MovibleSprite sprite in _units)
-            //{
-            //    _drawList.Add(sprite);
-            //}
-            //foreach (Building sprite in _buildings)
-            //{
-            //    _drawList.Add(sprite);
-            //}
-            //foreach (ResourceMine sprite in _resources)
-            //{
-            //    _drawList.Add(sprite);
-            //}
-            //_drawList.Sort(Sprite.CompareByY);
-            //foreach (Sprite sprite in _drawList)
-            //{
-            //    sprite.DrawMap(_spriteBatch, _camera, 1.0f, _weather);
-            //}
+
+			/*_drawList = _units.Cast<Sprite>().ToList().Concat(_buildings.Cast<Sprite>().ToList()).Concat(_resources.Cast<Sprite>().ToList()).OrderBy(s => s.Position.Y + s.Texture.Height);
+			foreach (Sprite sprite in _drawList)
+			{
+				if (_weather == 0)
+				{
+					sprite.Visible = true;
+					sprite.DrawMap(_spriteBatch, _camera, 1.0f, _weather);
+				}
+				else
+				{
+					float mul = 0.0f;
+					foreach (Unit unit in Joueur.Units)
+					{
+						float m = (unit.PositionCenter - sprite.PositionCenter).Length();
+						m = 1.0f - (m/(unit.LineSight + Joueur.AdditionalLineSight));
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					foreach (Building building in Joueur.Buildings)
+					{
+						float m = (building.PositionCenter - sprite.PositionCenter).Length();
+						m = 1.0f - (m/(building.LineSight + Joueur.AdditionalLineSight));
+						mul = (m > 0 && m > mul) ? m : mul;
+					}
+					sprite.Visible = mul > 0;
+					if (mul > 0f)
+					{
+						sprite.DrawMap(_spriteBatch, _camera, mul, _weather);
+					}
+				}
+			}*/
 
             Joueur.Draw(_spriteBatch, _camera, index);
             foreach (ResourceMine sprite in _resources)

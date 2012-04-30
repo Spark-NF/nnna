@@ -17,8 +17,7 @@ namespace NNNA
             : base(x, y)
         {
             _joueur = joueur;
-			LoadContent(content, "Batiments/forge", 8);
-			Texture.Animation = false;
+			LoadContent(content, "Batiments/forge");
             Life = 200;
             LineSight = 128;
             _cost.Add("Fer", 200);

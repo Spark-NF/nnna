@@ -83,6 +83,7 @@ namespace NNNA
 		public void LoadContent(ContentManager content, string assetName, int columns = 1)
 		{
 			_texture = new Image(content, assetName, columns);
+			_texture.Animation = false;
 			_assetName = assetName;
 			_go = new Image(content, "go", 8, 1, 5);
 		}

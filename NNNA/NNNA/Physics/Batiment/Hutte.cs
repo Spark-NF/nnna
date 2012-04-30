@@ -14,8 +14,7 @@ namespace NNNA
 			: base(x, y)
 		{
 			_joueur = joueur;
-			LoadContent(content, "Batiments/maison" + (a == 0 ? 1 : 2) + "_" + joueur.Ere.ToString(CultureInfo.CurrentCulture), 8);
-			Texture.Animation = false;
+			LoadContent(content, "Batiments/maison" + (a == 0 ? 1 : 2) + "_" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 100;
 			_cost.Add("Bois", 50);
 			LineSight = 2 * 64;

@@ -13,6 +13,7 @@ namespace NNNA
 		private readonly Texture2D _texture;
 		public Texture2D Texture
 		{ get { return _texture; } }
+		public int Part { get; set; }
 		private readonly int _columns;
 		private readonly int _rows;
 		private readonly int _speed;
@@ -49,6 +50,7 @@ namespace NNNA
 			_current = 0;
 			Width = _texture.Width / _columns;
 			Height = _texture.Height / _rows;
+			Part = Height;
 			_animation = columns > 1;
 
 			// Copie de la texture
@@ -99,7 +101,7 @@ namespace NNNA
 		{
 			if (_animation && !Finished && Game1.Frame % _speed == 0)
 			{ _current = (_current + 1) % _columns; }
-			spriteBatch.Draw(_texture, position, new Rectangle(_current * Width, (which - 1) * Height, Width, Height), color);
+			spriteBatch.Draw(_texture, position + new Vector2(0, Height - Part), new Rectangle(_current * Width, which * Height - Part, Width, Part), color);
 		}
 	}
 }

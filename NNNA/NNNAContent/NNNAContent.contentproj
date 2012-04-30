@@ -39,6 +39,121 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Batiments\archerie1.png">
+      <Name>archerie1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\archerie2.png">
+      <Name>archerie2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\caserne_1.png">
+      <Name>caserne_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\caserne_2.png">
+      <Name>caserne_2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\caserne_3.png">
+      <Name>caserne_3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\ecurie2.png">
+      <Name>ecurie2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\ferme2.png">
+      <Name>ferme2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\forge2.png">
+      <Name>forge2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\forge3.png">
+      <Name>forge3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\forge4.png">
+      <Name>forge4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\forum_1.png">
+      <Name>forum_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\forum_2.png">
+      <Name>forum_2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\forum_3.png">
+      <Name>forum_3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\maison1_1.png">
+      <Name>maison1_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\maison1_2.png">
+      <Name>maison1_2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\maison2_1.png">
+      <Name>maison2_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\maison2_2.png">
+      <Name>maison2_2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\maison_3.png">
+      <Name>maison_3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\mineur.png">
+      <Name>mineur</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\moulin.png">
+      <Name>moulin</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\siege.png">
+      <Name>siege</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\tour2.png">
+      <Name>tour2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Batiments\Usine1.png">
+      <Name>Usine1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="font_menu.spritefont">
       <Name>font_menu</Name>
       <Importer>FontDescriptionImporter</Importer>
@@ -324,14 +439,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batiments\caserne_1.png">
-      <Name>caserne_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="dots.png">
       <Name>dots</Name>
       <Importer>TextureImporter</Importer>
@@ -420,23 +527,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batiments\ferme.png">
-      <Name>ferme</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\ferme2.png">
-      <Name>ferme2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Decors\Rock2.png">
-      <Name>Rock2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Decors\Rock3.png">
       <Name>Rock3</Name>
       <Importer>TextureImporter</Importer>
@@ -461,49 +551,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_ColorKeyColor>255, 255, 255, 255</ProcessorParameters_ColorKeyColor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\forum_1.png">
-      <Name>forum_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\maison1_1.png">
-      <Name>maison1_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\maison2_1.png">
-      <Name>maison2_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\ecurie2.png">
-      <Name>ecurie2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\maison1_2.png">
-      <Name>maison1_2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\maison2_2.png">
-      <Name>maison2_2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\tour2.png">
-      <Name>tour2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -674,20 +721,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batiments\forum_2.png">
-      <Name>forum_2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\caserne_2.png">
-      <Name>caserne_2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="flash.png">
       <Name>flash</Name>
       <Importer>TextureImporter</Importer>
@@ -750,25 +783,6 @@
   <ItemGroup>
     <Compile Include="Units\Guerrier\guerrier.png">
       <Name>guerrier</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\maison1_1_c.png">
-      <Name>maison1_1_c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\maison2_1_c.png">
-      <Name>maison2_1_c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\caserne_1_c.png">
-      <Name>caserne_1_c</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1017,34 +1031,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batiments\forge2.png">
-      <Name>forge2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\forge3.png">
-      <Name>forge3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\forge4.png">
-      <Name>forge4</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\mineur.png">
-      <Name>mineur</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Resources\fer_1_sprite.png">
       <Name>fer_1_sprite</Name>
       <Importer>TextureImporter</Importer>
@@ -1061,13 +1047,6 @@
   <ItemGroup>
     <Compile Include="Resources\petrole_1_sprite.png">
       <Name>petrole_1_sprite</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\forge2 _c.png">
-      <Name>forge2 _c</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1101,108 +1080,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batiments\ferme2_c.png">
-      <Name>ferme2_c</Name>
+    <Compile Include="Resources\bois_1_sprite_small.png">
+      <Name>bois_1_sprite_small</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batiments\archerie2_c.png">
-      <Name>archerie2_c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\archerie2.png">
-      <Name>archerie1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\tour2 _c.png">
-      <Name>tour2 _c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\moulin.png">
-      <Name>moulin</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\moulin_c.png">
-      <Name>moulin_c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\caserne_2_c.png">
-      <Name>caserne_2_c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\caserne_3.png">
-      <Name>caserne_3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\caserne_3_c.png">
-      <Name>caserne_3_c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\ecurie2_c.png">
-      <Name>ecurie2_c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\forum_3.png">
-      <Name>forum_3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\maison1_2_c.png">
-      <Name>maison1_2_c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\maison2_2_c.png">
-      <Name>maison2_2_c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\maison_3.png">
-      <Name>maison_3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\maison_3_c.png">
-      <Name>maison_3_c</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\marché.png">
-      <Name>marché</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\siege.png">
-      <Name>siege</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\tour.png">
-      <Name>tour</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\Usine1.png">
-      <Name>Usine1</Name>
+    <Compile Include="Batiments\ferme1.png">
+      <Name>ferme1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

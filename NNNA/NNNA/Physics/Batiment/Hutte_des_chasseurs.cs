@@ -18,8 +18,7 @@ namespace NNNA
 		{
 			_joueur = joueur;
 			_type = "caserne";
-			LoadContent(content, "Batiments/caserne_" + joueur.Ere.ToString(CultureInfo.CurrentCulture), 6);
-			Texture.Animation = false;
+			LoadContent(content, "Batiments/caserne_" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 100;
 			LineSight = 2 * 64;
 			_cost.Add("Bois", 75);
