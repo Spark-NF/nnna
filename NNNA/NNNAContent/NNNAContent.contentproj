@@ -493,8 +493,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batiments\ecurie.png">
-      <Name>ecurie</Name>
+    <Compile Include="Batiments\ecurie2.png">
+      <Name>ecurie2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -510,8 +510,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Batiments\tour.png">
-      <Name>tour</Name>
+    <Compile Include="Batiments\tour2.png">
+      <Name>tour2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1027,13 +1027,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batiments\Usine1.png">
-      <Name>Usine1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Actions\build_usine.png">
       <Name>build_usine</Name>
       <Importer>TextureImporter</Importer>
@@ -1048,6 +1041,34 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Batiments\forge2.png">
+      <Name>forge2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Batiments\forge3.png">
+      <Name>forge3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Batiments\forge4.png">
+      <Name>forge4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Batiments\mineur.png">
+      <Name>mineur</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Actions\create_archer.png">
       <Name>create_archer</Name>
       <Importer>TextureImporter</Importer>
@@ -1055,6 +1076,19 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\create_archer.png">
+      <Name>create_archer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Batiments\forge2 _c.png">
+      <Name>forge2 _c</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>  <ItemGroup>
     <Compile Include="Resources\fer_1_sprite.png">
       <Name>fer_1_sprite</Name>
       <Importer>TextureImporter</Importer>
@@ -1071,8 +1105,7 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
-  <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />  <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

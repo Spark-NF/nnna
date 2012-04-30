@@ -131,7 +131,6 @@
     <Compile Include="Physics\Batiment\Moulin.cs" />
     <Compile Include="Physics\Batiment\Siege.cs" />
     <Compile Include="Physics\Batiment\Tour.cs" />
-    <Compile Include="Physics\Batiment\Usine.cs" />
     <Compile Include="Physics\Building.cs" />
     <Compile Include="Physics\Batiment\Grande_Hutte.cs" />
     <Compile Include="Physics\Batiment\Hutte.cs" />

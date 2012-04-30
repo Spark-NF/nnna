@@ -320,7 +320,7 @@ namespace NNNA
             _actions.Add("build_ecurie", Content.Load<Texture2D>("Actions/build_ecurie"));
             _actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
             _actions.Add("build_archerie",Content.Load<Texture2D>("Actions/build_archerie"));
-            _actions.Add("build_usine", Content.Load<Texture2D>("Actions/build_usine"));
+            _actions.Add("build_forge", Content.Load<Texture2D>("Actions/build_usine"));
 			// m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
 			#endregion Actions Unités
 
@@ -1029,6 +1029,30 @@ namespace NNNA
                             else
                             { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
                             break;
+                        case "build_forge":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
+                            {
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Forge((int)position.X, (int)position.Y, Content, Joueur);
+                                if (Joueur.Pay(b.Prix))
+                                {
+                                    _selectedList[0].Build(b);
+                                    _buildings.Add(b);
+                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle Forge !"), Color.White, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                            }
+                            else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
 
                         // Fin Ere 1 
 
@@ -1149,6 +1173,14 @@ namespace NNNA
                                     _currentActions.Clear();
                                     _currentActions.Add("build_hutte");
                                     _currentActions.Add("build_hutteDesChasseurs");
+                                    if (Joueur.Ere > 1)
+                                    {
+                                        _currentActions.Add("build_archerie");
+                                        _currentActions.Add("build_tour");
+                                        _currentActions.Add("build_ferme");
+                                        _currentActions.Add("build_ecurie");
+
+                                    }
                                     _currentActions.Add("retour");
                                     break;
 
@@ -1169,6 +1201,36 @@ namespace NNNA
                                     _currentAction = "build_hutteDesChasseurs";
                                     _dimensions = new Vector2(2, 2);
                                     break;
+                                case "build_archerie":
+                                    _pointer = "Batiments/archerie" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _currentAction = "build_archerie";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+
+                                case "build_tour":
+                                    _pointer = "Batiments/tour" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _currentAction = "build_tour";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+
+                                case "build_ferme":
+                                    _pointer = "Batiments/ferme" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _currentAction = "build_ferme";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+
+                                case "build_ecurie":
+                                    _pointer = "Batiments/ecurie" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _currentAction = "build_ecurie";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+
+                                case "build_forge": 
+                                    _pointer = "Batiments/forge" + Joueur.Ere.ToString(CultureInfo.CurrentCulture) + "_c";
+                                    _currentAction = "build_forge";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+
 
                                 case "retour":
                                     _currentActions.Clear();
