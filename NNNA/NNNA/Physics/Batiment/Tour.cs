@@ -16,7 +16,8 @@ namespace NNNA
 			: base(x, y)
 		{
 			_joueur = joueur;
-			LoadContent(content, "Batiments/ecurie");
+			LoadContent(content, "Batiments/tour");
+			Texture.Animation = false;
 			Life = 200;
 			LineSight = 512;
 			_cost.Add("Bois", 50);

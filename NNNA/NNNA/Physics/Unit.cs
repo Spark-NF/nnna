@@ -145,10 +145,8 @@ namespace NNNA
 						}
 						else
 						{
-                            if (this.Type == "archer" && DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && (DestinationUnit.PositionCenter - this.PositionCenter).LengthSquared() < this.Portee)
-                            {
-                                this.Tirer(DestinationUnit, content);
-                            }
+                            if (Type == "archer" && DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && (DestinationUnit.PositionCenter - this.PositionCenter).LengthSquared() < Portee)
+                            { Tirer(DestinationUnit, content); }
                             if (DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), new Sprite[,] { }))
 							{
 								DestinationUnit.Life -= Attaque;

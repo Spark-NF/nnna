@@ -15,11 +15,11 @@ namespace NNNA
 			: base(x, y)
 		{
 			_joueur = joueur;
-			LoadContent(content, "Batiments/ferme");
+			LoadContent(content, "Batiments/ferme", 8);
+			Texture.Animation = false;
 			Life = 100;
 			LineSight = 4 * 64;
-			_cost.Add("Bois", 60);
-            _cost.Add("Bois", 30);
+			_cost.Add("Bois", 100);
 
 		}
     }

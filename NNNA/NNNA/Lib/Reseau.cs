@@ -3,7 +3,8 @@ using System.Runtime.InteropServices;
 using System.Net.Sockets;
 using System;
 using System.IO;
-using Microsoft.Xna.Framework;
+  using System.Threading;
+  using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Net;
 
@@ -18,6 +19,8 @@ namespace NNNA
             set { jeuMulti = value; }
         }
         private List<Socket> connexions = new List<Socket>();
+    	public static string IP { get; set; }
+
         /// <summary>
         /// Fonction qui donne l'adresse ip d'un ordinateur d'on le nom est placé en parametre
         /// </summary>
@@ -30,26 +33,25 @@ namespace NNNA
             return ip;
             
         }
-        public static string IpWan()
-         {
-            string ipexterne;
-            Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            try
+        public static void GetIP()
+        {
+        	var myThread = new Thread(ParseIP);
+        	myThread.Start();
+        }
+		public static void ParseIP()
+		{
+			/*try
             {
-                Uri uri = new Uri("http://www.whatismyip.fr/raw/");
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+                var uri = new Uri("http://www.whatismyip.fr/raw/");
+                var request = (HttpWebRequest)WebRequest.Create(uri);
                 WebResponse response = request.GetResponse();
-                StreamReader read = new StreamReader(response.GetResponseStream());
-                ipexterne = read.ReadToEnd();
-                return ipexterne;
+                var read = new StreamReader(response.GetResponseStream());
+                IP = read.ReadToEnd();
             }
             catch
-            {
-                return GetIPaddresses(Environment.MachineName);
-            }
-            
-            
+			{ IP = GetIPaddresses(Environment.MachineName); }*/
          }
+
         /// <summary>
         /// Fonction qui verifie si l'ordinateur est connecté a internet.
         /// </summary>
