@@ -21,15 +21,17 @@ namespace NNNA
             _cost.Add("Nourriture", 100);
             _cost.Add("Fer", 20);
         }
-        public Archer(int x, int y, ContentManager content, Joueur joueur, bool removeResources_et_pop = true)
+        public Archer(int x, int y, ContentManager content, Joueur joueur, bool removeResources = true, bool add_pop = true)
             : base(x, y)
         {
             Joueur = joueur;
             _type = "archer";
-            if (removeResources_et_pop)
+            if (add_pop)
             {
-                if (Joueur.Population < joueur.PopulationMax)
-                    joueur.Population++;
+                joueur.Population++;
+            }
+            if (removeResources)
+            {
                 joueur.Resource("Nourriture").Remove(100); joueur.Resource("Fer").Remove(20);
             }
             Attaque = 10;

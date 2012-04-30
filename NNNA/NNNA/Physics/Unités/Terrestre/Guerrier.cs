@@ -10,15 +10,17 @@ namespace NNNA
         {
             _cost.Add("Nourriture", 70);
         }
-		public Guerrier(int x, int y, ContentManager content, Joueur joueur, bool removeResources_et_pop = true)
+		public Guerrier(int x, int y, ContentManager content, Joueur joueur, bool removeResources = true, bool add_pop = true)
 			: base(x, y)
 		{
 			Joueur = joueur;
 			_type = "guerrier";
-			if (removeResources_et_pop)
+            if (add_pop)
+            {
+                joueur.Population++;
+            }
+			if (removeResources)
 			{
-                if (Joueur.Population < joueur.PopulationMax)
-                    joueur.Population++;
                 joueur.Resource("Nourriture").Remove(70);
             }
 			Attaque = 10;

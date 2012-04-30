@@ -1241,10 +1241,11 @@ namespace NNNA
                                 case "create_peon":
                                     if (_selectedBuilding != null)
                                     {
-                                        var u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, Joueur, _selectedBuilding, false);
-                                        if (Joueur.Pay(u.Prix))
+                                        var u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, Joueur, _selectedBuilding, false, false);
+                                        if (Joueur.Population < Joueur.PopulationMax && Joueur.Pay(u.Prix))
                                         {
                                             _selectedBuilding.Iterator++;
+                                            Joueur.Population++;
                                             Joueur.Units.Add(u);
                                             _units.Add(u);
                                             MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
@@ -1262,10 +1263,11 @@ namespace NNNA
                                 case "create_guerrier":
                                     if (_selectedBuilding != null)
                                     {
-                                        var u1 = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur, false);
-                                        if (Joueur.Pay(u1.Prix))
+                                        var u1 = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur, false, false);
+                                        if (Joueur.Population < Joueur.PopulationMax && Joueur.Pay(u1.Prix))
                                         {
                                             _selectedBuilding.Iterator++;
+                                            Joueur.Population++;
                                             Joueur.Units.Add(u1);
                                             _units.Add(u1);
                                             MessagesManager.Messages.Add(new Msg(_("Nouveau chasseur !"), Color.White, 5000));
@@ -1278,10 +1280,11 @@ namespace NNNA
                                 case "create_archer":
                                     if (_selectedBuilding != null)
                                     {
-                                        var u1 = new Archer((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur, false);
-                                        if (Joueur.Pay(u1.Prix))
+                                        var u1 = new Archer((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur, false, false);
+                                        if (Joueur.Population < Joueur.PopulationMax && Joueur.Pay(u1.Prix))
                                         {
                                             _selectedBuilding.Iterator++;
+                                            Joueur.Population++;
                                             Joueur.Units.Add(u1);
                                             _units.Add(u1);
                                             MessagesManager.Messages.Add(new Msg(_("Nouvel archer !"), Color.White, 5000));
