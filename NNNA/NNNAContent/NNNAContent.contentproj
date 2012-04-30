@@ -12,9 +12,6 @@
     <OutputPath>bin\$(Platform)\$(Configuration)</OutputPath>
     <ContentRootDirectory>Content</ContentRootDirectory>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
@@ -553,20 +550,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\Copy of fer.png">
-      <Name>Copy of fer</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Actions\Copy of or.png">
-      <Name>Copy of or</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="sounds\creationguerrier.mp3">
       <Name>creationguerrier</Name>
       <Importer>Mp3Importer</Importer>
@@ -1067,17 +1050,23 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Actions\create_archer.png">
-      <Name>create_archer</Name>
+  </ItemGroup>  <ItemGroup>
+    <Compile Include="Resources\fer_1_sprite.png">
+      <Name>fer_1_sprite</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\create_archer.png">
-      <Name>create_archer</Name>
+    <Compile Include="Resources\or_1_sprite.png">
+      <Name>or_1_sprite</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Resources\petrole_1_sprite.png">
+      <Name>petrole_1_sprite</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1094,18 +1083,30 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Resources\or_1_sprite.png">
-      <Name>or_1_sprite</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Resources\petrole_1_sprite.png">
-      <Name>petrole_1_sprite</Name>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Units\Archer\archer_icon.png">
+      <Name>archer_icon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />  <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <ItemGroup>
+    <Compile Include="Actions\create_archer.png">
+      <Name>create_archer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Units\Archer\archer.png">
+      <Name>archer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
+  <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

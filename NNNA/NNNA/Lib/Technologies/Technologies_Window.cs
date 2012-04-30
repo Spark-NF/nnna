@@ -495,7 +495,7 @@ namespace NNNA
 
         private void forge_MouseLeftButtonDown()
         {
-            if (!_forge && Game1.Joueur.Pay(_prixEngrenage))
+            if (!_forge && Game1.Joueur.Pay(_prixForge))
             {
                 scierie.Visible = true;
                 _forge = true;
@@ -514,7 +514,7 @@ namespace NNNA
 
         private void scierie_MouseLeftButtonDown()
         {
-            if (!_scierie && Game1.Joueur.Pay(_prixEngrenage))
+            if (!_scierie && Game1.Joueur.Pay(_prixScierie))
             {
                 arme_de_siege.Visible = true;
                 _scierie = true;
@@ -533,7 +533,7 @@ namespace NNNA
 
         private void arme_de_siege_MouseLeftButtonDown()
         {
-            if (!_arme_de_siege && Game1.Joueur.Pay(_prixEngrenage))
+            if (!_arme_de_siege && Game1.Joueur.Pay(_prixArme_de_siege))
             {
                 alchimie.Visible = true;
                 _arme_de_siege = true;
@@ -552,7 +552,7 @@ namespace NNNA
 
         private void alchimie_MouseLeftButtonDown()
         {
-            if (!_alchimie && Game1.Joueur.Pay(_prixEngrenage))
+            if (!_alchimie && Game1.Joueur.Pay(_prixAlchimie))
             {
                 if (_gouvernail)
                 {
@@ -574,7 +574,7 @@ namespace NNNA
 
         private void navigation_MouseLeftButtonDown()
         {
-            if (!_navigation && Game1.Joueur.Pay(_prixEngrenage))
+            if (!_navigation && Game1.Joueur.Pay(_prixNavigation))
             {
                 gouvernail.Visible = true;
                 _navigation = true;
@@ -593,7 +593,7 @@ namespace NNNA
 
         private void gouvernail_MouseLeftButtonDown()
         {
-            if (!_gouvernail && Game1.Joueur.Pay(_prixEngrenage))
+            if (!_gouvernail && Game1.Joueur.Pay(_prixGouvernail))
             {
                 if (_alchimie)
                 {
@@ -615,7 +615,7 @@ namespace NNNA
 
         private void bucheron_MouseLeftButtonDown()
         {
-            if (!_bucheron && Game1.Joueur.Pay(_prixEngrenage))
+            if (!_bucheron && Game1.Joueur.Pay(_prixBucheron))
             {
                 charpente.Visible = true;
                 _bucheron = true;
@@ -634,7 +634,7 @@ namespace NNNA
 
         private void charpente_MouseLeftButtonDown()
         {
-            if (!_charpente && Game1.Joueur.Pay(_prixEngrenage))
+            if (!_charpente && Game1.Joueur.Pay(_prixCharpente))
             {
                 route.Visible = true;
                 _charpente = true;
@@ -653,7 +653,7 @@ namespace NNNA
 
         private void route_MouseLeftButtonDown()
         {
-            if (!_route && Game1.Joueur.Pay(_prixEngrenage))
+            if (!_route && Game1.Joueur.Pay(_prixRoute))
             {
                 _route = true;
                 //chasse.OpacityMask = null;

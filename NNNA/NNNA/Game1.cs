@@ -1241,7 +1241,7 @@ namespace NNNA
                                 case "create_peon":
                                     if (_selectedBuilding != null)
                                     {
-                                        var u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, Joueur, _selectedBuilding);
+                                        var u = new Peon((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 5), (int)_selectedBuilding.Position.Y + 155, Content, Joueur, _selectedBuilding, false);
                                         if (Joueur.Pay(u.Prix))
                                         {
                                             _selectedBuilding.Iterator++;
@@ -1262,7 +1262,7 @@ namespace NNNA
                                 case "create_guerrier":
                                     if (_selectedBuilding != null)
                                     {
-                                        var u1 = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur);
+                                        var u1 = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur, false);
                                         if (Joueur.Has(u1.Prix))
                                         {
                                             _selectedBuilding.Iterator++;
@@ -1278,7 +1278,7 @@ namespace NNNA
                                 case "create_archer":
                                     if (_selectedBuilding != null)
                                     {
-                                        var u1 = new Archer((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur);
+                                        var u1 = new Archer((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur, false);
                                         if (Joueur.Has(u1.Prix))
                                         {
                                             _selectedBuilding.Iterator++;
@@ -1516,6 +1516,8 @@ namespace NNNA
 				Joueur.Resource("Bois").Add(10000);
 				Joueur.Resource("Pierre").Add(10000);
 				Joueur.Resource("Nourriture").Add(10000);
+                Joueur.Resource("Fer").Add(10000);
+                Joueur.Resource("Or").Add(10000);
 				_konami = 0;
 			}
 
