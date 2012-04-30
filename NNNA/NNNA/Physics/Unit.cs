@@ -120,7 +120,7 @@ namespace NNNA
 								}
 							}
 						}
-						else if (DestinationResource != null && Will == "mine" && Collides(new List<MovibleSprite>(), new List<Building>(), new List<ResourceMine> { DestinationResource }, matrice))
+						else if (DestinationResource != null && Will == "mine" && Collides(new List<MovibleSprite>(), new List<Building>(), new List<ResourceMine> { DestinationResource }, new Sprite[,] { }))
 						{
 							if (DestinationResource.Quantity <= 0)
 							{ DestinationResource = null; }
@@ -149,7 +149,7 @@ namespace NNNA
                             {
                                 this.Tirer(DestinationUnit, content);
                             }
-							if (DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), matrice))
+                            if (DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), new Sprite[,] { }))
 							{
 								DestinationUnit.Life -= Attaque;
 								if (DestinationUnit.Life <= 0)
