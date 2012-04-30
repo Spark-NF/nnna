@@ -1,4 +1,4 @@
-// #define SOUND
+ //#define SOUND
 
 using System;
 using System.Collections.Generic;
@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 #if SOUND
 	using Microsoft.Xna.Framework.Audio;
 	using Microsoft.Xna.Framework.Media;
@@ -79,7 +80,7 @@ namespace NNNA
 			private const float MusicVolume = 2.0f;
 			private Sons _son = new Sons();
 		#endif
-		// private SoundEffect _debutpartie;
+		private SoundEffect _debutpartie;
         private Technologies_Window _techno;
 		#endregion
 
@@ -205,6 +206,11 @@ namespace NNNA
 
             // réseau
             _ipWan = Réseau.IpWan();
+
+            //son
+#if SOUND
+            _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral, false);
+#endif
 
 			base.Initialize();
 		}
@@ -343,8 +349,7 @@ namespace NNNA
 			LoadScreenSizeDependantContent();
 
             // Sons
-			// _debutpartie = Content.Load<SoundEffect>("sounds/debutpartie3");
-			// _debutpartie.Play();
+			 _debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
             
 		}
 		/// <summary>
@@ -485,14 +490,7 @@ namespace NNNA
 					break;
 			}
 
-			//Son 
-			#if SOUND
-				_son.EngineMenu.Update();
-				if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
-				{ _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
-			#endif
-
-            // MediaPlayer
+         /*   // MediaPlayer
             if (Clavier.Get().NewPress(Keys.Space))
             {
                 if (MediaPlayer.State == MediaState.Playing)
@@ -656,11 +654,11 @@ namespace NNNA
 					}
                     _resources.Sort(Sprite.CompareByY);
 
-					//Le son
+					//Le Son
 					#if SOUND
 						if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
 						{ _son.MusiqueMenu.Pause(); }
-						//_debutpartie.Play();
+						_debutpartie.Play();
 					#endif
 				}
 				_currentScreen = s;
@@ -1453,9 +1451,11 @@ namespace NNNA
 			{ _pointer = _pointerOld; }
 
 			#if SOUND
+            _son.EngineMenu.Update();
 				if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
-				{_son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); }
-				_son.MusiqueMenu.Resume(); 
+                { _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); _son.MusiqueMenu.Play(); }
+                else if (_son.MusiqueMenu.IsPaused)
+                { _son.MusiqueMenu.Resume(); }
 			#endif
 		}
 
@@ -1556,7 +1556,14 @@ namespace NNNA
 				DrawString(_spriteBatch, _fontSmall, _(Réseau.Connected()), new Vector2(5, _screenSize.Y -20),Color.GhostWhite,Color.Transparent,1);
 				DrawString(_spriteBatch, _fontSmall, _("Votre adresse IP est :") + " " + _ipWan, new Vector2((_screenSize.X - _fontSmall.MeasureString(_("Votre adresse IP est :") + " " + _ipWan).X), _screenSize.Y - 20), Color.GhostWhite, Color.Transparent, 1);
 			}
-
+            //Son 
+#if SOUND
+            _son.EngineMenu.Update();
+            if (!_son.MusiqueMenu.IsPlaying)
+            {
+                _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
+            }
+#endif
 		}
 
 		/// <summary>
