@@ -12,15 +12,18 @@ namespace NNNA
 			_cost.Add("Nourriture", 50);
 		}
 
-		public Peon(int x, int y, ContentManager content, Joueur joueur, Building affiliate, bool removeResources = true)
+		public Peon(int x, int y, ContentManager content, Joueur joueur, Building affiliate, bool removeResources_et_pop = true)
 			: base(x, y)
 		{
 			_createMaison = false;
 			Joueur = joueur;
-			joueur.Population++;
 			_type = "peon";
-			if (removeResources)
-			{ joueur.Resource("Nourriture").Remove(50); }
+			if (removeResources_et_pop)
+			{
+                if (Joueur.Population < joueur.PopulationMax)
+                    joueur.Population++;
+                joueur.Resource("Nourriture").Remove(50);
+            }
 			Attaque = 2;
 			VitesseCombat = 20;
 			Life = 50;

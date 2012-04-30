@@ -1263,7 +1263,7 @@ namespace NNNA
                                     if (_selectedBuilding != null)
                                     {
                                         var u1 = new Guerrier((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur, false);
-                                        if (Joueur.Has(u1.Prix))
+                                        if (Joueur.Pay(u1.Prix))
                                         {
                                             _selectedBuilding.Iterator++;
                                             Joueur.Units.Add(u1);
@@ -1279,7 +1279,7 @@ namespace NNNA
                                     if (_selectedBuilding != null)
                                     {
                                         var u1 = new Archer((int)_selectedBuilding.Position.X + 50 * (_selectedBuilding.Iterator % 3), (int)_selectedBuilding.Position.Y + 70, Content, Joueur, false);
-                                        if (Joueur.Has(u1.Prix))
+                                        if (Joueur.Pay(u1.Prix))
                                         {
                                             _selectedBuilding.Iterator++;
                                             Joueur.Units.Add(u1);
