@@ -97,6 +97,8 @@ namespace NNNA
 			PlayQuick,
 			PlayQuick2,
 			PlayMultiplayer,
+			PlayMultiplayerHost,
+			PlayMultiplayerJoin,
             Local,
             Internet,
             OptionsReseau,
@@ -469,9 +471,15 @@ namespace NNNA
 				case Screen.PlayQuick2:
 					UpdatePlayQuick2();
 					break;
-                case Screen.PlayMultiplayer:
-                    UpdateMulti();
-                    break;
+				case Screen.PlayMultiplayer:
+					UpdateMultiplayer();
+					break;
+				case Screen.PlayMultiplayerHost:
+					UpdatePlayMultiplayerHost();
+					break;
+				case Screen.PlayMultiplayerJoin:
+					UpdatePlayMultiplayerJoin();
+					break;
 				case Screen.Options:
 					UpdateOptions();
 					break;
@@ -520,8 +528,6 @@ namespace NNNA
 		}
 		private void UpdatePlay()
         { _currentScreen = TestMenu(Screen.PlayQuick, Screen.PlayMultiplayer, Screen.Title); }
-        private void UpdateMultiplayer()
-		{ _currentScreen = TestMenu(Screen.PlayMultiplayer, Screen.PlayMultiplayer, Screen.PlayMultiplayer, Screen.Play); }
 		private void UpdatePlayQuick()
 		{
 			Screen s = TestMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick2, Screen.Play);
@@ -692,6 +698,48 @@ namespace NNNA
 						break;
 				}
 			}
+		}
+		private void UpdateMultiplayer()
+		{
+			_currentScreen = TestMenu(Screen.PlayMultiplayerHost, Screen.PlayMultiplayerJoin, Screen.Play);
+			if (_currentScreen == Screen.PlayMultiplayerJoin)
+			{ Clavier.Get().GetText = true; }
+		}
+		private void UpdatePlayMultiplayerHost()
+		{
+			Screen s = TestMenu(Screen.PlayMultiplayerHost, Screen.PlayMultiplayerHost, Screen.PlayMultiplayerHost, Screen.PlayMultiplayerHost, Screen.OptionsSound, Screen.PlayMultiplayer);
+			if (s != Screen.PlayMultiplayerHost)
+			{
+				if (s == Screen.OptionsSound)
+				{
+					// host
+				}
+				else
+				{ _currentScreen = s; }
+			}
+			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
+			{
+				int m = Menu();
+				switch (m)
+				{
+					case 0: _quickType = (MapType)Variate(0, Enum.GetValues(typeof(MapType)).Length - 1, (int)_quickType); break;
+					case 1: _quickSize = Variate(0, 2, _quickSize); break;
+					case 2: _quickResources = Variate(0, 2, _quickResources); break;
+					case 3: _weather = Variate(0, 2, _weather); break;
+				}
+			}
+		}
+		private void UpdatePlayMultiplayerJoin()
+		{
+			Screen s = TestMenu(Screen.PlayMultiplayerJoin, Screen.OptionsSound, Screen.PlayMultiplayer);
+			if (s == Screen.OptionsSound)
+			{
+				Clavier.Get().GetText = false;
+
+				// join
+			}
+			else
+			{ _currentScreen = s; }
 		}
 		private void UpdateOptions()
 		{
@@ -1507,6 +1555,16 @@ namespace NNNA
 				case Screen.Options:
 					DrawOptions();
 					break;
+
+				case Screen.PlayMultiplayer:
+					DrawMultiplayer();
+					break;
+				case Screen.PlayMultiplayerHost:
+					DrawPlayMultiplayerHost();
+					break;
+				case Screen.PlayMultiplayerJoin:
+					DrawPlayMultiplayerJoin();
+					break;
 				case Screen.OptionsGeneral:
 					DrawOptionsGeneral();
 					break;
@@ -1648,11 +1706,25 @@ namespace NNNA
 			string[] texts = { "N/A", "Ordinateur", "Humain" };
 			MakeMenuFoes(_playersColors, texts[_players[0]], texts[_players[1]], texts[_players[2]], texts[_players[3]], "Jouer", "Retour");
 		}
-        private void DrawMultiplayer()
-        {
-            DrawCommon();
-            MakeMenu("Créer un partie", "Rejoindre une partie", "Options", "Retour");
-        }
+		private void DrawMultiplayer()
+		{
+			DrawCommon();
+			MakeMenu("Créer un partie", "Rejoindre une partie", "Retour");
+		}
+		private void DrawPlayMultiplayerHost()
+		{
+			DrawCommon();
+			string[] types = { "Île", "Plaine" };
+			string[] tailles = { "Petite", "Moyenne", "Grande" };
+			string[] ressources = { "rares", "normales", "abondantes" };
+			string[] weathers = { "Ensoleillé", "Nuageux", "Pluvieux" };
+			MakeMenu(types[(int)_quickType], tailles[_quickSize], _("Ressources") + " " + _(ressources[_quickResources]), weathers[_weather], "Lancer", "Retour");
+		}
+		private void DrawPlayMultiplayerJoin()
+		{
+			DrawCommon();
+			MakeMenu(Clavier.Get().Text, "Rejoindre", "Retour");
+		}
 		private void DrawOptions()
 		{
 			DrawCommon();
