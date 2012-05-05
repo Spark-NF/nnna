@@ -46,7 +46,7 @@ namespace NNNA
 		private List<string> _currentMenus = new List<string>();
 
 		private Vector2 _screenSize = new Vector2(1680, 1050);
-		private bool _fullScreen = true, _shadows = true, _healthOver, _showConsole;
+		private bool _fullScreen = true, _shadows = true, _healthOver, _showConsole, _showTextBox;
 		public static bool SmartHud;
 		private float _soundGeneral = 10, _soundSFX = 10, _soundMusic = 10, _a = 1.0f;
 		private int _textures = 2, _sound = 2, _weather = 1;
@@ -413,7 +413,6 @@ namespace NNNA
 		/// <param name="gameTime">Temps courant.</param>
 		protected override void Update(GameTime gameTime)
 		{
-
 			Frame++;
 
 			Clavier.Get().Update(Keyboard.GetState());
@@ -438,23 +437,6 @@ namespace NNNA
 				texture.SaveAsPng(stream, (int)_screenSize.X, (int)_screenSize.Y);
 				stream.Close(); 
 			}
-
-			// Code Konami
-			if (
-				(Clavier.Get().NewPress(Keys.Up)	&& _konami == 0) ||
-				(Clavier.Get().NewPress(Keys.Up)	&& _konami == 1) ||
-				(Clavier.Get().NewPress(Keys.Down)  && _konami == 2) ||
-				(Clavier.Get().NewPress(Keys.Down)  && _konami == 3) ||
-				(Clavier.Get().NewPress(Keys.Left)  && _konami == 4) ||
-				(Clavier.Get().NewPress(Keys.Right) && _konami == 5) ||
-				(Clavier.Get().NewPress(Keys.Left)  && _konami == 6) ||
-				(Clavier.Get().NewPress(Keys.Right) && _konami == 7) ||
-				(Clavier.Get().NewPress(Keys.B)	 && _konami == 8) ||
-				(Clavier.Get().NewPress(Keys.A)	 && _konami == 9)
-			)
-			{ _konami++; }
-			else if (Clavier.Get().NewPress())
-			{ _konami = 0; }
 
 			switch (_currentScreen)
 			{
@@ -880,6 +862,39 @@ namespace NNNA
 
 		private void UpdateGame(GameTime gameTime)
 		{
+
+			// Code Konami
+			if (
+				(Clavier.Get().NewPress(Keys.Up) && _konami == 0) ||
+				(Clavier.Get().NewPress(Keys.Up) && _konami == 1) ||
+				(Clavier.Get().NewPress(Keys.Down) && _konami == 2) ||
+				(Clavier.Get().NewPress(Keys.Down) && _konami == 3) ||
+				(Clavier.Get().NewPress(Keys.Left) && _konami == 4) ||
+				(Clavier.Get().NewPress(Keys.Right) && _konami == 5) ||
+				(Clavier.Get().NewPress(Keys.Left) && _konami == 6) ||
+				(Clavier.Get().NewPress(Keys.Right) && _konami == 7) ||
+				(Clavier.Get().NewPress(Keys.B) && _konami == 8) ||
+				(Clavier.Get().NewPress(Keys.A) && _konami == 9)
+			)
+			{ _konami++; }
+			else if (Clavier.Get().NewPress())
+			{ _konami = 0; }
+
+			// Chat
+			if (Clavier.Get().NewPress(Keys.T) && !_showTextBox)
+			{
+				_showTextBox = true;
+				Clavier.Get().GetText = true;
+			}
+			if (Clavier.Get().NewPress(Keys.Enter) && _showTextBox)
+			{
+				// Envoi du message via le réseau
+
+				Chat.Add(new ChatMessage { Author = Joueur.Name, Color = _playersColors[0], Text = Clavier.Get().Text });
+				_showTextBox = false;
+				Clavier.Get().GetText = false;
+			}
+
             _techno.Update(Souris.Get());
 
 			if (Clavier.Get().NewPress(Keys.Escape))
@@ -1203,20 +1218,21 @@ namespace NNNA
                 }
 
                 // Actions
-                if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= _hud.Position.X + 20 && Souris.Get().Y >= _hud.Position.Y + 20 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+            	bool shortcut = (Clavier.Get().NewPress(Keys.C) && !_showTextBox) || (Clavier.Get().NewPress(Keys.V) && !_showTextBox);
+				if (Souris.Get().Clicked(MouseButton.Left) && Souris.Get().X >= _hud.Position.X + 20 && Souris.Get().Y >= _hud.Position.Y + 20 || shortcut)
                 {
                     int x = Souris.Get().X - _hud.Position.X - 20, y = Souris.Get().Y - _hud.Position.Y - 20;
-                    if (x % 40 < 32 && y % 40 < 32 || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+					if (x % 40 < 32 && y % 40 < 32 || shortcut)
                     {
                         x /= 40;
                         y /= 40;
                         int pos = x + 6 * y;
-                        if (pos < _currentActions.Count || Clavier.Get().NewPress(Keys.C) || Clavier.Get().NewPress(Keys.V))
+						if (pos < _currentActions.Count || shortcut)
                         {
                             string act;
-                            if (Clavier.Get().NewPress(Keys.C))
+                            if (Clavier.Get().NewPress(Keys.C) && !_showTextBox)
                             { act = "build_hutte"; }
-                            else if (Clavier.Get().NewPress(Keys.V))
+							else if (Clavier.Get().NewPress(Keys.V) && !_showTextBox)
                             { act = "build_hutteDesChasseurs"; }
                             else
                             { act = _currentActions[pos]; }
@@ -2034,7 +2050,16 @@ namespace NNNA
 			}
 
             // Affichage les fps
-            //Debug(4, Math.Truncate(fps.FPS));
+            // Debug(4, Math.Truncate(fps.FPS));
+
+			// Chat
+			Chat.Draw(_spriteBatch, _fontSmall, Color2Texture2D(new Color(0, 0, 0, 128)), (int)(_screenSize.Y / 2) + 26);
+			if (_showTextBox)
+			{
+				_spriteBatch.Draw(Color2Texture2D(new Color(0, 0, 0, 128)), new Rectangle(1, (int)(_screenSize.Y / 2) - 5, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).X + 10, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).Y + 10), Color.White);
+				_spriteBatch.DrawString(_fontSmall, Joueur.Name + " : ", new Vector2(6, _screenSize.Y / 2.0f), _playersColors[0]);
+				_spriteBatch.DrawString(_fontSmall, Clavier.Get().Text, new Vector2((int)_fontSmall.MeasureString(Joueur.Name + " : ").X + 6, _screenSize.Y / 2.0f), Color.White);
+			}
 
             _techno.Draw(_spriteBatch, _fontSmall);
 		}

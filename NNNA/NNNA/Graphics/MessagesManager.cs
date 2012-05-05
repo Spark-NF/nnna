@@ -7,7 +7,6 @@ namespace NNNA
 	class MessagesManager
 	{
 		static public List<Msg> Messages = new List<Msg>();
-
 		static public uint X;
 
 		static public void Draw(SpriteBatch spriteBatch, SpriteFont font)

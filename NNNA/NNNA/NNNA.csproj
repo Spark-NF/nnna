@@ -94,6 +94,8 @@
   <ItemGroup>
     <Compile Include="CompteurFPS.cs" />
     <Compile Include="Graphics\Camera2D.cs" />
+    <Compile Include="Graphics\Chat.cs" />
+    <Compile Include="Graphics\ChatMessage.cs" />
     <Compile Include="Graphics\Form\Button.cs" />
     <Compile Include="Graphics\Form\Containing.cs" />
     <Compile Include="Graphics\Form\Control.cs" />

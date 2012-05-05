@@ -37,18 +37,18 @@ namespace NNNA
 		public void Update(Sprite curseur, GraphicsDeviceManager graphics)
 		{
 			_cameraPosition.X +=
-				(Keyboard.GetState().IsKeyDown(Keys.Right) ? _speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.D) ? _speed : 0) +
+				(Clavier.Get().Pressed(Keys.Right) && !Clavier.Get().GetText ? _speed : 0) +
+				(Clavier.Get().Pressed(Keys.D) && !Clavier.Get().GetText ? _speed : 0) +
 				(curseur.Position.X <= graphics.PreferredBackBufferWidth && curseur.Position.X > (graphics.PreferredBackBufferWidth - 10) ? _speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.Left) ? -_speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.Q) ? -_speed : 0) + 
+				(Clavier.Get().Pressed(Keys.Left) && !Clavier.Get().GetText ? -_speed : 0) +
+				(Clavier.Get().Pressed(Keys.Q) && !Clavier.Get().GetText ? -_speed : 0) + 
 				(curseur.Position.X >= 0 && curseur.Position.X < 10 ? -_speed : 0);
 			_cameraPosition.Y +=
-				(Keyboard.GetState().IsKeyDown(Keys.Down) ? _speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.S) ? _speed : 0) +
+				(Clavier.Get().Pressed(Keys.Down) && !Clavier.Get().GetText ? _speed : 0) +
+				(Clavier.Get().Pressed(Keys.S) && !Clavier.Get().GetText ? _speed : 0) +
 				(curseur.Position.Y <= (graphics.PreferredBackBufferHeight) && curseur.Position.Y > (graphics.PreferredBackBufferHeight - 10) && !Game1.SmartHud ? _speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.Up) ? -_speed : 0) +
-				(Keyboard.GetState().IsKeyDown(Keys.Z) ? -_speed : 0) + 
+				(Clavier.Get().Pressed(Keys.Up) && !Clavier.Get().GetText ? -_speed : 0) +
+				(Clavier.Get().Pressed(Keys.Z) && !Clavier.Get().GetText ? -_speed : 0) + 
 				(curseur.Position.Y >= 0 && curseur.Position.Y < 10 ? -_speed : 0);
 		}
 	}

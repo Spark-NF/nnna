@@ -97,16 +97,16 @@ namespace NNNA
 				case Keys.Y: return TranslateAlphabetic('y', shift, capsLock);
 				case Keys.Z: return TranslateAlphabetic('z', shift, capsLock);
 
-				case Keys.D0: return shift ? ')' : '0';
-				case Keys.D1: return shift ? '!' : '1';
-				case Keys.D2: return shift ? '@' : '2';
-				case Keys.D3: return shift ? '#' : '3';
-				case Keys.D4: return shift ? '$' : '4';
-				case Keys.D5: return shift ? '%' : '5';
-				case Keys.D6: return shift ? '^' : '6';
-				case Keys.D7: return shift ? '&' : '7';
-				case Keys.D8: return shift ? '*' : '8';
-				case Keys.D9: return shift ? '(' : '9';
+				case Keys.D0: return capsLock ^ shift ? '0' : 'à';
+				case Keys.D1: return capsLock ^ shift ? '1' : '&';
+				case Keys.D2: return capsLock ^ shift ? '2' : 'é';
+				case Keys.D3: return capsLock ^ shift ? '3' : '"';
+				case Keys.D4: return capsLock ^ shift ? '4' : '\'';
+				case Keys.D5: return capsLock ^ shift ? '5' : '(';
+				case Keys.D6: return capsLock ^ shift ? '6' : '-';
+				case Keys.D7: return capsLock ^ shift ? '7' : 'è';
+				case Keys.D8: return capsLock ^ shift ? '8' : '_';
+				case Keys.D9: return capsLock ^ shift ? '9' : 'ç';
 
 				case Keys.Add: return '+';
 				case Keys.Divide: return '/';
@@ -128,7 +128,19 @@ namespace NNNA
 				case Keys.NumPad8: if (numLock && !shift) return '8'; break;
 				case Keys.NumPad9: if (numLock && !shift) return '9'; break;
 
-				case Keys.OemBackslash: return shift ? '|' : '\\';
+				case Keys.OemBackslash:		return capsLock ^ shift ? '>' : '<';
+				case Keys.OemCloseBrackets:	return capsLock ^ shift ? '¨' : '^';
+				case Keys.OemComma:			return capsLock ^ shift ? '?' : ',';
+				case Keys.OemOpenBrackets:	return capsLock ^ shift ? '°' : ')';
+				case Keys.OemPeriod:		return capsLock ^ shift ? '.' : ';';
+				case Keys.OemPipe:			return capsLock ^ shift ? 'µ' : '*';
+				case Keys.OemPlus:			return capsLock ^ shift ? '+' : '=';
+				case Keys.OemQuestion:		return capsLock ^ shift ? '/' : ':';
+				case Keys.OemSemicolon:		return capsLock ^ shift ? '£' : '$';
+				case Keys.OemTilde:			return capsLock ^ shift ? '%' : 'ù';
+				case Keys.OemQuotes:		return '²';
+
+				/*case Keys.OemBackslash: return shift ? '|' : '\\';
 				case Keys.OemCloseBrackets: return shift ? '}' : ']';
 				case Keys.OemComma: return shift ? '<' : ',';
 				case Keys.OemMinus: return shift ? '_' : '-';
@@ -139,7 +151,7 @@ namespace NNNA
 				case Keys.OemQuestion: return shift ? '?' : '/';
 				case Keys.OemQuotes: return shift ? '"' : '\'';
 				case Keys.OemSemicolon: return shift ? ':' : ';';
-				case Keys.OemTilde: return shift ? '~' : '`';
+				case Keys.OemTilde: return shift ? '~' : '`';*/
 			}
 
 			return (char)0;
@@ -148,12 +160,12 @@ namespace NNNA
 		/// <summary>
 		/// Convertit un caractère minuscule en caractère adapté.
 		/// </summary>
-		/// <param name="baseChar">Le caractère à convertir.</param>
+		/// <param name="baseChar">Le caractère minuscule à convertir.</param>
 		/// <param name="shift">Si la touche shift est enfoncée.</param>
 		/// <param name="capsLock">Si le verrouillage de majuscules est activé.</param>
 		/// <returns>Le caractère miniscule ou majuscule, en fonction.</returns>
 		public static char TranslateAlphabetic(char baseChar, bool shift, bool capsLock)
-		{ return (capsLock ^ shift) ? char.ToUpper(baseChar) : baseChar; }
+		{ return capsLock ^ shift ? char.ToUpper(baseChar) : baseChar; }
 
 		/// <summary>
 		/// Si un bouton est appuyé.
