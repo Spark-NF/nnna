@@ -19,5 +19,10 @@ namespace NNNA
 				{ Messages.RemoveAt(i); }
 			}
 		}
+
+        static public void Clear()
+        {
+            Messages.Clear();
+        }
 	}
 }

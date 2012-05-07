@@ -630,6 +630,8 @@ namespace NNNA
 
 					//Le reste
 					_techno.Reset();
+                    MessagesManager.Clear();
+                    Chat.Clear();
 					_map.LoadContent(_matrice, Content, _minimap, Graphics.GraphicsDevice);
 					_hud.LoadContent(Content, "HUD/hud2");
 					_minimap.LoadContent(_map);

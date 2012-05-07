@@ -29,7 +29,7 @@ namespace NNNA
 				}
 				spriteBatch.Draw(background, new Rectangle(1, y, maxLength + 10, 20 * (Messages.Count - Math.Max(0, Messages.Count - 6)) + 10), Color.White);
 				int j = 0;
-				for (int i = Messages.Count - 1; i >= Math.Max(1, Messages.Count - 6); i--)
+				for (int i = Messages.Count - 1; i >= Math.Max(0, Messages.Count - 6); i--)
 				{
 					ChatMessage msg = Messages[i];
 					spriteBatch.DrawString(font, msg.Author + " : ", new Vector2(6, y + j * 20 + 5), msg.Color);
@@ -39,5 +39,10 @@ namespace NNNA
 				Timeout--;
 			}
 		}
+
+        static public void Clear()
+        {
+            Messages.Clear();
+        }
 	}
 }
