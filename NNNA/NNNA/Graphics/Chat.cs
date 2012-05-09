@@ -12,8 +12,11 @@ namespace NNNA
 
 		static public void Add(ChatMessage msg, int timeout = 20000)
 		{
-			Timeout = timeout;
-			Messages.Add(msg);
+            if (msg.Text != "")
+            {
+                Timeout = timeout;
+                Messages.Add(msg);
+            }
 		}
 
 		static public void Draw(SpriteBatch spriteBatch, SpriteFont font, Texture2D background, int y = 0)

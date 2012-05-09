@@ -2052,7 +2052,10 @@ namespace NNNA
 			}
 
             // Affichage les fps
-            // Debug(4, Math.Truncate(fps.FPS));
+            //if (!double.IsInfinity(_fps.FPS))
+            //{
+            //    Debug(4, _fps.FPS);
+            //}
 
 			// Chat
 			Chat.Draw(_spriteBatch, _fontSmall, Color2Texture2D(new Color(0, 0, 0, 128)), (int)(_screenSize.Y / 2) + 26);
