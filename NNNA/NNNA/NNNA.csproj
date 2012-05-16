@@ -121,7 +121,7 @@
     <Compile Include="Lib\Reseau.cs" />
     <Compile Include="Lib\Resource.cs" />
     <Compile Include="Lib\ResourceMine.cs" />
-    <Compile Include="Lib\Sons.cs" />
+    <Compile Include="Lib\Ambiance_Sound.cs" />
     <Compile Include="Lib\Technologies\Technologies_Window.cs" />
     <Compile Include="Lib\Vector2DExtander.cs" />
     <Compile Include="Physics\Batiment\Archerie.cs" />

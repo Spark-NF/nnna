@@ -1,4 +1,4 @@
-// #define SOUND
+#define SOUND
 // #define LIVE
 
 using System;
@@ -10,10 +10,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
-#if SOUND
-	using Microsoft.Xna.Framework.Audio;
-	using Microsoft.Xna.Framework.Media;
-#endif
 #if LIVE
 	using Microsoft.Xna.Framework.GamerServices;
 #endif
@@ -81,7 +77,7 @@ namespace NNNA
 		// Audio objects		
 		#if SOUND
 			private const float MusicVolume = 2.0f;
-			private Sons _son = new Sons();
+            private Ambiance_Sound _son = new Ambiance_Sound();
 			private SoundEffect _debutpartie;
 		#endif
 		private Technologies_Window _techno;
@@ -216,7 +212,7 @@ namespace NNNA
 
             //son
 #if SOUND
-            _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral, false);
+            _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
 #endif
 
 			base.Initialize();
@@ -357,7 +353,8 @@ namespace NNNA
 
             // Sons
 			#if SOUND
-				 _debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
+                _son.Set_Music("sonmenu");
+				_debutpartie = Content.Load<SoundEffect>("sounds/debutpartie");
 			#endif
             
 		}
@@ -653,8 +650,7 @@ namespace NNNA
 
 					//Le Son
 					#if SOUND
-						if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
-						{ _son.MusiqueMenu.Pause(); }
+                        _son.Pause();
 						_debutpartie.Play();
 					#endif
 				}
@@ -798,7 +794,7 @@ namespace NNNA
 				}
 			}
 			#if SOUND
-				_son.MusicCategory.SetVolume(MusicVolume * _soundMusic * (_soundGeneral / 10));
+                _son.Set_Volume(MusicVolume * _soundMusic * (_soundGeneral / 10));
 			#endif
 		}
 		private void UpdateCredits(GameTime gameTime)
@@ -1518,8 +1514,7 @@ namespace NNNA
 			//minimap.Update(units, buildings, selectedList, joueur);
 
 			#if SOUND
-				if (_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
-				{ _son.MusiqueMenu.Pause(); }
+                _son.Pause();
 			#endif
 		}
 
@@ -1533,11 +1528,7 @@ namespace NNNA
 			{ _pointer = _pointerOld; }
 
 			#if SOUND
-            _son.EngineMenu.Update();
-				if (!_son.MusiqueMenu.IsPlaying && !_son.MusiqueMenu.IsPaused)
-                { _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral); _son.MusiqueMenu.Play(); }
-                else if (_son.MusiqueMenu.IsPaused)
-                { _son.MusiqueMenu.Resume(); }
+                _son.Resume();
 			#endif
 		}
 
@@ -1650,11 +1641,7 @@ namespace NNNA
 			}
             //Son 
 #if SOUND
-            _son.EngineMenu.Update();
-            if (!_son.MusiqueMenu.IsPlaying)
-            {
-                _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
-            }
+            _son.Play();
 #endif
 		}
 
@@ -2097,6 +2084,9 @@ namespace NNNA
 			}
 			_spriteBatch.Draw(_backgroundDark, Vector2.Zero, Color.White);
 			MakePauseMenu("Quitter", "Retour");
+            #if SOUND
+            _son.Play();
+            #endif
 		}
 
 		#endregion
