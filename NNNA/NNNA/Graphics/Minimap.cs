@@ -73,8 +73,19 @@ namespace NNNA
 
 			// Position de la caméra
 			Vector2 vect = Game1.Xy2Matrice(camera_centered_pos);
-			if (vect.X >= 0 && vect.Y >= 0 && vect.X < _dimensions.X && vect.Y < _dimensions.Y)
-			{ textureColor[(int)((vect.X * _texture.Width) / _dimensions.X) + _texture.Width * (int)((vect.Y * _texture.Height) / _dimensions.Y)] = Color.White; }
+            SetPixel(textureColor, vect, Color.White);
+            SetPixel(textureColor, vect + new Vector2(1, 1), Color.White);
+            SetPixel(textureColor, vect + new Vector2(-1, -1), Color.White);
+            SetPixel(textureColor, vect + new Vector2(1, -1), Color.White);
+            SetPixel(textureColor, vect + new Vector2(-1, 1), Color.White);
+            SetPixel(textureColor, vect + new Vector2(2, 2), Color.White);
+            SetPixel(textureColor, vect + new Vector2(-2, -2), Color.White);
+            SetPixel(textureColor, vect + new Vector2(2, -2), Color.White);
+            SetPixel(textureColor, vect + new Vector2(-2, 2), Color.White);
+            SetPixel(textureColor, vect + new Vector2(3, 3), Color.White);
+            SetPixel(textureColor, vect + new Vector2(-3, -3), Color.White);
+            SetPixel(textureColor, vect + new Vector2(3, -3), Color.White);
+            SetPixel(textureColor, vect + new Vector2(-3, 3), Color.White);
 
 			// Mise à jour de la texture
 			var texture = new Texture2D(_texture.GraphicsDevice, _texture.Width, _texture.Height);
@@ -89,5 +100,11 @@ namespace NNNA
 			double ny = Math.Sin(radians) * offset.X + Math.Cos(radians) * offset.Y;
 			return new Vector2((float)nx * 1.2f + pivot.X, (float)ny * 1.2f + pivot.Y);
 		}
+
+        private void SetPixel(Color[] textureColor, Vector2 vect, Color color)
+        {
+            if (vect.X >= 0 && vect.Y >= 0 && vect.X < _dimensions.X && vect.Y < _dimensions.Y)
+            { textureColor[(int)((vect.X * _texture.Width) / _dimensions.X) + _texture.Width * (int)((vect.Y * _texture.Height) / _dimensions.Y)] = color; }
+        }
 	}
 }

@@ -6,10 +6,10 @@ namespace NNNA
 	{
 		private AudioEngine _engine;
         private WaveBank _musique;
-		private SoundBank _sons; 
+		private SoundBank _sons;
 		private Cue _piste;
 		private AudioCategory _musicCategory;
-        string _current_sound;
+        private string _current_sound;
 
 		public void Initializesons(float musicVolume, float soundMusic, float soundGeneral)
 		{
