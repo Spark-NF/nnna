@@ -21,15 +21,19 @@ namespace NNNA
         private TabControl tabcontrol;
         private TabItem tabItem1, tabItem2, tabItem3, tabItem4;
         private Button close, chasse, silex, agri, pierre_polie, irrigation, bronze, outils, feu, torche, fer, evolution1, evolution2, evolution3, evolution4, engrenage, forge, scierie, arme_de_siege, navigation, gouvernail, alchimie, bucheron, charpente, route;
-		private bool _chasse, _feu, _silex, _fer, _pierrePolie, _ere1, _ere2, _ere3, _bronze, _outils, _agri, _torche, _irrigation, _engrenage, _forge, _scierie, _arme_de_siege, _navigation, _gouvernail, _alchimie, _bucheron, _charpente, _route;
+        private bool _chasse, _feu, _silex, _fer, _pierrePolie, _ere1, _ere2, _ere3, _bronze, _outils, _agri, _torche, _irrigation, _engrenage, _forge, _scierie, _arme_de_siege, _navigation, _gouvernail, _alchimie, _bucheron, _charpente, _route;
         private readonly Dictionary<string, int> _prixFer = new Dictionary<string, int>(), _prixChasse = new Dictionary<string, int>(), _prixFeu = new Dictionary<string, int>(), _prixSilex = new Dictionary<string, int>(), _prixPierrePolie = new Dictionary<string, int>(), _prixBronze = new Dictionary<string, int>(), _prixOutils = new Dictionary<string, int>(), _prixAgri = new Dictionary<string, int>(), _prixTorche = new Dictionary<string, int>(), _prixIrrigation = new Dictionary<string, int>(), _prixEngrenage = new Dictionary<string, int>(), _prixForge = new Dictionary<string, int>(), _prixBucheron = new Dictionary<string, int>(), _prixNavigation = new Dictionary<string, int>(), _prixGouvernail = new Dictionary<string, int>(), _prixArme_de_siege = new Dictionary<string, int>(), _prixCharpente = new Dictionary<string, int>(), _prixRoute = new Dictionary<string, int>(), _prixAlchimie = new Dictionary<string, int>(), _prixScierie = new Dictionary<string,int>();
 		
         public Technologies_Window(Rectangle zone, string name, Microsoft.Xna.Framework.Content.ContentManager content)
 		{
             _content = content;
+
+            var ichasse = new Info_Bulle(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4 - zone.Height / 3, (int) (zone.Width / 2.085f), zone.Height / 3), "chasse");
+            ichasse.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/chasse");
+            
             close = new Button(new Rectangle(zone.X + zone.Width - zone.Width / 30 - zone.Height / 25, zone.Y + zone.Height / 30, zone.Height / 25, zone.Height / 25), "close", button_Close_Click, true);
 
-            chasse = new Button(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4, zone.Height / 15, zone.Height / 15), "chasse", chasse_MouseLeftButtonDown);
+            chasse = new Button(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4, zone.Height / 15, zone.Height / 15), "chasse", chasse_MouseLeftButtonDown, false, ichasse);
             silex = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "silex", silex_MouseLeftButtonDown);
             agri = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "agri", agri_MouseLeftButtonDown);
             pierre_polie = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "pierre_polie", pierre_polie_MouseLeftButtonDown);
@@ -77,7 +81,8 @@ namespace NNNA
             charpente.Background = content.Load<Texture2D>(@"Technologies/charpente");
             route.Background = content.Load<Texture2D>(@"Technologies/route");
             evolution2.Background = content.Load<Texture2D>(@"Technologies/evolution");
-            
+
+
             tabItem1 = new TabItem(new Control[] {
                                                   chasse,
                                                   silex,

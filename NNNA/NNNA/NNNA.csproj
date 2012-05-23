@@ -99,6 +99,7 @@
     <Compile Include="Graphics\Form\Button.cs" />
     <Compile Include="Graphics\Form\Containing.cs" />
     <Compile Include="Graphics\Form\Control.cs" />
+    <Compile Include="Graphics\Form\Info_Bulle.cs" />
     <Compile Include="Graphics\Form\TabControl.cs" />
     <Compile Include="Graphics\Form\TabItem.cs" />
     <Compile Include="Graphics\Form\TextBox.cs" />

@@ -44,6 +44,11 @@ namespace NNNA.Form
                 {
                     Children[i].Draw(sb, sf);
                 }
+                // dessine les enfants de l'onglet sélectionné après avoir avoir dessiné tous les autres onglets.
+                for (int j = 0; j < children[selectedTab].Children.Length; j++)
+                {
+                    children[selectedTab].Children[j].Draw(sb, sf);
+                }
             }
         }
     }
