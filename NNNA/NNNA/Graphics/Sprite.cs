@@ -141,7 +141,7 @@ namespace NNNA
 
 		// Comparateur de Sprite selon leur coordonnées en Y
 		public static int CompareByY(Sprite s1, Sprite s2)
-		{ return s1.Position.Y + (s1.Texture == null ? 0 : s1.Texture.Height) > s2.Position.Y + (s2.Texture == null ? 0 : s2.Texture.Height) ? 0 : 1; }
+        { return ((s1.Position.Y + (s1.Texture == null ? 0 : s1.Texture.Height) == s2.Position.Y + (s2.Texture == null ? 0 : (s2.Texture.Height))) ? 0 : (s1.Position.Y + (s1.Texture == null ? 0 : s1.Texture.Height) > s2.Position.Y + (s2.Texture == null ? 0 : s2.Texture.Height)) ? 1 : -1); }
 
 		public Rectangle Rectangle(Camera2D cam)
 		{

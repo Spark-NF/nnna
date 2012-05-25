@@ -69,7 +69,7 @@ namespace NNNA
 		private readonly List<Unit> _selectedList = new List<Unit>();
 		private readonly List<Building> _buildings = new List<Building>();
 		private readonly List<MovibleSprite> _units = new List<MovibleSprite>();
-		private IEnumerable<Sprite> _drawList;
+        private readonly List<Sprite> _to_draw = new List<Sprite>();
 		private Vector2 _dimensions;
 		private int[] _players;
 		private Color[] _playersColors;
@@ -539,6 +539,7 @@ namespace NNNA
 
 					_buildings.Clear();
 					_units.Clear();
+                    _to_draw.Clear();
 
 					// Les couleurs, noms et compte des joueurs
 					var colors = new List<Color> { _playersColors[0] };
@@ -646,7 +647,11 @@ namespace NNNA
 						}
 						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 250, new Image(Content, "Resources/bois_1_sprite_small")));
 					}
-                    _resources.Sort(Sprite.CompareByY);
+
+                    _to_draw.AddRange(_resources);
+                    _to_draw.AddRange(_buildings);
+                    _to_draw.AddRange(_units);
+                    
 
 					//Le Son
 					#if SOUND
@@ -879,7 +884,7 @@ namespace NNNA
 			{ _konami = 0; }
 
 			// Chat
-			if (Clavier.Get().NewPress(Keys.T) && !_showTextBox)
+            if (Clavier.Get().NewPress(Keys.T) && !_showTextBox && (!Clavier.Get().Pressed(Keys.LeftControl) || !Clavier.Get().Pressed(Keys.RightControl)))
 			{
 				_showTextBox = true;
 				Clavier.Get().GetText = true;
@@ -918,6 +923,7 @@ namespace NNNA
 
 			// On vire les ressources vides
 			_resources.RemoveAll(res => res.Quantity <= 0);
+            _to_draw.RemoveAll(res => res is ResourceMine && (res as ResourceMine).Quantity <= 0);
 
 			// Intelligence artificielle
 			var rand = new Random();
@@ -930,6 +936,7 @@ namespace NNNA
 					{
 						foe.Units.Remove(unit);
 						_units.Remove(unit);
+                        _to_draw.Remove(unit);
 					}
 					else
 					{
@@ -963,6 +970,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
+                                    _to_draw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -988,6 +996,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
+                                    _to_draw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1013,6 +1022,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
+                                    _to_draw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle tour !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1037,6 +1047,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
+                                    _to_draw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle écurie !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1061,6 +1072,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
+                                    _to_draw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1085,6 +1097,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
+                                    _to_draw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle archerie !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1109,6 +1122,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
+                                    _to_draw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle Forge !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1320,6 +1334,7 @@ namespace NNNA
                                             Joueur.Population++;
                                             Joueur.Units.Add(u);
                                             _units.Add(u);
+                                            _to_draw.Add(u);
                                             MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
                                             _currentAction = "";
                                         }
@@ -1342,6 +1357,7 @@ namespace NNNA
                                             Joueur.Population++;
                                             Joueur.Units.Add(u1);
                                             _units.Add(u1);
+                                            _to_draw.Add(u1);
                                             MessagesManager.Messages.Add(new Msg(_("Nouveau chasseur !"), Color.White, 5000));
                                             _currentAction = "";
                                         }
@@ -1359,6 +1375,7 @@ namespace NNNA
                                             Joueur.Population++;
                                             Joueur.Units.Add(u1);
                                             _units.Add(u1);
+                                            _to_draw.Add(u1);
                                             MessagesManager.Messages.Add(new Msg(_("Nouvel archer !"), Color.White, 5000));
                                             _currentAction = "";
                                         }
@@ -1508,8 +1525,8 @@ namespace NNNA
                     { unit.Mine(resourceUnder); }
                 }
             }
-			Joueur.Units.Sort(Sprite.CompareByY);
-			Joueur.Buildings.Sort(Sprite.CompareByY);
+            _to_draw.Sort(Sprite.CompareByY);
+
 			 
 			//minimap.Update(units, buildings, selectedList, joueur);
 
@@ -1771,157 +1788,151 @@ namespace NNNA
 			_spriteBatch.DrawString(_fontCredits, "Arnaud Weiss", new Vector2((_screenSize.X - _fontCredits.MeasureString("Arnaud Weiss").X) / 2, _screenSize.Y + 180 - y), Color.White);
 			_spriteBatch.DrawString(_fontCredits, _("Merci d'avoir joué !"), new Vector2((_screenSize.X - _fontCredits.MeasureString(_("Merci d'avoir joué !")).X) / 2, (_screenSize.Y * 3 + _fontCredits.MeasureString(_("Merci d'avoir joué !")).Y) / 2 + 180 - y), Color.White);
 		}
-		private void DrawGame()
-		{
-			var index = (int)Math.Floor(_compt / 25);
-			bool bui = _currentAction.StartsWith("build_");
-			foreach (Sprite sprite in _matrice)
-			{
-				if (sprite.Position.X - _camera.Position.X > -64 && 
-					sprite.Position.Y - _camera.Position.Y > -32 && 
-					sprite.Position.X - _camera.Position.X < _screenSize.X &&
-					(sprite.Position.Y - _camera.Position.Y < _screenSize.Y - Math.Round((double)_hud.Position.Height * 4 / 5) || 
-					sprite.Position.Y - _camera.Position.Y < _screenSize.Y && SmartHud))
-				{
-					float mul = 0.0f;
-					if (_weather > 0)
-					{
-						foreach (Unit unit in Joueur.Units)
-						{
-							float m = (unit.PositionCenter - sprite.PositionCenter).Length();
-							m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
-							mul = (m > 0 && m > mul) ? m : mul;
-						}
-						foreach (Building building in Joueur.Buildings)
-						{
-							float m = (building.PositionCenter - sprite.PositionCenter).Length();
-							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
-							mul = (m > 0 && m > mul) ? m : mul;
-						}
-					}
-					else
-					{ mul = 1.0f; }
-					sprite.DrawMap(_spriteBatch, _camera, mul, _weather, bui ? (sprite.Liquid ? new Color(255, 80, 80) : new Color(80, 255, 80)) : Color.Transparent);
-				}
-			}
+        private void DrawGame()
+        {
+            var index = (int)Math.Floor(_compt / 25);
+            bool bui = _currentAction.StartsWith("build_");
 
-			// Affichage des objets sur la carte
-            foreach (Joueur foe in _enemies)
+            // Affichage de la carte
+            foreach (Sprite sprite in _matrice)
             {
-                foreach (Building build in foe.Buildings)
+                if (sprite.Position.X - _camera.Position.X > -64 &&
+                    sprite.Position.Y - _camera.Position.Y > -32 &&
+                    sprite.Position.X - _camera.Position.X < _screenSize.X &&
+                    (sprite.Position.Y - _camera.Position.Y < _screenSize.Y - Math.Round((double)_hud.Position.Height * 4 / 5) ||
+                    sprite.Position.Y - _camera.Position.Y < _screenSize.Y && SmartHud))
                 {
-                    if (_weather == 0)
+                    float mul = 0.0f;
+                    if (_weather > 0)
                     {
-                        build.Visible = true;
-                        build.Draw(_spriteBatch, _camera, foe.ColorMovable);
-                    }
-                    else
-                    {
-                        float mul = 0.0f;
                         foreach (Unit unit in Joueur.Units)
                         {
-                            float m = (unit.PositionCenter - build.Position).Length();
+                            float m = (unit.PositionCenter - sprite.PositionCenter).Length();
                             m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
                         foreach (Building building in Joueur.Buildings)
                         {
-                            float m = (building.PositionCenter - build.Position).Length();
+                            float m = (building.PositionCenter - sprite.PositionCenter).Length();
                             m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
-                        build.Visible = mul > 0;
-                        if (mul > 0)
-                        { build.Draw(_spriteBatch, _camera, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
-                    }
-                }
-                foreach (Unit uni in foe.Units)
-                {
-                    if (_weather == 0)
-                    {
-                        uni.Visible = true;
-                        uni.Draw(_spriteBatch, _camera, index, foe.ColorMovable);
                     }
                     else
-                    {
-                        float mul = 0.0f;
-                        foreach (Unit unit in Joueur.Units)
-                        {
-                            float m = (unit.PositionCenter - uni.Position).Length();
-                            m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
-                            mul = (m > 0 && m > mul) ? m : mul;
-                        }
-                        foreach (Building building in Joueur.Buildings)
-                        {
-                            float m = (building.PositionCenter - uni.Position).Length();
-                            m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
-                            mul = (m > 0 && m > mul) ? m : mul;
-                        }
-                        uni.Visible = mul > 0;
-                        if (mul > 0f)
-                        { uni.Draw(_spriteBatch, _camera, index, new Color((mul * foe.ColorMovable.R) / 255, (mul * foe.ColorMovable.G) / 255, (mul * foe.ColorMovable.B) / 255)); }
-                    }
+                    { mul = 1.0f; }
+                    sprite.DrawMap(_spriteBatch, _camera, mul, _weather, bui ? (sprite.Liquid ? new Color(255, 80, 80) : new Color(80, 255, 80)) : Color.Transparent);
                 }
             }
 
-			/*_drawList = _units.Cast<Sprite>().ToList().Concat(_buildings.Cast<Sprite>().ToList()).Concat(_resources.Cast<Sprite>().ToList()).OrderBy(s => s.Position.Y + s.Texture.Height);
-			foreach (Sprite sprite in _drawList)
-			{
-				if (_weather == 0)
-				{
-					sprite.Visible = true;
-					sprite.DrawMap(_spriteBatch, _camera, 1.0f, _weather);
-				}
-				else
-				{
-					float mul = 0.0f;
-					foreach (Unit unit in Joueur.Units)
-					{
-						float m = (unit.PositionCenter - sprite.PositionCenter).Length();
-						m = 1.0f - (m/(unit.LineSight + Joueur.AdditionalLineSight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					foreach (Building building in Joueur.Buildings)
-					{
-						float m = (building.PositionCenter - sprite.PositionCenter).Length();
-						m = 1.0f - (m/(building.LineSight + Joueur.AdditionalLineSight));
-						mul = (m > 0 && m > mul) ? m : mul;
-					}
-					sprite.Visible = mul > 0;
-					if (mul > 0f)
-					{
-						sprite.DrawMap(_spriteBatch, _camera, mul, _weather);
-					}
-				}
-			}*/
-
-            Joueur.Draw(_spriteBatch, _camera, index);
-            foreach (ResourceMine sprite in _resources)
+            // Affichage des objets sur la carte
+            foreach (Sprite sprite in _to_draw)
             {
-                if (_weather == 0)
+                #region RESOURCES
+                if (sprite is ResourceMine)
                 {
-                    sprite.Visible = true;
-                    sprite.Draw(_spriteBatch, 1, _camera, 1.0f, _weather);
+                    var current = (sprite as ResourceMine);
+                    if (_weather == 0)
+                    {
+                        sprite.Visible = true;
+                        current.Draw(_spriteBatch, 1, _camera, 1.0f, _weather);
+                    }
+                    else
+                    {
+                        float mul = 0.0f;
+                        foreach (Unit unit in Joueur.Units)
+                        {
+                            float m = (unit.PositionCenter - sprite.PositionCenter).Length();
+                            m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
+                            mul = (m > 0 && m > mul) ? m : mul;
+                        }
+                        foreach (Building building in Joueur.Buildings)
+                        {
+                            float m = (building.PositionCenter - sprite.PositionCenter).Length();
+                            m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                            mul = (m > 0 && m > mul) ? m : mul;
+                        }
+                        sprite.Visible = mul > 0;
+                        if (mul > 0f)
+                        { current.Draw(_spriteBatch, 1, _camera, mul, _weather); }
+                    }
                 }
-                else
+                #endregion
+                #region UNITS
+                else if (sprite is Unit)
                 {
-                    float mul = 0.0f;
-                    foreach (Unit unit in Joueur.Units)
+                    var current = (sprite as Unit);
+                    if (Joueur.Units.Contains(sprite as MovibleSprite))
                     {
-                        float m = (unit.PositionCenter - sprite.PositionCenter).Length();
-                        m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
-                        mul = (m > 0 && m > mul) ? m : mul;
+                        sprite.Visible = true;
+                        current.Draw(_spriteBatch, _camera, index, Joueur.ColorMovable);
                     }
-                    foreach (Building building in Joueur.Buildings)
+                    else
                     {
-                        float m = (building.PositionCenter - sprite.PositionCenter).Length();
-                        m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
-                        mul = (m > 0 && m > mul) ? m : mul;
+                        if (_weather == 0)
+                        {
+                            sprite.Visible = true;
+                            current.Draw(_spriteBatch, _camera, index, current.Joueur.ColorMovable);
+                        }
+                        else
+                        {
+                            float mul = 0.0f;
+                            foreach (Unit unit in Joueur.Units)
+                            {
+                                float m = (unit.PositionCenter - sprite.Position).Length();
+                                m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
+                                mul = (m > 0 && m > mul) ? m : mul;
+                            }
+                            foreach (Building building in Joueur.Buildings)
+                            {
+                                float m = (building.PositionCenter - sprite.Position).Length();
+                                m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                                mul = (m > 0 && m > mul) ? m : mul;
+                            }
+                            sprite.Visible = mul > 0;
+                            if (mul > 0f)
+                            { current.Draw(_spriteBatch, _camera, index, new Color((mul * current.Joueur.ColorMovable.R) / 255, (mul * current.Joueur.ColorMovable.G) / 255, (mul * current.Joueur.ColorMovable.B) / 255)); }
+                        }
                     }
-                    sprite.Visible = mul > 0;
-                    if (mul > 0f)
-                    { sprite.Draw(_spriteBatch, 1, _camera, mul, _weather); }
                 }
+                #endregion
+                #region BUILDINGS
+                else if (sprite is Building)
+                {
+                    var current = (sprite as Building);
+                    if (Joueur.Buildings.Contains(current))
+                    {
+                        sprite.Visible = true;
+                        current.Draw(_spriteBatch, _camera, Joueur.ColorMovable);
+                    }
+                    else
+                    {
+                        if (_weather == 0)
+                        {
+                            sprite.Visible = true;
+                            current.Draw(_spriteBatch, _camera, current.Joueur.ColorMovable);
+                        }
+                        else
+                        {
+                            float mul = 0.0f;
+                            foreach (Unit unit in Joueur.Units)
+                            {
+                                float m = (unit.PositionCenter - sprite.Position).Length();
+                                m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
+                                mul = (m > 0 && m > mul) ? m : mul;
+                            }
+                            foreach (Building building in Joueur.Buildings)
+                            {
+                                float m = (building.PositionCenter - sprite.Position).Length();
+                                m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                                mul = (m > 0 && m > mul) ? m : mul;
+                            }
+                            sprite.Visible = mul > 0;
+                            if (mul > 0)
+                            { current.Draw(_spriteBatch, _camera, new Color((mul * current.Joueur.ColorMovable.R) / 255, (mul * current.Joueur.ColorMovable.G) / 255, (mul * current.Joueur.ColorMovable.B) / 255)); }
+                        }
+                    }
+                }
+                #endregion
             }
 
 			// Rectangle de séléction
@@ -2039,10 +2050,10 @@ namespace NNNA
 			}
 
             // Affichage les fps
-            if (!double.IsInfinity(_fps.FPS))
-            {
-                Debug(4, _fps.FPS);
-            }
+            //if (!double.IsInfinity(_fps.FPS))
+            //{
+            //    Debug(4, _fps.FPS);
+            //}
 
 			// Chat
 			Chat.Draw(_spriteBatch, _fontSmall, Color2Texture2D(new Color(0, 0, 0, 128)), (int)(_screenSize.Y / 2) + 26);
