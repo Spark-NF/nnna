@@ -48,16 +48,16 @@ namespace NNNA
 			_reducedMap = new Rectangle(_reducedMap.X, _reducedMap.Y, (int)(map.MapWidth * _ratio), (int)(map.MapHeight * _ratio));
 		}
 
-        public void Update(Souris s, Camera2D camera, int decay)
+        public void Update(Souris s, Camera2D camera, Vector2 screenSize, int decay)
         {
-            //Pour les tests enlever la deuxieme condition : on y voit plus clair.
-            if (s.Clicked(MouseButton.Left) && new Rectangle(_reducedMap.X - _reducedMap.Width / 2, _reducedMap.Y + decay, _reducedMap.Width, _reducedMap.Height).Intersects(new Rectangle(s.X, s.Y, 1, 1)))
+            //Pour les tests enlever la condition : on y voit plus clair.
+            if (new Rectangle(_reducedMap.X - _reducedMap.Width / 2, _reducedMap.Y + decay, _reducedMap.Width, _reducedMap.Height).Intersects(new Rectangle(s.X, s.Y, 1, 1)))
             {
-                // C'est ca qui est foireux !
+                // C'est ça qui est foireux !
                 Vector2 pos = new Vector2(s.X - _reducedMap.X + _texture.Width/2, s.Y - _reducedMap.Y + decay);
                 // A partir de là, ça le fait normalement.
                 Rotate(pos, Dimensions / 2, -45d);
-                camera.Position = Game1.Matrice2Xy(pos) - Game1.ScreenSize/2;
+                camera.Position = Game1.Matrice2Xy(pos) - screenSize/2;
             }
         }
 
