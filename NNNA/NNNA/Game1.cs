@@ -41,7 +41,7 @@ namespace NNNA
 		private readonly List<string> _lastState = new List<string>();
 		private List<string> _currentMenus = new List<string>();
 
-		private Vector2 _screenSize = new Vector2(1680, 1050);
+		public static  Vector2 ScreenSize = new Vector2(1680, 1050);
 		private bool _fullScreen = true, _shadows = true, _healthOver, _showConsole, _showTextBox;
 		public static bool SmartHud;
 		private float _soundGeneral = 10, _soundSFX = 10, _soundMusic = 10, _a = 1.0f;
@@ -123,8 +123,8 @@ namespace NNNA
 
 			Graphics = new GraphicsDeviceManager(this)
 			{
-                PreferredBackBufferWidth = (int)_screenSize.X,
-                PreferredBackBufferHeight = (int)_screenSize.Y,
+                PreferredBackBufferWidth = (int)ScreenSize.X,
+                PreferredBackBufferHeight = (int)ScreenSize.Y,
                 IsFullScreen = _fullScreen,
 				SynchronizeWithVerticalRetrace = false
 			};
@@ -152,8 +152,8 @@ namespace NNNA
 		{
 			_language = Properties.Settings.Default.Language;
 			_fullScreen = Properties.Settings.Default.FullScreen;
-			_screenSize.X = Properties.Settings.Default.ScreenWidth;
-			_screenSize.Y = Properties.Settings.Default.ScreenHeight;
+			ScreenSize.X = Properties.Settings.Default.ScreenWidth;
+			ScreenSize.Y = Properties.Settings.Default.ScreenHeight;
 			_healthOver = Properties.Settings.Default.HealthOver;
 			SmartHud = Properties.Settings.Default.SmartHUD;
 			_textures = Properties.Settings.Default.Textures;
@@ -172,8 +172,8 @@ namespace NNNA
 		{
 			Properties.Settings.Default.Language = _language;
 			Properties.Settings.Default.FullScreen = _fullScreen;
-			Properties.Settings.Default.ScreenWidth = (int)_screenSize.X;
-			Properties.Settings.Default.ScreenHeight = (int)_screenSize.Y;
+			Properties.Settings.Default.ScreenWidth = (int)ScreenSize.X;
+			Properties.Settings.Default.ScreenHeight = (int)ScreenSize.Y;
 			Properties.Settings.Default.HealthOver = _healthOver;
 			Properties.Settings.Default.SmartHUD = SmartHud;
 			Properties.Settings.Default.Textures = _textures;
@@ -365,21 +365,21 @@ namespace NNNA
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-			string ratio = ((int)((10 * _screenSize.X) / _screenSize.Y)).ToString(CultureInfo.CurrentCulture);
+			string ratio = ((int)((10 * ScreenSize.X) / ScreenSize.Y)).ToString(CultureInfo.CurrentCulture);
 			if (ratio != "13" && ratio != "16" && ratio != "18")
 			{ ratio = "13"; }
 			_backgrounds[0] = Content.Load<Texture2D>("background/" + ratio + "_0");
 			_backgrounds[1] = Content.Load<Texture2D>("background/" + ratio + "_1");
-			_backgroundDark = CreateRectangle((int)_screenSize.X, (int)_screenSize.Y, new Color(0, 0, 0, 170));
+			_backgroundDark = CreateRectangle((int)ScreenSize.X, (int)ScreenSize.Y, new Color(0, 0, 0, 170));
 			_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
 			//Fenetre des technologies
-            _techno = new Technologies_Window(new Rectangle((int)(_screenSize.X / 4), (int)(_screenSize.Y / 4), (int)(_screenSize.X / 2), (int)(_screenSize.Y / 2)), "Technologies", Content);
+            _techno = new Technologies_Window(new Rectangle((int)(ScreenSize.X / 4), (int)(ScreenSize.Y / 4), (int)(ScreenSize.X / 2), (int)(ScreenSize.Y / 2)), "Technologies", Content);
 
 			_hud = new HUD(0, ((Graphics.PreferredBackBufferHeight * 5) / 6) - 10, SmartHud, Graphics);
 			_minimap = new Minimap((_hud.Position.Width * 7) / 8 - _hud.Position.Width / 150, _hud.Position.Y + _hud.Position.Height / 15, (_hud.Position.Height * 9) / 10, (_hud.Position.Height * 9) / 10);
 
-			MessagesManager.X = (uint)_screenSize.X - 400;
+			MessagesManager.X = (uint)ScreenSize.X - 400;
 		}
 
 		/// <summary>
@@ -424,14 +424,14 @@ namespace NNNA
 			{
 				Draw(gameTime);
 
-				var backBuffer = new int[(int)_screenSize.X * (int)_screenSize.Y];
+				var backBuffer = new int[(int)ScreenSize.X * (int)ScreenSize.Y];
 				GraphicsDevice.GetBackBufferData(backBuffer);
 
-				var texture = new Texture2D(GraphicsDevice, (int)_screenSize.X, (int)_screenSize.Y, false, GraphicsDevice.PresentationParameters.BackBufferFormat);
+				var texture = new Texture2D(GraphicsDevice, (int)ScreenSize.X, (int)ScreenSize.Y, false, GraphicsDevice.PresentationParameters.BackBufferFormat);
 				texture.SetData(backBuffer);
 
 				Stream stream = File.OpenWrite("screenshot_" + Guid.NewGuid().ToString() + ".png");
-				texture.SaveAsPng(stream, (int)_screenSize.X, (int)_screenSize.Y);
+				texture.SaveAsPng(stream, (int)ScreenSize.X, (int)ScreenSize.Y);
 				stream.Close(); 
 			}
 
@@ -608,7 +608,7 @@ namespace NNNA
 					Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
 					Joueur.Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, hutte, false));
 					Joueur.Buildings.Add(hutte);
-					_camera.Position = Matrice2Xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - _screenSize / 2;
+					_camera.Position = Matrice2Xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - ScreenSize / 2;
 					_units.AddRange(Joueur.Units);
 					_buildings.AddRange(Joueur.Buildings);
 
@@ -674,11 +674,11 @@ namespace NNNA
 						break;
 
 					case -1:
-						float span = _screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
-						m = Souris.Get().Y > (_screenSize.Y / 5) + (180 * (_screenSize.Y / 1050)) && ((Souris.Get().Y - (_screenSize.Y / 5) - (180 * (_screenSize.Y / 1050))) % span) < (_fontMenu.MeasureString("Menu").Y * _screenSize.Y) / 1050 ? (int)((Souris.Get().Y - _screenSize.Y / 5 - (180 * (_screenSize.Y / 1050))) / span) : -1;
+						float span = ScreenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
+						m = Souris.Get().Y > (ScreenSize.Y / 5) + (180 * (ScreenSize.Y / 1050)) && ((Souris.Get().Y - (ScreenSize.Y / 5) - (180 * (ScreenSize.Y / 1050))) % span) < (_fontMenu.MeasureString("Menu").Y * ScreenSize.Y) / 1050 ? (int)((Souris.Get().Y - ScreenSize.Y / 5 - (180 * (ScreenSize.Y / 1050))) / span) : -1;
 						var colors = new List<Color>(new[] { Color.Blue, Color.Red, Color.Green, Color.Yellow, Color.Pink, Color.Purple, Color.Gray, Color.DeepPink, Color.Lime, Color.DarkOrange, Color.SaddleBrown, Color.Cyan });
-						float v = ((Souris.Get().Y - (_screenSize.Y / 5) - (180 * (_screenSize.Y / 1050))) % (_screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))));
-						if (Souris.Get().X >= _screenSize.X * 3 / 7 - 60 && Souris.Get().X <= _screenSize.X * 3 / 7 - 20 && Souris.Get().Y > (_screenSize.Y / 5) + (180 * (_screenSize.Y / 1050)) && v >= 21 && v <= 61)
+						float v = ((Souris.Get().Y - (ScreenSize.Y / 5) - (180 * (ScreenSize.Y / 1050))) % (ScreenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))));
+						if (Souris.Get().X >= ScreenSize.X * 3 / 7 - 60 && Souris.Get().X <= ScreenSize.X * 3 / 7 - 20 && Souris.Get().Y > (ScreenSize.Y / 5) + (180 * (ScreenSize.Y / 1050)) && v >= 21 && v <= 61)
 						{ _playersColors[m] = colors[(colors.IndexOf(_playersColors[m]) + (Souris.Get().Clicked(MouseButton.Left) ? 1 : -1) + colors.Count) % colors.Count]; }
 						break;
 				}
@@ -763,9 +763,9 @@ namespace NNNA
 				switch (m)
 				{
 					case 0:
-						_screenSize = GetNextResolution(Souris.Get().Clicked(MouseButton.Right));
-						Graphics.PreferredBackBufferWidth = (int)_screenSize.X;
-						Graphics.PreferredBackBufferHeight = (int)_screenSize.Y;
+						ScreenSize = GetNextResolution(Souris.Get().Clicked(MouseButton.Right));
+						Graphics.PreferredBackBufferWidth = (int)ScreenSize.X;
+						Graphics.PreferredBackBufferHeight = (int)ScreenSize.Y;
 						LoadScreenSizeDependantContent();
 						Graphics.ApplyChanges();
 						break;
@@ -1528,7 +1528,7 @@ namespace NNNA
             _to_draw.Sort(Sprite.CompareByY);
 
 			 
-			//minimap.Update(units, buildings, selectedList, joueur);
+			_minimap.Update(Souris.Get(), _camera, _hud.SmartPos);
 
 			#if SOUND
                 _son.Pause();
@@ -1627,7 +1627,7 @@ namespace NNNA
 			if (_showConsole)
 			{
 				List<ConsoleMessage> msgs = Console.GetLast();
-				_spriteBatch.Draw(_console, new Rectangle(0, 0, (int)_screenSize.X, 26 * msgs.Count), Color.White);
+				_spriteBatch.Draw(_console, new Rectangle(0, 0, (int)ScreenSize.X, 26 * msgs.Count), Color.White);
 				for (int i = msgs.Count; i > 0; i--)
 				{ _spriteBatch.DrawString(_fontSmall, msgs[msgs.Count - i].Message, new Vector2(5, 26 * i - 24), Color.White); }
 			}
@@ -1641,20 +1641,20 @@ namespace NNNA
 		private void DrawCommon(bool drawText = true)
 		{
 			// Le fond d'écran
-			var screenRectangle = new Rectangle(0, 0, (int)_screenSize.X, (int)_screenSize.Y);
+			var screenRectangle = new Rectangle(0, 0, (int)ScreenSize.X, (int)ScreenSize.Y);
 			_spriteBatch.Draw(_backgrounds[_theme], screenRectangle, Color.White);
 
 			if (drawText)
 			{
 				// Titre
-				DrawString(_spriteBatch, _fontMenuTitle, "NNNA", new Vector2((_screenSize.X - _fontMenuTitle.MeasureString("NNNA").X) / 2, _screenSize.Y / 13), new Color(200, 0, 0), Color.Black, 1);
+				DrawString(_spriteBatch, _fontMenuTitle, "NNNA", new Vector2((ScreenSize.X - _fontMenuTitle.MeasureString("NNNA").X) / 2, ScreenSize.Y / 13), new Color(200, 0, 0), Color.Black, 1);
 
 				// Version
-				_spriteBatch.DrawString(_fontSmall, GetType().Assembly.GetName().Version.ToString(), new Vector2((_screenSize.X - _fontSmall.MeasureString(GetType().Assembly.GetName().Version.ToString()).X) / 2, _screenSize.Y - 50), Color.GhostWhite);
+				_spriteBatch.DrawString(_fontSmall, GetType().Assembly.GetName().Version.ToString(), new Vector2((ScreenSize.X - _fontSmall.MeasureString(GetType().Assembly.GetName().Version.ToString()).X) / 2, ScreenSize.Y - 50), Color.GhostWhite);
 			   
 				// réseau
-				DrawString(_spriteBatch, _fontSmall, _(Réseau.Connected()), new Vector2(5, _screenSize.Y -20),Color.GhostWhite,Color.Transparent,1);
-				DrawString(_spriteBatch, _fontSmall, _("Votre adresse IP est :") + " " + Réseau.IP, new Vector2((_screenSize.X - _fontSmall.MeasureString(_("Votre adresse IP est :") + " " + Réseau.IP).X), _screenSize.Y - 20), Color.GhostWhite, Color.Transparent, 1);
+				DrawString(_spriteBatch, _fontSmall, _(Réseau.Connected()), new Vector2(5, ScreenSize.Y -20),Color.GhostWhite,Color.Transparent,1);
+				DrawString(_spriteBatch, _fontSmall, _("Votre adresse IP est :") + " " + Réseau.IP, new Vector2((ScreenSize.X - _fontSmall.MeasureString(_("Votre adresse IP est :") + " " + Réseau.IP).X), ScreenSize.Y - 20), Color.GhostWhite, Color.Transparent, 1);
 			}
             //Son 
 #if SOUND
@@ -1765,7 +1765,7 @@ namespace NNNA
 		{
 			DrawCommon();
 			string[] textures = { "min", "moyennes", "max" };
-			MakeMenu(_screenSize.X + " x " + _screenSize.Y, (_fullScreen ? "Plein écran" : "Fenêtré"), _("Textures")+" " + _(textures[_textures]), (_shadows ? "Ombres" : "Pas d'ombres"), _("Thème")+" "+(_theme + 1), "Retour");
+			MakeMenu(ScreenSize.X + " x " + ScreenSize.Y, (_fullScreen ? "Plein écran" : "Fenêtré"), _("Textures")+" " + _(textures[_textures]), (_shadows ? "Ombres" : "Pas d'ombres"), _("Thème")+" "+(_theme + 1), "Retour");
 		}
 		private void DrawOptionsSound()
 		{
@@ -1779,14 +1779,14 @@ namespace NNNA
 
 			// Crédits
 			int y = _credits / 20;
-			if (y > _screenSize.Y + 240 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2))
-			{ y = (int)(_screenSize.Y + 240 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2)); }
+			if (y > ScreenSize.Y + 240 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2))
+			{ y = (int)(ScreenSize.Y + 240 + (_fontCredits.MeasureString(_("Merci d'avoir joué !")).Y / 2)); }
 
-			_spriteBatch.DrawString(_fontCredits, "Nicolas Allain", new Vector2((_screenSize.X - _fontCredits.MeasureString("Nicolas Allain").X) / 2, _screenSize.Y - y), Color.White);
-			_spriteBatch.DrawString(_fontCredits, "Nicolas Faure", new Vector2((_screenSize.X - _fontCredits.MeasureString("Nicolas Faure").X) / 2, _screenSize.Y + 60 - y), Color.White);
-			_spriteBatch.DrawString(_fontCredits, "Nicolas Mouton-Besson", new Vector2((_screenSize.X - _fontCredits.MeasureString("Nicolas Mouton-Besson").X) / 2, _screenSize.Y + 120 - y), Color.White);
-			_spriteBatch.DrawString(_fontCredits, "Arnaud Weiss", new Vector2((_screenSize.X - _fontCredits.MeasureString("Arnaud Weiss").X) / 2, _screenSize.Y + 180 - y), Color.White);
-			_spriteBatch.DrawString(_fontCredits, _("Merci d'avoir joué !"), new Vector2((_screenSize.X - _fontCredits.MeasureString(_("Merci d'avoir joué !")).X) / 2, (_screenSize.Y * 3 + _fontCredits.MeasureString(_("Merci d'avoir joué !")).Y) / 2 + 180 - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, "Nicolas Allain", new Vector2((ScreenSize.X - _fontCredits.MeasureString("Nicolas Allain").X) / 2, ScreenSize.Y - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, "Nicolas Faure", new Vector2((ScreenSize.X - _fontCredits.MeasureString("Nicolas Faure").X) / 2, ScreenSize.Y + 60 - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, "Nicolas Mouton-Besson", new Vector2((ScreenSize.X - _fontCredits.MeasureString("Nicolas Mouton-Besson").X) / 2, ScreenSize.Y + 120 - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, "Arnaud Weiss", new Vector2((ScreenSize.X - _fontCredits.MeasureString("Arnaud Weiss").X) / 2, ScreenSize.Y + 180 - y), Color.White);
+			_spriteBatch.DrawString(_fontCredits, _("Merci d'avoir joué !"), new Vector2((ScreenSize.X - _fontCredits.MeasureString(_("Merci d'avoir joué !")).X) / 2, (ScreenSize.Y * 3 + _fontCredits.MeasureString(_("Merci d'avoir joué !")).Y) / 2 + 180 - y), Color.White);
 		}
         private void DrawGame()
         {
@@ -1798,9 +1798,9 @@ namespace NNNA
             {
                 if (sprite.Position.X - _camera.Position.X > -64 &&
                     sprite.Position.Y - _camera.Position.Y > -32 &&
-                    sprite.Position.X - _camera.Position.X < _screenSize.X &&
-                    (sprite.Position.Y - _camera.Position.Y < _screenSize.Y - Math.Round((double)_hud.Position.Height * 4 / 5) ||
-                    sprite.Position.Y - _camera.Position.Y < _screenSize.Y && SmartHud))
+                    sprite.Position.X - _camera.Position.X < ScreenSize.X &&
+                    (sprite.Position.Y - _camera.Position.Y < ScreenSize.Y - Math.Round((double)_hud.Position.Height * 4 / 5) ||
+                    sprite.Position.Y - _camera.Position.Y < ScreenSize.Y && SmartHud))
                 {
                     float mul = 0.0f;
                     if (_weather > 0)
@@ -1946,10 +1946,10 @@ namespace NNNA
 				(int)(Math.Abs(_selection.Width) + (coos.X < 0 ? coos.X : 0)),
 				(int)(Math.Abs(_selection.Height) + (coos.Y < 0 ? coos.Y : 0))
 			);
-			if (tex.Width + tex.X > _screenSize.X)
-			{ tex.Width = (int)_screenSize.X - tex.X; }
-			if (tex.Height + tex.Y > _screenSize.Y)
-			{ tex.Height = (int)_screenSize.Y - tex.Y; }
+			if (tex.Width + tex.X > ScreenSize.X)
+			{ tex.Width = (int)ScreenSize.X - tex.X; }
+			if (tex.Height + tex.Y > ScreenSize.Y)
+			{ tex.Height = (int)ScreenSize.Y - tex.Y; }
 			if (Math.Abs(_selection.Width) > 0 && Math.Abs(_selection.Height) > 0)
 			{
 				_spriteBatch.Draw(Color2Texture2D(Color.DarkBlue), tex, new Color(64, 64, 64, 64));
@@ -2023,12 +2023,12 @@ namespace NNNA
 
 			// Affichage du HUD
 			MessagesManager.Draw(_spriteBatch, _fontSmall);
-			_hud.Draw(_spriteBatch, _minimap, _units, _buildings, Joueur, _camera.Position + _screenSize / 2, _fontSmall);
+			_hud.Draw(_spriteBatch, _minimap, _units, _buildings, Joueur, _camera.Position + ScreenSize / 2, _fontSmall);
 
 			// Unités séléctionnées
 			for (int i = 0; i < _selectedList.Count; i++)
 			{
-				var pos = new Vector2(356*(_screenSize.X/1680) + (i%10)*36, _screenSize.Y - _hud.Position.Height + 54*(_screenSize.Y/1050) + (i/10)*36 + _hud.SmartPos);
+				var pos = new Vector2(356*(ScreenSize.X/1680) + (i%10)*36, ScreenSize.Y - _hud.Position.Height + 54*(ScreenSize.Y/1050) + (i/10)*36 + _hud.SmartPos);
 				_selectedList[i].DrawIcon(_spriteBatch, pos);
 				DrawBar(_selectedList[i].Life, _selectedList[i].MaxLife, pos + new Vector2(0, 28), 33, Color.Green, Color.Red);
 			}
@@ -2040,7 +2040,7 @@ namespace NNNA
 			// Flash de changement d'ère
 			if (FlashBool && _a > 0f)
 			{
-				_spriteBatch.Draw(_flash ,new Rectangle(0, 0, (int) _screenSize.X, (int) _screenSize.Y), new Color(0f, 0f, 0f, _a));
+				_spriteBatch.Draw(_flash ,new Rectangle(0, 0, (int) ScreenSize.X, (int) ScreenSize.Y), new Color(0f, 0f, 0f, _a));
 				_a -= 0.01f;
 			}
 			else
@@ -2056,12 +2056,12 @@ namespace NNNA
             //}
 
 			// Chat
-			Chat.Draw(_spriteBatch, _fontSmall, Color2Texture2D(new Color(0, 0, 0, 128)), (int)(_screenSize.Y / 2) + 26);
+			Chat.Draw(_spriteBatch, _fontSmall, Color2Texture2D(new Color(0, 0, 0, 128)), (int)(ScreenSize.Y / 2) + 26);
 			if (_showTextBox)
 			{
-				_spriteBatch.Draw(Color2Texture2D(new Color(0, 0, 0, 128)), new Rectangle(1, (int)(_screenSize.Y / 2) - 5, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).X + 10, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).Y + 10), Color.White);
-				_spriteBatch.DrawString(_fontSmall, Joueur.Name + " : ", new Vector2(6, _screenSize.Y / 2.0f), _playersColors[0]);
-				_spriteBatch.DrawString(_fontSmall, Clavier.Get().Text, new Vector2((int)_fontSmall.MeasureString(Joueur.Name + " : ").X + 6, _screenSize.Y / 2.0f), Color.White);
+				_spriteBatch.Draw(Color2Texture2D(new Color(0, 0, 0, 128)), new Rectangle(1, (int)(ScreenSize.Y / 2) - 5, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).X + 10, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).Y + 10), Color.White);
+				_spriteBatch.DrawString(_fontSmall, Joueur.Name + " : ", new Vector2(6, ScreenSize.Y / 2.0f), _playersColors[0]);
+				_spriteBatch.DrawString(_fontSmall, Clavier.Get().Text, new Vector2((int)_fontSmall.MeasureString(Joueur.Name + " : ").X + 6, ScreenSize.Y / 2.0f), Color.White);
 			}
 
             _techno.Draw(_spriteBatch, _fontSmall);
@@ -2162,7 +2162,7 @@ namespace NNNA
 		/// <param name="origin">Origine pour l'alignement à droite et à gauche.</param>
 		protected void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border, string spec, float scale, Vector2 origin)
 		{
-			while (font.MeasureString(text).X * scale > _screenSize.X * 0.36)
+			while (font.MeasureString(text).X * scale > ScreenSize.X * 0.36)
 			{ font.Spacing--; }
 
 			switch (spec)
@@ -2172,11 +2172,11 @@ namespace NNNA
 					break;
 
 				case "Right":
-					coos.X = _screenSize.X - font.MeasureString(text).X * scale - origin.X;
+					coos.X = ScreenSize.X - font.MeasureString(text).X * scale - origin.X;
 					break;
 
 				case "Center":
-					coos.X = (_screenSize.X - font.MeasureString(text).X * scale) / 2;
+					coos.X = (ScreenSize.X - font.MeasureString(text).X * scale) / 2;
 					break;
 			}
 
@@ -2203,7 +2203,7 @@ namespace NNNA
 		{
 			_currentMenus = new List<string>(args);
 			for (int i = 0; i < args.Length; i++)
-			{ DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, i * (_screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))) + _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050))), (Menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", _screenSize.Y / 1050); }
+			{ DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, i * (ScreenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))) + ScreenSize.Y / 5 + (180 * (ScreenSize.Y / 1050))), (Menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", ScreenSize.Y / 1050); }
 		}
 
 		/// <summary>
@@ -2216,12 +2216,12 @@ namespace NNNA
 			_currentMenus = new List<string>(args);
 			for (int i = 0; i < Math.Min(args.Length, 4); i++)
 			{
-				float y = i * (_screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))) + _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050));
-				_spriteBatch.Draw(CreateRectangle(40, 40, colors[i], new Color(24, 24, 24), 3), new Vector2(_screenSize.X * 3 / 7 - 60, y + 21), Color.White);
-				DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, y), (MenuFoes() == i ? Color.White : Color.Silver), Color.Black, 1, "Left", _screenSize.Y / 1050, new Vector2(_screenSize.X * 3 / 7, 0));
+				float y = i * (ScreenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))) + ScreenSize.Y / 5 + (180 * (ScreenSize.Y / 1050));
+				_spriteBatch.Draw(CreateRectangle(40, 40, colors[i], new Color(24, 24, 24), 3), new Vector2(ScreenSize.X * 3 / 7 - 60, y + 21), Color.White);
+				DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, y), (MenuFoes() == i ? Color.White : Color.Silver), Color.Black, 1, "Left", ScreenSize.Y / 1050, new Vector2(ScreenSize.X * 3 / 7, 0));
 			}
 			for (int i = 4; i < args.Length; i++)
-			{ DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, i * (_screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))) + _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050))), (Menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", _screenSize.Y / 1050); }
+			{ DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, i * (ScreenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))) + ScreenSize.Y / 5 + (180 * (ScreenSize.Y / 1050))), (Menu() == i ? Color.White : Color.Silver), Color.Black, 1, "Center", ScreenSize.Y / 1050); }
 		}
 
 		/// <summary>
@@ -2230,29 +2230,29 @@ namespace NNNA
 		/// <returns>Le menu actuellement séléctionné</returns>
 		protected int Menu()
 		{
-			float span = _screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
-			int y = Souris.Get().Y > (_screenSize.Y/5) + (180*(_screenSize.Y/1050)) &&
-				    ((Souris.Get().Y - (_screenSize.Y/5) - (180*(_screenSize.Y/1050)))%span) <
-				    (_fontMenu.MeasureString("Menu").Y*_screenSize.Y)/1050
-				        ? (int) ((Souris.Get().Y - _screenSize.Y/5 - (180*(_screenSize.Y/1050)))/span)
+			float span = ScreenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
+			int y = Souris.Get().Y > (ScreenSize.Y/5) + (180*(ScreenSize.Y/1050)) &&
+				    ((Souris.Get().Y - (ScreenSize.Y/5) - (180*(ScreenSize.Y/1050)))%span) <
+				    (_fontMenu.MeasureString("Menu").Y*ScreenSize.Y)/1050
+				        ? (int) ((Souris.Get().Y - ScreenSize.Y/5 - (180*(ScreenSize.Y/1050)))/span)
 				        : -1;
 			return y >= 0 &&
 					y < _currentMenus.Count &&
-				    Souris.Get().X >= (_screenSize.X - _fontMenu.MeasureString(_(_currentMenus[y])).X)/2 &&
-				    Souris.Get().X <= (_screenSize.X + _fontMenu.MeasureString(_(_currentMenus[y])).X)/2
+				    Souris.Get().X >= (ScreenSize.X - _fontMenu.MeasureString(_(_currentMenus[y])).X)/2 &&
+				    Souris.Get().X <= (ScreenSize.X + _fontMenu.MeasureString(_(_currentMenus[y])).X)/2
 				    ? y
 				    : -1;
 		}
 		protected int MenuFoes()
 		{
-			float span = _screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
-			int y = Souris.Get().Y > (_screenSize.Y / 5) + (180 * (_screenSize.Y / 1050)) && ((Souris.Get().Y - (_screenSize.Y / 5) - (180 * (_screenSize.Y / 1050))) % span) < (_fontMenu.MeasureString("Menu").Y * _screenSize.Y) / 1050 ? (int)((Souris.Get().Y - _screenSize.Y / 5 - (180 * (_screenSize.Y / 1050))) / span) : -1;
+			float span = ScreenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
+			int y = Souris.Get().Y > (ScreenSize.Y / 5) + (180 * (ScreenSize.Y / 1050)) && ((Souris.Get().Y - (ScreenSize.Y / 5) - (180 * (ScreenSize.Y / 1050))) % span) < (_fontMenu.MeasureString("Menu").Y * ScreenSize.Y) / 1050 ? (int)((Souris.Get().Y - ScreenSize.Y / 5 - (180 * (ScreenSize.Y / 1050))) / span) : -1;
 			return y >= 0 &&
 				   y < _currentMenus.Count &&
-				   ((y < 4 && Souris.Get().X >= _screenSize.X * 3 / 7 &&
-				     Souris.Get().X - (_screenSize.X * 3 / 7) <= _fontMenu.MeasureString(_(_currentMenus[y])).X) ||
-			        (Souris.Get().X >= (_screenSize.X - _fontMenu.MeasureString(_(_currentMenus[y])).X)/2 &&
-			         Souris.Get().X <= (_screenSize.X + _fontMenu.MeasureString(_(_currentMenus[y])).X)/2))
+				   ((y < 4 && Souris.Get().X >= ScreenSize.X * 3 / 7 &&
+				     Souris.Get().X - (ScreenSize.X * 3 / 7) <= _fontMenu.MeasureString(_(_currentMenus[y])).X) ||
+			        (Souris.Get().X >= (ScreenSize.X - _fontMenu.MeasureString(_(_currentMenus[y])).X)/2 &&
+			         Souris.Get().X <= (ScreenSize.X + _fontMenu.MeasureString(_(_currentMenus[y])).X)/2))
 			       	? y
 			       	: -1;
 		}
@@ -2264,7 +2264,7 @@ namespace NNNA
 		protected void MakePauseMenu(params string[] args)
 		{
 			for (int i = 0; i < args.Length; i++)
-			{ _spriteBatch.DrawString(_fontMenu, _(args[i]), new Vector2((668 * (_screenSize.X / 1680)), i * 80 + (180 * (_screenSize.Y / 1050))), Color.White); }
+			{ _spriteBatch.DrawString(_fontMenu, _(args[i]), new Vector2((668 * (ScreenSize.X / 1680)), i * 80 + (180 * (ScreenSize.Y / 1050))), Color.White); }
 		}
 
 		/// <summary>
@@ -2272,7 +2272,7 @@ namespace NNNA
 		/// </summary>
 		/// <returns>Le menu de pause actuellement séléctionné</returns>
 		protected int PauseMenu()
-		{ return (Souris.Get().X > (654 * (_screenSize.X / 1680)) && Souris.Get().Y > (180 * (_screenSize.Y / 1050))) ? (int)((Souris.Get().Y - (180 * (_screenSize.Y / 1050))) / 80) : -1; }
+		{ return (Souris.Get().X > (654 * (ScreenSize.X / 1680)) && Souris.Get().Y > (180 * (ScreenSize.Y / 1050))) ? (int)((Souris.Get().Y - (180 * (ScreenSize.Y / 1050))) / 80) : -1; }
 
 		/// <summary>
 		/// Teste si un menu est cliqué.
@@ -2345,9 +2345,9 @@ namespace NNNA
 			float w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 			var list = l.Where(vector => (Math.Abs(Math.Round(vector.X/vector.Y, 2) - Math.Round(w/h, 2)) < 0.1 && vector.X <= w && vector.Y <= h) || vector == new Vector2(800, 600)).ToList();
 			Vector2 next;
-			if (list.Contains(_screenSize))
+			if (list.Contains(ScreenSize))
 			{
-				int index = list.IndexOf(_screenSize);
+				int index = list.IndexOf(ScreenSize);
 				next = list.ElementAt((index + (previous ? -1 : 1) + list.Count) % list.Count);
 			}
 			else

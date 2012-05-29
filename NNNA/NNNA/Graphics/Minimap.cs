@@ -48,6 +48,19 @@ namespace NNNA
 			_reducedMap = new Rectangle(_reducedMap.X, _reducedMap.Y, (int)(map.MapWidth * _ratio), (int)(map.MapHeight * _ratio));
 		}
 
+        public void Update(Souris s, Camera2D camera, int decay)
+        {
+            //Pour les tests enlever la deuxieme condition : on y voit plus clair.
+            if (s.Clicked(MouseButton.Left) && new Rectangle(_reducedMap.X - _reducedMap.Width / 2, _reducedMap.Y + decay, _reducedMap.Width, _reducedMap.Height).Intersects(new Rectangle(s.X, s.Y, 1, 1)))
+            {
+                // C'est ca qui est foireux !
+                Vector2 pos = new Vector2(s.X - _reducedMap.X + _texture.Width/2, s.Y - _reducedMap.Y + decay);
+                // A partir de là, ça le fait normalement.
+                Rotate(pos, Dimensions / 2, -45d);
+                camera.Position = Game1.Matrice2Xy(pos) - Game1.ScreenSize/2;
+            }
+        }
+
 		public void Draw(List<MovibleSprite> units, List<Building> buildings, Joueur joueur, Vector2 camera_centered_pos, int decay, SpriteBatch spriteBatch)
 		{
 			var textureColor = new Color[_texture.Width * _texture.Height];
