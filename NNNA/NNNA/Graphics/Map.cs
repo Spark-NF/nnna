@@ -42,7 +42,7 @@ namespace NNNA
 				i++;
 				for (int c = 0; c < map.GetLength(0); c++)
 				{
-					char name = map[l, c].Name;
+					var name = map[l, c].Name;
 					switch (name)
 					{
 						case 'h':
@@ -71,7 +71,7 @@ namespace NNNA
 							break;
 
 						case 't':
-							string texture = "eau3";
+							var texture = "eau3";
 							if (c < map.GetLength(0) - 1 && c >= 1 && l < map.GetLength(1) - 1 && l >= 1)
 							{
 								// Entouré de sable

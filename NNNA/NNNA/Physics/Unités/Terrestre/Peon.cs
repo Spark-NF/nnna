@@ -15,8 +15,7 @@ namespace NNNA
 		public Peon(int x, int y, ContentManager content, Joueur joueur, Building affiliate, bool removeResources = true, bool add_pop = true)
 			: base(x, y)
 		{
-			_createMaison = false;
-			Joueur = joueur;
+		    Joueur = joueur;
 			_type = "peon";
             if (add_pop)
             {
@@ -36,8 +35,6 @@ namespace NNNA
 			SetTextures(content, "peon");
 			_cost.Add("Nourriture", 50);
 			Affiliate = affiliate;
-			//creationPeon = content.Load<SoundEffect>("sounds/creationpeon");
-			//creationPeon.Play();
 		}
 
 		public void Collect(Resource ressource, int ere, GameTime time)

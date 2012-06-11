@@ -21,8 +21,17 @@ namespace NNNA
 			set { _population = value; }
 		}
 
+        public bool Caserne { get; set; }
+
+        private int _additionalAttack;
+        public int AdditionalAttack
+        {
+            get { return _additionalAttack; }
+            set { _additionalAttack = value; }
+        }
+
 		private int _additionalLineSight;
-		internal int AdditionalLineSight
+		public int AdditionalLineSight
 		{
 			get { return _additionalLineSight; }
 			set { _additionalLineSight = value; }
@@ -83,6 +92,8 @@ namespace NNNA
 			_population = 0;
 			_populationMax = 5;
 			_additionalLineSight = 0;
+		    _additionalAttack = 0;
+		    Caserne = false;
 
 			_resources.Add(new Resource("Bois", new[] { "Bois", "Bois", "Bois", "Bois" }, 500));
 			_resources.Add(new Resource("Pierre", new[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));

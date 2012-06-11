@@ -8,16 +8,16 @@ namespace NNNA
 {
 	class Unit : MovibleSprite
 	{
-		public Joueur Joueur { get; set; }
-		public Building Affiliate { get; set; }
-		public int PochesMax { get; set; }
+        public Joueur Joueur { get; protected set;  }
+		public Building Affiliate { get; protected set; }
+		public int PochesMax { get; private set; }
 		public string PochesContent { get; set; }
-		public int MaxLife { get; set; }
-		public int Attaque { get; set; }
-		public int VitesseCombat { get; set; }
-		public int Portee { get; set; }
+		public int MaxLife { get; private set; }
+        public int Attaque { private get; set;  }
+		public int VitesseCombat { private get; set; }
+		public int Portee { private get; set; }
 		public int Regeneration { get; set; }
-		public int LineSight { get; set; }
+		public int LineSight { get; protected set; }
 
 		protected int _life;
 		public int Life
@@ -54,9 +54,9 @@ namespace NNNA
 		}
 		public void Build(Building building)
 		{
-			DestinationBuilding = building;
-			DestinationBuilding.Texture.Part = 0;
-			Will = "build";
+                DestinationBuilding = building;
+                DestinationBuilding.Texture.Part = 0;
+                Will = "build";
 		}
 		public void Mine(ResourceMine resource)
 		{
@@ -148,7 +148,7 @@ namespace NNNA
                             { Tirer(DestinationUnit, content); }
                             if (DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), new Sprite[,] { }))
 							{
-								DestinationUnit.Life -= Attaque;
+								DestinationUnit.Life -= Attaque + Joueur.AdditionalAttack;
 								if (DestinationUnit.Life <= 0)
 								{ DestinationUnit = null; }
 							}

@@ -8,9 +8,9 @@ namespace NNNA.Form
     {
         #region ATTRIBUTS
         private string _text;
-        Delegate _click;
-        Info_Bulle _info;
-        bool _draw_info_bulle;
+        private readonly Delegate _click;
+        private readonly InfoBulle _info;
+        bool _drawInfoBulle;
         private bool _borderEffect;
         #endregion ATTRIBUTS
 
@@ -22,10 +22,10 @@ namespace NNNA.Form
         { get { return _borderEffect; } set { _borderEffect = value; } }
         #endregion GET/SET
 
-        public Button(Rectangle zone, string name, Delegate click, bool visible = false, Info_Bulle info = null)
+        public Button(Rectangle zone, string name, Delegate click, bool visible = false, InfoBulle info = null)
             : base(zone, name)
         {
-            _draw_info_bulle = false;
+            _drawInfoBulle = false;
             _text = click.Method.Name;
             _click = click;
             _info = info;
@@ -34,14 +34,14 @@ namespace NNNA.Form
 
         public override void Update(Souris s)
         {
-            _draw_info_bulle = false;
+            _drawInfoBulle = false;
             if (_visible && _zone.Intersects(new Rectangle(s.X,s.Y,1,1)))
             {
                 if (s.Clicked(MouseButton.Left))
                 {
                     _click();
                 }
-                _draw_info_bulle = true;
+                _drawInfoBulle = true;
             }
         }
 
@@ -50,7 +50,7 @@ namespace NNNA.Form
             if (_visible)
             {
                 sb.Draw(_background, _zone, null, _backgroundColor);
-                if (_info != null && _draw_info_bulle)
+                if (_info != null && _drawInfoBulle)
                 {
                     _info.Draw(sb, sf);
                 }

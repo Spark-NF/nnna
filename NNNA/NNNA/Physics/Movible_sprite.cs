@@ -52,14 +52,6 @@ namespace NNNA
 		public int Updates;
 		protected int _dec = 90;
 
-		protected bool _createMaison;
-		public bool CreateMaison
-		{ get { return _createMaison; } }
-
-		protected bool _createHutteChasseurs;
-		public bool CreateHutteChasseurs
-		{ get { return _createHutteChasseurs; } }
-
 		protected string _type;
 		public string Type
 		{ get { return _type; } }
@@ -184,72 +176,6 @@ namespace NNNA
 			}
 		}
 
-		public void Create_Maison(List<StaticSprite> staticSpriteList, ContentManager content, Joueur joueur, Camera2D camera, Random random)
-		{
-			if (joueur.Resource("Bois").Count >= 50)
-			{
-				if (_createMaison == false)
-				{
-					_a = (byte) (random.Next(0, 2) == 1 ? 0 : 1);
-					_createMaison = true;
-				}
-				if (Souris.Get().Clicked(MouseButton.Right))
-				{ _createMaison = false; }
-				else if (Souris.Get().Clicked(MouseButton.Left))
-				{/*
-				Click = true;
-				ClickPosition = curseur.Position + camera.Position;
-				Angle = Math.Atan2(ClickPosition.Y - m_position.Y, ClickPosition.X - m_position.X);
-				Direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
-				Cparcourir = new Vector2(ClickPosition.X - m_position.X, ClickPosition.Y - m_position.Y);
-				Cparcouru = Vector2.Zero;
-				PositionIni = m_position;
-				curseur.Texture = content.Load<Texture2D>("pointer");
-			}
-			else if (create_maison == true && Click == false)
-			{*/
-					_createMaison = false;
-					staticSpriteList.Add(new Hutte((int)(Souris.Get().X + camera.Position.X), (int)(Souris.Get().Y + camera.Position.Y), content, joueur, _a));
-					MessagesManager.Messages.Add(new Msg("Nouvelle hutte !", Color.White, 5000));
-				}
-			}
-			else
-			{
-				MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de bois.", Color.Red, 5000));
-				_createMaison = false;
-			}
-		}
-		public void Create_Hutte_Chasseurs(List<StaticSprite> staticSpriteList, ContentManager content, Joueur joueur, Camera2D camera)
-		{
-			if (joueur.Resource("Bois").Count >= 75)
-			{
-				_createHutteChasseurs = true;
-				if (Souris.Get().Clicked(MouseButton.Right))
-				{ _createHutteChasseurs = false; }
-				else if (Souris.Get().Clicked(MouseButton.Left))
-				{/*
-				Click = true;
-				ClickPosition = curseur.Position + camera.Position;
-				Angle = Math.Atan2(ClickPosition.Y - m_position.Y, ClickPosition.X - m_position.X);
-				Direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
-				Cparcourir = new Vector2(ClickPosition.X - m_position.X, ClickPosition.Y - m_position.Y);
-				Cparcouru = Vector2.Zero;
-				PositionIni = m_position;
-				curseur.Texture = content.Load<Texture2D>("pointer");
-			}
-			else if (create_maison == true && Click == false)
-			{*/
-					_createHutteChasseurs = false;
-					staticSpriteList.Add(new HutteDesChasseurs((int)(Souris.Get().X + camera.Position.X), (int)(Souris.Get().Y + camera.Position.Y), content, joueur));
-					MessagesManager.Messages.Add(new Msg("Nouvelle hutte des chasseurs !", Color.White, 5000));
-				}
-			}
-			else
-			{
-				MessagesManager.Messages.Add(new Msg("Vous n'avez pas assez de bois.", Color.Red, 5000));
-				_createHutteChasseurs = false;
-			}
-		}
 		public void DrawIcon(SpriteBatch spriteBatch, Vector2 position)
 		{ spriteBatch.Draw(_icon, position, new Rectangle(0, 0, _icon.Width, _icon.Height), Color.White); }
 		public void SetTextures(ContentManager content, string name, int dec = 90)

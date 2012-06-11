@@ -44,7 +44,7 @@ namespace NNNA
 		private Vector2 _screenSize = new Vector2(1680, 1050);
 		private bool _fullScreen = true, _shadows = true, _healthOver, _showConsole, _showTextBox;
 		public static bool SmartHud;
-		private float _soundGeneral = 10, _soundSFX = 10, _soundMusic = 10, _a = 1.0f;
+		private float _soundGeneral = 10, _soundSfx = 10, _soundMusic = 10, _a = 1.0f;
 		private int _textures = 2, _sound = 2, _weather = 1;
 		internal static bool FlashBool;
 		
@@ -69,7 +69,7 @@ namespace NNNA
 		private readonly List<Unit> _selectedList = new List<Unit>();
 		private readonly List<Building> _buildings = new List<Building>();
 		private readonly List<MovibleSprite> _units = new List<MovibleSprite>();
-        private readonly List<Sprite> _to_draw = new List<Sprite>();
+        private readonly List<Sprite> _toDraw = new List<Sprite>();
 		private Vector2 _dimensions;
 		private int[] _players;
 		private Color[] _playersColors;
@@ -77,7 +77,7 @@ namespace NNNA
 		// Audio objects		
 		#if SOUND
 			private const float MusicVolume = 2.0f;
-            private Ambiance_Sound _son = new Ambiance_Sound();
+            private readonly Ambiance_Sound _son = new Ambiance_Sound();
 			private SoundEffect _debutpartie;
 		#endif
 		private Technologies_Window _techno;
@@ -160,7 +160,7 @@ namespace NNNA
 			_shadows = Properties.Settings.Default.Shadows;
 			_soundGeneral = Properties.Settings.Default.SoundGeneral;
 			_soundMusic = Properties.Settings.Default.SoundMusic;
-			_soundSFX = Properties.Settings.Default.SoundSFX;
+			_soundSfx = Properties.Settings.Default.SoundSFX;
 			_sound = Properties.Settings.Default.Sound;
 			_theme = Properties.Settings.Default.Theme;
 		}
@@ -180,7 +180,7 @@ namespace NNNA
 			Properties.Settings.Default.Shadows = _shadows;
 			Properties.Settings.Default.SoundGeneral = (int)_soundGeneral;
 			Properties.Settings.Default.SoundMusic = (int)_soundMusic;
-			Properties.Settings.Default.SoundSFX = (int)_soundSFX;
+			Properties.Settings.Default.SoundSFX = (int)_soundSfx;
 			Properties.Settings.Default.Sound = _sound;
 			Properties.Settings.Default.Theme = _theme;
 			Properties.Settings.Default.Save();
@@ -361,11 +361,11 @@ namespace NNNA
 		/// <summary>
 		/// Charge tous les contenus du jeu dépendant de la résolution de l'écran.
 		/// </summary>
-		protected void LoadScreenSizeDependantContent()
+		private void LoadScreenSizeDependantContent()
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-			string ratio = ((int)((10 * _screenSize.X) / _screenSize.Y)).ToString(CultureInfo.CurrentCulture);
+			var ratio = ((int)((10 * _screenSize.X) / _screenSize.Y)).ToString(CultureInfo.CurrentCulture);
 			if (ratio != "13" && ratio != "16" && ratio != "18")
 			{ ratio = "13"; }
 			_backgrounds[0] = Content.Load<Texture2D>("background/" + ratio + "_0");
@@ -539,7 +539,7 @@ namespace NNNA
 
 					_buildings.Clear();
 					_units.Clear();
-                    _to_draw.Clear();
+                    _toDraw.Clear();
 
 					// Les couleurs, noms et compte des joueurs
 					var colors = new List<Color> { _playersColors[0] };
@@ -648,9 +648,9 @@ namespace NNNA
 						_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 250, new Image(Content, "Resources/bois_1_sprite_small")));
 					}
 
-                    _to_draw.AddRange(_resources);
-                    _to_draw.AddRange(_buildings);
-                    _to_draw.AddRange(_units);
+                    _toDraw.AddRange(_resources);
+                    _toDraw.AddRange(_buildings);
+                    _toDraw.AddRange(_units);
                     
 
 					//Le Son
@@ -794,7 +794,7 @@ namespace NNNA
 				{
 					case 0: _soundGeneral = Variate(0, 10, (int)_soundGeneral); break;
 					case 1: _soundMusic = Variate(0, 10, (int)_soundMusic); break;
-					case 2: _soundSFX = Variate(0, 10, (int)_soundSFX); break;
+					case 2: _soundSfx = Variate(0, 10, (int)_soundSfx); break;
 					case 3: _sound = Variate(0, 2, _sound); break;
 				}
 			}
@@ -813,13 +813,13 @@ namespace NNNA
 		/// <summary>
 		/// Met à jour la liste des actions des unités. C'est ici que doivent être mises toutes les actions du menu de gauche dans le HUD.
 		/// </summary>
-		public void UpdateActions()
+		private void UpdateActions()
 		{
 			_currentActions.Clear();
 			if (_selectedList.Count > 0)
 			{
-				bool allSame = true;
-				string type = "";
+				var allSame = true;
+				var type = "";
 				_currentActions.Add("attack");
 				foreach (Unit sprite in _selectedList)
 				{
@@ -923,7 +923,7 @@ namespace NNNA
 
 			// On vire les ressources vides
 			_resources.RemoveAll(res => res.Quantity <= 0);
-            _to_draw.RemoveAll(res => res is ResourceMine && (res as ResourceMine).Quantity <= 0);
+            _toDraw.RemoveAll(res => res is ResourceMine && (res as ResourceMine).Quantity <= 0);
 
 			// Intelligence artificielle
 			var rand = new Random();
@@ -936,7 +936,7 @@ namespace NNNA
 					{
 						foe.Units.Remove(unit);
 						_units.Remove(unit);
-                        _to_draw.Remove(unit);
+                        _toDraw.Remove(unit);
 					}
 					else
 					{
@@ -959,57 +959,76 @@ namespace NNNA
                     Vector2 pos;
                     switch (_currentAction)
                     {
-                        // Ere 1 
+                            // Ere 1 
                         case "build_hutte":
-                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y*16));
                             if (ValidSpawn(pos, _dimensions))
                             {
-                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                                b = new Hutte((int)position.X, (int)position.Y, Content, Joueur, (byte)_random.Next(0, 2));
+                                var position = new Vector2((pos.X - pos.Y)*32, (pos.X + pos.Y - _dimensions.Y)*16);
+                                b = new Hutte((int) position.X, (int) position.Y, Content, Joueur,
+                                              (byte) _random.Next(0, 2));
                                 if (Joueur.Pay(b.Prix))
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
-                                    _to_draw.Add(b);
+                                    _toDraw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
                                 else
                                 {
-                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."),
+                                                                         Color.Red, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
                             }
                             else
-                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            {
+                                MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red,
+                                                                     5000));
+                            }
                             break;
 
                         case "build_hutteDesChasseurs":
-                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y*16));
                             if (ValidSpawn(pos, _dimensions))
                             {
-                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                                b = new HutteDesChasseurs((int)position.X, (int)position.Y, Content, Joueur);
-                                if (Joueur.Pay(b.Prix))
+                                var position = new Vector2((pos.X - pos.Y)*32, (pos.X + pos.Y - _dimensions.Y)*16);
+                                b = new HutteDesChasseurs((int) position.X, (int) position.Y, Content, Joueur);
+                                if (!Joueur.Caserne)
                                 {
-                                    _selectedList[0].Build(b);
-                                    _buildings.Add(b);
-                                    _to_draw.Add(b);
-                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"), Color.White, 5000));
+                                    MessagesManager.Messages.Add(new Msg(_( "Votre niveau technologique ne vous \npermet pas de construire ce batiment."), Color.Red, 5000));
+                                    MessagesManager.Messages.Add(new Msg("", Color.Transparent, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
                                 else
                                 {
-                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-                                    _pointer = "pointer";
-                                    _currentAction = "";
+                                    if (Joueur.Pay(b.Prix))
+                                    {
+                                        _selectedList[0].Build(b);
+                                        _buildings.Add(b);
+                                        _toDraw.Add(b);
+                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"),
+                                                                             Color.White, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
+                                    else
+                                    {
+                                        MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."),
+                                                                             Color.Red, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
+
                                 }
                             }
                             else
                             { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+
                             break;
 
                         case "build_tour":
@@ -1022,7 +1041,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
-                                    _to_draw.Add(b);
+                                    _toDraw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle tour !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1047,7 +1066,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
-                                    _to_draw.Add(b);
+                                    _toDraw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle écurie !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1072,7 +1091,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
-                                    _to_draw.Add(b);
+                                    _toDraw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1097,7 +1116,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
-                                    _to_draw.Add(b);
+                                    _toDraw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle archerie !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1122,7 +1141,7 @@ namespace NNNA
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
-                                    _to_draw.Add(b);
+                                    _toDraw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle Forge !"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
@@ -1342,7 +1361,7 @@ namespace NNNA
                                             Joueur.Population++;
                                             Joueur.Units.Add(u);
                                             _units.Add(u);
-                                            _to_draw.Add(u);
+                                            _toDraw.Add(u);
                                             MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
                                             _currentAction = "";
                                         }
@@ -1365,7 +1384,7 @@ namespace NNNA
                                             Joueur.Population++;
                                             Joueur.Units.Add(u1);
                                             _units.Add(u1);
-                                            _to_draw.Add(u1);
+                                            _toDraw.Add(u1);
                                             MessagesManager.Messages.Add(new Msg(_("Nouveau chasseur !"), Color.White, 5000));
                                             _currentAction = "";
                                         }
@@ -1383,7 +1402,7 @@ namespace NNNA
                                             Joueur.Population++;
                                             Joueur.Units.Add(u1);
                                             _units.Add(u1);
-                                            _to_draw.Add(u1);
+                                            _toDraw.Add(u1);
                                             MessagesManager.Messages.Add(new Msg(_("Nouvel archer !"), Color.White, 5000));
                                             _currentAction = "";
                                         }
@@ -1424,18 +1443,18 @@ namespace NNNA
                             // Si une unité ennemie se trouve sous le curseur
                             if (unit.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
                             {
-                                float mul = 0.0f;
+                                var mul = 0.0f;
                                 if (_weather > 0)
                                 {
                                     foreach (Unit uni in Joueur.Units)
                                     {
-                                        float m = (uni.PositionCenter - unit.Position).Length();
+                                        var m = (uni.PositionCenter - unit.Position).Length();
                                         m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
                                         mul = (m > 0 && m > mul) ? m : mul;
                                     }
                                     foreach (Building building in Joueur.Buildings)
                                     {
-                                        float m = (building.PositionCenter - unit.Position).Length();
+                                        var m = (building.PositionCenter - unit.Position).Length();
                                         m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
                                         mul = (m > 0 && m > mul) ? m : mul;
                                     }
@@ -1463,18 +1482,18 @@ namespace NNNA
                         // Si une unité ennemie se trouve sous le curseur
                         if (resource.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
                         {
-                            float mul = 0.0f;
+                            var mul = 0.0f;
                             if (_weather > 0)
                             {
                                 foreach (Unit uni in Joueur.Units)
                                 {
-                                    float m = (uni.PositionCenter - resource.Position).Length();
+                                    var m = (uni.PositionCenter - resource.Position).Length();
                                     m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
                                     mul = (m > 0 && m > mul) ? m : mul;
                                 }
                                 foreach (Building building in Joueur.Buildings)
                                 {
-                                    float m = (building.PositionCenter - resource.Position).Length();
+                                    var m = (building.PositionCenter - resource.Position).Length();
                                     m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
                                     mul = (m > 0 && m > mul) ? m : mul;
                                 }
@@ -1533,7 +1552,7 @@ namespace NNNA
                     { unit.Mine(resourceUnder); }
                 }
             }
-            _to_draw.Sort(Sprite.CompareByY);
+            _toDraw.Sort(Sprite.CompareByY);
 
 			#if SOUND
                 _son.Pause();
@@ -1776,7 +1795,7 @@ namespace NNNA
 		{
 			DrawCommon();
 			string[] sound = { "min", "moy", "max" };
-			MakeMenu(_("Général :") + " " + _soundGeneral, _("Musique :") + " " + _soundMusic, _("Effets :") + " " + _soundSFX, _("Qualité") + " " + _(sound[_sound]), "Retour");
+			MakeMenu(_("Général :") + " " + _soundGeneral, _("Musique :") + " " + _soundMusic, _("Effets :") + " " + _soundSfx, _("Qualité") + " " + _(sound[_sound]), "Retour");
 		}
 		private void DrawCredits()
 		{
@@ -1796,7 +1815,7 @@ namespace NNNA
         private void DrawGame()
         {
             var index = (int)Math.Floor(_compt / 25);
-            bool bui = _currentAction.StartsWith("build_");
+            var bui = _currentAction.StartsWith("build_");
 
             // Affichage de la carte
             foreach (Sprite sprite in _matrice)
@@ -1812,13 +1831,13 @@ namespace NNNA
                     {
                         foreach (Unit unit in Joueur.Units)
                         {
-                            float m = (unit.PositionCenter - sprite.PositionCenter).Length();
+                            var m = (unit.PositionCenter - sprite.PositionCenter).Length();
                             m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
                         foreach (Building building in Joueur.Buildings)
                         {
-                            float m = (building.PositionCenter - sprite.PositionCenter).Length();
+                            var m = (building.PositionCenter - sprite.PositionCenter).Length();
                             m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
@@ -1830,7 +1849,7 @@ namespace NNNA
             }
 
             // Affichage des objets sur la carte
-            foreach (Sprite sprite in _to_draw)
+            foreach (Sprite sprite in _toDraw)
             {
                 #region RESOURCES
                 if (sprite is ResourceMine)
@@ -1843,16 +1862,16 @@ namespace NNNA
                     }
                     else
                     {
-                        float mul = 0.0f;
+                        var mul = 0.0f;
                         foreach (Unit unit in Joueur.Units)
                         {
-                            float m = (unit.PositionCenter - sprite.PositionCenter).Length();
+                            var m = (unit.PositionCenter - sprite.PositionCenter).Length();
                             m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
                         foreach (Building building in Joueur.Buildings)
                         {
-                            float m = (building.PositionCenter - sprite.PositionCenter).Length();
+                            var m = (building.PositionCenter - sprite.PositionCenter).Length();
                             m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
@@ -1880,16 +1899,16 @@ namespace NNNA
                         }
                         else
                         {
-                            float mul = 0.0f;
+                            var mul = 0.0f;
                             foreach (Unit unit in Joueur.Units)
                             {
-                                float m = (unit.PositionCenter - sprite.Position).Length();
+                                var m = (unit.PositionCenter - sprite.Position).Length();
                                 m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
                                 mul = (m > 0 && m > mul) ? m : mul;
                             }
                             foreach (Building building in Joueur.Buildings)
                             {
-                                float m = (building.PositionCenter - sprite.Position).Length();
+                                var m = (building.PositionCenter - sprite.Position).Length();
                                 m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
                                 mul = (m > 0 && m > mul) ? m : mul;
                             }
@@ -1918,16 +1937,16 @@ namespace NNNA
                         }
                         else
                         {
-                            float mul = 0.0f;
+                            var mul = 0.0f;
                             foreach (Unit unit in Joueur.Units)
                             {
-                                float m = (unit.PositionCenter - sprite.Position).Length();
+                                var m = (unit.PositionCenter - sprite.Position).Length();
                                 m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
                                 mul = (m > 0 && m > mul) ? m : mul;
                             }
                             foreach (Building building in Joueur.Buildings)
                             {
-                                float m = (building.PositionCenter - sprite.Position).Length();
+                                var m = (building.PositionCenter - sprite.Position).Length();
                                 m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
                                 mul = (m > 0 && m > mul) ? m : mul;
                             }
@@ -1980,18 +1999,18 @@ namespace NNNA
 			{
 				foreach (Unit unit in foe.Units)
 				{
-					float mul = 0.0f;
+					var mul = 0.0f;
 					if (_weather > 0)
 					{
 						foreach (Unit uni in Joueur.Units)
 						{
-							float m = (uni.PositionCenter - unit.Position).Length();
+							var m = (uni.PositionCenter - unit.Position).Length();
 							m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
 						foreach (Building building in Joueur.Buildings)
 						{
-							float m = (building.PositionCenter - unit.Position).Length();
+							var m = (building.PositionCenter - unit.Position).Length();
 							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
@@ -2003,18 +2022,18 @@ namespace NNNA
 				}
 				foreach (Building build in foe.Buildings)
 				{
-					float mul = 0.0f;
+					var mul = 0.0f;
 					if (_weather > 0)
 					{
 						foreach (Unit uni in Joueur.Units)
 						{
-							float m = (uni.PositionCenter - build.Position).Length();
+							var m = (uni.PositionCenter - build.Position).Length();
 							m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
 						foreach (Building building in Joueur.Buildings)
 						{
-							float m = (building.PositionCenter - build.Position).Length();
+							var m = (building.PositionCenter - build.Position).Length();
 							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
@@ -2083,8 +2102,8 @@ namespace NNNA
 		/// <param name="c2">La couleur de la partie de la barre qui est vide.</param>
 		private void DrawBar(int life, int max, Vector2 pos, int width, Color c1, Color c2)
 		{
-			int greenLength = (Math.Max(life, 0) * (width - 2)) / max;
-			int redLength = (width - 2) - greenLength;
+			var greenLength = (Math.Max(life, 0) * (width - 2)) / max;
+			var redLength = (width - 2) - greenLength;
 			_spriteBatch.Draw(Color2Texture2D(Color.Black), new Rectangle((int)pos.X - 1, (int)pos.Y - 1, width, 5), Color.White);
 			if (greenLength > 0)
 			{ _spriteBatch.Draw(Color2Texture2D(c1), new Rectangle((int)pos.X, (int)pos.Y, greenLength, 3), Color.White); }
@@ -2132,13 +2151,13 @@ namespace NNNA
 		}
 		private void Debug(List<Point> value)
 		{
-			string deb = "List<" + value.GetType().GetGenericArguments()[0] + ">(" + value.Count.ToString(CultureInfo.CurrentCulture) + ") { ";
+			var deb = "List<" + value.GetType().GetGenericArguments()[0] + ">(" + value.Count.ToString(CultureInfo.CurrentCulture) + ") { ";
 			deb = value.Aggregate(deb, (current, t) => current + (t + ", "));
 			Debug(deb.Substring(0, deb.Length - 2) + " }");
 		}
 		private void Debug(object[] value)
 		{
-			string deb = value.GetType() + "[" + value.Length.ToString(CultureInfo.CurrentCulture) + "] { ";
+			var deb = value.GetType() + "[" + value.Length.ToString(CultureInfo.CurrentCulture) + "] { ";
 			deb = value.Aggregate(deb, (current, t) => current + (t + ", "));
 			Debug(deb.Substring(0, deb.Length - 2) + " }");
 		}
@@ -2165,7 +2184,7 @@ namespace NNNA
 		/// <param name="spec">L'alignement du text. Valeurs possibles : "Left", "Right", "Center". Laissez vide pour ne rien changer.</param>
 		/// <param name="scale">La déformation en taille du texte.</param>
 		/// <param name="origin">Origine pour l'alignement à droite et à gauche.</param>
-		protected void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border, string spec, float scale, Vector2 origin)
+		private void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border, string spec, float scale, Vector2 origin)
 		{
 			while (font.MeasureString(text).X * scale > _screenSize.X * 0.36)
 			{ font.Spacing--; }
@@ -2197,14 +2216,14 @@ namespace NNNA
 
 			font.Spacing = 0;
 		}
-		protected void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border = 0, string spec = "", float scale = 1)
+		private void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border = 0, string spec = "", float scale = 1)
 		{ DrawString(spriteBatch, font, text, coos, color, borderCol, border, spec, scale, Vector2.Zero); }
 
 		/// <summary>
 		/// Affiche un menu à l'écran.
 		/// </summary>
 		/// <param name="args">Les options du menu.</param>
-		protected void MakeMenu(params string[] args)
+		private void MakeMenu(params string[] args)
 		{
 			_currentMenus = new List<string>(args);
 			for (int i = 0; i < args.Length; i++)
@@ -2216,12 +2235,12 @@ namespace NNNA
 		/// </summary>
 		/// <param name="colors">Les couleurs des joueurs.</param>
 		/// <param name="args">Les options du menu.</param>
-		protected void MakeMenuFoes(Color[] colors, params string[] args)
+		private void MakeMenuFoes(Color[] colors, params string[] args)
 		{
 			_currentMenus = new List<string>(args);
 			for (int i = 0; i < Math.Min(args.Length, 4); i++)
 			{
-				float y = i * (_screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))) + _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050));
+				var y = i * (_screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))) + _screenSize.Y / 5 + (180 * (_screenSize.Y / 1050));
 				_spriteBatch.Draw(CreateRectangle(40, 40, colors[i], new Color(24, 24, 24), 3), new Vector2(_screenSize.X * 3 / 7 - 60, y + 21), Color.White);
 				DrawString(_spriteBatch, _fontMenu, _(args[i]), new Vector2(0, y), (MenuFoes() == i ? Color.White : Color.Silver), Color.Black, 1, "Left", _screenSize.Y / 1050, new Vector2(_screenSize.X * 3 / 7, 0));
 			}
@@ -2233,10 +2252,10 @@ namespace NNNA
 		/// Retourne le menu actuellement séléctionné.
 		/// </summary>
 		/// <returns>Le menu actuellement séléctionné</returns>
-		protected int Menu()
+		private int Menu()
 		{
-			float span = _screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
-			int y = Souris.Get().Y > (_screenSize.Y/5) + (180*(_screenSize.Y/1050)) &&
+			var span = _screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
+			var y = Souris.Get().Y > (_screenSize.Y/5) + (180*(_screenSize.Y/1050)) &&
 				    ((Souris.Get().Y - (_screenSize.Y/5) - (180*(_screenSize.Y/1050)))%span) <
 				    (_fontMenu.MeasureString("Menu").Y*_screenSize.Y)/1050
 				        ? (int) ((Souris.Get().Y - _screenSize.Y/5 - (180*(_screenSize.Y/1050)))/span)
@@ -2248,10 +2267,10 @@ namespace NNNA
 				    ? y
 				    : -1;
 		}
-		protected int MenuFoes()
+		private int MenuFoes()
 		{
-			float span = _screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
-			int y = Souris.Get().Y > (_screenSize.Y / 5) + (180 * (_screenSize.Y / 1050)) && ((Souris.Get().Y - (_screenSize.Y / 5) - (180 * (_screenSize.Y / 1050))) % span) < (_fontMenu.MeasureString("Menu").Y * _screenSize.Y) / 1050 ? (int)((Souris.Get().Y - _screenSize.Y / 5 - (180 * (_screenSize.Y / 1050))) / span) : -1;
+			var span = _screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
+			var y = Souris.Get().Y > (_screenSize.Y / 5) + (180 * (_screenSize.Y / 1050)) && ((Souris.Get().Y - (_screenSize.Y / 5) - (180 * (_screenSize.Y / 1050))) % span) < (_fontMenu.MeasureString("Menu").Y * _screenSize.Y) / 1050 ? (int)((Souris.Get().Y - _screenSize.Y / 5 - (180 * (_screenSize.Y / 1050))) / span) : -1;
 			return y >= 0 &&
 				   y < _currentMenus.Count &&
 				   ((y < 4 && Souris.Get().X >= _screenSize.X * 3 / 7 &&
@@ -2266,7 +2285,7 @@ namespace NNNA
 		/// Affiche un menu de pause à l'écran.
 		/// </summary>
 		/// <param name="args">Les options du menu.</param>
-		protected void MakePauseMenu(params string[] args)
+		private void MakePauseMenu(params string[] args)
 		{
 			for (int i = 0; i < args.Length; i++)
 			{ _spriteBatch.DrawString(_fontMenu, _(args[i]), new Vector2((668 * (_screenSize.X / 1680)), i * 80 + (180 * (_screenSize.Y / 1050))), Color.White); }
@@ -2276,7 +2295,7 @@ namespace NNNA
 		/// Retourne le menu de pause actuellement séléctionné.
 		/// </summary>
 		/// <returns>Le menu de pause actuellement séléctionné</returns>
-		protected int PauseMenu()
+		private int PauseMenu()
 		{ return (Souris.Get().X > (654 * (_screenSize.X / 1680)) && Souris.Get().Y > (180 * (_screenSize.Y / 1050))) ? (int)((Souris.Get().Y - (180 * (_screenSize.Y / 1050))) / 80) : -1; }
 
 		/// <summary>
@@ -2284,11 +2303,11 @@ namespace NNNA
 		/// </summary>
 		/// <param name="args">La liste des menus possibles.</param>
 		/// <returns>Le menu cliqué.</returns>
-		protected Screen TestMenu(params Screen[] args)
+		private Screen TestMenu(params Screen[] args)
 		{
 			if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = Menu();
+				var m = Menu();
 				if (m >= 0 && m < args.Length)
 				{ return args[m]; }
 			}
@@ -2300,7 +2319,7 @@ namespace NNNA
 		/// </summary>
 		/// <param name="args">La liste des menus possibles.</param>
 		/// <returns>Le menu cliqué.</returns>
-		protected Screen TestPauseMenu(params Screen[] args)
+		private Screen TestPauseMenu(params Screen[] args)
 		{
 			if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
@@ -2447,6 +2466,7 @@ namespace NNNA
 			translations["en"]["Vous êtes déconnecté"] = "Your are not connected";
 			translations["en"]["Vous n'avez pas assez de ressources."] = "You do not have enough resources.";
 			translations["en"]["Vous ne pouvez pas construire ici"] = "You cannot build here.";
+            translations["en"]["Votre niveau technologique ne vous \npermet pas de construire ce batiment."] = "You are not able to build this building \nbecause of your technologic level.";
 			translations["en"]["Nouvelle hutte !"] = "New hut!";
 			translations["en"]["Nouvelle hutte des chasseurs !"] = "New hunters' hut!";
 			translations["en"]["Nouveau peon !"] = "New peon!";
@@ -2554,8 +2574,8 @@ namespace NNNA
 		{
 			const double angleDegre = -26.57; // -36.57 = -arctan(1/2)
 			const double angleRadian = Math.PI * angleDegre / 180;
-			double sina = Math.Sin(angleRadian);
-			double cosa = Math.Cos(angleRadian);
+			var sina = Math.Sin(angleRadian);
+			var cosa = Math.Cos(angleRadian);
 			var rot = new Vector2((float)(mouse.X * cosa - mouse.Y * sina), (float)(mouse.X * sina + mouse.Y * cosa)); // Coordonées parallélogramme
 			var final = new Vector2(rot.X + (float)(0.75 * rot.Y), rot.Y); // Coordonées rectangle
 			var coo = new Vector2((float)Math.Round((final.X - 35) / 35.777), (float)Math.Round((final.Y + 4) / 28.54)); // Coordonées matrice // 35.777 = sqrt(16²+32²)

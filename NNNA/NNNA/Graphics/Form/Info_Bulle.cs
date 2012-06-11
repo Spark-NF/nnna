@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA.Form
 {
-    class Info_Bulle : Control
+    class InfoBulle : Control
     {
-        public Info_Bulle(Rectangle zone, string name)
+        public InfoBulle(Rectangle zone, string name)
             : base(zone, name)
         {  }
 

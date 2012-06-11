@@ -13,7 +13,7 @@ namespace NNNA
 		public Guerrier(int x, int y, ContentManager content, Joueur joueur, bool removeResources = true, bool add_pop = true)
 			: base(x, y)
 		{
-			Joueur = joueur;
+            Joueur = joueur;
 			_type = "guerrier";
             if (add_pop)
             {

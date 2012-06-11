@@ -28,7 +28,7 @@ namespace NNNA
 		{
             _content = content;
 
-            var ichasse = new Info_Bulle(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4 - zone.Height / 3, (int) (zone.Width / 2.085f), zone.Height / 3), "chasse");
+            var ichasse = new InfoBulle(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4 - zone.Height / 3, (int) (zone.Width / 2.085f), zone.Height / 3), "chasse");
             ichasse.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/chasse");
             
             close = new Button(new Rectangle(zone.X + zone.Width - zone.Width / 30 - zone.Height / 25, zone.Y + zone.Height / 30, zone.Height / 25, zone.Height / 25), "close", button_Close_Click, true);
@@ -287,6 +287,8 @@ namespace NNNA
 				agri.Visible = true;
 				feu.Visible = true;
 				_chasse = true;
+			    Game1.Joueur.AdditionalAttack += 10;
+			    Game1.Joueur.Caserne = true;
 				//chasse.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Chasse » aquise !", Color.White, 5000));
 			}

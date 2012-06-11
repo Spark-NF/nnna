@@ -6,18 +6,18 @@ namespace NNNA.Form
     class TabItem : Containing
     {
         #region ATTRIBUTS
-        private bool selected;
+        private bool _selected;
         #endregion ATTRIBUTS
 
         #region GET/SET
         public bool Selected
-        { get { return selected; } set { selected = value; } }
+        { get { return _selected; } set { _selected = value; } }
         #endregion GET/SET
 
         public TabItem(Control[] children, Rectangle zone, string name)
             : base(children, zone, name) 
         {
-            selected = false;
+            _selected = false;
         }
 
         public bool Select(Souris s)
@@ -29,7 +29,7 @@ namespace NNNA.Form
 
         public override void Update(Souris s)
         {
-            if (selected)
+            if (_visible && _selected)
             {
                 for (int i = 0; i < Children.Length; i++)
                 {
@@ -42,8 +42,8 @@ namespace NNNA.Form
         {
             if (_visible)
             {
-                sb.Draw(_background, _zone, null, selected ? _backgroundColor : Color.Gray);
-                sb.DrawString(sf, Name, new Vector2(_zone.X, _zone.Y) + new Vector2(Zone.Width / 2, Zone.Height / 2) - sf.MeasureString(Name) / 2, selected ? Color.Black : _textColor);
+                sb.Draw(_background, _zone, null, _selected ? _backgroundColor : Color.Gray);
+                sb.DrawString(sf, Name, new Vector2(_zone.X, _zone.Y) + new Vector2(Zone.Width / 2, Zone.Height / 2) - sf.MeasureString(Name) / 2, _selected ? Color.Black : _textColor);
                 //if (selected)
                 //{
                 //    for (int i = 0; i < Children.Length; i++)

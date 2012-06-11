@@ -38,17 +38,17 @@ namespace NNNA
 			// HUD
 			if (Souris.Get().Position.Y > Height - 10)
 			{ SmartPos = 0; }
-			int posY = _isSmart ? _position.Y + SmartPos : _position.Y;
+			var posY = _isSmart ? _position.Y + SmartPos : _position.Y;
 			if (posY < Height)
 			{
 				spriteBatch.Draw(_textureBackground, new Rectangle(_position.X, posY, _position.Width, _position.Height), Color.White);
-				minimap.Draw(units, buildings, joueur, camera_centered_pos, SmartPos, spriteBatch);
+				minimap.Draw(units, buildings, camera_centered_pos, SmartPos, spriteBatch);
 			}
 			if (Souris.Get().Position.Y < _position.Y && _position.Y + SmartPos < Height && _isSmart)
 			{ SmartPos += 5; }
 
 			// Ressources
-			int i = 0;
+			var i = 0;
 			foreach (Resource res in joueur.Resources(joueur.Ere))
 			{
 				spriteBatch.Draw(res.Icon(joueur.Ere), new Vector2(5 + i * 140, 5), Color.White);

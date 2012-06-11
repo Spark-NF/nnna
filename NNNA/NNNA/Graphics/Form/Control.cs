@@ -34,7 +34,7 @@ namespace NNNA.Form
         { get { return _background; } set { _background = value; } }
         #endregion GET/SET
 
-        public Control(Rectangle zone, string name)
+        protected Control(Rectangle zone, string name)
         {
             _zone = zone;
             _name = name;

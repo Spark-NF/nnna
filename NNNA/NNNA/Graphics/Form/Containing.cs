@@ -13,7 +13,7 @@ namespace NNNA.Form
         { get { return _children; } set { _children = value; } }
         #endregion GET/SET
 
-        public Containing(Control[] children, Rectangle zone, string name)
+        protected Containing(Control[] children, Rectangle zone, string name)
             : base(zone, name)
         {
             _children = children;
