@@ -205,7 +205,7 @@ namespace NNNA
 			_map = new Map();
 			_camera = new Camera2D(0, 0);
 			_curseur = new Sprite(0, 0);
-			Joueur = new Joueur(Color.Red, "NNNA", Content);
+			Joueur = new Joueur(Color.Red, Environment.UserName, Content);
 			_players = new[] { 2, 1, 0, 0 };
 			_playersColors = new[] { Color.Blue, Color.Red, Color.Green, Color.Yellow };
 
@@ -765,7 +765,8 @@ namespace NNNA
 				NetworkStream stream = client.GetStream();
 				stream.Write(data, 0, data.Length);
 
-				//wait
+				Send(Joueur.Name);
+                Send("Trololol");
 
 				_threadListen = new Thread(Listen);
 				_threadListen.Start();
@@ -1040,7 +1041,7 @@ namespace NNNA
 					{
 						if (++unit.Updates == 120)
 						{
-							unit.Move(unit.Position + new Vector2(rand.Next(-40, 41), rand.Next(-40, 41)), _units, _buildings, _matrice);
+						    unit.Move(new List<Vector2> {unit.Position + new Vector2(rand.Next(-40, 41), rand.Next(-40, 41))}, _units, _buildings, _matrice);
 							unit.Updates = rand.Next(0, 40);
 						}
 						unit.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, Content);
@@ -1622,7 +1623,7 @@ namespace NNNA
 								{ _pointerOld = _pointer; }
                                 unit.Will = "poches";
                                 unit.DestinationBuilding = unit.Affiliate;
-                                unit.Move(unit.DestinationBuilding.Position + new Vector2((float)Math.Round((double)unit.DestinationBuilding.Texture.Width / 2), 0)); //, sprites, buildings, matrice);
+                                unit.Move(new List<Vector2> {unit.DestinationBuilding.Position + new Vector2((float)Math.Round((double)unit.DestinationBuilding.Texture.Width / 2), 0)}); //, sprites, buildings, matrice);
                             }
                         }
                     }
@@ -1986,14 +1987,14 @@ namespace NNNA
                     if (Joueur.Units.Contains(sprite as MovibleSprite))
                     {
                         sprite.Visible = true;
-                        current.Draw(_spriteBatch, _camera, index, Joueur.ColorMovable);
+                        current.Draw(_spriteBatch, _camera, Joueur.ColorMovable);
                     }
                     else
                     {
                         if (_weather == 0)
                         {
                             sprite.Visible = true;
-                            current.Draw(_spriteBatch, _camera, index, current.Joueur.ColorMovable);
+                            current.Draw(_spriteBatch, _camera, current.Joueur.ColorMovable);
                         }
                         else
                         {
@@ -2012,7 +2013,7 @@ namespace NNNA
                             }
                             sprite.Visible = mul > 0;
                             if (mul > 0f)
-                            { current.Draw(_spriteBatch, _camera, index, new Color((mul * current.Joueur.ColorMovable.R) / 255, (mul * current.Joueur.ColorMovable.G) / 255, (mul * current.Joueur.ColorMovable.B) / 255)); }
+                            { current.Draw(_spriteBatch, _camera, new Color((mul * current.Joueur.ColorMovable.R) / 255, (mul * current.Joueur.ColorMovable.G) / 255, (mul * current.Joueur.ColorMovable.B) / 255)); }
                         }
                     }
                 }

@@ -8,48 +8,19 @@ namespace NNNA
 {
 	class MovibleSprite : Sprite
 	{
-		protected string _will;
-		public string Will
-		{
-			get { return _will; }
-			set { _will = value; }
-		}
+	    public string Will { protected get; set; }
 
-		protected Building _destinationBuilding;
-		public Building DestinationBuilding
-		{
-			get { return _destinationBuilding; }
-			set { _destinationBuilding = value; }
-		}
-		protected Unit _destinationUnit;
-		public Unit DestinationUnit
-		{
-			get { return _destinationUnit; }
-			set { _destinationUnit = value; }
-		}
-		protected ResourceMine _destinationResource;
-		public ResourceMine DestinationResource
-		{
-			get { return _destinationResource; }
-			set { _destinationResource = value; }
-		}
+	    public Building DestinationBuilding { get; set; }
 
-		protected Texture2D _icon;
-		public Texture2D Icon
-		{
-			get { return _icon; }
-			set { _icon = value; }
-		}
+	    protected Unit DestinationUnit { get; set; }
 
-		protected Texture2D _selection;
-		public Texture2D Selection
-		{
-			get { return _selection; }
-			set { _selection = value; }
-		}
+	    protected ResourceMine DestinationResource { get; set; }
 
-		private byte _a;
-		public int Updates;
+	    private Texture2D _icon;
+
+	    protected Texture2D _selection;
+
+	    public int Updates;
 		protected int _dec = 90;
 
 		protected string _type;
@@ -57,27 +28,12 @@ namespace NNNA
 		{ get { return _type; } }
 
 		protected Vector2 _positionIni;
-		public Vector2 PositionIni
-		{
-			get { return _positionIni; }
-			set { _positionIni = value; }
-		}
 
-		protected Vector2 _cparcourir;
-		public Vector2 Cparcourir
-		{
-			get { return _cparcourir; }
-			set { _cparcourir = value; }
-		}
+	    protected Vector2 _cparcourir;
 
-		protected Vector2 _cparcouru;
-		public Vector2 Cparcouru
-		{
-			get { return _cparcouru; }
-			set { _cparcouru = value; }
-		}
+	    protected Vector2 _cparcouru;
 
-		protected double _angle = 90;
+	    protected double _angle = 90;
 		public double Angle
 		{
 			get { return _angle; }
@@ -85,13 +41,8 @@ namespace NNNA
 		}
 
 		protected Vector2 _direction;
-		public Vector2 Direction
-		{
-			get { return _direction; }
-			set { _direction = value; }
-		}
 
-		protected float _speed = 0.1f;
+	    protected float _speed = 0.1f;
 		public float Speed
 		{
 			get { return _speed; }
@@ -101,55 +52,41 @@ namespace NNNA
 		protected List<Sprite> _pathList;
 		protected int _pathIterator;
 
-		protected Dictionary<string, int> _cost = new Dictionary<string, int>();
-		public Dictionary<string, int> Prix
-		{ get { return _cost; } }
+	    public Dictionary<string, int> Prix { get; private set; }
 
-		protected bool _clickInterne;
+	    protected bool _clickInterne;
 
-		protected bool _click;
-		public bool Click
-		{
-			get { return _click; }
-			set { _click = value; }
-		}
+	    protected bool Click { get; set; }
 
-		protected Vector2 _clickPosition;
-		public Vector2 ClickPosition
-		{
-			get { return _clickPosition; }
-			set { _clickPosition = value; }
-		}
+	    protected Vector2 ClickPosition { get; set; }
 
-		internal bool _selected;
-		public bool Selected
-		{
-			get { return _selected; }
-			set { _selected = value; }
-		}
+	    public bool Selected { get; set; }
 
-		public MovibleSprite(int x, int y)
+	    public MovibleSprite(int x, int y)
 			: base(x, y)
 		{
-			_a = 0;
-			_selected = false;
-			_click = false;
+	        Prix = new Dictionary<string, int>();
+	        Selected = false;
+			Click = false;
 			_clickInterne = false;
 			Updates = 0;
 		}
-        public void Move(Vector2 coordinates)
+        public void Move(List<Vector2> coordinates)
         {
-        	Vector2 pos = _position + new Vector2(Texture.Collision.X + Texture.Collision.Width/2.0f, Texture.Collision.Y + Texture.Collision.Height/2.0f);
-			if (coordinates != pos)
+        	var pos = _position + new Vector2(Texture.Collision.X + Texture.Collision.Width/2.0f, Texture.Collision.Y + Texture.Collision.Height/2.0f);
+            if (coordinates.Count > 0)
             {
-                _click = true;
-                _texture.Animation = true;
-				_clickPosition = coordinates;
-				_cparcourir = _clickPosition - pos;
-				_angle = Math.Atan2(_cparcourir.Y, _cparcourir.X);
-                _direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
-                _cparcouru = Vector2.Zero;
-				_positionIni = pos;
+                if (coordinates[0] != _position)
+                {
+                    Click = true;
+                    _texture.Animation = true;
+                    ClickPosition = coordinates[0];
+                    _cparcourir = ClickPosition - pos;
+                    _angle = Math.Atan2(_cparcourir.Y, _cparcourir.X);
+                    _direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
+                    _cparcouru = Vector2.Zero;
+                    _positionIni = pos;
+                }
             }
         }
 
@@ -161,19 +98,24 @@ namespace NNNA
 		/// <param name="sprites">Les unités du monde.</param>
 		/// <param name="buildings">Les bâtiments du monde.</param>
 		/// <param name="matrice">La matrice de la carte.</param>
-		public void Move(Vector2 coordinates, List<MovibleSprite> sprites, List<Building> buildings, Sprite[,] matrice)
+		public void Move(List<Vector2> coordinates, List<MovibleSprite> sprites, List<Building> buildings, Sprite[,] matrice)
 		{
-			if (coordinates != _position)
-			{
-				_click = true;
-				_texture.Animation = true;
-				_clickPosition = coordinates;
-				_angle = Math.Atan2(_clickPosition.Y - _position.Y, _clickPosition.X - _position.X);
-				_direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
-				_cparcourir = new Vector2(_clickPosition.X - _position.X, _clickPosition.Y - _position.Y);
-				_cparcouru = Vector2.Zero;
-				_positionIni = _position;
-			}
+            if (coordinates.Count > 0)
+            {
+                if (coordinates[0] != _position)
+                {
+                    Click = true;
+                    _texture.Animation = true;
+                    ClickPosition = coordinates[0];
+                    _angle = Math.Atan2(ClickPosition.Y - _position.Y, ClickPosition.X - _position.X);
+                    _direction = new Vector2((float) Math.Cos(_angle), (float) Math.Sin(_angle));
+                    _cparcourir = new Vector2(ClickPosition.X - _position.X, ClickPosition.Y - _position.Y);
+                    _cparcouru = Vector2.Zero;
+                    _positionIni = _position;
+                }
+                else
+                    coordinates.RemoveAt(0);
+            }
 		}
 
 		public void DrawIcon(SpriteBatch spriteBatch, Vector2 position)

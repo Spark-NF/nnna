@@ -18,8 +18,8 @@ namespace NNNA
         public Archer(int x = 0, int y = 0)
             : base(x, y)
         {
-            _cost.Add("Nourriture", 100);
-            _cost.Add("Fer", 20);
+            Prix.Add("Nourriture", 100);
+            Prix.Add("Fer", 20);
         }
         public Archer(int x, int y, ContentManager content, Joueur joueur, bool removeResources = true, bool add_pop = true)
             : base(x, y)
@@ -44,11 +44,11 @@ namespace NNNA
             speed_tirs = 8;
             tirs = new List<Fleche>();
             SetTextures(content, "archer", 45);
-            _cost.Add("Nourriture", 100);
-            _cost.Add("Fer", 20);
+            Prix.Add("Nourriture", 100);
+            Prix.Add("Fer", 20);
         }
 
-        public override void Tirer(Unit cible, ContentManager content)
+        protected override void Tirer(Unit cible, ContentManager content)
         {
             tirs.Add(new Fleche(content, (int) Position.X, (int) Position.Y, speed_tirs, cible.PositionCenter));
         }

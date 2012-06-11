@@ -8,7 +8,7 @@ namespace NNNA
         public Guerrier(int x = 0, int y = 0)
             : base(x, y)
         {
-            _cost.Add("Nourriture", 70);
+            Prix.Add("Nourriture", 70);
         }
 		public Guerrier(int x, int y, ContentManager content, Joueur joueur, bool removeResources = true, bool add_pop = true)
 			: base(x, y)
@@ -31,7 +31,7 @@ namespace NNNA
 			Regeneration = 1;
             Speed = 0.05f + joueur.AdditionalSpeed;
 			SetTextures(content, "guerrier", 45);
-            _cost.Add("Nourriture", 70);
+            Prix.Add("Nourriture", 70);
 			// creationguerrier =content.Load<SoundEffect>("sounds/creationguerrier");
 			// creationguerrier.Play();
 		}

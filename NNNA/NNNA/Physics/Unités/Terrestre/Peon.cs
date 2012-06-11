@@ -9,7 +9,7 @@ namespace NNNA
 		public Peon(int x = 0, int y = 0)
 			: base(x, y)
 		{
-			_cost.Add("Nourriture", 50);
+			Prix.Add("Nourriture", 50);
 		}
 
 		public Peon(int x, int y, ContentManager content, Joueur joueur, Building affiliate, bool removeResources = true, bool add_pop = true)
@@ -33,7 +33,7 @@ namespace NNNA
 			Regeneration = 1;
 			Speed = 0.06f + joueur.AdditionalSpeed;
 			SetTextures(content, "peon");
-			_cost.Add("Nourriture", 50);
+			Prix.Add("Nourriture", 50);
 			Affiliate = affiliate;
 		}
 

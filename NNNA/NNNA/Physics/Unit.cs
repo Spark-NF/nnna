@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 
 namespace NNNA
 {
@@ -11,40 +12,43 @@ namespace NNNA
         public Joueur Joueur { get; protected set;  }
 		public Building Affiliate { get; protected set; }
 		public int PochesMax { get; private set; }
-		public string PochesContent { get; set; }
+	    private string PochesContent { get; set; }
 		public int MaxLife { get; private set; }
-        public int Attaque { private get; set;  }
+	    protected int Attaque { get; set;  }
 		public int VitesseCombat { private get; set; }
 		public int Portee { private get; set; }
 		public int Regeneration { get; set; }
 		public int LineSight { get; protected set; }
+	    private List<Vector2> moving; 
 
-		protected int _life;
+	    private int _life;
 		public int Life
 		{
 			get { return _life; }
-			set
+		    protected set
 			{
 				_life = value;
 				if (value > MaxLife)
 				{ MaxLife = value; }
 			}
 		}
-		protected int _poches;
+
+	    private int _poches;
 		public int Poches
 		{
 			get { return _poches; }
-			set { _poches = value >= PochesMax ? PochesMax : value; }
+		    private set { _poches = value >= PochesMax ? PochesMax : value; }
 		}
 
-		public Unit(int x, int y)
+	    protected Unit(int x, int y)
 			: base(x, y)
 		{
 			PochesMax = 50;
+            moving = new List<Vector2>();
 			Poches = 0;
 		}
 
-        public virtual void Tirer(Unit cible, ContentManager content)
+	    protected virtual void Tirer(Unit cible, ContentManager content)
         { }
 
 		public void Attack(Unit obj)
@@ -66,31 +70,37 @@ namespace NNNA
 
 		public void ClickMouvement(Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice, ContentManager content)
 		{
-			if (_click || _selected || DestinationUnit != null || DestinationBuilding != null)
+			if (Click || Selected || DestinationUnit != null || DestinationBuilding != null)
 			{
-				if (Souris.Get().Clicked(MouseButton.Right) && (curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) || hud.IsSmart) && (_selected || !_click))
+				if (Souris.Get().Clicked(MouseButton.Right) && (curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) || hud.IsSmart) && (Selected || !Click))
 				{
-					Move(curseur.Position + camera.Position);
+                    if (!Clavier.Get().Pressed(Keys.LeftControl) && !Clavier.Get().Pressed(Keys.RightControl))
+                        moving = new List<Vector2>();
+                    moving.Add(curseur.Position + camera.Position);
+                    Move(moving);
 					DestinationUnit = null;
 					DestinationBuilding = null;
 					DestinationResource = null;
 				}
                 else if (DestinationUnit != null)
-				{ Move(DestinationUnit.Position + new Vector2(DestinationUnit.Texture.Collision.X + DestinationUnit.Texture.Collision.Width / 2, DestinationUnit.Texture.Collision.Y + DestinationUnit.Texture.Collision.Height / 2)); }
+                { moving = new List<Vector2> { DestinationUnit.Position + new Vector2(DestinationUnit.Texture.Collision.X + DestinationUnit.Texture.Collision.Width / 2, DestinationUnit.Texture.Collision.Y + DestinationUnit.Texture.Collision.Height / 2) }; Move(moving); }
 				else if (DestinationBuilding != null)
-				{ Move(DestinationBuilding.Position + new Vector2(DestinationBuilding.Texture.Collision.X + DestinationBuilding.Texture.Collision.Width / 2, DestinationBuilding.Texture.Collision.Y + DestinationBuilding.Texture.Collision.Height / 2)); }
+                { moving = new List<Vector2> { DestinationBuilding.Position + new Vector2(DestinationBuilding.Texture.Collision.X + DestinationBuilding.Texture.Collision.Width / 2, DestinationBuilding.Texture.Collision.Y + DestinationBuilding.Texture.Collision.Height / 2) }; Move(moving); }
 				else if (DestinationResource != null)
-				{ Move(DestinationResource.Position + new Vector2(DestinationResource.Texture.Collision.X + DestinationResource.Texture.Collision.Width / 2, DestinationResource.Texture.Collision.Y + DestinationResource.Texture.Collision.Height / 2)); }
-				if (_click)
+                { moving = new List<Vector2> { DestinationResource.Position + new Vector2(DestinationResource.Texture.Collision.X + DestinationResource.Texture.Collision.Width / 2, DestinationResource.Texture.Collision.Y + DestinationResource.Texture.Collision.Height / 2) }; Move(moving); }
+                if (Click)
 				{
-					Vector2 translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
+					var translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
 					_cparcouru = _position + new Vector2(Texture.Collision.X + Texture.Collision.Width/2.0f, Texture.Collision.Y + Texture.Collision.Height/2.0f) - _positionIni;
 					Update(translation);
 					if (Math.Abs(_cparcouru.X) >= Math.Abs(_cparcourir.X) && Math.Abs(_cparcouru.Y) >= Math.Abs(_cparcourir.Y))
 					{
-						_click = false;
+						Click = false;
 						_texture.Animation = false;
 						_position -= translation;
+                        if (moving.Count > 0)
+                            moving.RemoveAt(0);
+                        Move(moving);
 					}
 					else
 					{
@@ -115,7 +125,7 @@ namespace NNNA
 								if (DestinationResource != null)
 								{
 									Will = "mine";
-									Move(DestinationResource.Position + new Vector2((float)Math.Round((double)DestinationResource.Texture.Width / 2), (float)Math.Round((double)DestinationResource.Texture.Height * 0.95f)) - new Vector2((float)Math.Round(Texture.Width / 2.0f), Texture.Height));
+									Move(new List<Vector2> { DestinationResource.Position + new Vector2((float)Math.Round((double)DestinationResource.Texture.Width / 2), (float)Math.Round((double)DestinationResource.Texture.Height * 0.95f)) - new Vector2((float)Math.Round(Texture.Width / 2.0f), Texture.Height) });
 								}
 							}
 						}
@@ -138,7 +148,7 @@ namespace NNNA
 								{
 									Will = "poches";
 									DestinationBuilding = Affiliate;
-									Move(DestinationBuilding.Position + new Vector2((float)Math.Round((double)DestinationBuilding.Texture.Width / 2), 0)); //, sprites, buildings, matrice);
+									Move(new List<Vector2> { DestinationBuilding.Position + new Vector2((float)Math.Round((double)DestinationBuilding.Texture.Width / 2), 0) }); //, sprites, buildings, matrice);
 								}
 							}
 						}
@@ -161,22 +171,22 @@ namespace NNNA
 		}
 		public void ClickMouvement(Sprite[,] map, Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice)
 		{
-			if (_click || _selected)
+			if (Click || Selected)
 			{
-				if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (_selected || !_click))
+				if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (Selected || !Click))
 				{
-					_click = true;
+					Click = true;
 					_clickInterne = false;
 					_positionIni = _position;
-					_clickPosition = curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 2), (float)Math.Round((double)Texture.Height * 4 / 5));
-					Vector2 start = Game1.Xy2Matrice(_positionIni);
-					Vector2 destination = Game1.Xy2Matrice(curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 8), (float)Math.Round((double)Texture.Height * 4 / 5)));
+					ClickPosition = curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 2), (float)Math.Round((double)Texture.Height * 4 / 5));
+					var start = Game1.Xy2Matrice(_positionIni);
+					var destination = Game1.Xy2Matrice(curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 8), (float)Math.Round((double)Texture.Height * 4 / 5)));
 					_pathList = PathFinding.FindPath(map, map[(int)start.Y, (int)start.X], map[(int)destination.Y, (int)destination.X]);
 					if (_pathList != null)
 					{ _pathIterator = _pathList.Count - 1; }
-					else _click = false;
+					else Click = false;
 				}
-				if (_click)
+				if (Click)
 				{
 					if (_pathIterator > 0)
 					{
@@ -197,7 +207,7 @@ namespace NNNA
 						else
 						{
 							_cparcouru = _position - _positionIni;
-							Vector2 translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
+							var translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
 							Update(translation);
 							if (Collides(sprites, buildings, resources, matrice))
 							{ _position -= translation; }
@@ -207,9 +217,9 @@ namespace NNNA
 					{
 						if (!_clickInterne)
 						{
-							_angle = Math.Atan2(_clickPosition.Y - _position.Y, _clickPosition.X - _position.X);
+							_angle = Math.Atan2(ClickPosition.Y - _position.Y, ClickPosition.X - _position.X);
 							_direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
-							_cparcourir = new Vector2(_clickPosition.X - _position.X, _clickPosition.Y - _position.Y);
+							_cparcourir = new Vector2(ClickPosition.X - _position.X, ClickPosition.Y - _position.Y);
 							_cparcouru = Vector2.Zero;
 							_clickInterne = true;
 						}
@@ -222,19 +232,19 @@ namespace NNNA
 						else
 						{
 							_cparcouru = _position - _positionIni;
-							Vector2 translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
+							var translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
 							Update(translation);
 							if (Collides(sprites, buildings, resources, matrice))
 							{ _position -= translation; }
 						}
 					}
-					else _click = false;
+					else Click = false;
 				}
 			}
 		}
-		public void Draw(SpriteBatch spriteBatch, Camera2D camera, int index, Color col)
+		public void Draw(SpriteBatch spriteBatch, Camera2D camera, Color col)
 		{
-			int tex = 1;
+			var tex = 1;
 
 			//MODE 8 ANGLES
 			if (_dec == 45)
@@ -270,11 +280,16 @@ namespace NNNA
 			{
 				if (Click)
 				{
-					var distance = (ClickPosition - Position - new Vector2(Texture.Collision.X + Texture.Collision.Width / 2.0f, Texture.Collision.Y + Texture.Collision.Height / 2.0f)).Length();
-					for (int i = 0; i < distance; i += 4)
-					{ spriteBatch.Draw(_dots, ClickPosition - camera.Position - new Vector2((float)(i * Math.Cos(Angle)), (float)(i * Math.Sin(Angle))), Color.White); }
+                    for (int j = 0; j < moving.Count; j++)
+                    {
+                        var  chemin = (j == 0) ? moving[j] - Position - new Vector2(Texture.Collision.X + Texture.Collision.Width / 2.0f, Texture.Collision.Y + Texture.Collision.Height / 2.0f) : moving[j] - moving[j - 1];
+                        var distance = (chemin).Length();
+                        var angle = Math.Atan2(chemin.Y, chemin.X);
+                        for (int i = 0; i < distance; i += 4)
+                        { spriteBatch.Draw(_dots, moving[j] - camera.Position - new Vector2((float)(i * Math.Cos(angle)), (float)(i * Math.Sin(angle))), Color.White); }
+                    }
 					if (_go != null && DestinationUnit == null && DestinationResource == null && (DestinationBuilding == null || Will != "poches"))
-					{ _go.Draw(spriteBatch, ClickPosition - camera.Position - new Vector2(_go.Width, _go.Height) / 2.0f, Color.White); }
+					{ _go.Draw(spriteBatch, moving[moving.Count - 1] - camera.Position - new Vector2(_go.Width, _go.Height) / 2.0f, Color.White); }
 				}
 				spriteBatch.Draw(_selection, _position - camera.Position + new Vector2(0, 32), Joueur.Color);
 			}

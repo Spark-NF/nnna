@@ -202,7 +202,7 @@ namespace NNNA
 			foreach (Unit sprite in _units)
 			{
 				sprite.Visible = true;
-				sprite.Draw(sb, camera, index, _colorMovable);
+				sprite.Draw(sb, camera, _colorMovable);
 			}
 		}
 	}
