@@ -1,15 +1,16 @@
 #define SOUND
-// #define LIVE
 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
+using System.Threading;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Audio;
 #if LIVE
 	using Microsoft.Xna.Framework.GamerServices;
 #endif
@@ -83,6 +84,13 @@ namespace NNNA
 		private Technologies_Window _techno;
 		#endregion
 
+		// Internet
+		private Socket _internetSocket;
+		private NetworkStream _internetStream;
+		private StreamWriter _internetWriter;
+		private StreamReader _internetReader;
+		private Thread _internetThread;
+
 		#region Enums
 
 		public enum Screen
@@ -135,11 +143,6 @@ namespace NNNA
             Content.RootDirectory = "Content";
             _fps = new CompteurFPS(this);
             Components.Add(_fps);
-
-            // Dossier Utilisateur
-			#if LIVE
-				Components.Add(new GamerServicesComponent(this));
-			#endif
             
         }
 
@@ -211,9 +214,9 @@ namespace NNNA
             Réseau.GetIP();
 
             //son
-#if SOUND
-            _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
-#endif
+            #if SOUND
+                _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
+            #endif
 
 			base.Initialize();
 		}
@@ -719,9 +722,17 @@ namespace NNNA
 			Screen s = TestMenu(Screen.PlayMultiplayerJoin, Screen.OptionsSound, Screen.PlayMultiplayer);
 			if (s == Screen.OptionsSound)
 			{
-				Clavier.Get().GetText = false;
+				TcpClient client = new TcpClient(Clavier.Get().Text, 25666);
+				Byte[] data = System.Text.Encoding.ASCII.GetBytes("Trololol");
+				NetworkStream stream = client.GetStream();
+				stream.Write(data, 0, data.Length);
 
-				// join
+				//wait
+
+				stream.Close();
+				client.Close();    
+
+				Clavier.Get().GetText = false;
 			}
 			else
 			{ _currentScreen = s; }
