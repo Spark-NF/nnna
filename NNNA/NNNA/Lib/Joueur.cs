@@ -22,6 +22,7 @@ namespace NNNA
 		}
 
         public bool Caserne { get; set; }
+        public bool Ferme { get; set; }
 
         private int _additionalAttack;
         public int AdditionalAttack
@@ -29,13 +30,31 @@ namespace NNNA
             get { return _additionalAttack; }
             set { _additionalAttack = value; }
         }
+        private float _additionalSpeed;
+        public float AdditionalSpeed
+        {
+            get { return _additionalSpeed; }
+            set { _additionalSpeed = value; }
+        }
+        private int _additionalLife;
+        public int AdditionalLife
+        {
+            get { return _additionalLife; }
+            set { _additionalLife = value; }
+        }
 
-		private int _additionalLineSight;
-		public int AdditionalLineSight
+		private int _additionalUnitLineSight;
+		public int AdditionalUnitLineSight
 		{
-			get { return _additionalLineSight; }
-			set { _additionalLineSight = value; }
+			get { return _additionalUnitLineSight; }
+			set { _additionalUnitLineSight = value; }
 		}
+        private int _additionalBuildingLineSight;
+        public int AdditionalBuildingLineSight
+        {
+            get { return _additionalBuildingLineSight; }
+            set { _additionalBuildingLineSight = value; }
+        }
 
 		private Random _rand = new Random();
 		private uint _populationMax;
@@ -91,9 +110,12 @@ namespace NNNA
 			_name = nom;
 			_population = 0;
 			_populationMax = 5;
-			_additionalLineSight = 0;
+			_additionalUnitLineSight = 0;
+            _additionalBuildingLineSight = 0;
 		    _additionalAttack = 0;
+            _additionalLife = 0;
 		    Caserne = false;
+            Ferme = false;
 
 			_resources.Add(new Resource("Bois", new[] { "Bois", "Bois", "Bois", "Bois" }, 500));
 			_resources.Add(new Resource("Pierre", new[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));

@@ -31,7 +31,7 @@ namespace NNNA
 			LineSight = 512;
 			Portee = 1;
 			Regeneration = 1;
-			Speed = 0.06f;
+			Speed = 0.06f + joueur.AdditionalSpeed;
 			SetTextures(content, "peon");
 			_cost.Add("Nourriture", 50);
 			Affiliate = affiliate;

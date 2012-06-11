@@ -289,7 +289,7 @@ namespace NNNA
 			win.Visible = false;
 		}
 
-		private void chasse_MouseLeftButtonDown()
+        private void chasse_MouseLeftButtonDown() // + 2 Attaque
 		{
 			if (!_chasse && Game1.Joueur.Pay(_prixChasse))
 			{
@@ -297,7 +297,7 @@ namespace NNNA
 				agri.Visible = true;
 				feu.Visible = true;
 				_chasse = true;
-			    Game1.Joueur.AdditionalAttack += 10;
+			    Game1.Joueur.AdditionalAttack += 2;
 			    Game1.Joueur.Caserne = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Chasse » aquise !", Color.White, 5000));
 			}
@@ -311,12 +311,12 @@ namespace NNNA
             }
 		}
 
-		private void feu_MouseLeftButtonDown()
+        private void feu_MouseLeftButtonDown() // + De luminosité 
 		{
 			if (!_feu && Game1.Joueur.Pay(_prixFeu))
 			{
 				torche.Visible = true;
-				Game1.Joueur.AdditionalLineSight += 128;
+				Game1.Joueur.AdditionalBuildingLineSight += 128;
 				_feu = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Feu » aquise !", Color.White, 5000));
 			}
@@ -330,11 +330,12 @@ namespace NNNA
             }
 		}
 
-		private void silex_MouseLeftButtonDown()
+        private void silex_MouseLeftButtonDown() // + 5 Attaque 
 		{
 			if (!_silex && Game1.Joueur.Pay(_prixSilex))
 			{
 				pierre_polie.Visible = true;
+                Game1.Joueur.AdditionalAttack += 5;
 				_silex = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Silex » aquise !", Color.White, 5000));
 			}
@@ -348,11 +349,12 @@ namespace NNNA
             }
 		}
 
-		private void pierre_polie_MouseLeftButtonDown()
+        private void pierre_polie_MouseLeftButtonDown() // + 5 Attaque
 		{
 			if (!_pierrePolie && Game1.Joueur.Pay(_prixPierrePolie))
 			{
 				bronze.Visible = true;
+                Game1.Joueur.AdditionalAttack += 5;
 				_pierrePolie = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Pierre polie » aquise !", Color.White, 5000));
 			}
@@ -366,11 +368,12 @@ namespace NNNA
             }
 		}
 
-		private void bronze_MouseLeftButtonDown()
+		private void bronze_MouseLeftButtonDown() // + 10 Attaque 
 		{
 			if (!_bronze && Game1.Joueur.Pay(_prixBronze))
 			{
 				outils.Visible = true;
+                Game1.Joueur.AdditionalAttack += 10;
 				_bronze = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Bronze » aquise !", Color.White, 5000));
 			}
@@ -384,7 +387,7 @@ namespace NNNA
             }
 		}
 
-		private void outils_MouseLeftButtonDown()
+        private void outils_MouseLeftButtonDown() // Construction Batiment + Rapide ( A FAIRE ! )
 		{
 			if (!_outils && Game1.Joueur.Pay(_prixOutils))
 			{
@@ -404,12 +407,13 @@ namespace NNNA
             }
 		}
 
-		private void agri_MouseLeftButtonDown()
+        private void agri_MouseLeftButtonDown()// Creation Ferme
 		{
 			if (!_agri && Game1.Joueur.Pay(_prixAgri))
 			{
                 if (_outils)
                     irrigation.Visible = true;
+                Game1.Joueur.Ferme = true;
 				_agri = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Agriculture » aquise !", Color.White, 5000));
 			}
@@ -423,12 +427,12 @@ namespace NNNA
             }
 		}
 
-		private void torche_MouseLeftButtonDown()
+		private void torche_MouseLeftButtonDown() // + 128 LineSight
 		{
 			if (!_torche && Game1.Joueur.Pay(_prixTorche))
 			{
 				_torche = true;
-				Game1.Joueur.AdditionalLineSight += 128;
+				Game1.Joueur.AdditionalUnitLineSight += 128;
 				MessagesManager.Messages.Add(new Msg("Technologie « Torche » aquise !", Color.White, 5000));
 			}
 			else if (!_torche)
@@ -441,7 +445,7 @@ namespace NNNA
             }
 		}
 
-		private void irrigation_MouseLeftButtonDown()
+		private void irrigation_MouseLeftButtonDown() // Augmente la vitesse de colte de la nourriture 
 		{
 			if (!_irrigation && Game1.Joueur.Pay(_prixIrrigation))
 			{
@@ -460,12 +464,13 @@ namespace NNNA
             }
 		}
 
-		private void fer_MouseLeftButtonDown()
+		private void fer_MouseLeftButtonDown() // + 15 Attaque
 		{
 			if (!_fer && Game1.Joueur.Pay(_prixFer))
 			{
                 if (_irrigation)
                     evolution1.Visible = true;
+                Game1.Joueur.AdditionalAttack += 15;
 				_fer = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Fer » aquise !", Color.White, 5000));
 			}
@@ -479,7 +484,9 @@ namespace NNNA
             }
 		}
 
-        private void engrenage_MouseLeftButtonDown()
+        //ERE 2
+
+        private void engrenage_MouseLeftButtonDown() // Debloque Techno
         {
             if (!_engrenage && Game1.Joueur.Pay(_prixEngrenage))
             {
@@ -499,11 +506,12 @@ namespace NNNA
             }
         }
 
-        private void forge_MouseLeftButtonDown()
+        private void forge_MouseLeftButtonDown() // + 20 de vie
         {
             if (!_forge && Game1.Joueur.Pay(_prixForge))
             {
                 scierie.Visible = true;
+                Game1.Joueur.AdditionalLife += 20;
                 _forge = true;
                 MessagesManager.Messages.Add(new Msg("Technologie « Forge » aquise !", Color.White, 5000));
             }
@@ -517,7 +525,7 @@ namespace NNNA
             }
         }
 
-        private void scierie_MouseLeftButtonDown()
+        private void scierie_MouseLeftButtonDown()// Ya pas de camp de bucheron pour linstant
         {
             if (!_scierie && Game1.Joueur.Pay(_prixScierie))
             {
@@ -535,7 +543,7 @@ namespace NNNA
             }
         }
 
-        private void arme_de_siege_MouseLeftButtonDown()
+        private void arme_de_siege_MouseLeftButtonDown() // Debloque techno
         {
             if (!_arme_de_siege && Game1.Joueur.Pay(_prixArme_de_siege))
             {
@@ -553,7 +561,7 @@ namespace NNNA
             }
         }
 
-        private void alchimie_MouseLeftButtonDown()
+        private void alchimie_MouseLeftButtonDown()// Debloque Techno
         {
             if (!_alchimie && Game1.Joueur.Pay(_prixAlchimie))
             {
@@ -574,7 +582,7 @@ namespace NNNA
             }
         }
 
-        private void navigation_MouseLeftButtonDown()
+        private void navigation_MouseLeftButtonDown()// BULLSHIT
         {
             if (!_navigation && Game1.Joueur.Pay(_prixNavigation))
             {
@@ -592,7 +600,7 @@ namespace NNNA
             }
         }
 
-        private void gouvernail_MouseLeftButtonDown()
+        private void gouvernail_MouseLeftButtonDown() // Pas de bateaux -_- 
         {
             if (!_gouvernail && Game1.Joueur.Pay(_prixGouvernail))
             {
@@ -613,7 +621,7 @@ namespace NNNA
             }
         }
 
-        private void bucheron_MouseLeftButtonDown()
+        private void bucheron_MouseLeftButtonDown() // BULLSHIT
         {
             if (!_bucheron && Game1.Joueur.Pay(_prixBucheron))
             {
@@ -631,7 +639,7 @@ namespace NNNA
             }
         }
 
-        private void charpente_MouseLeftButtonDown()
+        private void charpente_MouseLeftButtonDown() // BULLSHIT
         {
             if (!_charpente && Game1.Joueur.Pay(_prixCharpente))
             {
@@ -649,11 +657,12 @@ namespace NNNA
             }
         }
 
-        private void route_MouseLeftButtonDown()
+        private void route_MouseLeftButtonDown() // 2x plus vite unité
         {
             if (!_route && Game1.Joueur.Pay(_prixRoute))
             {
                 _route = true;
+                Game1.Joueur.AdditionalSpeed += 0.06f;
                 MessagesManager.Messages.Add(new Msg("Technologie « Route » aquise !", Color.White, 5000));
             }
             else if (!_route)

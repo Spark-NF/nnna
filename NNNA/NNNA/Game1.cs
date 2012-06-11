@@ -333,6 +333,7 @@ namespace NNNA
             _actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
             _actions.Add("build_archerie",Content.Load<Texture2D>("Actions/build_archerie"));
             _actions.Add("build_forge", Content.Load<Texture2D>("Actions/build_usine"));
+
 			// m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
 			#endregion Actions Unités
 
@@ -1092,30 +1093,45 @@ namespace NNNA
                             else
                             { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
                             break;
+
                         case "build_ferme":
                             pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
                             if (ValidSpawn(pos, _dimensions))
                             {
                                 var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
                                 b = new Ferme((int)position.X, (int)position.Y, Content, Joueur);
-                                if (Joueur.Pay(b.Prix))
+                                if (!Joueur.Ferme)
                                 {
-                                    _selectedList[0].Build(b);
-                                    _buildings.Add(b);
-                                    _toDraw.Add(b);
-                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"), Color.White, 5000));
+                                    MessagesManager.Messages.Add(new Msg(_("Votre niveau technologique ne vous \npermet pas de construire ce batiment."), Color.Red, 5000));
+                                    MessagesManager.Messages.Add(new Msg("", Color.Transparent, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
                                 else
                                 {
-                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-                                    _pointer = "pointer";
-                                    _currentAction = "";
+                                    if (Joueur.Pay(b.Prix))
+                                    {
+                                        _selectedList[0].Build(b);
+                                        _buildings.Add(b);
+                                        _toDraw.Add(b);
+                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"),
+                                                                             Color.White, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
+                                    else
+                                    {
+                                        MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."),
+                                                                             Color.Red, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
+
                                 }
                             }
                             else
                             { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+
                             break;
                         case "build_archerie":
                             pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
@@ -1167,28 +1183,6 @@ namespace NNNA
                             else
                             { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
                             break;
-
-                        // Fin Ere 1 
-
-                        /* Ere 2 
-                        case "build_ferme":
-                            b = new Hutte((int)(curseur.Position.X + camera.Position.X), (int)(curseur.Position.Y + camera.Position.Y), Content, _joueur);
-                            if (joueur.Pay(b.Prix))
-                            {
-                                joueur.buildings.Add(b);
-                                MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"), Color.White, 5000));
-                                m_pointer = Content.Load<Texture2D>("pointer");
-                                isbuilding = false;
-                                m_currentAction = "";
-                            }
-                            else
-                            {
-                                MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-                                m_pointer = Content.Load<Texture2D>("pointer");
-                                m_currentAction = "";
-                            }
-                            break;
-                        Fin Ere 2 */
 
                         default:
                             if (Souris.Get().Y > (_hud.IsSmart ? _hud.Position.Y + _hud.SmartPos : _hud.Position.Y))
@@ -1460,13 +1454,13 @@ namespace NNNA
                                     foreach (Unit uni in Joueur.Units)
                                     {
                                         var m = (uni.PositionCenter - unit.Position).Length();
-                                        m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
+                                        m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalUnitLineSight));
                                         mul = (m > 0 && m > mul) ? m : mul;
                                     }
                                     foreach (Building building in Joueur.Buildings)
                                     {
                                         var m = (building.PositionCenter - unit.Position).Length();
-                                        m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                                        m = 1.0f - (m / (building.LineSight + Joueur.AdditionalBuildingLineSight));
                                         mul = (m > 0 && m > mul) ? m : mul;
                                     }
                                 }
@@ -1499,13 +1493,13 @@ namespace NNNA
                                 foreach (Unit uni in Joueur.Units)
                                 {
                                     var m = (uni.PositionCenter - resource.Position).Length();
-                                    m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
+                                    m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalUnitLineSight));
                                     mul = (m > 0 && m > mul) ? m : mul;
                                 }
                                 foreach (Building building in Joueur.Buildings)
                                 {
                                     var m = (building.PositionCenter - resource.Position).Length();
-                                    m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                                    m = 1.0f - (m / (building.LineSight + Joueur.AdditionalBuildingLineSight));
                                     mul = (m > 0 && m > mul) ? m : mul;
                                 }
                             }
@@ -1843,13 +1837,13 @@ namespace NNNA
                         foreach (Unit unit in Joueur.Units)
                         {
                             var m = (unit.PositionCenter - sprite.PositionCenter).Length();
-                            m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
+                            m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalUnitLineSight));
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
                         foreach (Building building in Joueur.Buildings)
                         {
                             var m = (building.PositionCenter - sprite.PositionCenter).Length();
-                            m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                            m = 1.0f - (m / (building.LineSight + Joueur.AdditionalBuildingLineSight));
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
                     }
@@ -1877,13 +1871,13 @@ namespace NNNA
                         foreach (Unit unit in Joueur.Units)
                         {
                             var m = (unit.PositionCenter - sprite.PositionCenter).Length();
-                            m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
+                            m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalUnitLineSight));
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
                         foreach (Building building in Joueur.Buildings)
                         {
                             var m = (building.PositionCenter - sprite.PositionCenter).Length();
-                            m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                            m = 1.0f - (m / (building.LineSight + Joueur.AdditionalBuildingLineSight));
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
                         sprite.Visible = mul > 0;
@@ -1914,13 +1908,13 @@ namespace NNNA
                             foreach (Unit unit in Joueur.Units)
                             {
                                 var m = (unit.PositionCenter - sprite.Position).Length();
-                                m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
+                                m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalUnitLineSight));
                                 mul = (m > 0 && m > mul) ? m : mul;
                             }
                             foreach (Building building in Joueur.Buildings)
                             {
                                 var m = (building.PositionCenter - sprite.Position).Length();
-                                m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                                m = 1.0f - (m / (building.LineSight + Joueur.AdditionalBuildingLineSight));
                                 mul = (m > 0 && m > mul) ? m : mul;
                             }
                             sprite.Visible = mul > 0;
@@ -1952,13 +1946,13 @@ namespace NNNA
                             foreach (Unit unit in Joueur.Units)
                             {
                                 var m = (unit.PositionCenter - sprite.Position).Length();
-                                m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalLineSight));
+                                m = 1.0f - (m / (unit.LineSight + Joueur.AdditionalUnitLineSight));
                                 mul = (m > 0 && m > mul) ? m : mul;
                             }
                             foreach (Building building in Joueur.Buildings)
                             {
                                 var m = (building.PositionCenter - sprite.Position).Length();
-                                m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+                                m = 1.0f - (m / (building.LineSight + Joueur.AdditionalBuildingLineSight));
                                 mul = (m > 0 && m > mul) ? m : mul;
                             }
                             sprite.Visible = mul > 0;
@@ -2016,13 +2010,13 @@ namespace NNNA
 						foreach (Unit uni in Joueur.Units)
 						{
 							var m = (uni.PositionCenter - unit.Position).Length();
-							m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
+							m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalUnitLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
 						foreach (Building building in Joueur.Buildings)
 						{
 							var m = (building.PositionCenter - unit.Position).Length();
-							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalBuildingLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
 					}
@@ -2039,13 +2033,13 @@ namespace NNNA
 						foreach (Unit uni in Joueur.Units)
 						{
 							var m = (uni.PositionCenter - build.Position).Length();
-							m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalLineSight));
+							m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalUnitLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
 						foreach (Building building in Joueur.Buildings)
 						{
 							var m = (building.PositionCenter - build.Position).Length();
-							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalLineSight));
+							m = 1.0f - (m / (building.LineSight + Joueur.AdditionalBuildingLineSight));
 							mul = (m > 0 && m > mul) ? m : mul;
 						}
 					}

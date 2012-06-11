@@ -29,7 +29,7 @@ namespace NNNA
             LineSight = 384;
 			Portee = 1;
 			Regeneration = 1;
-			Speed = 0.05f;
+            Speed = 0.05f + joueur.AdditionalSpeed;
 			SetTextures(content, "guerrier", 45);
             _cost.Add("Nourriture", 70);
 			// creationguerrier =content.Load<SoundEffect>("sounds/creationguerrier");

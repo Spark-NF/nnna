@@ -148,7 +148,7 @@ namespace NNNA
                             { Tirer(DestinationUnit, content); }
                             if (DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), new Sprite[,] { }))
 							{
-								DestinationUnit.Life -= Attaque + Joueur.AdditionalAttack;
+								DestinationUnit.Life -= Joueur.AdditionalLife + Attaque + Joueur.AdditionalAttack;
 								if (DestinationUnit.Life <= 0)
 								{ DestinationUnit = null; }
 							}

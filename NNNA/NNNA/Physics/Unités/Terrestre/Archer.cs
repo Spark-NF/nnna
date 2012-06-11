@@ -40,7 +40,7 @@ namespace NNNA
             LineSight = 384;
             Portee = 10;
             Regeneration = 1;
-            Speed = 0.05f;
+            Speed = 0.05f + joueur.AdditionalSpeed;
             speed_tirs = 8;
             tirs = new List<Fleche>();
             SetTextures(content, "archer", 45);
