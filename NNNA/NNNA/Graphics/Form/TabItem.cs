@@ -44,13 +44,6 @@ namespace NNNA.Form
             {
                 sb.Draw(_background, _zone, null, _selected ? _backgroundColor : Color.Gray);
                 sb.DrawString(sf, Name, new Vector2(_zone.X, _zone.Y) + new Vector2(Zone.Width / 2, Zone.Height / 2) - sf.MeasureString(Name) / 2, _selected ? Color.Black : _textColor);
-                //if (selected)
-                //{
-                //    for (int i = 0; i < Children.Length; i++)
-                //    {
-                //        Children[i].Draw(sb, sf);
-                //    }
-                //}
             }
         }
     }

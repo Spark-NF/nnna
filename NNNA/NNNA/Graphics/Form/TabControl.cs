@@ -49,6 +49,15 @@ namespace NNNA.Form
                 {
                     children[selectedTab].Children[j].Draw(sb, sf);
                 }
+                // dessine les info bulles du boutton survolé
+                for (int j = 0; j < children[selectedTab].Children.Length; j++)
+                {
+                    if (children[selectedTab].Children[j] is Button)
+                    {
+                        var button = (children[selectedTab].Children[j] as Button);
+                        button.Draw_Info(sb, sf);
+                    }
+                }
             }
         }
     }

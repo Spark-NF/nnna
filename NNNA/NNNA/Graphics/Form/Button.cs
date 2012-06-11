@@ -50,6 +50,13 @@ namespace NNNA.Form
             if (_visible)
             {
                 sb.Draw(_background, _zone, null, _backgroundColor);
+            }
+        }
+        
+        public void Draw_Info(SpriteBatch sb, SpriteFont sf)
+        {
+            if (_visible)
+            {
                 if (_info != null && _drawInfoBulle)
                 {
                     _info.Draw(sb, sf);

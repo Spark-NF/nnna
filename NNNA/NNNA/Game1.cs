@@ -641,8 +641,8 @@ namespace NNNA
 					_resources.Clear();
 					for (int i = 0; i < 20 * (_quickResources + _quickSize + 1); i++)
 					{
-						int x = _random.Next(_matrice.GetLength(0));
-						int y = _random.Next(_matrice.GetLength(1));
+						var x = _random.Next(_matrice.GetLength(0));
+						var y = _random.Next(_matrice.GetLength(1));
 						while ((!_matrice[y, x].Crossable))
 						{
 							x = _random.Next(_matrice.GetLength(0));
@@ -666,7 +666,7 @@ namespace NNNA
 			}
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = MenuFoes();
+				var m = MenuFoes();
 				switch (m)
 				{
 					case 0:
@@ -677,10 +677,10 @@ namespace NNNA
 						break;
 
 					case -1:
-						float span = _screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
+						var span = _screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0));
 						m = Souris.Get().Y > (_screenSize.Y / 5) + (180 * (_screenSize.Y / 1050)) && ((Souris.Get().Y - (_screenSize.Y / 5) - (180 * (_screenSize.Y / 1050))) % span) < (_fontMenu.MeasureString("Menu").Y * _screenSize.Y) / 1050 ? (int)((Souris.Get().Y - _screenSize.Y / 5 - (180 * (_screenSize.Y / 1050))) / span) : -1;
 						var colors = new List<Color>(new[] { Color.Blue, Color.Red, Color.Green, Color.Yellow, Color.Pink, Color.Purple, Color.Gray, Color.DeepPink, Color.Lime, Color.DarkOrange, Color.SaddleBrown, Color.Cyan });
-						float v = ((Souris.Get().Y - (_screenSize.Y / 5) - (180 * (_screenSize.Y / 1050))) % (_screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))));
+						var v = ((Souris.Get().Y - (_screenSize.Y / 5) - (180 * (_screenSize.Y / 1050))) % (_screenSize.Y / (11 + (_currentMenus.Count > 5 ? (_currentMenus.Count - 5) * 2 : 0))));
 						if (Souris.Get().X >= _screenSize.X * 3 / 7 - 60 && Souris.Get().X <= _screenSize.X * 3 / 7 - 20 && Souris.Get().Y > (_screenSize.Y / 5) + (180 * (_screenSize.Y / 1050)) && v >= 21 && v <= 61)
 						{ _playersColors[m] = colors[(colors.IndexOf(_playersColors[m]) + (Souris.Get().Clicked(MouseButton.Left) ? 1 : -1) + colors.Count) % colors.Count]; }
 						break;

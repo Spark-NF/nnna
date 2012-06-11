@@ -29,21 +29,43 @@ namespace NNNA
             _content = content;
 
             var ichasse = new InfoBulle(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4 - zone.Height / 3, (int) (zone.Width / 2.085f), zone.Height / 3), "chasse");
+            var isilex = new InfoBulle(new Rectangle(zone.X + zone.Width / 4, zone.Y, (int)(zone.Width / 2.085f), zone.Height / 3), "silex");
+            var iagri = new InfoBulle(new Rectangle(zone.X + zone.Width / 2, zone.Y, (int)(zone.Width / 2.085f), zone.Height / 3), "agri");
+            var ipierre_polie = new InfoBulle(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 12, (int)(zone.Width / 2.085f), zone.Height / 3), "pierre_polie");
+            var iirrigation = new InfoBulle(new Rectangle(zone.X + zone.Width / 2, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "irrigation");
+            var ibronze = new InfoBulle(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 2 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "bronze");
+            var ioutils = new InfoBulle(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "outils");
+            var ifeu = new InfoBulle(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y, (int)(zone.Width / 2.085f), zone.Height / 3), "feu");
+            var itorche = new InfoBulle(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "torche");
+            var ifer = new InfoBulle(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "fer");
+            var ievolution1 = new InfoBulle(new Rectangle(zone.X + (zone.Width * 5 / 12), zone.Y + (zone.Height * 4) / 5 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "evolution1");
+            
             ichasse.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/chasse");
+            isilex.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/silex");
+            iagri.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/agri");
+            ipierre_polie.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/pierre_polie");
+            iirrigation.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/irrigation");
+            ibronze.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/bronze");
+            ioutils.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/outils");
+            ifeu.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/feu");
+            itorche.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/torche");
+            ifer.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/fer");
+            ievolution1.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/evolution1");
+
             
             close = new Button(new Rectangle(zone.X + zone.Width - zone.Width / 30 - zone.Height / 25, zone.Y + zone.Height / 30, zone.Height / 25, zone.Height / 25), "close", button_Close_Click, true);
 
             chasse = new Button(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4, zone.Height / 15, zone.Height / 15), "chasse", chasse_MouseLeftButtonDown, false, ichasse);
-            silex = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "silex", silex_MouseLeftButtonDown);
-            agri = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "agri", agri_MouseLeftButtonDown);
-            pierre_polie = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "pierre_polie", pierre_polie_MouseLeftButtonDown);
-            irrigation = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "irrigation", irrigation_MouseLeftButtonDown);
-            bronze = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "bronze", bronze_MouseLeftButtonDown);
-            outils = new Button(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5, zone.Height / 15, zone.Height / 15), "outils", outils_MouseLeftButtonDown);
-            feu = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "feu", feu_MouseLeftButtonDown);
-            torche = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "torche", torche_MouseLeftButtonDown);
-            fer = new Button(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "fer", fer_MouseLeftButtonDown);
-            evolution1 = new Button(new Rectangle(zone.X + (zone.Width * 5 / 12), zone.Y + (zone.Height * 4) / 5, zone.Height / 15, zone.Height / 15), "evolution", evolution_MouseLeftButtonDown);
+            silex = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "silex", silex_MouseLeftButtonDown, false, isilex);
+            agri = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "agri", agri_MouseLeftButtonDown, false, iagri);
+            pierre_polie = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "pierre_polie", pierre_polie_MouseLeftButtonDown, false, ipierre_polie);
+            irrigation = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "irrigation", irrigation_MouseLeftButtonDown, false, iirrigation);
+            bronze = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "bronze", bronze_MouseLeftButtonDown, false, ibronze);
+            outils = new Button(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5, zone.Height / 15, zone.Height / 15), "outils", outils_MouseLeftButtonDown, false, ioutils);
+            feu = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "feu", feu_MouseLeftButtonDown, false, ifeu);
+            torche = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "torche", torche_MouseLeftButtonDown, false, itorche);
+            fer = new Button(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "fer", fer_MouseLeftButtonDown, false, ifer);
+            evolution1 = new Button(new Rectangle(zone.X + (zone.Width * 5 / 12), zone.Y + (zone.Height * 4) / 5, zone.Height / 15, zone.Height / 15), "evolution", evolution_MouseLeftButtonDown, false, ievolution1);
 
             close.Background = content.Load<Texture2D>(@"Technologies/button_close");
             chasse.Background = content.Load<Texture2D>(@"Technologies/chasse");
@@ -260,18 +282,6 @@ namespace NNNA
             tabItem3.Visible = false;
 
             tabItem4.Visible = false;
-
-            //chasse.OpacityMask = _u.OpacityMask;
-            //silex.OpacityMask = _u.OpacityMask;
-            //agri.OpacityMask = _u.OpacityMask;
-            //feu.OpacityMask = _u.OpacityMask;
-            //torche.OpacityMask = _u.OpacityMask;
-            //pierre_polie.OpacityMask = _u.OpacityMask;
-            //bronze.OpacityMask = _u.OpacityMask;
-            //outils.OpacityMask = _u.OpacityMask;
-            //fer.OpacityMask = _u.OpacityMask;
-            //irrigation.OpacityMask = _u.OpacityMask;
-            //evolution.OpacityMask = _u.OpacityMask;
         }
 
 		private void button_Close_Click()
@@ -289,7 +299,6 @@ namespace NNNA
 				_chasse = true;
 			    Game1.Joueur.AdditionalAttack += 10;
 			    Game1.Joueur.Caserne = true;
-				//chasse.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Chasse » aquise !", Color.White, 5000));
 			}
             else if (!_chasse)
@@ -309,7 +318,6 @@ namespace NNNA
 				torche.Visible = true;
 				Game1.Joueur.AdditionalLineSight += 128;
 				_feu = true;
-				//feu.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Feu » aquise !", Color.White, 5000));
 			}
 			else if (!_feu)
@@ -328,7 +336,6 @@ namespace NNNA
 			{
 				pierre_polie.Visible = true;
 				_silex = true;
-				//silex.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Silex » aquise !", Color.White, 5000));
 			}
 			else if (!_silex)
@@ -347,7 +354,6 @@ namespace NNNA
 			{
 				bronze.Visible = true;
 				_pierrePolie = true;
-				//pierre_polie.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Pierre polie » aquise !", Color.White, 5000));
 			}
 			else if (!_pierrePolie)
@@ -366,7 +372,6 @@ namespace NNNA
 			{
 				outils.Visible = true;
 				_bronze = true;
-				//bronze.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Bronze » aquise !", Color.White, 5000));
 			}
 			else if (!_bronze)
@@ -387,7 +392,6 @@ namespace NNNA
                     irrigation.Visible = true;
 				fer.Visible = true;
 				_outils = true;
-				//outils.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Outils » aquise !", Color.White, 5000));
 			}
 			else if (!_outils)
@@ -407,7 +411,6 @@ namespace NNNA
                 if (_outils)
                     irrigation.Visible = true;
 				_agri = true;
-				//agri.OpacityMask = null;
 				MessagesManager.Messages.Add(new Msg("Technologie « Agriculture » aquise !", Color.White, 5000));
 			}
 			else if (!_agri)
@@ -425,7 +428,6 @@ namespace NNNA
 			if (!_torche && Game1.Joueur.Pay(_prixTorche))
 			{
 				_torche = true;
-				//torche.OpacityMask = null;
 				Game1.Joueur.AdditionalLineSight += 128;
 				MessagesManager.Messages.Add(new Msg("Technologie « Torche » aquise !", Color.White, 5000));
 			}
@@ -445,7 +447,6 @@ namespace NNNA
 			{
                 if (_fer)
                     evolution1.Visible = true;
-				//irrigation.OpacityMask = null;
 				_irrigation = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Irrigation » aquise !", Color.White, 5000));
 			}
@@ -465,7 +466,6 @@ namespace NNNA
 			{
                 if (_irrigation)
                     evolution1.Visible = true;
-				//fer.OpacityMask = null;
 				_fer = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Fer » aquise !", Color.White, 5000));
 			}
@@ -486,8 +486,7 @@ namespace NNNA
                 forge.Visible = true;
                 navigation.Visible = true;
                 bucheron.Visible = true;
-                _engrenage = true;
-                //chasse.OpacityMask = null;
+                _engrenage = true;;
                 MessagesManager.Messages.Add(new Msg("Technologie « Engrenage » aquise !", Color.White, 5000));
             }
             else if (!_engrenage)
@@ -506,7 +505,6 @@ namespace NNNA
             {
                 scierie.Visible = true;
                 _forge = true;
-                //chasse.OpacityMask = null;
                 MessagesManager.Messages.Add(new Msg("Technologie « Forge » aquise !", Color.White, 5000));
             }
             else if (!_forge)
@@ -525,7 +523,6 @@ namespace NNNA
             {
                 arme_de_siege.Visible = true;
                 _scierie = true;
-                //chasse.OpacityMask = null;
                 MessagesManager.Messages.Add(new Msg("Technologie « Scierie » aquise !", Color.White, 5000));
             }
             else if (!_scierie)
@@ -544,7 +541,6 @@ namespace NNNA
             {
                 alchimie.Visible = true;
                 _arme_de_siege = true;
-                //chasse.OpacityMask = null;
                 MessagesManager.Messages.Add(new Msg("Technologie « Arme de siege » aquise !", Color.White, 5000));
             }
             else if (!_arme_de_siege)
@@ -566,7 +562,6 @@ namespace NNNA
                     evolution2.Visible = true;
                 }
                 _alchimie = true;
-                //chasse.OpacityMask = null;
                 MessagesManager.Messages.Add(new Msg("Technologie « Alchimie » aquise !", Color.White, 5000));
             }
             else if (!_alchimie)
@@ -585,7 +580,6 @@ namespace NNNA
             {
                 gouvernail.Visible = true;
                 _navigation = true;
-                //chasse.OpacityMask = null;
                 MessagesManager.Messages.Add(new Msg("Technologie « Navigation » aquise !", Color.White, 5000));
             }
             else if (!_navigation)
@@ -607,7 +601,6 @@ namespace NNNA
                     evolution2.Visible = true;
                 }
                 _gouvernail = true;
-                //chasse.OpacityMask = null;
                 MessagesManager.Messages.Add(new Msg("Technologie « Gouvernail » aquise !", Color.White, 5000));
             }
             else if (!_gouvernail)
@@ -626,7 +619,6 @@ namespace NNNA
             {
                 charpente.Visible = true;
                 _bucheron = true;
-                //chasse.OpacityMask = null;
                 MessagesManager.Messages.Add(new Msg("Technologie « Bucheron » aquise !", Color.White, 5000));
             }
             else if (!_bucheron)
@@ -645,7 +637,6 @@ namespace NNNA
             {
                 route.Visible = true;
                 _charpente = true;
-                //chasse.OpacityMask = null;
                 MessagesManager.Messages.Add(new Msg("Technologie « Charpente » aquise !", Color.White, 5000));
             }
             else if (!_charpente)
@@ -663,7 +654,6 @@ namespace NNNA
             if (!_route && Game1.Joueur.Pay(_prixRoute))
             {
                 _route = true;
-                //chasse.OpacityMask = null;
                 MessagesManager.Messages.Add(new Msg("Technologie « Route » aquise !", Color.White, 5000));
             }
             else if (!_route)
@@ -681,7 +671,6 @@ namespace NNNA
 			if (_fer && _irrigation && !_ere1)
 			{
 				_ere1 = true;
-				//evolution.OpacityMask = null;
 				Game1.Joueur.Ere = 2;
 				tabItem3.Visible = true;
 				Game1.FlashBool = true;
