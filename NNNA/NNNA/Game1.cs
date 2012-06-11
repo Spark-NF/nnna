@@ -1947,6 +1947,24 @@ namespace NNNA
                 }
             }
 
+            // Dessin des pointillés de déplacement
+            foreach (Unit unit in Joueur.Units)
+            {
+                if (unit.Selected && unit.Click)
+                {
+                    for (int j = 0; j < unit.Moving.Count; j++)
+                    {
+                        var chemin = (j == 0) ? unit.Moving[j] - unit.Position - new Vector2(unit.Texture.Collision.X + unit.Texture.Collision.Width / 2.0f, unit.Texture.Collision.Y + unit.Texture.Collision.Height / 2.0f) : unit.Moving[j] - unit.Moving[j - 1];
+                        var distance = (chemin).Length();
+                        var angle = Math.Atan2(chemin.Y, chemin.X);
+                        for (int i = 0; i < distance; i += 4)
+                        { _spriteBatch.Draw(unit.Dots, unit.Moving[j] - _camera.Position - new Vector2((float)(i * Math.Cos(angle)), (float)(i * Math.Sin(angle))), Color.White); }
+                    }
+                    if (unit.Go != null && unit.DestinationUnit == null && unit.DestinationResource == null && (unit.DestinationBuilding == null || unit.Will != "poches"))
+                    { unit.Go.Draw(_spriteBatch, unit.Moving[unit.Moving.Count - 1] - _camera.Position - new Vector2(unit.Go.Width, unit.Go.Height) / 2.0f, Color.White); }
+                }
+            }
+
             // Affichage des objets sur la carte
             foreach (Sprite sprite in _toDraw)
             {

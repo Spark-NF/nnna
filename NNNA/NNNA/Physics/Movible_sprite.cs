@@ -8,13 +8,13 @@ namespace NNNA
 {
 	class MovibleSprite : Sprite
 	{
-	    public string Will { protected get; set; }
+	    public string Will { get; set; }
 
 	    public Building DestinationBuilding { get; set; }
 
-	    protected Unit DestinationUnit { get; set; }
+	    public Unit DestinationUnit { get; set; }
 
-	    protected ResourceMine DestinationResource { get; set; }
+	    public ResourceMine DestinationResource { get; set; }
 
 	    private Texture2D _icon;
 
@@ -56,7 +56,7 @@ namespace NNNA
 
 	    protected bool _clickInterne;
 
-	    protected bool Click { get; set; }
+	    public bool Click { get; protected set; }
 
 	    protected Vector2 ClickPosition { get; set; }
 
@@ -124,8 +124,8 @@ namespace NNNA
 		{
 			_dec = dec;
 			_texture = new Image(content.Load<Texture2D>("Units/" + name + "/" + name), 4, 360/dec) { Animation = false };
-			_go = new Image(content, "go", 8, 1, 5);
-			_dots = content.Load<Texture2D>("dots");
+			Go = new Image(content, "go", 8, 1, 5);
+			Dots = content.Load<Texture2D>("dots");
 			_selection = content.Load<Texture2D>("selected");
 			_icon = content.Load<Texture2D>("Units/" + name + "/" + name + "_icon");
 		}

@@ -11,8 +11,8 @@ namespace NNNA
 	{
 		protected bool _decouvert;
 		protected string _assetName;
-		protected Texture2D _dots;
-		protected Image _go;
+		public Texture2D Dots;
+		public Image Go;
 
 		protected Image _texture;
 		public Image Texture
@@ -85,7 +85,7 @@ namespace NNNA
 			_texture = new Image(content, assetName, columns);
 			_texture.Animation = false;
 			_assetName = assetName;
-			_go = new Image(content, "go", 8, 1, 5);
+			Go = new Image(content, "go", 8, 1, 5);
 		}
 
 		public void Update(Vector2 translation)
