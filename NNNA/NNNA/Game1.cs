@@ -85,11 +85,10 @@ namespace NNNA
 		#endregion
 
 		// Internet
-		private Socket _internetSocket;
-		private NetworkStream _internetStream;
-		private StreamWriter _internetWriter;
-		private StreamReader _internetReader;
-		private Thread _internetThread;
+		private TcpClient _internetConnection;
+		private bool _isInternet = false;
+		private Thread _threadListen;
+		private int _receivedPackets;
 
 		#region Enums
 
@@ -701,7 +700,45 @@ namespace NNNA
 			{
 				if (s == Screen.OptionsSound)
 				{
-					// host
+					/*Process.Start("server.exe");
+					Thread.Sleep(1000);*/
+
+					_isInternet = true;
+					_internetConnection = new TcpClient("localhost", 25666);
+
+					_buildings.Clear();
+					_units.Clear();
+					_toDraw.Clear();
+
+					Generate();
+
+					Send(Joueur.Name);
+					String matrice = _matrice.GetLength(0).ToString(CultureInfo.InvariantCulture);
+					for (int x = 0; x < _matrice.GetLength(0); x++)
+					{
+						for (int y = 0; y < _matrice.GetLength(1); y++)
+						{ matrice += "," + _matrice[x, y].Name; }
+					}
+					Send(matrice);
+
+					_techno.Reset();
+					MessagesManager.Clear();
+					Chat.Clear();
+					_map.LoadContent(_matrice, Content, _minimap, Graphics.GraphicsDevice);
+					_hud.LoadContent(Content, "HUD/hud2");
+					_minimap.LoadContent(_map);
+
+					_toDraw.AddRange(_resources);
+					_toDraw.AddRange(_buildings);
+					_toDraw.AddRange(_units);
+
+					//Le Son
+					#if SOUND
+						_son.Pause();
+						_debutpartie.Play();
+					#endif
+
+					_currentScreen = Screen.Game;
 				}
 				else
 				{ _currentScreen = s; }
@@ -730,13 +767,62 @@ namespace NNNA
 
 				//wait
 
-				stream.Close();
-				client.Close();    
+				_threadListen = new Thread(Listen);
+				_threadListen.Start();
+
+				_techno.Reset();
+				MessagesManager.Clear();
+				Chat.Clear();
 
 				Clavier.Get().GetText = false;
 			}
 			else
 			{ _currentScreen = s; }
+		}
+		private void Listen()
+		{
+			NetworkStream stream = _internetConnection.GetStream();
+
+			while (_isInternet)
+			{
+				String data = "";
+				int bit;
+				while ((bit = stream.ReadByte()) != 0)
+				{ data += (char)bit; }
+
+				if (_receivedPackets == 0)
+				{
+					String[] matrice = data.Split(',');
+					int maxX = data[0];
+					data.Remove(0);
+
+					_matrice = new Sprite[maxX, data.Length / maxX];
+					int x = 0, y = 0;
+					foreach (String chr in matrice)
+					{
+						_matrice[x, y] = new Sprite(chr.ToCharArray()[0]);
+						x++;
+						if (x >= maxX)
+						{
+							x = 0;
+							y++;
+						}
+					}
+
+					_map.LoadContent(_matrice, Content, _minimap, Graphics.GraphicsDevice);
+					_hud.LoadContent(Content, "HUD/hud2");
+					_minimap.LoadContent(_map);
+				}
+
+				_receivedPackets++;
+			}
+		}
+		private void Send(String message)
+		{
+			Byte[] msg = System.Text.Encoding.ASCII.GetBytes(message);
+			Array.Resize(ref msg, msg.Length + 1);
+			NetworkStream stream = _internetConnection.GetStream();
+			stream.Write(msg, 0, msg.Length);
 		}
 		private void UpdateOptions()
 		{
@@ -1572,6 +1658,13 @@ namespace NNNA
 			_currentScreen = TestPauseMenu(Screen.Title, Screen.Game);
 			if (_currentScreen == Screen.Game)
 			{ _pointer = _pointerOld; }
+			else if (_isInternet)
+			{
+				Send("close");
+				_threadListen.Abort(0);
+				_internetConnection.GetStream().Close();
+				_internetConnection.Close();
+			}
 
 			#if SOUND
                 _son.Resume();
