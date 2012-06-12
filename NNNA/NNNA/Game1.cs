@@ -329,9 +329,10 @@ namespace NNNA
             _actions.Add("build_ecurie", Content.Load<Texture2D>("Actions/build_ecurie"));
             _actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
             _actions.Add("build_archerie",Content.Load<Texture2D>("Actions/build_archerie"));
-            _actions.Add("build_forge", Content.Load<Texture2D>("Actions/build_usine"));
+            _actions.Add("build_forge", Content.Load<Texture2D>("Actions/build_forge"));
+            _actions.Add("build_mine", Content.Load<Texture2D>("Actions/build_mine"));
+            _actions.Add("build_siege", Content.Load<Texture2D>("Actions/build_siege"));
 
-			// m_actions.Add("build_ferme", Content.Load<Texture2D>("Actions/build_ferme"));
 			#endregion Actions Unités
 
 			#region Actions Batiments
@@ -1439,6 +1440,57 @@ namespace NNNA
                             else
                             { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
                             break;
+                        case "build_mine":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
+                            {
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Mineur((int)position.X, (int)position.Y, Content, Joueur);
+                                if (Joueur.Pay(b.Prix))
+                                {
+                                    _selectedList[0].Build(b);
+                                    _buildings.Add(b);
+                                    _toDraw.Add(b);
+                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle Mine!"), Color.White, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                            }
+                            else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
+
+                        case "build_siege":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
+                            {
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Siege((int)position.X, (int)position.Y, Content, Joueur);
+                                if (Joueur.Pay(b.Prix))
+                                {
+                                    _selectedList[0].Build(b);
+                                    _buildings.Add(b);
+                                    _toDraw.Add(b);
+                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle fabrique d'armes lourdes!"), Color.White, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                            }
+                            else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
 
                         default:
                             if (Souris.Get().Y > (_hud.IsSmart ? _hud.Position.Y + _hud.SmartPos : _hud.Position.Y))
@@ -1552,6 +1604,9 @@ namespace NNNA
                                         _currentActions.Add("build_tour");
                                         _currentActions.Add("build_ferme");
                                         _currentActions.Add("build_ecurie");
+                                        _currentActions.Add("build_mine");
+                                        _currentActions.Add("build_forge");
+                                        _currentActions.Add("build_siege");
 
                                     }
                                     _currentActions.Add("retour");
@@ -1602,6 +1657,18 @@ namespace NNNA
                                 case "build_forge": 
                                     _pointer = "Batiments/forge" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
                                     _currentAction = "build_forge";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+
+                                case "build_mine":
+                                    _pointer = "Batiments/mineur" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
+                                    _currentAction = "build_mine";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+
+                                case "build_siege":
+                                    _pointer = "Batiments/siege" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
+                                    _currentAction = "build_siege";
                                     _dimensions = new Vector2(2, 2);
                                     break;
 

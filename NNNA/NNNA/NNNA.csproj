@@ -136,8 +136,10 @@
     <Compile Include="Physics\Batiment\Maison.cs" />
     <Compile Include="Physics\Batiment\Mineur.cs" />
     <Compile Include="Physics\Batiment\Moulin.cs" />
+    <Compile Include="Physics\Batiment\Port.cs" />
     <Compile Include="Physics\Batiment\Siege.cs" />
     <Compile Include="Physics\Batiment\Tour.cs" />
+    <Compile Include="Physics\Batiment\Universite.cs" />
     <Compile Include="Physics\Building.cs" />
     <Compile Include="Physics\Batiment\Grande_Hutte.cs" />
     <Compile Include="Physics\Batiment\Hutte.cs" />
