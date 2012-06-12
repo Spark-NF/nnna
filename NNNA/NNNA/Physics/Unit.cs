@@ -25,7 +25,7 @@ namespace NNNA
 		public int Life
 		{
 			get { return _life; }
-		    protected set
+		    set
 			{
 				_life = value;
 				if (value > MaxLife)
@@ -47,9 +47,6 @@ namespace NNNA
             Moving = new List<Vector2>();
 			Poches = 0;
 		}
-
-	    protected virtual void Tirer(Unit cible, ContentManager content)
-        { }
 
 		public void Attack(Unit obj)
 		{
@@ -89,11 +86,21 @@ namespace NNNA
 				else if (DestinationResource != null)
                 { Moving = new List<Vector2> { DestinationResource.Position + new Vector2(DestinationResource.Texture.Collision.X + DestinationResource.Texture.Collision.Width / 2, DestinationResource.Texture.Collision.Y + DestinationResource.Texture.Collision.Height / 2) }; Move(Moving); }
                 if (Click)
-				{
-					var translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
-					_cparcouru = _position + new Vector2(Texture.Collision.X + Texture.Collision.Width/2.0f, Texture.Collision.Y + Texture.Collision.Height/2.0f) - _positionIni;
-					Update(translation);
-					if (Math.Abs(_cparcouru.X) >= Math.Abs(_cparcourir.X) && Math.Abs(_cparcouru.Y) >= Math.Abs(_cparcourir.Y))
+                {
+                    var translation = Vector2.Zero;
+                    if (Type == "archer" && Will == "attack" && DestinationUnit != null && (DestinationUnit.PositionCenter - PositionCenter).LengthSquared() < Portee * Portee)
+                    {
+                        _cparcouru = Vector2.Zero;
+                        Texture.Animation = false;
+                    }
+                    else
+                    {
+                        translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
+                        _cparcouru = _position + new Vector2(Texture.Collision.X + Texture.Collision.Width / 2.0f, Texture.Collision.Y + Texture.Collision.Height / 2.0f) - _positionIni;
+                        Update(translation);
+                        Texture.Animation = true;
+                    }
+                    if (Math.Abs(_cparcouru.X) >= Math.Abs(_cparcourir.X) && Math.Abs(_cparcouru.Y) >= Math.Abs(_cparcourir.Y))
 					{
 						Click = false;
 						_texture.Animation = false;
@@ -154,12 +161,17 @@ namespace NNNA
 						}
 						else
 						{
-                            if (Type == "archer" && DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && (DestinationUnit.PositionCenter - PositionCenter).LengthSquared() < Portee)
-                            { Tirer(DestinationUnit, content); }
+                            if (Type == "archer" && DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && (DestinationUnit.PositionCenter - PositionCenter).LengthSquared() < Portee*Portee)
+                            {
+                                ((Archer) this).Tirer(DestinationUnit, content);
+                                DestinationUnit.Life -= Attaque + Joueur.AdditionalAttack;
+                                if (DestinationUnit.Life + DestinationUnit.Joueur.AdditionalLife <= 0)
+                                { DestinationUnit = null; }
+                            }
                             if (DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), new Sprite[,] { }))
 							{
-								DestinationUnit.Life -= Joueur.AdditionalLife + Attaque + Joueur.AdditionalAttack;
-								if (DestinationUnit.Life <= 0)
+								DestinationUnit.Life -= Attaque + Joueur.AdditionalAttack;
+                                if (DestinationUnit.Life + DestinationUnit.Joueur.AdditionalLife <= 0)
 								{ DestinationUnit = null; }
 							}
 							if (Collides(sprites, buildings, resources, matrice))
@@ -242,7 +254,7 @@ namespace NNNA
 				}
 			}
 		}
-		public void Draw(SpriteBatch spriteBatch, Camera2D camera, Color col)
+		public virtual void Draw(SpriteBatch spriteBatch, Camera2D camera, Color col)
 		{
 			var tex = 1;
 

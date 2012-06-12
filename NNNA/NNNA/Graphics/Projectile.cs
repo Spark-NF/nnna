@@ -10,6 +10,7 @@ namespace NNNA
         protected int _speed;
         protected Vector2 _direction, _distanceRestante, _textureCenter, _but, _lastPosition;
         protected double _distanceIni;
+        public bool Touche { get; protected set; }
         private Rectangle _rect;
         protected float _realityOffset;
 
@@ -31,6 +32,7 @@ namespace NNNA
         public Projectile(ContentManager content, int x, int y, int speed, Vector2 but, string assetName)
             : base(x, y)
         {
+            Touche = false;
             _lastPosition = _position;
             _speed = speed;
             _but = but;
@@ -47,7 +49,8 @@ namespace NNNA
 
         protected void Mouvement()
         {
-            double angle = Math.Atan2(_but.Y - _position.Y, _but.X - _position.X);
+            Touche = _distanceRestante.LengthSquared() < 20;
+            var angle = Math.Atan2(_but.Y - _position.Y, _but.X - _position.X);
             _direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
             _lastPosition = _position;
             _position += _direction * _speed;

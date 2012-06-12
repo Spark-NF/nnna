@@ -6,8 +6,12 @@ namespace NNNA
 {
     class Fleche : Projectile
     {
-        public Fleche(ContentManager content, int x, int y, int speed, Vector2 but, string assetName = "Projectiles/fleche")
-            : base(content, x, y, speed, but, assetName) { }
+        public Unit Cible { get; private set; }
+        public Fleche(ContentManager content, int x, int y, int speed, Unit cible, string assetName = "Projectiles/fleche")
+            : base(content, x, y, speed, cible.PositionCenter, assetName)
+        {
+            Cible = cible;
+        }
 
         public void Update()
         {

@@ -297,7 +297,7 @@ namespace NNNA
 				agri.Visible = true;
 				feu.Visible = true;
 				_chasse = true;
-			    Game1.Joueur.AdditionalAttack += 2;
+			    Game1.Joueur.AdditionalAttack += 1;
 			    Game1.Joueur.Caserne = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Chasse » aquise !", Color.White, 5000));
 			}
@@ -335,7 +335,7 @@ namespace NNNA
 			if (!_silex && Game1.Joueur.Pay(_prixSilex))
 			{
 				pierre_polie.Visible = true;
-                Game1.Joueur.AdditionalAttack += 5;
+                Game1.Joueur.AdditionalAttack += 1;
 				_silex = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Silex » aquise !", Color.White, 5000));
 			}
@@ -354,7 +354,7 @@ namespace NNNA
 			if (!_pierrePolie && Game1.Joueur.Pay(_prixPierrePolie))
 			{
 				bronze.Visible = true;
-                Game1.Joueur.AdditionalAttack += 5;
+                Game1.Joueur.AdditionalAttack += 1;
 				_pierrePolie = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Pierre polie » aquise !", Color.White, 5000));
 			}
@@ -373,7 +373,7 @@ namespace NNNA
 			if (!_bronze && Game1.Joueur.Pay(_prixBronze))
 			{
 				outils.Visible = true;
-                Game1.Joueur.AdditionalAttack += 10;
+                Game1.Joueur.AdditionalAttack += 1;
 				_bronze = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Bronze » aquise !", Color.White, 5000));
 			}
@@ -470,7 +470,7 @@ namespace NNNA
 			{
                 if (_irrigation)
                     evolution1.Visible = true;
-                Game1.Joueur.AdditionalAttack += 15;
+                Game1.Joueur.AdditionalAttack += 1;
 				_fer = true;
 				MessagesManager.Messages.Add(new Msg("Technologie « Fer » aquise !", Color.White, 5000));
 			}
@@ -662,7 +662,7 @@ namespace NNNA
             if (!_route && Game1.Joueur.Pay(_prixRoute))
             {
                 _route = true;
-                Game1.Joueur.AdditionalSpeed += 0.06f;
+                Game1.Joueur.AdditionalSpeed += 0.02f;
                 MessagesManager.Messages.Add(new Msg("Technologie « Route » aquise !", Color.White, 5000));
             }
             else if (!_route)
@@ -697,6 +697,7 @@ namespace NNNA
                 tabItem4.Visible = true;
                 Game1.FlashBool = true;
                 MessagesManager.Messages.Add(new Msg("ERE IMPERIALE ATTEINTE !!", Color.Red, 5000));
+
                 // Modif des sprites a faire içi
             }
             else if (_ere2 && !_ere3)

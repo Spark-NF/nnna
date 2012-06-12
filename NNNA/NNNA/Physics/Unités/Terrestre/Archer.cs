@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace NNNA
 {
@@ -35,10 +36,10 @@ namespace NNNA
                 joueur.Resource("Nourriture").Remove(100); joueur.Resource("Fer").Remove(20);
             }
             Attaque = 10;
-            VitesseCombat = 30;
+            VitesseCombat = 90;
             Life = 100;
             LineSight = 384;
-            Portee = 10;
+            Portee = (int)(LineSight * 0.8f) + Joueur.AdditionalUnitLineSight/2;
             Regeneration = 1;
             Speed = 0.05f + joueur.AdditionalSpeed;
             speed_tirs = 8;
@@ -48,9 +49,23 @@ namespace NNNA
             Prix.Add("Fer", 20);
         }
 
-        protected override void Tirer(Unit cible, ContentManager content)
+        public void Tirer(Unit cible, ContentManager content)
         {
-            tirs.Add(new Fleche(content, (int) Position.X, (int) Position.Y, speed_tirs, cible.PositionCenter));
+            tirs.Add(new Fleche(content, (int) Position.X, (int) Position.Y, speed_tirs, cible));
+        }
+
+        public override void Draw (SpriteBatch spriteBatch, Camera2D camera, Color col)
+        {
+            base.Draw(spriteBatch, camera, col);
+            for (int i = 0; i < tirs.Count; i++)
+            {
+                tirs[i].Update();
+                tirs[i].DrawRotation(spriteBatch, camera);
+                if (tirs[i].Touche)
+                {
+                    tirs.RemoveAt(i);
+                }
+            }
         }
     }
 }

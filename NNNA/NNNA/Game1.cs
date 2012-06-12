@@ -92,7 +92,7 @@ namespace NNNA
 
 		#region Enums
 
-		public enum Screen
+	    private enum Screen
 		{
 			Title,
 			Play,
@@ -113,7 +113,8 @@ namespace NNNA
 			Game,
 			GameMenu
 		};
-		public enum MapType
+
+	    private enum MapType
 		{
 			Island,
 			Flat
@@ -1913,7 +1914,6 @@ namespace NNNA
 		}
         private void DrawGame()
         {
-            var index = (int)Math.Floor(_compt / 25);
             var bui = _currentAction.StartsWith("build_");
 
             // Affichage de la carte
@@ -1948,9 +1948,9 @@ namespace NNNA
             }
 
             // Dessin des pointillés de déplacement
-            foreach (Unit unit in Joueur.Units)
+            foreach (Unit unit in _selectedList)
             {
-                if (unit.Selected && unit.Click)
+                if (unit.Click)
                 {
                     for (int j = 0; j < unit.Moving.Count; j++)
                     {
