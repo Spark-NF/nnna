@@ -51,21 +51,7 @@ namespace NNNA
 
         public void Tirer(Unit cible, ContentManager content)
         {
-            tirs.Add(new Fleche(content, (int) Position.X, (int) Position.Y, speed_tirs, cible));
-        }
-
-        public override void Draw (SpriteBatch spriteBatch, Camera2D camera, Color col)
-        {
-            base.Draw(spriteBatch, camera, col);
-            for (int i = 0; i < tirs.Count; i++)
-            {
-                tirs[i].Update();
-                tirs[i].DrawRotation(spriteBatch, camera);
-                if (tirs[i].Touche)
-                {
-                    tirs.RemoveAt(i);
-                }
-            }
+            tirs.Add(new Fleche(content, (int) PositionCenter.X, (int) PositionCenter.Y, speed_tirs, ref cible));
         }
     }
 }

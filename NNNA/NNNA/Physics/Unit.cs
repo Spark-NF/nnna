@@ -14,7 +14,7 @@ namespace NNNA
 		public int PochesMax { get; private set; }
 	    private string PochesContent { get; set; }
 		public int MaxLife { get; private set; }
-	    protected int Attaque { get; set;  }
+	    public int Attaque { get; set;  }
 		public int VitesseCombat { private get; set; }
 		public int Portee { private get; set; }
 		public int Regeneration { get; set; }
@@ -164,9 +164,6 @@ namespace NNNA
                             if (Type == "archer" && DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && (DestinationUnit.PositionCenter - PositionCenter).LengthSquared() < Portee*Portee)
                             {
                                 ((Archer) this).Tirer(DestinationUnit, content);
-                                DestinationUnit.Life -= Attaque + Joueur.AdditionalAttack;
-                                if (DestinationUnit.Life + DestinationUnit.Joueur.AdditionalLife <= 0)
-                                { DestinationUnit = null; }
                             }
                             if (DestinationUnit != null && Will == "attack" && Game1.Frame % VitesseCombat == 0 && Collides(new List<MovibleSprite> { DestinationUnit }, new List<Building>(), new List<ResourceMine>(), new Sprite[,] { }))
 							{

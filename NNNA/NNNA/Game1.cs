@@ -1947,7 +1947,7 @@ namespace NNNA
                 }
             }
 
-            // Dessin des pointillés de déplacement
+            #region POINTILLÉS
             foreach (Unit unit in _selectedList)
             {
                 if (unit.Click)
@@ -1964,6 +1964,7 @@ namespace NNNA
                     { unit.Go.Draw(_spriteBatch, unit.Moving[unit.Moving.Count - 1] - _camera.Position - new Vector2(unit.Go.Width, unit.Go.Height) / 2.0f, Color.White); }
                 }
             }
+            #endregion
 
             // Affichage des objets sur la carte
             foreach (Sprite sprite in _toDraw)
@@ -2075,8 +2076,36 @@ namespace NNNA
                 }
                 #endregion
             }
+            #region ARROWS
+            foreach (Unit unit in _units)
+            {
+                if (unit is Archer)
+                {
+                    var archer = (unit as Archer);
+                    for (int i = 0; i < archer.Tirs.Count; i++)
+                    {
+                        archer.Tirs[i].Update();
+                        archer.Tirs[i].DrawRotation(_spriteBatch, _camera);
+                        if (archer.Tirs[i].Touche)
+                        {
+                            if (archer.DestinationUnit != null)
+                            {
+                                archer.DestinationUnit.Life -= archer.Attaque + Joueur.AdditionalAttack;
+                                if (archer.DestinationUnit.Life + archer.DestinationUnit.Joueur.AdditionalLife <= 0)
+                                    archer.DestinationUnit = null;
+                            }
+                            archer.Tirs.RemoveAt(i);
+                        }
+                        else if(archer.Tirs[i].Fin_parcour)
+                        {
+                            archer.Tirs.RemoveAt(i);
+                        }
+                    }
+                }
+            }
+            #endregion
 
-			// Rectangle de séléction
+            // Rectangle de séléction
 			var coos = new Vector2(
 				_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0),
 				_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)

@@ -11,8 +11,9 @@ namespace NNNA
         protected Vector2 _direction, _distanceRestante, _textureCenter, _but, _lastPosition;
         protected double _distanceIni;
         public bool Touche { get; protected set; }
-        private Rectangle _rect;
+        protected Rectangle _rect;
         protected float _realityOffset;
+        public bool Fin_parcour { get; private set; }
 
         #region Get / Set
         public Vector2 But
@@ -33,6 +34,7 @@ namespace NNNA
             : base(x, y)
         {
             Touche = false;
+            Fin_parcour = false;
             _lastPosition = _position;
             _speed = speed;
             _but = but;
@@ -49,7 +51,6 @@ namespace NNNA
 
         protected void Mouvement()
         {
-            Touche = _distanceRestante.LengthSquared() < 20;
             var angle = Math.Atan2(_but.Y - _position.Y, _but.X - _position.X);
             _direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
             _lastPosition = _position;
@@ -61,6 +62,7 @@ namespace NNNA
             else
             { _position.Y += _realityOffset; }
             _distanceRestante = _but - _position;
+            Fin_parcour = _realityOffset < -0.7f;
         }
 
         public new void Draw(SpriteBatch spritebatch, Camera2D camera)
