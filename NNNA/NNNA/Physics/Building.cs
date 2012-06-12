@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
-	class Building : StaticSprite
+	[Serializable]
+	public class Building : StaticSprite
 	{
 		protected Joueur _joueur;
 		public Joueur Joueur

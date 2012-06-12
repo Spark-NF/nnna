@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework.Content;
-
+﻿using System;
+using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
+	[Serializable]
     class Maison : Building
     {
         public Maison(int x = 0, int y = 0)

@@ -1,9 +1,9 @@
 ﻿using System;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
+	[Serializable]
     class Fleche : Projectile
     {
         public Unit Cible { get; private set; }

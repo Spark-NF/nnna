@@ -1,9 +1,11 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
 	// 1ere Ere
+	[Serializable]
 	class GrandeHutte : ProductionBuilding
 	{
 		public GrandeHutte(int x = 0, int y = 0)

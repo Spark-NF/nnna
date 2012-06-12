@@ -88,6 +88,7 @@
     <Reference Include="System.Core">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
@@ -115,6 +116,9 @@
     <Compile Include="Lib\Console.cs" />
     <Compile Include="Lib\ConsoleMessage.cs" />
     <Compile Include="Lib\Joueur.cs" />
+    <Compile Include="Lib\JoueurHuman.cs" />
+    <Compile Include="Lib\JoueurIA.cs" />
+    <Compile Include="Lib\JoueurInternet.cs" />
     <Compile Include="Lib\Node.cs" />
     <Compile Include="Lib\NodeList.cs" />
     <Compile Include="Lib\PathFinding.cs" />

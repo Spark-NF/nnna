@@ -7,7 +7,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace NNNA
 {
-	class Unit : MovibleSprite
+	[Serializable]
+	public class Unit : MovibleSprite
 	{
         public Joueur Joueur { get; protected set;  }
 		public Building Affiliate { get; protected set; }
@@ -65,15 +66,15 @@ namespace NNNA
 			Will = "mine";
 		}
 
-		public void ClickMouvement(Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice, ContentManager content)
+		public void ClickMouvement(GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice, ContentManager content)
 		{
 			if (Click || Selected || DestinationUnit != null || DestinationBuilding != null)
 			{
-				if (Souris.Get().Clicked(MouseButton.Right) && (curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) || hud.IsSmart) && (Selected || !Click))
+				if (Souris.Get().Clicked(MouseButton.Right) && (Souris.Get().Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) || hud.IsSmart) && (Selected || !Click))
 				{
                     if (!Clavier.Get().Pressed(Keys.LeftControl) && !Clavier.Get().Pressed(Keys.RightControl))
                         Moving = new List<Vector2>();
-                    Moving.Add(curseur.Position + camera.Position);
+					Moving.Add(Souris.Get().Position + camera.Position);
                     Move(Moving);
 					DestinationUnit = null;
 					DestinationBuilding = null;
@@ -95,7 +96,7 @@ namespace NNNA
                     }
                     else
                     {
-                        translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
+                        translation = _direction * gameTime.ElapsedGameTime.Milliseconds * Speed;
                         _cparcouru = _position + new Vector2(Texture.Collision.X + Texture.Collision.Width / 2.0f, Texture.Collision.Y + Texture.Collision.Height / 2.0f) - _positionIni;
                         Update(translation);
                         Texture.Animation = true;
@@ -178,18 +179,18 @@ namespace NNNA
 				}
 			}
 		}
-		public void ClickMouvement(Sprite[,] map, Sprite curseur, GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice)
+		public void ClickMouvement(Sprite[,] map, GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice)
 		{
 			if (Click || Selected)
 			{
-				if (Souris.Get().Clicked(MouseButton.Right) && curseur.Position.Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (Selected || !Click))
+				if (Souris.Get().Clicked(MouseButton.Right) && Souris.Get().Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (Selected || !Click))
 				{
 					Click = true;
 					_clickInterne = false;
 					_positionIni = _position;
-					ClickPosition = curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 2), (float)Math.Round((double)Texture.Height * 4 / 5));
+					ClickPosition = Souris.Get().Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 2), (float)Math.Round((double)Texture.Height * 4 / 5));
 					var start = Game1.Xy2Matrice(_positionIni);
-					var destination = Game1.Xy2Matrice(curseur.Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 8), (float)Math.Round((double)Texture.Height * 4 / 5)));
+					var destination = Game1.Xy2Matrice(Souris.Get().Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 8), (float)Math.Round((double)Texture.Height * 4 / 5)));
 					_pathList = PathFinding.FindPath(map, map[(int)start.Y, (int)start.X], map[(int)destination.Y, (int)destination.X]);
 					if (_pathList != null)
 					{ _pathIterator = _pathList.Count - 1; }
@@ -201,8 +202,8 @@ namespace NNNA
 					{
 						if (!_clickInterne && _pathList != null)
 						{
-							_angle = Math.Atan2(_pathList[_pathIterator].PositionCenter.Y - _position.Y, _pathList[_pathIterator].PositionCenter.X - _position.X);
-							_direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
+							Angle = Math.Atan2(_pathList[_pathIterator].PositionCenter.Y - _position.Y, _pathList[_pathIterator].PositionCenter.X - _position.X);
+							_direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
 							_cparcourir = new Vector2(_pathList[_pathIterator].PositionCenter.X - _position.X, _pathList[_pathIterator].PositionCenter.Y - _position.Y);
 							_cparcouru = Vector2.Zero;
 							_clickInterne = true;
@@ -216,7 +217,7 @@ namespace NNNA
 						else
 						{
 							_cparcouru = _position - _positionIni;
-							var translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
+							var translation = _direction * gameTime.ElapsedGameTime.Milliseconds * Speed;
 							Update(translation);
 							if (Collides(sprites, buildings, resources, matrice))
 							{ _position -= translation; }
@@ -226,8 +227,8 @@ namespace NNNA
 					{
 						if (!_clickInterne)
 						{
-							_angle = Math.Atan2(ClickPosition.Y - _position.Y, ClickPosition.X - _position.X);
-							_direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
+							Angle = Math.Atan2(ClickPosition.Y - _position.Y, ClickPosition.X - _position.X);
+							_direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
 							_cparcourir = new Vector2(ClickPosition.X - _position.X, ClickPosition.Y - _position.Y);
 							_cparcouru = Vector2.Zero;
 							_clickInterne = true;
@@ -241,7 +242,7 @@ namespace NNNA
 						else
 						{
 							_cparcouru = _position - _positionIni;
-							var translation = _direction * gameTime.ElapsedGameTime.Milliseconds * _speed;
+							var translation = _direction * gameTime.ElapsedGameTime.Milliseconds * Speed;
 							Update(translation);
 							if (Collides(sprites, buildings, resources, matrice))
 							{ _position -= translation; }
@@ -258,30 +259,30 @@ namespace NNNA
 			//MODE 8 ANGLES
 			if (_dec == 45)
 			{
-				if (_angle > 1 * (Math.PI / 8) && _angle <= 3 * (Math.PI / 8))
+				if (Angle > 1 * (Math.PI / 8) && Angle <= 3 * (Math.PI / 8))
 				{ tex = 2; }
-				else if (_angle > 3 * (Math.PI / 8) && _angle <= 5 * (Math.PI / 8))
+				else if (Angle > 3 * (Math.PI / 8) && Angle <= 5 * (Math.PI / 8))
 				{ tex = 3; }
-				else if (_angle > 5 * (Math.PI / 8) && _angle <= 7 * (Math.PI / 8))
+				else if (Angle > 5 * (Math.PI / 8) && Angle <= 7 * (Math.PI / 8))
 				{ tex = 4; }
-				else if (_angle > 7 * (Math.PI / 8) || _angle <= -7 * (Math.PI / 8))
+				else if (Angle > 7 * (Math.PI / 8) || Angle <= -7 * (Math.PI / 8))
 				{ tex = 5; }
-				else if (_angle > -7 * (Math.PI / 8) && _angle <= -5 * (Math.PI / 8))
+				else if (Angle > -7 * (Math.PI / 8) && Angle <= -5 * (Math.PI / 8))
 				{ tex = 6; }
-				else if (_angle > -5 * (Math.PI / 8) && _angle <= -3 * (Math.PI / 8))
+				else if (Angle > -5 * (Math.PI / 8) && Angle <= -3 * (Math.PI / 8))
 				{ tex = 7; }
-				else if (_angle > -3 * (Math.PI / 8) && _angle <= -1 * (Math.PI / 8))
+				else if (Angle > -3 * (Math.PI / 8) && Angle <= -1 * (Math.PI / 8))
 				{ tex = 8; }
 			}
 
 			//MODE 4 ANGLES
 			else
 			{
-				if (_angle > 1 * (Math.PI / 4) && _angle <= 3 * (Math.PI / 4))
+				if (Angle > 1 * (Math.PI / 4) && Angle <= 3 * (Math.PI / 4))
 				{ tex = 2; }
-				else if (_angle > 3 * (Math.PI / 4) || _angle <= -3 * (Math.PI / 4))
+				else if (Angle > 3 * (Math.PI / 4) || Angle <= -3 * (Math.PI / 4))
 				{ tex = 3; }
-				else if (_angle > -3 * (Math.PI / 4) && _angle <= -1 * (Math.PI / 4))
+				else if (Angle > -3 * (Math.PI / 4) && Angle <= -1 * (Math.PI / 4))
 				{ tex = 4; }
 			}
 

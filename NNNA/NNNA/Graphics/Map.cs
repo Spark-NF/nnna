@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-	class Map
+	public class Map
 	{
 		private int _mapWidth;
 		public int MapWidth
@@ -34,13 +34,13 @@ namespace NNNA
 				textureColor[i] = Color.Black;
 				i++;
 			}
-			for (int l = 0; l < map.GetLength(1); l++)
+			for (int l = 0; l < map.GetLength(0); l++)
 			{
 				textureColor[i] = Color.Black;
 				i++;
 				textureColor[i] = Color.Black;
 				i++;
-				for (int c = 0; c < map.GetLength(0); c++)
+				for (int c = 0; c < map.GetLength(1); c++)
 				{
 					var name = map[l, c].Name;
 					switch (name)
@@ -72,7 +72,7 @@ namespace NNNA
 
 						case 't':
 							var texture = "eau3";
-							if (c < map.GetLength(0) - 1 && c >= 1 && l < map.GetLength(1) - 1 && l >= 1)
+							if (c < map.GetLength(1) - 1 && c >= 1 && l < map.GetLength(0) - 1 && l >= 1)
 							{
 								// Entouré de sable
 								if (!map[l + 1, c].Liquid && !map[l - 1, c].Liquid && !map[l, c + 1].Liquid && !map[l, c - 1].Liquid)

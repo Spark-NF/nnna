@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-	class Minimap
+	public class Minimap
 	{
 		private Rectangle _reducedMap;
 		private float _ratio;

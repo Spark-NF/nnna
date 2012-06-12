@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace NNNA
 {
-	class Camera2D
+	public class Camera2D
 	{
 		private int _speed;
 		public int Speed

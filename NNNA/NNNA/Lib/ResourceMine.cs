@@ -1,9 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-	class ResourceMine : StaticSprite
+	[Serializable]
+	public class ResourceMine : StaticSprite
 	{
 		public Resource Resource { get; private set; }
 		public int Quantity { get; private set; }

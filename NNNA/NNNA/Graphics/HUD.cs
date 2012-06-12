@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-    class HUD
+    public class HUD
 	{
 		private Texture2D _textureBackground;
 

@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using System;
+using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
+	[Serializable]
     class Siege : ProductionBuilding
     {
         // Ere 2/3

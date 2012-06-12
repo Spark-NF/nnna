@@ -7,11 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-	class Sprite
+	[Serializable]
+	public class Sprite
 	{
 		protected bool _decouvert;
 		protected string _assetName;
-		public Texture2D Dots;
+
 		public Image Go;
 
 		protected Image _texture;
@@ -54,21 +55,26 @@ namespace NNNA
 		}
 		public bool Liquid;
 
-		public Sprite(Char name)
+		[field: NonSerialized]
+		public Texture2D Dots;
+
+		public Sprite()
 		{
 			_crossable = true;
 			_decouvert = false;
+		}
+		public Sprite(Char name)
+			: this()
+		{
 			_name = name;
 			Liquid = name == 'e' || name == 't';
 		}
 		public Sprite(Vector2 position)
-		{
-			_crossable = true;
-			_decouvert = false;
-			_position = position;
-		}
+			: this()
+		{ _position = position; }
 		public Sprite(int x, int y) : this(new Vector2(x, y)) { }
 		public Sprite(ContentManager content, string assetName, int x, int y, bool crossable = true, int i = -1, int j = -1, char name = '\0')
+			: this()
 		{
 			_decouvert = false;
 			_position = new Vector2(x, y);

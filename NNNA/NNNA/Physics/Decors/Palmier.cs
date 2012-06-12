@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
+	[Serializable]
 	class Palmier : Building
 	{
 		public Palmier(int x, int y, ContentManager content)

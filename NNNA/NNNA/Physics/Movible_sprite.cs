@@ -6,66 +6,42 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-	class MovibleSprite : Sprite
+	[Serializable]
+	public class MovibleSprite : Sprite
 	{
 	    public string Will { get; set; }
-
 	    public Building DestinationBuilding { get; set; }
-
 	    public Unit DestinationUnit { get; set; }
-
-	    public ResourceMine DestinationResource { get; set; }
-
-	    private Texture2D _icon;
-
-	    protected Texture2D _selection;
-
-	    public int Updates;
+		public ResourceMine DestinationResource { get; set; }
+		public int Updates;
 		protected int _dec = 90;
-
-		protected string _type;
-		public string Type
-		{ get { return _type; } }
-
+		public string Type { get; protected set; }
+		public Dictionary<string, int> Prix { get; private set; }
+		public double Angle { get; set; }
+		public float Speed { get; set; }
+		public bool Click { get; protected set; }
+		protected Vector2 ClickPosition { get; set; }
+		public bool Selected { get; set; }
 		protected Vector2 _positionIni;
-
-	    protected Vector2 _cparcourir;
-
-	    protected Vector2 _cparcouru;
-
-	    protected double _angle = 90;
-		public double Angle
-		{
-			get { return _angle; }
-			set { _angle = value; }
-		}
-
+		protected Vector2 _cparcourir;
+		protected Vector2 _cparcouru;
 		protected Vector2 _direction;
-
-	    protected float _speed = 0.1f;
-		public float Speed
-		{
-			get { return _speed; }
-			set { _speed = value; }
-		}
-
 		protected List<Sprite> _pathList;
 		protected int _pathIterator;
+		protected bool _clickInterne;
 
-	    public Dictionary<string, int> Prix { get; private set; }
+		[field: NonSerialized]
+	    private Texture2D _icon;
 
-	    protected bool _clickInterne;
-
-	    public bool Click { get; protected set; }
-
-	    protected Vector2 ClickPosition { get; set; }
-
-	    public bool Selected { get; set; }
+		[field: NonSerialized]
+	    protected Texture2D _selection;
 
 	    public MovibleSprite(int x, int y)
 			: base(x, y)
 		{
-	        Prix = new Dictionary<string, int>();
+	    	Speed = 0.1f;
+	    	Angle = 90;
+	    	Prix = new Dictionary<string, int>();
 	        Selected = false;
 			Click = false;
 			_clickInterne = false;
@@ -82,8 +58,8 @@ namespace NNNA
                     _texture.Animation = true;
                     ClickPosition = coordinates[0];
                     _cparcourir = ClickPosition - pos;
-                    _angle = Math.Atan2(_cparcourir.Y, _cparcourir.X);
-                    _direction = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
+                    Angle = Math.Atan2(_cparcourir.Y, _cparcourir.X);
+                    _direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
                     _cparcouru = Vector2.Zero;
                     _positionIni = pos;
                 }
@@ -107,8 +83,8 @@ namespace NNNA
                     Click = true;
                     _texture.Animation = true;
                     ClickPosition = coordinates[0];
-                    _angle = Math.Atan2(ClickPosition.Y - _position.Y, ClickPosition.X - _position.X);
-                    _direction = new Vector2((float) Math.Cos(_angle), (float) Math.Sin(_angle));
+                    Angle = Math.Atan2(ClickPosition.Y - _position.Y, ClickPosition.X - _position.X);
+                    _direction = new Vector2((float) Math.Cos(Angle), (float) Math.Sin(Angle));
                     _cparcourir = new Vector2(ClickPosition.X - _position.X, ClickPosition.Y - _position.Y);
                     _cparcouru = Vector2.Zero;
                     _positionIni = _position;

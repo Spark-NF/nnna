@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,11 +8,9 @@ namespace NNNA
 	/// <summary>
 	/// Cette classe permet de gérer des animations très facilement.
 	/// </summary>
-	class Image
+	[Serializable]
+	public class Image
 	{
-		private readonly Texture2D _texture;
-		public Texture2D Texture
-		{ get { return _texture; } }
 		public int Part { get; set; }
 		private readonly int _columns;
 		private readonly int _rows;
@@ -39,6 +38,11 @@ namespace NNNA
 		}
 		public bool Finished
 		{ get { return _single && _current == _columns - 1; } }
+
+		[field: NonSerialized]
+		private readonly Texture2D _texture;
+		public Texture2D Texture
+		{ get { return _texture; } }
 
 		public Image(Texture2D texture, int columns = 1, int rows = 1, int speed = 15)
 		{

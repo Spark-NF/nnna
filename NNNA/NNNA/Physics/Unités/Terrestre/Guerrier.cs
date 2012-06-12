@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using System;
+using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
+	[Serializable]
 	class Guerrier : LandUnit
 	{
 		// SoundEffect creationguerrier;
@@ -14,7 +16,7 @@ namespace NNNA
 			: base(x, y)
 		{
             Joueur = joueur;
-			_type = "guerrier";
+			Type = "guerrier";
             if (add_pop)
             {
                 joueur.Population++;

@@ -6,14 +6,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-#if LIVE
-	using Microsoft.Xna.Framework.GamerServices;
-#endif
 
 namespace NNNA
 {
@@ -63,10 +62,11 @@ namespace NNNA
 		private HUD _hud;
 		private Camera2D _camera;
 		internal static Joueur Joueur;
-		private Joueur[] _enemies;
+		private List<JoueurAI> _enemiesAI;
+		private List<JoueurInternet> _enemiesInternet;
 		private Building _selectedBuilding;
 		private float[,] _heightMap;
-		private readonly List<ResourceMine> _resources = new List<ResourceMine>();
+		private List<ResourceMine> _resources = new List<ResourceMine>();
 		private readonly List<Unit> _selectedList = new List<Unit>();
 		private readonly List<Building> _buildings = new List<Building>();
 		private readonly List<MovibleSprite> _units = new List<MovibleSprite>();
@@ -86,9 +86,10 @@ namespace NNNA
 
 		// Internet
 		private TcpClient _internetConnection;
-		private bool _isInternet = false;
+		private bool _isInternet;
 		private Thread _threadListen;
 		private int _receivedPackets;
+		private int _position;
 
 		#region Enums
 
@@ -96,15 +97,11 @@ namespace NNNA
 		{
 			Title,
 			Play,
-			PlayCampain,
 			PlayQuick,
 			PlayQuick2,
 			PlayMultiplayer,
 			PlayMultiplayerHost,
 			PlayMultiplayerJoin,
-            Local,
-            Internet,
-            OptionsReseau,
 			Options,
 			OptionsGraphics,
 			OptionsSound,
@@ -206,7 +203,7 @@ namespace NNNA
 			_map = new Map();
 			_camera = new Camera2D(0, 0);
 			_curseur = new Sprite(0, 0);
-			Joueur = new Joueur(Color.Red, Environment.UserName, Content);
+			Joueur = new JoueurHuman(Color.Red, Environment.UserName, Content);
 			_players = new[] { 2, 1, 0, 0 };
 			_playersColors = new[] { Color.Blue, Color.Red, Color.Green, Color.Yellow };
 
@@ -688,6 +685,121 @@ namespace NNNA
 				}
 			}
 		}
+		private void Generate(int internetPlayers = 0)
+		{
+			bool ok = false;
+			var spawns = new List<Point>();
+			var heights = new List<float>();
+			int[] sizes = { 50, 100, 200 };
+			string[] names = { Environment.UserName, "Lord Lard", "Herr von Speck", "Monsieur Martin" };
+			var dist = (float)Math.Round((double)sizes[_quickSize] / 2);
+			//int users = _players.Count(t => t > 0);
+			_foes = 0;
+
+			var colors = new List<Color> { _playersColors[0] };
+			for (int i = 1; i < _players.Length; i++)
+			{
+				if (_players[i] > 0)
+				{
+					colors.Add(_playersColors[i]);
+					_foes++;
+				}
+			}
+
+			// On regénère une carte tant qu'elle est incapable d'accueillir le bon nombre de spawns
+			while (!ok)
+			{
+				// Génération
+				_matrice = GenerateMap(_quickType, sizes[_quickSize], sizes[_quickSize]);
+				_minimap.Dimensions = new Vector2(sizes[_quickSize], sizes[_quickSize]);
+
+				// Spawns
+				heights.Clear();
+				for (int x = 0; x < _heightMap.GetLength(0); x++)
+				{
+					for (int y = 0; y < _heightMap.GetLength(1); y++)
+					{ heights.Add(_heightMap[x, y] * 255); }
+				}
+				float waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
+				int last = heights.IndexOf(waterline) > 0 ? heights.IndexOf(waterline) : heights.Count;
+				var heightsOr = new List<float>(heights);
+				heights.Sort((x, y) => (y.CompareTo(x)));
+				spawns.Clear();
+				int j = 0;
+
+				// On génère autant de spawns qu'il y aura de joueurs, chacun espacés d'au moins $dist
+				while (spawns.Count < _foes + 1 && j < last)
+				{
+					int index = heightsOr.IndexOf(heights[j]);
+					heightsOr[index] = -1;
+					var point = new Point(index % _heightMap.GetLength(1), index / _heightMap.GetLength(1));
+					bool isNear = false;
+					foreach (Point p in spawns)
+					{
+						if (point.DistanceTo(p) <= dist)
+						{ isNear = true; }
+					}
+					if (!isNear)
+					{ spawns.Add(point); }
+					j++;
+				}
+
+				if (spawns.Count == _foes + 1)
+				{ ok = true; }
+			}
+
+			//Joueur
+			Joueur = new JoueurHuman(colors[0], names[0], Content);
+			var hutte = new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, Joueur);
+			Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
+			Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
+			Joueur.Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, hutte, false));
+			Joueur.Buildings.Add(hutte);
+			_camera.Position = Matrice2Xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - _screenSize / 2;
+			_units.AddRange(Joueur.Units);
+			_buildings.AddRange(Joueur.Buildings);
+
+			// Ennemis
+			_enemiesAI = new List<JoueurAI>();
+			_enemiesInternet = new List<JoueurInternet>();
+			for (int i = 0; i < internetPlayers; i++)
+			{
+				_enemiesInternet.Add(new JoueurInternet(colors[i + 1], names[i + 1], Content));
+				hutte = new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, _enemiesInternet[i]);
+				_enemiesInternet[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesInternet[i], false));
+				_enemiesInternet[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesInternet[i], false));
+				_enemiesInternet[i].Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesInternet[i], hutte, false));
+				_enemiesInternet[i].Buildings.Add(hutte);
+				_units.AddRange(_enemiesInternet[i].Units);
+				_buildings.AddRange(_enemiesInternet[i].Buildings);
+			}
+			for (int i = internetPlayers; i < _foes; i++)
+			{
+				int u = i - internetPlayers;
+				_enemiesAI.Add(new JoueurAI(colors[i + 1], names[i + 1], Content));
+				hutte = new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, _enemiesAI[u]);
+				_enemiesAI[u].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesAI[u], false));
+				_enemiesAI[u].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesAI[u], false));
+				_enemiesAI[u].Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesAI[u], hutte, false));
+				_enemiesAI[u].Buildings.Add(hutte);
+				_units.AddRange(_enemiesAI[u].Units);
+				_buildings.AddRange(_enemiesAI[u].Buildings);
+			}
+
+			//Decor
+			_resources.Clear();
+			for (int i = 0; i < 20 * (_quickResources + _quickSize + 1); i++)
+			{
+				int x = _random.Next(_matrice.GetLength(0));
+				int y = _random.Next(_matrice.GetLength(1));
+				while ((!_matrice[y, x].Crossable))
+				{
+					x = _random.Next(_matrice.GetLength(0));
+					y = _random.Next(_matrice.GetLength(1));
+				}
+				_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 250, new Image(Content, "Resources/bois_1_sprite_small")));
+			}
+		}
 		private void UpdateMultiplayer()
 		{
 			_currentScreen = TestMenu(Screen.PlayMultiplayerHost, Screen.PlayMultiplayerJoin, Screen.Play);
@@ -714,17 +826,30 @@ namespace NNNA
 					Generate();
 
 					Send(Joueur.Name);
+
 					String matrice = _matrice.GetLength(0).ToString(CultureInfo.InvariantCulture);
 					for (int x = 0; x < _matrice.GetLength(0); x++)
 					{
 						for (int y = 0; y < _matrice.GetLength(1); y++)
-						{ matrice += "," + _matrice[x, y].Name; }
+						{ matrice += "," + _matrice[x, y]; }
 					}
-					Send(matrice);
+					Send(Serialize(matrice));
+
+					var p = new List<Joueur> { Joueur };
+					p.AddRange(_enemiesInternet);
+					p.AddRange(_enemiesAI);
+					Send(Serialize(p));
+
+					Send(Serialize(_resources));
+
+					/*_receivedPackets = 4;
+					_threadListen = new Thread(Listen);
+					_threadListen.Start();*/
 
 					_techno.Reset();
 					MessagesManager.Clear();
 					Chat.Clear();
+
 					_map.LoadContent(_matrice, Content, _minimap, Graphics.GraphicsDevice);
 					_hud.LoadContent(Content, "HUD/hud2");
 					_minimap.LoadContent(_map);
@@ -756,10 +881,42 @@ namespace NNNA
 				}
 			}
 		}
+		public static string Serialize(object data)
+		{
+			using (var stream = new MemoryStream())
+			{
+				var formatter = new BinaryFormatter();
+				formatter.Serialize(stream, data);
+				stream.Flush();
+				stream.Position = 0;
+				return Convert.ToBase64String(stream.ToArray());
+			}
+
+			/*var serializer = new XmlSerializer(obj.GetType());
+			using (var writer = new StringWriter())
+			{
+				serializer.Serialize(writer, obj);
+				return writer.ToString();
+			}*/
+		}
+		public static T Unserialize<T>(string data)
+		{
+			byte[] b = Convert.FromBase64String(data);
+			using (var stream = new MemoryStream(b))
+			{
+				var formatter = new BinaryFormatter();
+				stream.Seek(0, SeekOrigin.Begin);
+				return (T)formatter.Deserialize(stream);
+			}
+
+			/*var serializer = new XmlSerializer(typeof(T));
+			using (var reader = new StringReader(xml))
+			{ return (T)serializer.Deserialize(reader); }*/
+		}
 		private void UpdatePlayMultiplayerJoin()
 		{
 			Screen s = TestMenu(Screen.PlayMultiplayerJoin, Screen.OptionsSound, Screen.PlayMultiplayer);
-			if (s == Screen.OptionsSound)
+			if (s == Screen.OptionsSound && Clavier.Get().Text != "")
 			{
 				TcpClient client = new TcpClient(Clavier.Get().Text, 25666);
 				Byte[] data = System.Text.Encoding.ASCII.GetBytes("Trololol");
@@ -767,7 +924,6 @@ namespace NNNA
 				stream.Write(data, 0, data.Length);
 
 				Send(Joueur.Name);
-                Send("Trololol");
 
 				_threadListen = new Thread(Listen);
 				_threadListen.Start();
@@ -792,28 +948,64 @@ namespace NNNA
 				while ((bit = stream.ReadByte()) != 0)
 				{ data += (char)bit; }
 
-				if (_receivedPackets == 0)
+				switch (_receivedPackets)
 				{
-					String[] matrice = data.Split(',');
-					int maxX = data[0];
-					data.Remove(0);
+					case 0:
+						var matrice = Unserialize<String>(data);
 
-					_matrice = new Sprite[maxX, data.Length / maxX];
-					int x = 0, y = 0;
-					foreach (String chr in matrice)
-					{
-						_matrice[x, y] = new Sprite(chr.ToCharArray()[0]);
-						x++;
-						if (x >= maxX)
+						List<String> mat = matrice.Split(',').ToList();
+						int length = Convert.ToInt32(mat[0]);
+						mat.RemoveAt(0);
+
+						_matrice = new Sprite[length, mat.Count / length];
+						for (int x = 0; x < mat.Count; x++)
+						{ _matrice[x % length, (int)Math.Floor((float)x / length)] = new Sprite(mat[x].ToCharArray()[0]); }
+						break;
+
+					case 1:
+						_position = Unserialize<int>(data);
+						break;
+
+					case 2:
+						var joueurs = Unserialize<List<Joueur>>(data);
+						Joueur = joueurs[_position];
+						foreach (Joueur j in joueurs)
 						{
-							x = 0;
-							y++;
-						}
-					}
+							if (j != Joueur)
+							{
+								switch (j.Type)
+								{
+									case "ai":
+										_enemiesAI.Add((JoueurAI)j);
+										break;
 
-					_map.LoadContent(_matrice, Content, _minimap, Graphics.GraphicsDevice);
-					_hud.LoadContent(Content, "HUD/hud2");
-					_minimap.LoadContent(_map);
+									case "human":
+									case "internet":
+										_enemiesInternet.Add((JoueurInternet)j);
+										break;
+								}
+							}
+						}
+						break;
+
+					case 3:
+						_resources = Unserialize<List<ResourceMine>>(data);
+						
+						_map.LoadContent(_matrice, Content, _minimap, Graphics.GraphicsDevice);
+						_hud.LoadContent(Content, "HUD/hud2");
+						_minimap.LoadContent(_map);
+						
+						_toDraw.Clear();
+						_toDraw.AddRange(_resources);
+						_toDraw.AddRange(_buildings);
+						_toDraw.AddRange(_units);
+
+						_currentScreen = Screen.Game;
+						break;
+
+					default:
+						// action
+						break;
 				}
 
 				_receivedPackets++;
@@ -1026,29 +1218,8 @@ namespace NNNA
             _toDraw.RemoveAll(res => res is ResourceMine && (res as ResourceMine).Quantity <= 0);
 
 			// Intelligence artificielle
-			var rand = new Random();
-			foreach (Joueur foe in _enemies)
-			{
-				for (int i = 0; i < foe.Units.Count; i++)
-				{
-					var unit = (Unit)foe.Units[i];
-					if (unit.Life <= 0)
-					{
-						foe.Units.Remove(unit);
-						_units.Remove(unit);
-                        _toDraw.Remove(unit);
-					}
-					else
-					{
-						if (++unit.Updates == 120)
-						{
-						    unit.Move(new List<Vector2> {unit.Position + new Vector2(rand.Next(-40, 41), rand.Next(-40, 41))}, _units, _buildings, _matrice);
-							unit.Updates = rand.Next(0, 40);
-						}
-						unit.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, Content);
-					}
-				}
-			}
+			foreach (JoueurAI foe in _enemiesAI)
+			{ foe.Update(gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, _toDraw); }
 
 			// Rectangle de séléction
             if (!_techno.Win_Visible)
@@ -1059,7 +1230,7 @@ namespace NNNA
                     Vector2 pos;
                     switch (_currentAction)
                     {
-                            // Ere 1 
+						// Ere 1 
                         case "build_hutte":
                             pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y*16));
                             if (ValidSpawn(pos, _dimensions))
@@ -1078,16 +1249,14 @@ namespace NNNA
                                 }
                                 else
                                 {
-                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."),
-                                                                         Color.Red, 5000));
+                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
                             }
                             else
                             {
-                                MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red,
-                                                                     5000));
+                                MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000));
                             }
                             break;
 
@@ -1111,15 +1280,13 @@ namespace NNNA
                                         _selectedList[0].Build(b);
                                         _buildings.Add(b);
                                         _toDraw.Add(b);
-                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"),
-                                                                             Color.White, 5000));
+                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"), Color.White, 5000));
                                         _pointer = "pointer";
                                         _currentAction = "";
                                     }
                                     else
                                     {
-                                        MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."),
-                                                                             Color.Red, 5000));
+                                        MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
                                         _pointer = "pointer";
                                         _currentAction = "";
                                     }
@@ -1156,6 +1323,7 @@ namespace NNNA
                             else
                             { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
                             break;
+
                         case "build_ecurie":
                             pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
                             if (ValidSpawn(pos, _dimensions))
@@ -1521,7 +1689,7 @@ namespace NNNA
                 }
             }
 			foreach (Unit sprite in Joueur.Units)
-			{ sprite.ClickMouvement(_curseur, gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, Content); }
+			{ sprite.ClickMouvement(gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, Content); }
 
 			// Curseur de combat
 			Unit unitUnder = null;
@@ -1529,7 +1697,7 @@ namespace NNNA
             {
                 if (_selectedList.Count > 0)
                 {
-                    foreach (Joueur foe in _enemies)
+					foreach (JoueurAI foe in _enemiesAI)
                     {
                         foreach (Unit unit in foe.Units)
                         {
@@ -2141,7 +2309,7 @@ namespace NNNA
 				if (!_healthOver || build.Selected)
 				{ DrawBar(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100, Color.Green, Color.Red); }
 			}
-			foreach (Joueur foe in _enemies)
+			foreach (JoueurAI foe in _enemiesAI)
 			{
 				foreach (Unit unit in foe.Units)
 				{

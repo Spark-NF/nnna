@@ -1,10 +1,12 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using System;
+using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 namespace NNNA
 {
+	[Serializable]
     class Archer : LandUnit
     {
         private int speed_tirs;
@@ -26,7 +28,7 @@ namespace NNNA
             : base(x, y)
         {
             Joueur = joueur;
-            _type = "archer";
+            Type = "archer";
             if (add_pop)
             {
                 joueur.Population++;

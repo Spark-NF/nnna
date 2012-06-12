@@ -4,14 +4,17 @@ using System;
 
 namespace NNNA
 {
-	class Resource
+	[Serializable]
+	public class Resource
 	{
 		public static Resource Empty = new Resource("", new string[] {});
 
+		[field: NonSerialized]
 		private Texture2D[] _icons;
 		public Texture2D Icon(int ere)
 		{ return _icons[ere - 1]; }
 
+		[field: NonSerialized]
 		private Texture2D[] _textures;
 		public Texture2D Texture(int ere)
 		{ return _textures[ere - 1]; }

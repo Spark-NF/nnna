@@ -1,9 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-	class StaticSprite : Sprite
+	[Serializable]
+	public class StaticSprite : Sprite
 	{
 		private bool _selected;
 		public bool Selected

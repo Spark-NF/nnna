@@ -1,10 +1,12 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using System;
+using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
+	[Serializable]
     class Forge : ProductionBuilding
     {
-        // Ere 2/3
+		// Ere 2/3
         public Forge(int x = 0, int y = 0)
             : base(x, y)
         {

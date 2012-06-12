@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace NNNA
 {
-	enum MouseButton
+	public enum MouseButton
 	{
 		Left,
 		Middle,
@@ -12,7 +12,7 @@ namespace NNNA
 		X2
 	}
 
-	class Souris
+	public class Souris
 	{
 		// Début de la partie spécifique au pattern singleton //
 		private static Souris _instance;

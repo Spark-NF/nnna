@@ -1,8 +1,10 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using Microsoft.Xna.Framework.Content;
 
 namespace NNNA
 {
+	[Serializable]
     class Ecurie : ProductionBuilding
     {
         // Ere 2

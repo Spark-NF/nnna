@@ -7,128 +7,74 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NNNA
 {
-	class Joueur
+	[Serializable]
+	public abstract class Joueur
 	{
+		public uint Population { get; set; }
+		public bool Caserne { get; set; }
+        public bool Ferme { get; set; }
+		public int AdditionalAttack { get; set; }
+		public float AdditionalSpeed { get; set; }
+		public int AdditionalLife { get; set; }
+		public int AdditionalUnitLineSight { get; set; }
+		public int AdditionalBuildingLineSight { get; set; }
+		public uint PopulationMax { get; set; }
+		public Color Color { get; set; }
+		public Color ColorMovable { get; set; }
+		internal int Ere { get; set; }
+		public string Name { get; set; }
+		public List<MovibleSprite> Units { get; set; }
+		public List<Building> Buildings { get; set; }
+		public List<Resource> _Resources { get; set; }
+		public string Type { protected set; get; }
+
+		protected readonly Random _rand = new Random();
+
+		[field: NonSerialized]
+		protected readonly ContentManager _content;
+
+		[field: NonSerialized]
 		private Texture2D _popTexture;
 		public Texture2D PopTexture
 		{
 			get { return _popTexture; }
-		}
-		private uint _population;
-		public uint Population
-		{
-			get { return _population; }
-			set { _population = value; }
+			private set { _popTexture = value; }
 		}
 
-        public bool Caserne { get; set; }
-        public bool Ferme { get; set; }
-
-        private int _additionalAttack;
-        public int AdditionalAttack
-        {
-            get { return _additionalAttack; }
-            set { _additionalAttack = value; }
-        }
-        private float _additionalSpeed;
-        public float AdditionalSpeed
-        {
-            get { return _additionalSpeed; }
-            set { _additionalSpeed = value; }
-        }
-        private int _additionalLife;
-        public int AdditionalLife
-        {
-            get { return _additionalLife; }
-            set { _additionalLife = value; }
-        }
-
-		private int _additionalUnitLineSight;
-		public int AdditionalUnitLineSight
+		protected Joueur(Color couleur, string nom, ContentManager content, string type = "")
 		{
-			get { return _additionalUnitLineSight; }
-			set { _additionalUnitLineSight = value; }
-		}
-        private int _additionalBuildingLineSight;
-        public int AdditionalBuildingLineSight
-        {
-            get { return _additionalBuildingLineSight; }
-            set { _additionalBuildingLineSight = value; }
-        }
-
-		private Random _rand = new Random();
-		private uint _populationMax;
-		public uint PopulationMax
-		{
-			get { return _populationMax; }
-			set { _populationMax = value; }
-		}
-		private Color _color, _colorMovable;
-		public Color Color
-		{
-			get { return _color; }
-			set { _color = value; }
-		}
-		public Color ColorMovable
-		{
-			get { return _colorMovable; }
-			set { _colorMovable = value; }
-		}
-
-		private int _ere;
-		internal int Ere
-		{
-			get { return _ere; }
-			set { _ere = value; }
-		}
-
-		private string _name;
-		public string Name
-		{
-			get { return _name; }
-			set { _name = value; }
-		}
-		private List<MovibleSprite> _units = new List<MovibleSprite>();
-		public List<MovibleSprite> Units
-		{
-			get { return _units; }
-			set { _units = value; }
-		}
-		private List<Building> _buildings = new List<Building>();
-		public List<Building> Buildings
-		{
-			get { return _buildings; }
-			set { _buildings = value; }
-		}
-		public List<Resource> _resources = new List<Resource>();
-
-		public Joueur(Color couleur, string nom, ContentManager content)
-		{
-			_ere = 1;
-			_color = couleur;
-			_colorMovable = new Color(couleur.R + ((255 - couleur.R) / 2), couleur.G + ((255 - couleur.G) / 2), couleur.B + ((255 - couleur.B) / 2));
-			_name = nom;
-			_population = 0;
-			_populationMax = 5;
-			_additionalUnitLineSight = 0;
-            _additionalBuildingLineSight = 0;
-		    _additionalAttack = 0;
-            _additionalLife = 0;
+			Type = type;
+			_content = content;
+			Buildings = new List<Building>();
+			Units = new List<MovibleSprite>();
+			_Resources = new List<Resource>();
+			Ere = 1;
+			Color = couleur;
+			ColorMovable = new Color(couleur.R + ((255 - couleur.R) / 2), couleur.G + ((255 - couleur.G) / 2), couleur.B + ((255 - couleur.B) / 2));
+			Name = nom;
+			Population = 0;
+			PopulationMax = 5;
+			AdditionalUnitLineSight = 0;
+            AdditionalBuildingLineSight = 0;
+		    AdditionalAttack = 0;
+            AdditionalLife = 0;
 		    Caserne = false;
             Ferme = false;
 
-			_resources.Add(new Resource("Bois", new[] { "Bois", "Bois", "Bois", "Bois" }, 500));
-			_resources.Add(new Resource("Pierre", new[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));
-			_resources.Add(new Resource("Nourriture", new[] { "Nourriture", "Nourriture", "Nourriture", "Oxygene" }, 500));
-			_resources.Add(new Resource("Or", new[] { "", "Or", "Or", "Cristaux" }));
-			_resources.Add(new Resource("Fer", new[] { "", "Fer", "Titane", "Tritonite" }));
-			_resources.Add(new Resource("Petrole", new[] { "", "", "Petrole", "Tritium" }));
+			_Resources.Add(new Resource("Bois", new[] { "Bois", "Bois", "Bois", "Bois" }, 500));
+			_Resources.Add(new Resource("Pierre", new[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));
+			_Resources.Add(new Resource("Nourriture", new[] { "Nourriture", "Nourriture", "Nourriture", "Oxygene" }, 500));
+			_Resources.Add(new Resource("Or", new[] { "", "Or", "Or", "Cristaux" }));
+			_Resources.Add(new Resource("Fer", new[] { "", "Fer", "Titane", "Tritonite" }));
+			_Resources.Add(new Resource("Petrole", new[] { "", "", "Petrole", "Tritium" }));
 
-			_popTexture = content.Load<Texture2D>("Resources/Pop");
+			PopTexture = content.Load<Texture2D>("Resources/Pop");
 
-			foreach (Resource res in _resources)
+			foreach (Resource res in _Resources)
 			{ res.Load(content, _rand); }
 		}
+
+		public abstract void Update(GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> units, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice, List<Sprite> toDraw);
 
 
 
@@ -139,7 +85,7 @@ namespace NNNA
 		/// <returns>La ressource correspondant à cet identifiant.</returns>
 		public Resource Resource(string id)
 		{
-			foreach (Resource res in _resources)
+			foreach (Resource res in _Resources)
 			{
 				if (res.Id == id)
 				{ return res; }
@@ -184,7 +130,7 @@ namespace NNNA
 		/// <param name="ere">L'ère à laquelle chercher les ressources.</param>
 		/// <returns>La liste des ressources.</returns>
 		public List<Resource> Resources(int ere = 1)
-		{ return _resources.Where(res => res.Name(ere) != "").ToList(); }
+		{ return _Resources.Where(res => res.Name(ere) != "").ToList(); }
 
 		/// <summary>
 		/// Affiche les bâtiments et unités du joueur sur la carte.
@@ -194,15 +140,15 @@ namespace NNNA
 		/// <param name="index">L'index, pour les unités.</param>
 		public void Draw(SpriteBatch sb, Camera2D camera, int index)
 		{
-			foreach (Building sprite in _buildings)
+			foreach (Building sprite in Buildings)
 			{
 				sprite.Visible = true;
-				sprite.Draw(sb, camera, _colorMovable);
+				sprite.Draw(sb, camera, ColorMovable);
 			}
-			foreach (Unit sprite in _units)
+			foreach (Unit sprite in Units)
 			{
 				sprite.Visible = true;
-				sprite.Draw(sb, camera, _colorMovable);
+				sprite.Draw(sb, camera, ColorMovable);
 			}
 		}
 	}
