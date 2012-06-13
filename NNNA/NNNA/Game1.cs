@@ -2299,7 +2299,7 @@ namespace NNNA
         {
             var bui = _currentAction.StartsWith("build_");
 
-            // Affichage de la carte
+            #region CARTE
             foreach (Sprite sprite in _matrice)
             {
                 if (sprite.Position.X - _camera.Position.X > -64 &&
@@ -2308,7 +2308,7 @@ namespace NNNA
                     (sprite.Position.Y - _camera.Position.Y < _screenSize.Y - Math.Round((double)_hud.Position.Height * 4 / 5) ||
                     sprite.Position.Y - _camera.Position.Y < _screenSize.Y && SmartHud))
                 {
-                    float mul = 0.0f;
+                    var mul = 0.0f;
                     if (_weather > 0)
                     {
                         foreach (Unit unit in Joueur.Units)
@@ -2329,6 +2329,7 @@ namespace NNNA
                     sprite.DrawMap(_spriteBatch, _camera, mul, _weather, bui ? (sprite.Liquid ? new Color(255, 80, 80) : new Color(80, 255, 80)) : Color.Transparent);
                 }
             }
+            #endregion
 
             #region POINTILLÉS
             foreach (Unit unit in _selectedList)
@@ -2349,7 +2350,6 @@ namespace NNNA
             }
             #endregion
 
-            // Affichage des objets sur la carte
             foreach (Sprite sprite in _toDraw)
             {
                 #region RESOURCES
@@ -2488,29 +2488,8 @@ namespace NNNA
             }
             #endregion
 
-            // Rectangle de séléction
-			var coos = new Vector2(
-				_selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0),
-				_selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)
-			);
-			var tex = new Rectangle(
-				coos.X < 0 ? 0 : (int)coos.X,
-				coos.Y < 0 ? 0 : (int)coos.Y, 
-				(int)(Math.Abs(_selection.Width) + (coos.X < 0 ? coos.X : 0)),
-				(int)(Math.Abs(_selection.Height) + (coos.Y < 0 ? coos.Y : 0))
-			);
-			if (tex.Width + tex.X > _screenSize.X)
-			{ tex.Width = (int)_screenSize.X - tex.X; }
-			if (tex.Height + tex.Y > _screenSize.Y)
-			{ tex.Height = (int)_screenSize.Y - tex.Y; }
-			if (Math.Abs(_selection.Width) > 0 && Math.Abs(_selection.Height) > 0)
-			{
-				_spriteBatch.Draw(Color2Texture2D(Color.DarkBlue), tex, new Color(64, 64, 64, 64));
-				_spriteBatch.Draw(Color2Texture2D(Color.Blue), new Rectangle(tex.X + 1, tex.Y + 1, tex.Width - 2, tex.Height - 2), new Color(64, 64, 64, 64));
-			}
-
-			// Barres de vie et de poches
-			foreach (Unit unit in Joueur.Units)
+            #region BARRES DE VIES ET DE POCHES
+            foreach (Unit unit in Joueur.Units)
 			{
 				if (!_healthOver || unit.Selected)
 				{
@@ -2572,26 +2551,66 @@ namespace NNNA
 					if (mul > 0.25f)
 					{ DrawBar(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100, Color.Green, Color.Red); }
 				}
-			}
+            }
+            #endregion
 
-			// Affichage du HUD
-			MessagesManager.Draw(_spriteBatch, _fontSmall);
+            #region RECTANGLE DE SÉLECTION
+            var coos = new Vector2(
+                _selection.X - _camera.Position.X + (_selection.Width < 0 ? _selection.Width : 0),
+                _selection.Y - _camera.Position.Y + (_selection.Height < 0 ? _selection.Height : 0)
+            );
+            var tex = new Rectangle(
+                coos.X < 0 ? 0 : (int)coos.X,
+                coos.Y < 0 ? 0 : (int)coos.Y,
+                (int)(Math.Abs(_selection.Width) + (coos.X < 0 ? coos.X : 0)),
+                (int)(Math.Abs(_selection.Height) + (coos.Y < 0 ? coos.Y : 0))
+            );
+            if (tex.Width + tex.X > _screenSize.X)
+            { tex.Width = (int)_screenSize.X - tex.X; }
+            if (tex.Height + tex.Y > _screenSize.Y)
+            { tex.Height = (int)_screenSize.Y - tex.Y; }
+            if (Math.Abs(_selection.Width) > 0 && Math.Abs(_selection.Height) > 0)
+            {
+                _spriteBatch.Draw(Color2Texture2D(Color.DarkBlue), tex, new Color(64, 64, 64, 64));
+                _spriteBatch.Draw(Color2Texture2D(Color.Blue), new Rectangle(tex.X + 1, tex.Y + 1, tex.Width - 2, tex.Height - 2), new Color(64, 64, 64, 64));
+            }
+            #endregion
+
+            #region CHAT
+            Chat.Draw(_spriteBatch, _fontSmall, Color2Texture2D(new Color(0, 0, 0, 128)), (int)(_screenSize.Y / 2) + 26);
+            if (_showTextBox)
+            {
+                _spriteBatch.Draw(Color2Texture2D(new Color(0, 0, 0, 128)), new Rectangle(1, (int)(_screenSize.Y / 2) - 5, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).X + 10, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).Y + 10), Color.White);
+                _spriteBatch.DrawString(_fontSmall, Joueur.Name + " : ", new Vector2(6, _screenSize.Y / 2.0f), _playersColors[0]);
+                _spriteBatch.DrawString(_fontSmall, Clavier.Get().Text, new Vector2((int)_fontSmall.MeasureString(Joueur.Name + " : ").X + 6, _screenSize.Y / 2.0f), Color.White);
+            }
+            #endregion
+
+            #region HUD
+            MessagesManager.Draw(_spriteBatch, _fontSmall);
 			_hud.Draw(_spriteBatch, _minimap, _units, _buildings, Joueur, _camera.Position + _screenSize / 2, _fontSmall);
 
-			// Unités séléctionnées
-			for (int i = 0; i < _selectedList.Count; i++)
+            #region UNITÉES SÉLECTIONÉES
+            for (int i = 0; i < _selectedList.Count; i++)
 			{
 				var pos = new Vector2(356*(_screenSize.X/1680) + (i%10)*36, _screenSize.Y - _hud.Position.Height + 54*(_screenSize.Y/1050) + (i/10)*36 + _hud.SmartPos);
 				_selectedList[i].DrawIcon(_spriteBatch, pos);
 				DrawBar(_selectedList[i].Life, _selectedList[i].MaxLife, pos + new Vector2(0, 28), 33, Color.Green, Color.Red);
-			}
+            }
+            #endregion
 
-			// List des actions
-			for (int i = 0; i < _currentActions.Count; i++)
+            #region ACTIONS
+            for (int i = 0; i < _currentActions.Count; i++)
 			{ _spriteBatch.Draw(_actions[_currentActions[i]], new Vector2(_hud.Position.X + 20 + 40 * (i % 6), _hud.Position.Y + 20 + 40 * (i / 6) + _hud.SmartPos), Color.White); }
+            #endregion
+            #endregion
 
-			// Flash de changement d'ère
-			if (FlashBool && _a > 0f)
+            #region TECHNOLOGIES
+            _techno.Draw(_spriteBatch, _fontSmall);
+            #endregion
+
+            #region FLASH DE CHANGEMENT D'ÈRE
+            if (FlashBool && _a > 0f)
 			{
 				_spriteBatch.Draw(_flash ,new Rectangle(0, 0, (int) _screenSize.X, (int) _screenSize.Y), new Color(0f, 0f, 0f, _a));
 				_a -= 0.01f;
@@ -2600,25 +2619,15 @@ namespace NNNA
 			{
 				FlashBool = false;
 				_a = 1.0f;
-			}
+            }
+            #endregion
 
             // Affichage les fps
             //if (!double.IsInfinity(_fps.FPS))
             //{
             //    Debug(4, _fps.FPS);
             //}
-
-			// Chat
-			Chat.Draw(_spriteBatch, _fontSmall, Color2Texture2D(new Color(0, 0, 0, 128)), (int)(_screenSize.Y / 2) + 26);
-			if (_showTextBox)
-			{
-				_spriteBatch.Draw(Color2Texture2D(new Color(0, 0, 0, 128)), new Rectangle(1, (int)(_screenSize.Y / 2) - 5, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).X + 10, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).Y + 10), Color.White);
-				_spriteBatch.DrawString(_fontSmall, Joueur.Name + " : ", new Vector2(6, _screenSize.Y / 2.0f), _playersColors[0]);
-				_spriteBatch.DrawString(_fontSmall, Clavier.Get().Text, new Vector2((int)_fontSmall.MeasureString(Joueur.Name + " : ").X + 6, _screenSize.Y / 2.0f), Color.White);
-			}
-
-            _techno.Draw(_spriteBatch, _fontSmall);
-		}
+        }
 
 		/// <summary>
 		/// Affiche d'une barre colorée à l'écran.
