@@ -13,6 +13,11 @@ namespace NNNA
 		public uint Population { get; set; }
 		public bool Caserne { get; set; }
         public bool Ferme { get; set; }
+        public bool Scierie { get; set; }
+        public bool Port { get; set; }
+        public bool Forge { get; set; }
+        public bool Moulin { get; set; }
+        public bool ArmeDeSiege { get; set; }
 		public int AdditionalAttack { get; set; }
 		public float AdditionalSpeed { get; set; }
 		public int AdditionalLife { get; set; }
@@ -60,6 +65,11 @@ namespace NNNA
             AdditionalLife = 0;
 		    Caserne = false;
             Ferme = false;
+            Scierie = false;
+            Port = false;
+            Forge = false;
+            Moulin = false;
+            ArmeDeSiege = false;
 
 			_Resources.Add(new Resource("Bois", new[] { "Bois", "Bois", "Bois", "Bois" }, 500));
 			_Resources.Add(new Resource("Pierre", new[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));

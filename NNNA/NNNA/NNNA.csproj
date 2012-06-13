@@ -130,10 +130,12 @@
     <Compile Include="Lib\Technologies\Technologies_Window.cs" />
     <Compile Include="Lib\Vector2DExtander.cs" />
     <Compile Include="Physics\Batiment\Archerie.cs" />
+    <Compile Include="Physics\Batiment\Bucheron.cs" />
     <Compile Include="Physics\Batiment\Ecurie.cs" />
     <Compile Include="Physics\Batiment\Ferme.cs" />
     <Compile Include="Physics\Batiment\Forge.cs" />
     <Compile Include="Physics\Batiment\Maison.cs" />
+    <Compile Include="Physics\Batiment\Marche.cs" />
     <Compile Include="Physics\Batiment\Mineur.cs" />
     <Compile Include="Physics\Batiment\Moulin.cs" />
     <Compile Include="Physics\Batiment\Port.cs" />

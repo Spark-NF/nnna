@@ -494,6 +494,7 @@ namespace NNNA
                 navigation.Visible = true;
                 bucheron.Visible = true;
                 _engrenage = true;;
+                Game1.Joueur.Moulin = true;
                 MessagesManager.Messages.Add(new Msg("Technologie « Engrenage » aquise !", Color.White, 5000));
             }
             else if (!_engrenage)
@@ -513,6 +514,7 @@ namespace NNNA
                 scierie.Visible = true;
                 Game1.Joueur.AdditionalLife += 20;
                 _forge = true;
+                Game1.Joueur.Forge = true;
                 MessagesManager.Messages.Add(new Msg("Technologie « Forge » aquise !", Color.White, 5000));
             }
             else if (!_forge)
@@ -531,6 +533,7 @@ namespace NNNA
             {
                 arme_de_siege.Visible = true;
                 _scierie = true;
+                Game1.Joueur.Scierie = true;
                 MessagesManager.Messages.Add(new Msg("Technologie « Scierie » aquise !", Color.White, 5000));
             }
             else if (!_scierie)
@@ -549,6 +552,7 @@ namespace NNNA
             {
                 alchimie.Visible = true;
                 _arme_de_siege = true;
+                Game1.Joueur.ArmeDeSiege = true;
                 MessagesManager.Messages.Add(new Msg("Technologie « Arme de siege » aquise !", Color.White, 5000));
             }
             else if (!_arme_de_siege)
@@ -588,6 +592,7 @@ namespace NNNA
             {
                 gouvernail.Visible = true;
                 _navigation = true;
+                Game1.Joueur.Port = true;
                 MessagesManager.Messages.Add(new Msg("Technologie « Navigation » aquise !", Color.White, 5000));
             }
             else if (!_navigation)

@@ -4,24 +4,26 @@ using Microsoft.Xna.Framework;
 
 namespace NNNA
 {
-	[Serializable]
-    class Mineur : ProductionBuilding
+    [Serializable]
+    class Marche : Building
     {
         // Ere 2/3
-        public Mineur(int x = 0, int y = 0)
+        public Marche(int x = 0, int y = 0)
             : base(x, y)
         {
-            _cost.Add("Bois", 100);
+            _cost.Add("Bois", 500);
+            _cost.Add("Pierre", 100); 
         }
 
-        public Mineur(int x, int y, ContentManager content, Joueur joueur, GameTime time)
+        public Marche(int x, int y, ContentManager content, Joueur joueur, GameTime time)
             : base(x, y)
         {
             _joueur = joueur;
-			LoadContent(content, "Batiments/mineur");
+            LoadContent(content, "Batiments/marche");
             Life = 200;
             LineSight = 128;
-            _cost.Add("Bois", 100);
+            _cost.Add("Bois", 250);
+            _cost.Add("Pierre", 100); 
         }
         public void Collect(Joueur joueur, int ere, Resource ressource, GameTime time)
         {

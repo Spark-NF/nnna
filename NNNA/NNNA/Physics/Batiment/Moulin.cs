@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework;
 
 namespace NNNA
 {
@@ -14,7 +15,7 @@ namespace NNNA
             _cost.Add("Nourriture", 60);
         }
 
-        public Moulin(int x, int y, ContentManager content, Joueur joueur)
+        public Moulin(int x, int y, ContentManager content, Joueur joueur, GameTime time)
             : base(x, y)
         {
             _joueur = joueur;
@@ -24,7 +25,13 @@ namespace NNNA
 
             _cost.Add("Nourriture", 60);
             _cost.Add("Pierre", 60); ;
-
+        }
+        public void Collect(Joueur joueur, int ere, Resource ressource, GameTime time)
+        {
+            if ((time.TotalGameTime.Seconds % 5) == 0)
+            {
+                Joueur.Resource(ressource.Name(ere)).Add(5);
+            }
         }
     }
 }

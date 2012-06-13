@@ -332,6 +332,9 @@ namespace NNNA
             _actions.Add("build_forge", Content.Load<Texture2D>("Actions/build_forge"));
             _actions.Add("build_mine", Content.Load<Texture2D>("Actions/build_mine"));
             _actions.Add("build_siege", Content.Load<Texture2D>("Actions/build_siege"));
+            _actions.Add("build_moulin", Content.Load<Texture2D>("Actions/build_moulin"));
+            _actions.Add("build_marche", Content.Load<Texture2D>("Actions/build_marche"));
+            _actions.Add("build_bucheron", Content.Load<Texture2D>("Actions/build_bucheron"));
 
 			#endregion Actions Unités
 
@@ -1421,20 +1424,30 @@ namespace NNNA
                             {
                                 var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
                                 b = new Forge((int)position.X, (int)position.Y, Content, Joueur);
-                                if (Joueur.Pay(b.Prix))
+                                if (!Joueur.Forge)
                                 {
-                                    _selectedList[0].Build(b);
-                                    _buildings.Add(b);
-                                    _toDraw.Add(b);
-                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle Forge !"), Color.White, 5000));
+                                    MessagesManager.Messages.Add(new Msg(_("Votre niveau technologique ne vous \npermet pas de construire ce batiment."), Color.Red, 5000));
+                                    MessagesManager.Messages.Add(new Msg("", Color.Transparent, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
                                 else
                                 {
-                                    MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
-                                    _pointer = "pointer";
-                                    _currentAction = "";
+                                    if (Joueur.Pay(b.Prix))
+                                    {
+                                        _selectedList[0].Build(b);
+                                        _buildings.Add(b);
+                                        _toDraw.Add(b);
+                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle Forge !"), Color.White, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
+                                    else
+                                    {
+                                        MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
                                 }
                             }
                             else
@@ -1445,7 +1458,7 @@ namespace NNNA
                             if (ValidSpawn(pos, _dimensions))
                             {
                                 var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                                b = new Mineur((int)position.X, (int)position.Y, Content, Joueur);
+                                b = new Mineur((int)position.X, (int)position.Y, Content, Joueur,gameTime);
                                 if (Joueur.Pay(b.Prix))
                                 {
                                     _selectedList[0].Build(b);
@@ -1465,19 +1478,63 @@ namespace NNNA
                             else
                             { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
                             break;
-
-                        case "build_siege":
+                        case "build_bucheron":
                             pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
                             if (ValidSpawn(pos, _dimensions))
                             {
                                 var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                                b = new Siege((int)position.X, (int)position.Y, Content, Joueur);
+                                b = new Mineur((int)position.X, (int)position.Y, Content, Joueur, gameTime);
+                                if (!Joueur.Scierie)
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Votre niveau technologique ne vous \npermet pas de construire ce batiment."), Color.Red, 5000));
+                                    MessagesManager.Messages.Add(new Msg("", Color.Transparent, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    if (!Joueur.Scierie)
+                                    {
+                                        MessagesManager.Messages.Add(new Msg(_("Votre niveau technologique ne vous \npermet pas de construire ce batiment."), Color.Red, 5000));
+                                        MessagesManager.Messages.Add(new Msg("", Color.Transparent, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
+                                    else
+                                    {
+                                        if (Joueur.Pay(b.Prix))
+                                        {
+                                            _selectedList[0].Build(b);
+                                            _buildings.Add(b);
+                                            _toDraw.Add(b);
+                                            MessagesManager.Messages.Add(new Msg(_("Nouvelle Scierie!"), Color.White, 5000));
+                                            _pointer = "pointer";
+                                            _currentAction = "";
+                                        }
+                                        else
+                                        {
+                                            MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                            _pointer = "pointer";
+                                            _currentAction = "";
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
+                        case "build_marche":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
+                            {
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Mineur((int)position.X, (int)position.Y, Content, Joueur, gameTime);
                                 if (Joueur.Pay(b.Prix))
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
                                     _toDraw.Add(b);
-                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle fabrique d'armes lourdes!"), Color.White, 5000));
+                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle Marche!"), Color.White, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
@@ -1486,6 +1543,77 @@ namespace NNNA
                                     MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
                                     _pointer = "pointer";
                                     _currentAction = "";
+                                }
+                            }
+                            else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
+                        case "build_moulin":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
+                            {
+
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Mineur((int)position.X, (int)position.Y, Content, Joueur, gameTime);
+                                if (!Joueur.Moulin)
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Votre niveau technologique ne vous \npermet pas de construire ce batiment."), Color.Red, 5000));
+                                    MessagesManager.Messages.Add(new Msg("", Color.Transparent, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    if (Joueur.Pay(b.Prix))
+                                    {
+                                        _selectedList[0].Build(b);
+                                        _buildings.Add(b);
+                                        _toDraw.Add(b);
+                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle Moulin!"), Color.White, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
+                                    else
+                                    {
+                                        MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
+                                }
+                            }
+                            else
+                            { MessagesManager.Messages.Add(new Msg(_("Vous ne pouvez pas construire ici."), Color.Red, 5000)); }
+                            break;
+                        case "build_siege":
+                            pos = Xy2Matrice(Souris.Get().Position + _camera.Position + new Vector2(0, _dimensions.Y * 16));
+                            if (ValidSpawn(pos, _dimensions))
+                            {
+                                var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
+                                b = new Siege((int)position.X, (int)position.Y, Content, Joueur);
+                                if (!Joueur.ArmeDeSiege)
+                                {
+                                    MessagesManager.Messages.Add(new Msg(_("Votre niveau technologique ne vous \npermet pas de construire ce batiment."), Color.Red, 5000));
+                                    MessagesManager.Messages.Add(new Msg("", Color.Transparent, 5000));
+                                    _pointer = "pointer";
+                                    _currentAction = "";
+                                }
+                                else
+                                {
+                                    if (Joueur.Pay(b.Prix))
+                                    {
+                                        _selectedList[0].Build(b);
+                                        _buildings.Add(b);
+                                        _toDraw.Add(b);
+                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle fabrique d'armes lourdes!"), Color.White, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
+                                    else
+                                    {
+                                        MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
+                                        _pointer = "pointer";
+                                        _currentAction = "";
+                                    }
                                 }
                             }
                             else
@@ -1607,6 +1735,9 @@ namespace NNNA
                                         _currentActions.Add("build_mine");
                                         _currentActions.Add("build_forge");
                                         _currentActions.Add("build_siege");
+                                        _currentActions.Add("build_marche");
+                                        _currentActions.Add("build_bucheron");
+                                        _currentActions.Add("build_moulin");
 
                                     }
                                     _currentActions.Add("retour");
@@ -1672,6 +1803,23 @@ namespace NNNA
                                     _dimensions = new Vector2(2, 2);
                                     break;
 
+                                case "build_moulin":
+                                    _pointer = "Batiments/moulin" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
+                                    _currentAction = "build_moulin";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+
+                                case "build_marche":
+                                    _pointer = "Batiments/marche" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
+                                    _currentAction = "build_marche";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+
+                                case "build_bucheron":
+                                    _pointer = "Batiments/bucheron" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
+                                    _currentAction = "build_bucheron";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
 
                                 case "retour":
                                     _currentActions.Clear();

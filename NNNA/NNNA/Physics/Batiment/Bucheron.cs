@@ -4,21 +4,21 @@ using Microsoft.Xna.Framework;
 
 namespace NNNA
 {
-	[Serializable]
-    class Mineur : ProductionBuilding
+    [Serializable]
+    class Bucheron : Building
     {
         // Ere 2/3
-        public Mineur(int x = 0, int y = 0)
+        public Bucheron(int x = 0, int y = 0)
             : base(x, y)
         {
-            _cost.Add("Bois", 100);
+            _cost.Add("Bois", 500);
         }
 
-        public Mineur(int x, int y, ContentManager content, Joueur joueur, GameTime time)
+        public Bucheron(int x, int y, ContentManager content, Joueur joueur, GameTime time)
             : base(x, y)
         {
             _joueur = joueur;
-			LoadContent(content, "Batiments/mineur");
+            LoadContent(content, "Batiments/bucheron");
             Life = 200;
             LineSight = 128;
             _cost.Add("Bois", 100);
