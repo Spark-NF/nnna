@@ -27,10 +27,10 @@ namespace NNNA
 				{
 					if (++unit.Updates == 120)
 					{
-						unit.Move(new List<Vector2> { unit.Position + new Vector2(_rand.Next(-40, 41), _rand.Next(-40, 41)) }, units, buildings, matrice);
-						unit.Updates = _rand.Next(0, 40);
+						unit.Move(new List<Vector2> { unit.Position + new Vector2(Rand.Next(-40, 41), Rand.Next(-40, 41)) }, units, buildings, matrice);
+						unit.Updates = Rand.Next(0, 40);
 					}
-					unit.ClickMouvement(gameTime, camera, hud, units, buildings, resources, matrice, _content);
+					unit.ClickMouvement(gameTime, camera, hud, units, buildings, resources, matrice, Content);
 				}
 			}
 		}

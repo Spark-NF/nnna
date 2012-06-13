@@ -11,20 +11,20 @@ namespace NNNA
         public Moulin(int x = 0, int y = 0)
             : base(x, y)
         {
-            _cost.Add("Pierre", 60);
-            _cost.Add("Nourriture", 60);
+            Prix.Add("Pierre", 60);
+            Prix.Add("Nourriture", 60);
         }
 
         public Moulin(int x, int y, ContentManager content, Joueur joueur, GameTime time)
             : base(x, y)
         {
-            _joueur = joueur;
+            Joueur = joueur;
 			LoadContent(content, "Batiments/siege");
             Life = 200;
             LineSight = 128;
 
-            _cost.Add("Nourriture", 60);
-            _cost.Add("Pierre", 60); ;
+            Prix.Add("Nourriture", 60);
+            Prix.Add("Pierre", 60);
         }
         public void Collect(Joueur joueur, int ere, Resource ressource, GameTime time)
         {

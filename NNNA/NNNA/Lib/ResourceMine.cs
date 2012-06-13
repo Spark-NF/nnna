@@ -42,13 +42,13 @@ namespace NNNA
 			}
 		}
 
-		/// <summary>
-		/// Mine la ressource.
-		/// </summary>
-		/// <param name="joueur">Le joueur minant la ressource.</param>
-		/// <param name="unit">L'unité minant la ressource.</param>
-		/// <returns>La quantité venant d'être minée.</returns>
-		public int Mine(int max, Unit unit)
+	    /// <summary>
+	    /// Mine la ressource.
+	    /// </summary>
+	    /// <param name="max"> </param>
+	    /// <param name="unit">L'unité minant la ressource.</param>
+	    /// <returns>La quantité venant d'être minée.</returns>
+	    public int Mine(int max, Unit unit)
 		{
 			int qtty = Quantity >= max ? max : Quantity;
 			qtty = qtty >= 1 ? 1 : qtty;

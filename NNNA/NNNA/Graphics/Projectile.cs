@@ -65,7 +65,7 @@ namespace NNNA
             Fin_parcour = _realityOffset < -0.7f;
         }
 
-        public new void Draw(SpriteBatch spritebatch, Camera2D camera)
+        public void Draw(SpriteBatch spritebatch, Camera2D camera)
 		{ _texture.Draw(spritebatch, _position - camera.Position, Color.White); }
 
         public void DrawRotation(SpriteBatch spritebatch, Camera2D camera)

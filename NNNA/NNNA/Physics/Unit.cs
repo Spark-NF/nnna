@@ -92,17 +92,17 @@ namespace NNNA
                     var translation = Vector2.Zero;
                     if (Type == "archer" && Will == "attack" && DestinationUnit != null && (DestinationUnit.PositionCenter - PositionCenter).LengthSquared() < Portee * Portee)
                     {
-                        _cparcouru = Vector2.Zero;
+                        Cparcouru = Vector2.Zero;
                         Texture.Animation = false;
                     }
                     else
                     {
-                        translation = _direction * gameTime.ElapsedGameTime.Milliseconds * Speed;
-                        _cparcouru = _position + new Vector2(Texture.Collision.X + Texture.Collision.Width / 2.0f, Texture.Collision.Y + Texture.Collision.Height / 2.0f) - _positionIni;
+                        translation = Direction * gameTime.ElapsedGameTime.Milliseconds * Speed;
+                        Cparcouru = _position + new Vector2(Texture.Collision.X + Texture.Collision.Width / 2.0f, Texture.Collision.Y + Texture.Collision.Height / 2.0f) - PositionIni;
                         Update(translation);
                         Texture.Animation = true;
                     }
-                    if (Math.Abs(_cparcouru.X) >= Math.Abs(_cparcourir.X) && Math.Abs(_cparcouru.Y) >= Math.Abs(_cparcourir.Y))
+                    if (Math.Abs(Cparcouru.X) >= Math.Abs(Cparcourir.X) && Math.Abs(Cparcouru.Y) >= Math.Abs(Cparcourir.Y))
 					{
 						Click = false;
 						_texture.Animation = false;
@@ -206,63 +206,63 @@ namespace NNNA
 				if (Souris.Get().Clicked(MouseButton.Right) && Souris.Get().Y <= hud.Position.Y + ((hud.Position.Height * 1) / 5) && (Selected || !Click))
 				{
 					Click = true;
-					_clickInterne = false;
-					_positionIni = _position;
+					ClickInterne = false;
+					PositionIni = _position;
 					ClickPosition = Souris.Get().Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 2), (float)Math.Round((double)Texture.Height * 4 / 5));
-					var start = Game1.Xy2Matrice(_positionIni);
+					var start = Game1.Xy2Matrice(PositionIni);
 					var destination = Game1.Xy2Matrice(Souris.Get().Position + camera.Position - new Vector2((float)Math.Round((double)Texture.Width / 8), (float)Math.Round((double)Texture.Height * 4 / 5)));
-					_pathList = PathFinding.FindPath(map, map[(int)start.Y, (int)start.X], map[(int)destination.Y, (int)destination.X]);
-					if (_pathList != null)
-					{ _pathIterator = _pathList.Count - 1; }
+					PathList = PathFinding.FindPath(map, map[(int)start.Y, (int)start.X], map[(int)destination.Y, (int)destination.X]);
+					if (PathList != null)
+					{ PathIterator = PathList.Count - 1; }
 					else Click = false;
 				}
 				if (Click)
 				{
-					if (_pathIterator > 0)
+					if (PathIterator > 0)
 					{
-						if (!_clickInterne && _pathList != null)
+						if (!ClickInterne && PathList != null)
 						{
-							Angle = Math.Atan2(_pathList[_pathIterator].PositionCenter.Y - _position.Y, _pathList[_pathIterator].PositionCenter.X - _position.X);
-							_direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
-							_cparcourir = new Vector2(_pathList[_pathIterator].PositionCenter.X - _position.X, _pathList[_pathIterator].PositionCenter.Y - _position.Y);
-							_cparcouru = Vector2.Zero;
-							_clickInterne = true;
+							Angle = Math.Atan2(PathList[PathIterator].PositionCenter.Y - _position.Y, PathList[PathIterator].PositionCenter.X - _position.X);
+							Direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
+							Cparcourir = new Vector2(PathList[PathIterator].PositionCenter.X - _position.X, PathList[PathIterator].PositionCenter.Y - _position.Y);
+							Cparcouru = Vector2.Zero;
+							ClickInterne = true;
 						}
-						if (Math.Abs(_cparcouru.X) >= Math.Abs(_cparcourir.X) && Math.Abs(_cparcouru.Y) >= Math.Abs(_cparcourir.Y))
+						if (Math.Abs(Cparcouru.X) >= Math.Abs(Cparcourir.X) && Math.Abs(Cparcouru.Y) >= Math.Abs(Cparcourir.Y))
 						{
-							_pathIterator--;
-							_positionIni = _position;
-							_clickInterne = false;
+							PathIterator--;
+							PositionIni = _position;
+							ClickInterne = false;
 						}
 						else
 						{
-							_cparcouru = _position - _positionIni;
-							var translation = _direction * gameTime.ElapsedGameTime.Milliseconds * Speed;
+							Cparcouru = _position - PositionIni;
+							var translation = Direction * gameTime.ElapsedGameTime.Milliseconds * Speed;
 							Update(translation);
 							if (Collides(sprites, buildings, resources, matrice))
 							{ _position -= translation; }
 						}
 					}
-					else if (_pathIterator == 0)
+					else if (PathIterator == 0)
 					{
-						if (!_clickInterne)
+						if (!ClickInterne)
 						{
 							Angle = Math.Atan2(ClickPosition.Y - _position.Y, ClickPosition.X - _position.X);
-							_direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
-							_cparcourir = new Vector2(ClickPosition.X - _position.X, ClickPosition.Y - _position.Y);
-							_cparcouru = Vector2.Zero;
-							_clickInterne = true;
+							Direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
+							Cparcourir = new Vector2(ClickPosition.X - _position.X, ClickPosition.Y - _position.Y);
+							Cparcouru = Vector2.Zero;
+							ClickInterne = true;
 						}
-						if (Math.Abs(_cparcouru.X) >= Math.Abs(_cparcourir.X) && Math.Abs(_cparcouru.Y) >= Math.Abs(_cparcourir.Y))
+						if (Math.Abs(Cparcouru.X) >= Math.Abs(Cparcourir.X) && Math.Abs(Cparcouru.Y) >= Math.Abs(Cparcourir.Y))
 						{
-							_pathIterator--;
-							_positionIni = _position;
-							_clickInterne = false;
+							PathIterator--;
+							PositionIni = _position;
+							ClickInterne = false;
 						}
 						else
 						{
-							_cparcouru = _position - _positionIni;
-							var translation = _direction * gameTime.ElapsedGameTime.Milliseconds * Speed;
+							Cparcouru = _position - PositionIni;
+							var translation = Direction * gameTime.ElapsedGameTime.Milliseconds * Speed;
 							Update(translation);
 							if (Collides(sprites, buildings, resources, matrice))
 							{ _position -= translation; }
@@ -277,7 +277,7 @@ namespace NNNA
 			var tex = 1;
 
 			//MODE 8 ANGLES
-			if (_dec == 45)
+			if (Dec == 45)
 			{
 				if (Angle > 1 * (Math.PI / 8) && Angle <= 3 * (Math.PI / 8))
 				{ tex = 2; }
@@ -308,7 +308,7 @@ namespace NNNA
 
 			if (Selected)
 			{
-				spriteBatch.Draw(_selection, _position - camera.Position + new Vector2(0, 32), Joueur.Color);
+				spriteBatch.Draw(Selection, _position - camera.Position + new Vector2(0, 32), Joueur.Color);
 			}
 			_texture.Draw(spriteBatch, _position - camera.Position, col, tex);
 		}

@@ -11,19 +11,19 @@ namespace NNNA
         public Archerie(int x = 0, int y = 0)
 			: base(x, y)
 		{
-            _cost.Add("Bois", 150);
-            _cost.Add("Pierre", 100);
+            Prix.Add("Bois", 150);
+            Prix.Add("Pierre", 100);
 		}
 
 		public Archerie(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
-			_joueur = joueur;
+			Joueur = joueur;
 			LoadContent(content, "Batiments/archerie" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 100;
             LineSight = 128;
-			_cost.Add("Bois", 150);
-            _cost.Add("Pierre", 100);
+			Prix.Add("Bois", 150);
+            Prix.Add("Pierre", 100);
 
 		}
     }

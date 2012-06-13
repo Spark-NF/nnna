@@ -11,17 +11,17 @@ namespace NNNA
 		public Ferme(int x = 0, int y = 0)
 			: base(x, y)
 		{
-            _cost.Add("Bois", 100);
+            Prix.Add("Bois", 100);
 		}
 
 		public Ferme(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
-			_joueur = joueur;
+			Joueur = joueur;
 			LoadContent(content, "Batiments/ferme" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 100;
 			LineSight = 4 * 64;
-			_cost.Add("Bois", 100);
+			Prix.Add("Bois", 100);
 
 		}
     }

@@ -10,15 +10,15 @@ namespace NNNA
 	{
 		public Hutte(int x = 0, int y = 0)
 			: base(x, y)
-		{ _cost.Add("Bois", 50); }
+		{ Prix.Add("Bois", 50); }
 
 		public Hutte(int x, int y, ContentManager content, Joueur joueur, byte a)
 			: base(x, y)
 		{
-			_joueur = joueur;
+			Joueur = joueur;
 			LoadContent(content, "Batiments/maison" + (a == 0 ? 1 : 2) + "_" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 100;
-			_cost.Add("Bois", 50);
+			Prix.Add("Bois", 50);
 			LineSight = 2 * 64;
 			if (joueur.PopulationMax < 200)
 			{

@@ -12,12 +12,12 @@ namespace NNNA
         {
             Prix.Add("Nourriture", 70);
         }
-		public Guerrier(int x, int y, ContentManager content, Joueur joueur, bool removeResources = true, bool add_pop = true)
+		public Guerrier(int x, int y, ContentManager content, Joueur joueur, bool removeResources = true, bool addPop = true)
 			: base(x, y)
 		{
             Joueur = joueur;
 			Type = "guerrier";
-            if (add_pop)
+            if (addPop)
             {
                 joueur.Population++;
             }

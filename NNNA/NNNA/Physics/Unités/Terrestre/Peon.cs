@@ -14,12 +14,12 @@ namespace NNNA
 			Prix.Add("Nourriture", 50);
 		}
 
-		public Peon(int x, int y, ContentManager content, Joueur joueur, Building affiliate, bool removeResources = true, bool add_pop = true)
+		public Peon(int x, int y, ContentManager content, Joueur joueur, Building affiliate, bool removeResources = true, bool addPop = true)
 			: base(x, y)
 		{
 		    Joueur = joueur;
 			Type = "peon";
-            if (add_pop)
+            if (addPop)
             {
                 joueur.Population++;
             }

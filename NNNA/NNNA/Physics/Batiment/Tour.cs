@@ -11,19 +11,19 @@ namespace NNNA
 		public Tour(int x = 0, int y = 0)
 			: base(x, y)
 		{
-			_cost.Add("Bois", 50);
-			_cost.Add("Pierre", 200);
+			Prix.Add("Bois", 50);
+			Prix.Add("Pierre", 200);
 		}
 
 		public Tour(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
-			_joueur = joueur;
+			Joueur = joueur;
 			LoadContent(content, "Batiments/tour" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 200;
 			LineSight = 512;
-			_cost.Add("Bois", 50);
-			_cost.Add("Pierre", 200);
+			Prix.Add("Bois", 50);
+			Prix.Add("Pierre", 200);
 
 		}
 	}

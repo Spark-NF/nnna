@@ -11,20 +11,20 @@ namespace NNNA
 		public GrandeHutte(int x = 0, int y = 0)
 			: base(x, y)
 		{
-			_type = "forum";
-			_cost.Add("Bois", 1000);
-			_cost.Add("Nourriture", 500);
+			Type = "forum";
+			Prix.Add("Bois", 1000);
+			Prix.Add("Nourriture", 500);
 		}
 
 		public GrandeHutte(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
-			_joueur = joueur;
-			_type = "forum";
+			Joueur = joueur;
+			Type = "forum";
 			LoadContent(content, "Batiments/forum_" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 500;
-			_cost.Add("Bois", 1000);
-			_cost.Add("Nourriture", 500);
+			Prix.Add("Bois", 1000);
+			Prix.Add("Nourriture", 500);
 			LineSight = 12 * 64;
 			if (joueur.PopulationMax < 200)
 			{

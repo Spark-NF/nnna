@@ -11,19 +11,19 @@ namespace NNNA
         public Marche(int x = 0, int y = 0)
             : base(x, y)
         {
-            _cost.Add("Bois", 500);
-            _cost.Add("Pierre", 100); 
+            Prix.Add("Bois", 500);
+            Prix.Add("Pierre", 100); 
         }
 
         public Marche(int x, int y, ContentManager content, Joueur joueur, GameTime time)
             : base(x, y)
         {
-            _joueur = joueur;
+            Joueur = joueur;
             LoadContent(content, "Batiments/marche");
             Life = 200;
             LineSight = 128;
-            _cost.Add("Bois", 250);
-            _cost.Add("Pierre", 100); 
+            Prix.Add("Bois", 250);
+            Prix.Add("Pierre", 100); 
         }
         public void Collect(Joueur joueur, int ere, Resource ressource, GameTime time)
         {

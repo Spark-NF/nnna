@@ -14,14 +14,9 @@ namespace NNNA
 			set { _selected = value; }
 		}
 
-		protected string _type;
-		public string Type
-		{
-			get { return _type; }
-			set { _type = value; }
-		}
+	    public string Type { get; protected set; }
 
-		public StaticSprite(int x, int y)
+	    protected StaticSprite(int x, int y)
 			: base(x, y)
 		{ _selected = false; }
 

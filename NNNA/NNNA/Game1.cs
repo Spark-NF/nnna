@@ -81,7 +81,7 @@ namespace NNNA
             private readonly Ambiance_Sound _son = new Ambiance_Sound();
 			private SoundEffect _debutpartie;
 		#endif
-		private Technologies_Window _techno;
+		private TechnologiesWindow _techno;
 		#endregion
 
 		// Internet
@@ -379,7 +379,7 @@ namespace NNNA
 			_console = CreateRectangle(1, 1, new Color(0, 0, 0, 128));
 
 			//Fenetre des technologies
-            _techno = new Technologies_Window(new Rectangle((int)(_screenSize.X / 4), (int)(_screenSize.Y / 4), (int)(_screenSize.X / 2), (int)(_screenSize.Y / 2)), "Technologies", Content);
+            _techno = new TechnologiesWindow(new Rectangle((int)(_screenSize.X / 4), (int)(_screenSize.Y / 4), (int)(_screenSize.X / 2), (int)(_screenSize.Y / 2)), "Technologies", Content);
 
 			_hud = new HUD(0, ((Graphics.PreferredBackBufferHeight * 5) / 6) - 10, SmartHud, Graphics);
 			_minimap = new Minimap((_hud.Position.Width * 7) / 8 - _hud.Position.Width / 150, _hud.Position.Y + _hud.Position.Height / 15, (_hud.Position.Height * 9) / 10, (_hud.Position.Height * 9) / 10);
@@ -1201,8 +1201,8 @@ namespace NNNA
 				_pointer = "pointer";
 				if (_currentAction.StartsWith("build_"))
 				{ _currentAction = ""; }
-				else if (_techno.Win_Visible)
-				{ _techno.Win_Visible = false; }
+				else if (_techno.WinVisible)
+				{ _techno.WinVisible = false; }
 				else
 				{
 					_pointerOld = _pointer;
@@ -1211,7 +1211,7 @@ namespace NNNA
 				}
 			}
             if ((Clavier.Get().Pressed(Keys.LeftControl) || Clavier.Get().Pressed(Keys.RightControl)) && Clavier.Get().Pressed(Keys.T))
-            { _techno.Win_Visible = true; }
+            { _techno.WinVisible = true; }
 
 			_compt = (_compt + gameTime.ElapsedGameTime.Milliseconds * 0.1f) % 100;
 			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
@@ -1226,7 +1226,7 @@ namespace NNNA
 			{ foe.Update(gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, _toDraw); }
 
 			// Rectangle de séléction
-            if (!_techno.Win_Visible)
+            if (!_techno.WinVisible)
             {
                 if (Souris.Get().Clicked(MouseButton.Left))
                 {
@@ -1847,7 +1847,7 @@ namespace NNNA
                                     break;
 
                                 case "technologies":
-                                    _techno.Win_Visible = true;
+                                    _techno.WinVisible = true;
                                     break;
 
                                 case "create_guerrier":
@@ -1908,7 +1908,7 @@ namespace NNNA
 
 			// Curseur de combat
 			Unit unitUnder = null;
-            if (!_techno.Win_Visible)
+            if (!_techno.WinVisible)
             {
                 if (_selectedList.Count > 0)
                 {

@@ -11,17 +11,17 @@ namespace NNNA
         public Bucheron(int x = 0, int y = 0)
             : base(x, y)
         {
-            _cost.Add("Bois", 500);
+            Prix.Add("Bois", 500);
         }
 
         public Bucheron(int x, int y, ContentManager content, Joueur joueur, GameTime time)
             : base(x, y)
         {
-            _joueur = joueur;
+            Joueur = joueur;
             LoadContent(content, "Batiments/bucheron");
             Life = 200;
             LineSight = 128;
-            _cost.Add("Bois", 100);
+            Prix.Add("Bois", 100);
         }
         public void Collect(Joueur joueur, int ere, Resource ressource, GameTime time)
         {

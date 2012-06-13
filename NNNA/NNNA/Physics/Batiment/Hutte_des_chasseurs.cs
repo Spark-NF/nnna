@@ -11,19 +11,19 @@ namespace NNNA
 		public HutteDesChasseurs(int x = 0, int y = 0)
 			: base(x, y)
 		{
-			_type = "caserne";
-			_cost.Add("Bois", 75);
+			Type = "caserne";
+			Prix.Add("Bois", 75);
 		}
 
 		public HutteDesChasseurs(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
-			_joueur = joueur;
-			_type = "caserne";
+			Joueur = joueur;
+			Type = "caserne";
 			LoadContent(content, "Batiments/caserne_" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 100;
 			LineSight = 2 * 64;
-			_cost.Add("Bois", 75);
+			Prix.Add("Bois", 75);
 		}
 	}
 }

@@ -11,19 +11,19 @@ namespace NNNA
         public Ecurie(int x = 0, int y = 0)
 			: base(x, y)
 		{
-            _cost.Add("Bois", 300);
-            _cost.Add("Pierre", 200);
+            Prix.Add("Bois", 300);
+            Prix.Add("Pierre", 200);
 		}
 
 		public Ecurie(int x, int y, ContentManager content, Joueur joueur)
 			: base(x, y)
 		{
-			_joueur = joueur;
+			Joueur = joueur;
 			LoadContent(content, "Batiments/ecurie" + joueur.Ere.ToString(CultureInfo.CurrentCulture));
 			Life = 100;
             LineSight = 128;
-			_cost.Add("Bois", 300);
-            _cost.Add("Pierre", 200);
+			Prix.Add("Bois", 300);
+            Prix.Add("Pierre", 200);
 
 		}
     }

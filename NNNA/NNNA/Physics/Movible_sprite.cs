@@ -14,7 +14,7 @@ namespace NNNA
 	    public Unit DestinationUnit { get; set; }
 		public ResourceMine DestinationResource { get; set; }
 		public int Updates;
-		protected int _dec = 90;
+		protected int Dec = 90;
 		public string Type { get; protected set; }
 		public Dictionary<string, int> Prix { get; private set; }
 		public double Angle { get; set; }
@@ -22,19 +22,19 @@ namespace NNNA
 		public bool Click { get; protected set; }
 		protected Vector2 ClickPosition { get; set; }
 		public bool Selected { get; set; }
-		protected Vector2 _positionIni;
-		protected Vector2 _cparcourir;
-		protected Vector2 _cparcouru;
-		protected Vector2 _direction;
-		protected List<Sprite> _pathList;
-		protected int _pathIterator;
-		protected bool _clickInterne;
+		protected Vector2 PositionIni;
+		protected Vector2 Cparcourir;
+		protected Vector2 Cparcouru;
+		protected Vector2 Direction;
+		protected List<Sprite> PathList;
+		protected int PathIterator;
+		protected bool ClickInterne;
 
 		[field: NonSerialized]
 	    private Texture2D _icon;
 
 		[field: NonSerialized]
-	    protected Texture2D _selection;
+	    protected Texture2D Selection;
 
 	    public MovibleSprite(int x, int y)
 			: base(x, y)
@@ -44,7 +44,7 @@ namespace NNNA
 	    	Prix = new Dictionary<string, int>();
 	        Selected = false;
 			Click = false;
-			_clickInterne = false;
+			ClickInterne = false;
 			Updates = 0;
 		}
         public void Move(List<Vector2> coordinates)
@@ -57,11 +57,11 @@ namespace NNNA
                     Click = true;
                     _texture.Animation = true;
                     ClickPosition = coordinates[0];
-                    _cparcourir = ClickPosition - pos;
-                    Angle = Math.Atan2(_cparcourir.Y, _cparcourir.X);
-                    _direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
-                    _cparcouru = Vector2.Zero;
-                    _positionIni = pos;
+                    Cparcourir = ClickPosition - pos;
+                    Angle = Math.Atan2(Cparcourir.Y, Cparcourir.X);
+                    Direction = new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
+                    Cparcouru = Vector2.Zero;
+                    PositionIni = pos;
                 }
             }
         }
@@ -84,10 +84,10 @@ namespace NNNA
                     _texture.Animation = true;
                     ClickPosition = coordinates[0];
                     Angle = Math.Atan2(ClickPosition.Y - _position.Y, ClickPosition.X - _position.X);
-                    _direction = new Vector2((float) Math.Cos(Angle), (float) Math.Sin(Angle));
-                    _cparcourir = new Vector2(ClickPosition.X - _position.X, ClickPosition.Y - _position.Y);
-                    _cparcouru = Vector2.Zero;
-                    _positionIni = _position;
+                    Direction = new Vector2((float) Math.Cos(Angle), (float) Math.Sin(Angle));
+                    Cparcourir = new Vector2(ClickPosition.X - _position.X, ClickPosition.Y - _position.Y);
+                    Cparcouru = Vector2.Zero;
+                    PositionIni = _position;
                 }
                 else
                     coordinates.RemoveAt(0);
@@ -98,11 +98,11 @@ namespace NNNA
 		{ spriteBatch.Draw(_icon, position, new Rectangle(0, 0, _icon.Width, _icon.Height), Color.White); }
 		public void SetTextures(ContentManager content, string name, int dec = 90)
 		{
-			_dec = dec;
+			Dec = dec;
 			_texture = new Image(content.Load<Texture2D>("Units/" + name + "/" + name), 4, 360/dec) { Animation = false };
 			Go = new Image(content, "go", 8, 1, 5);
 			Dots = content.Load<Texture2D>("dots");
-			_selection = content.Load<Texture2D>("selected");
+			Selection = content.Load<Texture2D>("selected");
 			_icon = content.Load<Texture2D>("Units/" + name + "/" + name + "_icon");
 		}
 	}

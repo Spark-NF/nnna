@@ -24,19 +24,20 @@ namespace NNNA
 		public int AdditionalUnitLineSight { get; set; }
 		public int AdditionalBuildingLineSight { get; set; }
 		public uint PopulationMax { get; set; }
-		public Color Color { get; set; }
-		public Color ColorMovable { get; set; }
+		public Color Color { get; private set; }
+		public Color ColorMovable { get; private set; }
 		internal int Ere { get; set; }
 		public string Name { get; set; }
 		public List<MovibleSprite> Units { get; set; }
 		public List<Building> Buildings { get; set; }
-		public List<Resource> _Resources { get; set; }
-		public string Type { protected set; get; }
+	    public List<Resource> _Resources { get; set; }
 
-		protected readonly Random _rand = new Random();
+	    public string Type { protected set; get; }
+
+		protected readonly Random Rand = new Random();
 
 		[field: NonSerialized]
-		protected readonly ContentManager _content;
+		protected readonly ContentManager Content;
 
 		[field: NonSerialized]
 		private Texture2D _popTexture;
@@ -49,7 +50,7 @@ namespace NNNA
 		protected Joueur(Color couleur, string nom, ContentManager content, string type = "")
 		{
 			Type = type;
-			_content = content;
+			Content = content;
 			Buildings = new List<Building>();
 			Units = new List<MovibleSprite>();
 			_Resources = new List<Resource>();
@@ -81,7 +82,7 @@ namespace NNNA
 			PopTexture = content.Load<Texture2D>("Resources/Pop");
 
 			foreach (Resource res in _Resources)
-			{ res.Load(content, _rand); }
+			{ res.Load(content, Rand); }
 		}
 
 		public abstract void Update(GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> units, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice, List<Sprite> toDraw);
