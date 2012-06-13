@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
@@ -66,7 +67,7 @@ namespace NNNA
 			Will = "mine";
 		}
 
-		public void ClickMouvement(GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice, ContentManager content)
+		public void ClickMouvement(GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, IEnumerable<Building> buildings, IEnumerable<ResourceMine> resources, Sprite[,] matrice, ContentManager content)
 		{
 			if (Click || Selected || DestinationUnit != null || DestinationBuilding != null)
 			{
@@ -173,12 +174,31 @@ namespace NNNA
 								{ DestinationUnit = null; }
 							}
 							if (Collides(sprites, buildings, resources, matrice))
-							{ _position -= translation; }
+							{
+                                if (Collides(sprites) && Will != "attack")
+                                    Position += Minimap.Rotate(translation, Vector2.Zero, Math.PI/2);
+                                _position -= translation;
+                                Move(Moving);
+							}
 						}
 					}
 				}
 			}
 		}
+
+        private bool Collides(IEnumerable<MovibleSprite> units)
+        {
+            // On teste la collision entre notre rectangle et celui de toutes les autres unités
+            var rec = new Rectangle((int)_position.X + Texture.Collision.X, (int)_position.Y + Texture.Collision.Y, Texture.Collision.Width, Texture.Collision.Height);
+            if ((from sprite in units.Cast<Sprite>().ToList()
+                 where sprite != this
+                 select new Rectangle((int)sprite.Position.X + sprite.Texture.Collision.X, (int)sprite.Position.Y + sprite.Texture.Collision.Y, sprite.Texture.Collision.Width, sprite.Texture.Collision.Height))
+                 .Any(sprec => sprec.Intersects(rec)))
+            { return true; }
+
+            // Si aucune collision n'a été détéctée jusqu'ici, alors c'est que l'on est pas en collision
+            return false;
+        }
 		public void ClickMouvement(Sprite[,] map, GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> sprites, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice)
 		{
 			if (Click || Selected)

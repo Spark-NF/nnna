@@ -123,7 +123,7 @@ namespace NNNA
 		/// <param name="resources">La liste des ressources minables de la carte.</param>
 		/// <param name="matrice">La matrice de la carte.</param>
 		/// <returns>Un booléen indiquant si l'on est en collision ou non.</returns>
-		public bool Collides(List<MovibleSprite> units, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice)
+		public bool Collides(IEnumerable<MovibleSprite> units, IEnumerable<Building> buildings, IEnumerable<ResourceMine> resources, Sprite[,] matrice)
 		{
 			// On teste la collision entre notre rectangle et celui de tous les autres sprites
 			var rec = new Rectangle((int)_position.X + Texture.Collision.X, (int)_position.Y + Texture.Collision.Y, Texture.Collision.Width, Texture.Collision.Height);
