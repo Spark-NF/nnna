@@ -125,7 +125,7 @@ namespace NNNA
 		public bool Collides(IEnumerable<MovibleSprite> units, IEnumerable<Building> buildings, IEnumerable<ResourceMine> resources, Sprite[,] matrice)
 		{
 			// On teste la collision entre notre rectangle et celui de tous les autres sprites
-			var rec = new Rectangle((int)_position.X + Texture.Collision.X, (int)_position.Y + Texture.Collision.Y, Texture.Collision.Width, Texture.Collision.Height);
+			var rec = (Texture != null) ? new Rectangle((int)_position.X + Texture.Collision.X, (int)_position.Y + Texture.Collision.Y, Texture.Collision.Width, Texture.Collision.Height) : new Rectangle((int) _position.X, (int) _position.Y, 1, 1);
 			if ((from sprite in units.Cast<Sprite>().ToList().Concat(buildings.Cast<Sprite>().ToList()).Concat(resources.Cast<Sprite>().ToList())
 				 where	sprite != this
 				 select new Rectangle((int)sprite.Position.X + sprite.Texture.Collision.X, (int)sprite.Position.Y + sprite.Texture.Collision.Y, sprite.Texture.Collision.Width, sprite.Texture.Collision.Height))
@@ -133,7 +133,7 @@ namespace NNNA
 			{ return true; }
 
 			// On teste la collision avec la carte
-			var coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Width, _position.Y + _texture.Height * 4 / 5));
+			var coos = (_texture != null) ? Game1.Xy2Matrice(new Vector2(_position.X + _texture.Width, _position.Y + _texture.Height * 4 / 5)) : Game1.Xy2Matrice(_position);
 			if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
 			{
 				if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
@@ -143,6 +143,28 @@ namespace NNNA
 			// Si aucune collision n'a été détéctée jusqu'ici, alors c'est que l'on est pas en collision
 			return false;
 		}
+
+        public bool NonCollides(IEnumerable<MovibleSprite> units, IEnumerable<Building> buildings, IEnumerable<ResourceMine> resources, Sprite[,] matrice, Vector2 diago_collision)
+        {
+            // On teste la collision entre notre rectangle et celui de tous les autres sprites
+            var rec = (Texture != null) ? new Rectangle((int)_position.X + Texture.Collision.X, (int)_position.Y + Texture.Collision.Y, Texture.Collision.Width, Texture.Collision.Height) : new Rectangle((int)(_position.X - diago_collision.X), (int)(_position.Y - diago_collision.Y), (int) (diago_collision.X * 2), (int)(diago_collision.Y * 2));
+            if ((from sprite in units.Cast<Sprite>().ToList().Concat(buildings.Cast<Sprite>().ToList()).Concat(resources.Cast<Sprite>().ToList())
+                 where sprite != this
+                 select new Rectangle((int)sprite.Position.X + sprite.Texture.Collision.X, (int)sprite.Position.Y + sprite.Texture.Collision.Y, sprite.Texture.Collision.Width, sprite.Texture.Collision.Height))
+                 .Any(sprec => sprec.Intersects(rec)))
+            { return false; }
+
+            // On teste la collision avec la carte
+            var coos = (_texture != null) ? Game1.Xy2Matrice(new Vector2(_position.X + _texture.Width, _position.Y + _texture.Height * 4 / 5)) : Game1.Xy2Matrice(_position);
+            if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
+            {
+                if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
+                { return false; }
+            }
+
+            // Si aucune collision n'a été détéctée jusqu'ici, alors c'est que l'on est pas en collision
+            return true;
+        }
 
 		// Comparateur de Sprite selon leur coordonnées en Y
 		public static int CompareByY(Sprite s1, Sprite s2)

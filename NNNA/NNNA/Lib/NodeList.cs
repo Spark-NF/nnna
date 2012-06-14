@@ -11,10 +11,10 @@ namespace NNNA
         {
             get
             {
-                int count = Count;
-                for (int i = 0; i < count; i++)
+                var count = Count;
+                for (var i = 0; i < count; i++)
                 {
-                    if (this[i].Tile.Position == node.Tile.Position)
+                    if (this[i].Position == node.Position)
                         return this[i];
                 }
                 return default(T);
@@ -23,11 +23,12 @@ namespace NNNA
 
         public void PivotInsertion(T node)
         {
-        	int left = 0, right = Count - 1;
+            var left = 0;
+            var right = Count - 1;
 
         	while (left <= right)
             {
-            	int center = (left + right) / 2;
+            	var center = (left + right) / 2;
             	if (node.ManhattanDist < this[center].ManhattanDist)
                 { right = center - 1; }
                 else if (node.ManhattanDist > this[center].ManhattanDist)

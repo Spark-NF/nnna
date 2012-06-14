@@ -93,7 +93,7 @@ namespace NNNA
 
 		public void DrawIcon(SpriteBatch spriteBatch, Vector2 position)
 		{ _icon.Draw(spriteBatch, position, Color.White); }
-		public void SetTextures(ContentManager content, string name, int dec = 90)
+		protected void SetTextures(ContentManager content, string name, int dec = 90)
 		{
 			Dec = dec;
 			_texture = new Image(content, "Units/" + name + "/" + name, 4, 360/dec) { Animation = false };

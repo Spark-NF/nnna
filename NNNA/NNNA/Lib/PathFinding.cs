@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace NNNA
 {
 	class PathFinding
 	{
-		public static List<Sprite> FindPath(Sprite[,] map, Sprite start, Sprite destination)
+		public static List<Vector2> FindPath(Vector2 start, Vector2 destination, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice, Vector2 diago_collision)
 		{
-			if (!destination.Crossable)
+			if (new Sprite(destination).Collides(new List<MovibleSprite>(), buildings, resources, matrice))
 			{ return null; }
 
 			var openList = new NodeList<Node>();
@@ -17,24 +18,26 @@ namespace NNNA
 
 			while (openList.Count > 0)
 			{
-				Node current = openList[0];
+				var current = openList[0];
 				openList.RemoveAt(0);
 				closedList.Add(current);
 
-				if (current.Tile.PositionCenter == destination.PositionCenter)
+				if ((current.Position - destination).LengthSquared() < 200)
 				{
-					var sol = new List<Sprite>();
+					var sol = new List<Vector2>();
+                    sol.Add(destination);
 					while (current.Parent != null)
 					{
-						sol.Add(current.Tile);
+						sol.Add(current.Position);
 						current = current.Parent;
 					}
+                    sol.Reverse();
 					return sol;
 				}
 
-				List<Node> possibleNodes = current.Neightborhood(map, destination);
-				int possibleNodesCount = possibleNodes.Count;
-				for (int i = 0; i < possibleNodesCount; i++)
+				List<Node> possibleNodes = current.Neightborhood(destination, buildings, resources, matrice, diago_collision);
+				var possibleNodesCount = possibleNodes.Count;
+				for (var i = 0; i < possibleNodesCount; i++)
 				{
 					if (!closedList.Contains(possibleNodes[i]))
 					{

@@ -6,75 +6,96 @@ namespace NNNA
 {
     class Node
     {
-        private Node _parent;
-    	public Node Parent
-    	{
-    		get { return _parent; }
-			set { _parent = value; }
-    	}
+        public Node Parent { get; set; }
+        public int ManhattanDist { get; private set; }
+        public Vector2 Position { get; private set; }
+        public Vector2 Destination { get; private set; }
 
-        private Sprite _tile;
-        public Sprite Tile
-        { get { return _tile; } }
-
-        private Sprite _destination;
-    	public Sprite Destination
-    	{
-    		get { return _destination; }
-			set { _destination = value; }
-    	}
-
-        private int _manhattanDist;
-    	public int ManhattanDist
-    	{
-    		get { return _manhattanDist; }
-			set { _manhattanDist = value; }
-    	}
-
-        public Node(Sprite tile, Node parent, Sprite destination)
+        public Node(Vector2 current, Node parent, Vector2 destination)
         {
-            _tile = tile;
-            _parent = parent;
-            _destination = destination;
-            _manhattanDist = (int)(Math.Abs(tile.PositionMatrice.X - destination.PositionMatrice.X) + Math.Abs(tile.PositionMatrice.Y - destination.PositionMatrice.Y));
+            Destination = destination;
+            Position = current;
+            Parent = parent;
+            ManhattanDist = (int) (destination - current).LengthSquared();
         }
 
-        public List<Node> Neightborhood(Sprite[,] map, Sprite destination)
+        public List<Node> Neightborhood(Vector2 destination, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice, Vector2 diago_collision)
         {
             var neight = new List<Node>();
-            Vector2 m = _tile.PositionMatrice;
+            var espacement = 10;
 
             //Up
-            if (m.Y > 0 && map[(int)m.X, (int)m.Y - 1].Crossable)
-                neight.Add(new Node(map[(int) m.X, (int) m.Y - 1], this, destination));
+            var pos = new Vector2(0, espacement);
+            if (new Sprite(Position + pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position + pos, this, destination));
 
             //Down
-            if (m.Y < map.GetLength(1) - 1 && map[(int)m.X, (int)m.Y + 1].Crossable)
-                neight.Add(new Node(map[(int)m.X, (int)m.Y + 1], this, destination));
+            if (new Sprite(Position - pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position - pos, this, destination));
 
             //Right
-            if (m.X < map.GetLength(0) - 1 && map[(int)m.X + 1, (int)m.Y].Crossable)
-                neight.Add(new Node(map[(int)m.X + 1, (int)m.Y], this, destination));
+            pos = new Vector2(espacement, 0);
+            if (new Sprite(Position + pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position + pos, this, destination));
 
             //Left
-            if (m.X > 0 && map[(int)m.X - 1, (int)m.Y].Crossable)
-                neight.Add(new Node(map[(int)m.X - 1, (int)m.Y], this, destination));
+            if (new Sprite(Position - pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position - pos, this, destination));
 
-            ////Up Right
-            //if (m.X < map.GetLength(0) - 1 && m.Y > 0 && map[(int)m.X + 1, (int)m.Y - 1].Crossable)
-            //    neight.Add(new Node(map[(int)m.X + 1, (int)m.Y - 1], this, destination));
+            //Up Right
+            pos = new Vector2(espacement, espacement);
+            if (new Sprite(Position + pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position + pos, this, destination));
 
-            ////Up Left
-            //if (m.X > 0 && m.Y > 0 && map[(int)m.X - 1, (int)m.Y - 1].Crossable)
-            //    neight.Add(new Node(map[(int)m.X - 1, (int)m.Y - 1], this, destination));
+            //Down Left
+            if (new Sprite(Position - pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position - pos, this, destination));
 
-            ////Down Right
-            //if (m.X < map.GetLength(0) - 1 && m.Y < map.GetLength(1) - 1 && map[(int)m.X + 1, (int)m.Y + 1].Crossable)
-            //    neight.Add(new Node(map[(int)m.X + 1, (int)m.Y + 1], this, destination));
+            //Up Left
+            pos = new Vector2(-espacement, espacement);
+            if (new Sprite(Position + pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position + pos, this, destination));
 
-            ////Down Left
-            //if (m.X > 0 && m.Y < map.GetLength(1) - 1 && map[(int)m.X - 1, (int)m.Y + 1].Crossable)
-            //    neight.Add(new Node(map[(int)m.X - 1, (int)m.Y + 1], this, destination));
+            //Down Right
+            if (new Sprite(Position - pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position - pos, this, destination));
+
+            //Up Up Right
+            pos = new Vector2((espacement/2), espacement);
+            if (new Sprite(Position + pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position + pos, this, destination));
+
+            //Down Down Left
+            if (new Sprite(Position - pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position - pos, this, destination));
+
+            //Up Up Left
+            pos = new Vector2(-(espacement / 2), espacement);
+            if (new Sprite(Position + pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position + pos, this, destination));
+
+            //Down Down Right
+            if (new Sprite(Position - pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position - pos, this, destination));
+
+            //Right Right Up
+            pos = new Vector2(espacement, (espacement/2));
+            if (new Sprite(Position + pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position + pos, this, destination));
+
+            //Left Left Down
+            if (new Sprite(Position - pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position - pos, this, destination));
+
+            //Left Left Up
+            pos = new Vector2(-espacement, (espacement / 2));
+            if (new Sprite(Position + pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position + pos, this, destination));
+
+            //Right Right Down
+            if (new Sprite(Position - pos).NonCollides(new List<MovibleSprite>(), buildings, resources, matrice, diago_collision))
+                neight.Add(new Node(Position - pos, this, destination));
+
 
             return neight;
         }

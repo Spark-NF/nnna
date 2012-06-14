@@ -2307,7 +2307,7 @@ namespace NNNA
                         for (int i = 0; i < distance; i += 4)
 						{ unit.Dots.Draw(_spriteBatch, unit.Moving[j] - _camera.Position - new Vector2((float)(i * Math.Cos(angle)), (float)(i * Math.Sin(angle))), Color.White); }
                     }
-                    if (unit.Go != null && unit.DestinationUnit == null && unit.DestinationResource == null && (unit.DestinationBuilding == null || unit.Will != "poches"))
+                    if (unit.Moving.Count > 0 && unit.Go != null && unit.DestinationUnit == null && unit.DestinationResource == null && (unit.DestinationBuilding == null || unit.Will != "poches"))
                     { unit.Go.Draw(_spriteBatch, unit.Moving[unit.Moving.Count - 1] - _camera.Position - new Vector2(unit.Go.Width, unit.Go.Height) / 2.0f, Color.White); }
                 }
             }
