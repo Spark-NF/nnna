@@ -127,6 +127,7 @@
     <Compile Include="Lib\Resource.cs" />
     <Compile Include="Lib\ResourceMine.cs" />
     <Compile Include="Lib\Ambiance_Sound.cs" />
+    <Compile Include="Lib\Static.cs" />
     <Compile Include="Lib\Technologies\Technologies_Window.cs" />
     <Compile Include="Lib\Vector2DExtander.cs" />
     <Compile Include="Physics\Batiment\Archerie.cs" />

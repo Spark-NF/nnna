@@ -32,20 +32,19 @@ namespace NNNA
 		public List<Building> Buildings { get; set; }
 	    public List<Resource> _Resources { get; set; }
 
-	    public string Type { protected set; get; }
+		public string Type { protected set; get; }
+
+		private Image _popTexture;
+		public Image PopTexture
+		{
+			get { return _popTexture; }
+			private set { _popTexture = value; }
+		}
 
 		protected readonly Random Rand = new Random();
 
 		[field: NonSerialized]
 		protected readonly ContentManager Content;
-
-		[field: NonSerialized]
-		private Texture2D _popTexture;
-		public Texture2D PopTexture
-		{
-			get { return _popTexture; }
-			private set { _popTexture = value; }
-		}
 
 		protected Joueur(Color couleur, string nom, ContentManager content, string type = "")
 		{
@@ -79,7 +78,7 @@ namespace NNNA
 			_Resources.Add(new Resource("Fer", new[] { "", "Fer", "Titane", "Tritonite" }));
 			_Resources.Add(new Resource("Petrole", new[] { "", "", "Petrole", "Tritium" }));
 
-			PopTexture = content.Load<Texture2D>("Resources/Pop");
+			PopTexture = new Image(content, "Resources/Pop");
 
 			foreach (Resource res in _Resources)
 			{ res.Load(content, Rand); }

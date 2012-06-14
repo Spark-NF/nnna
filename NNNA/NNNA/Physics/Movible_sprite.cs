@@ -30,11 +30,8 @@ namespace NNNA
 		protected int PathIterator;
 		protected bool ClickInterne;
 
-		[field: NonSerialized]
-	    private Texture2D _icon;
-
-		[field: NonSerialized]
-	    protected Texture2D Selection;
+	    private Image _icon;
+		protected Image Selection;
 
 	    public MovibleSprite(int x, int y)
 			: base(x, y)
@@ -95,15 +92,15 @@ namespace NNNA
 		}
 
 		public void DrawIcon(SpriteBatch spriteBatch, Vector2 position)
-		{ spriteBatch.Draw(_icon, position, new Rectangle(0, 0, _icon.Width, _icon.Height), Color.White); }
+		{ _icon.Draw(spriteBatch, position, Color.White); }
 		public void SetTextures(ContentManager content, string name, int dec = 90)
 		{
 			Dec = dec;
-			_texture = new Image(content.Load<Texture2D>("Units/" + name + "/" + name), 4, 360/dec) { Animation = false };
+			_texture = new Image(content, "Units/" + name + "/" + name, 4, 360/dec) { Animation = false };
 			Go = new Image(content, "go", 8, 1, 5);
-			Dots = content.Load<Texture2D>("dots");
-			Selection = content.Load<Texture2D>("selected");
-			_icon = content.Load<Texture2D>("Units/" + name + "/" + name + "_icon");
+			Dots = new Image(content, "dots");
+			Selection = new Image(content, "selected");
+			_icon = new Image(content, "Units/" + name + "/" + name + "_icon");
 		}
 	}
 }

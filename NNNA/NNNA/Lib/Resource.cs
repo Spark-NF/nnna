@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using System.Globalization;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
@@ -9,14 +10,12 @@ namespace NNNA
 	{
 		public static Resource Empty = new Resource("", new string[] {});
 
-		[field: NonSerialized]
-		private Texture2D[] _icons;
-		public Texture2D Icon(int ere)
+		private Image[] _icons;
+		public Image Icon(int ere)
 		{ return _icons[ere - 1]; }
 
-		[field: NonSerialized]
-		private Texture2D[] _textures;
-		public Texture2D Texture(int ere)
+		private Image[] _textures;
+		public Image Texture(int ere)
 		{ return _textures[ere - 1]; }
 
 		private string _id;
@@ -48,15 +47,14 @@ namespace NNNA
 
 		public void Load(ContentManager content, Random rand)
 		{
-			_icons = new Texture2D[4];
-			_textures = new Texture2D[4];
+			_icons = new Image[4];
+			_textures = new Image[4];
 			for (int i = 1; i <= 4; i++)
 			{
 				if (Name(i) != "")
 				{ 
-					_icons[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + i);
-					if (Name(i) == "Bois") _textures[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + 1 + "_sprite" + (rand.Next(1000) % 3));
-					else _textures[i - 1] = content.Load<Texture2D>("Resources/" + _id + "_" + 1 + "_sprite");
+					_icons[i - 1] = new Image(content, "Resources/" + _id + "_" + i);
+					_textures[i - 1] = new Image(content, "Resources/" + _id + "_" + 1 + "_sprite" + (Name(i) == "Bois" ? (rand.Next(1000) % 3).ToString(CultureInfo.InvariantCulture) : ""));
 				}
 			}
 		}

@@ -11,6 +11,9 @@ namespace NNNA
 		public JoueurAI(Color couleur, string nom, ContentManager content)
 			: base(couleur, nom, content, "ai")
 		{ }
+		public JoueurAI(Joueur j, ContentManager content)
+			: base(j.Color, j.Name, content, "ai")
+		{ }
 
 		public override void Update(GameTime gameTime, Camera2D camera, HUD hud, List<MovibleSprite> units, List<Building> buildings, List<ResourceMine> resources, Sprite[,] matrice, List<Sprite> toDraw)
 		{

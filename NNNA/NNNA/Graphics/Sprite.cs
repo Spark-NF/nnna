@@ -55,8 +55,7 @@ namespace NNNA
 		}
 		public bool Liquid;
 
-		[field: NonSerialized]
-		public Texture2D Dots;
+		public Image Dots;
 
 		public Sprite()
 		{

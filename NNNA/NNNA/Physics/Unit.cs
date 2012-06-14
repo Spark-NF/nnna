@@ -307,9 +307,7 @@ namespace NNNA
 			}
 
 			if (Selected)
-			{
-				spriteBatch.Draw(Selection, _position - camera.Position + new Vector2(0, 32), Joueur.Color);
-			}
+			{ Selection.Draw(spriteBatch, _position - camera.Position + new Vector2(0, 32), Joueur.Color); }
 			_texture.Draw(spriteBatch, _position - camera.Position, col, tex);
 		}
 	}

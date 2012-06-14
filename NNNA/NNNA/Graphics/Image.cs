@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,7 +10,7 @@ namespace NNNA
 	/// Cette classe permet de gérer des animations très facilement.
 	/// </summary>
 	[Serializable]
-	public class Image
+	public class Image : IDeserializationCallback
 	{
 		public int Part { get; set; }
 		private readonly int _columns;
@@ -39,14 +40,18 @@ namespace NNNA
 		public bool Finished
 		{ get { return _single && _current == _columns - 1; } }
 
+		public string AssetName { get; set; }
+
 		[field: NonSerialized]
-		private readonly Texture2D _texture;
+		private Texture2D _texture;
 		public Texture2D Texture
 		{ get { return _texture; } }
 
-		public Image(Texture2D texture, int columns = 1, int rows = 1, int speed = 15)
+		public Image(ContentManager contentManager, string assetName, int columns = 1, int rows = 1, int speed = 15)
 		{
+			var texture = contentManager.Load<Texture2D>(assetName);
 			_texture = new Texture2D(texture.GraphicsDevice, texture.Width, texture.Height);
+			AssetName = assetName;
 			_columns = columns;
 			_rows = rows;
 			_speed = speed;
@@ -96,9 +101,6 @@ namespace NNNA
 			}
 			_texture.SetData(0, new Rectangle(0, 0, Width, Height), data, 0, Width * Height);
 		}
-		public Image(ContentManager contentManager, string assetName, int columns = 1, int rows = 1, int speed = 15)
-			: this(contentManager.Load<Texture2D>(assetName), columns, rows, speed)
-		{ }
 
 		public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, int which = 1)
 		{
@@ -106,5 +108,8 @@ namespace NNNA
 			{ _current = (_current + 1) % _columns; }
 			spriteBatch.Draw(_texture, position + new Vector2(0, Height - Part), new Rectangle(_current * Width, which * Height - Part, Width, Part), color);
 		}
+
+		public void OnDeserialization(object sender)
+		{ _texture = Static.Game.getContent().Load<Texture2D>(AssetName); }
 	}
 }

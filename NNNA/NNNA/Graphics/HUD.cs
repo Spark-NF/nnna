@@ -51,11 +51,11 @@ namespace NNNA
 			var i = 0;
 			foreach (Resource res in joueur.Resources(joueur.Ere))
 			{
-				spriteBatch.Draw(res.Icon(joueur.Ere), new Vector2(5 + i * 140, 5), Color.White);
+				res.Icon(joueur.Ere).Draw(spriteBatch, new Vector2(5 + i * 140, 5), Color.White);
                 spriteBatch.DrawString(font, res.Count.ToString(CultureInfo.CurrentCulture), new Vector2(10 + i * 140 + res.Icon(joueur.Ere).Width, 5 + ((res.Icon(joueur.Ere).Height - font.MeasureString(res.Count.ToString(CultureInfo.CurrentCulture)).Y) / 2)), Color.White);
 				i++;
 			}
-            spriteBatch.Draw(joueur.PopTexture, new Vector2(5 + joueur.Resources(joueur.Ere).Count * 140, 5), Color.White);
+            joueur.PopTexture.Draw(spriteBatch, new Vector2(5 + joueur.Resources(joueur.Ere).Count * 140, 5), Color.White);
             spriteBatch.DrawString(font, joueur.Population.ToString(CultureInfo.CurrentCulture) + "/" + joueur.PopulationMax.ToString(CultureInfo.CurrentCulture), new Vector2(10 + joueur.Resources(joueur.Ere).Count * 140 + joueur.PopTexture.Width, 5 + ((joueur.PopTexture.Height - font.MeasureString(joueur.Population.ToString(CultureInfo.CurrentCulture) + "/" + joueur.PopulationMax.ToString(CultureInfo.CurrentCulture)).Y) / 2)), Color.White);
         }
     }

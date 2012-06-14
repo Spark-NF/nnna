@@ -8,9 +8,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -61,7 +61,8 @@ namespace NNNA
 		private Minimap _minimap;
 		private HUD _hud;
 		private Camera2D _camera;
-		internal static Joueur Joueur;
+		internal static Joueur[] Joueurs = new Joueur[4];
+		public static Joueur Joueur { get { return Joueurs[_position]; } }
 		private List<JoueurAI> _enemiesAI;
 		private List<JoueurInternet> _enemiesInternet;
 		private Building _selectedBuilding;
@@ -89,7 +90,7 @@ namespace NNNA
 		private bool _isInternet;
 		private Thread _threadListen;
 		private int _receivedPackets;
-		private int _position;
+		public static int _position;
 
 		#region Enums
 
@@ -140,8 +141,12 @@ namespace NNNA
             Content.RootDirectory = "Content";
             _fps = new CompteurFPS(this);
             Components.Add(_fps);
-            
+
+        	Static.Game = this;
         }
+
+		public ContentManager getContent()
+		{ return Content; }
 
 		#region Settings
 
@@ -203,7 +208,7 @@ namespace NNNA
 			_map = new Map();
 			_camera = new Camera2D(0, 0);
 			_curseur = new Sprite(0, 0);
-			Joueur = new JoueurHuman(Color.Red, Environment.UserName, Content);
+			Joueurs[_position] = new JoueurHuman(Color.Red, Environment.UserName, Content);
 			_players = new[] { 2, 1, 0, 0 };
 			_playersColors = new[] { Color.Blue, Color.Red, Color.Green, Color.Yellow };
 
@@ -546,90 +551,8 @@ namespace NNNA
 					_units.Clear();
                     _toDraw.Clear();
 
-					// Les couleurs, noms et compte des joueurs
-					var colors = new List<Color> { _playersColors[0] };
-					string[] names = { Environment.UserName, "Lord Lard", "Herr von Speck", "Monsieur Martin" };
-					//int users = _players.Count(t => t > 0);
-					_foes = 0;
-					for (int i = 1; i < _players.Length; i++)
-					{
-						if (_players[i] > 0)
-						{
-							colors.Add(_playersColors[i]);
-							_foes++;
-						}
-					}
-
-					// On regénère une carte tant qu'elle est incapable d'accueillir le bon nombre de spawns
-					while (!ok)
-					{
-						// Génération
-						_matrice = GenerateMap(_quickType, sizes[_quickSize], sizes[_quickSize]);
-						_minimap.Dimensions = new Vector2(sizes[_quickSize], sizes[_quickSize]);
-
-						// Spawns
-						heights.Clear();
-						for (int x = 0; x < _heightMap.GetLength(0); x++)
-						{
-							for (int y = 0; y < _heightMap.GetLength(1); y++)
-							{ heights.Add(_heightMap[x, y] * 255); }
-						}
-						float waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
-						int last = heights.IndexOf(waterline) > 0 ? heights.IndexOf(waterline) : heights.Count;
-						var heightsOr = new List<float>(heights);
-						heights.Sort((x, y) => (y.CompareTo(x)));
-						spawns.Clear();
-						int j = 0;
-
-						// On génère autant de spawns qu'il y aura de joueurs, chacun espacés d'au moins $dist
-						while (spawns.Count < _foes + 1 && j < last)
-						{
-							int index = heightsOr.IndexOf(heights[j]);
-							heightsOr[index] = -1;
-							var point = new Point(index % _heightMap.GetLength(1), index / _heightMap.GetLength(1));
-							bool isNear = false;
-							foreach (Point p in spawns)
-							{
-								if (point.DistanceTo(p) <= dist)
-								{ isNear = true; }
-							}
-							if (!isNear)
-							{ spawns.Add(point); }
-							j++;
-						}
-
-						if (spawns.Count == _foes + 1)
-						{ ok = true; }
-					}
-
-					/*
-					 * envoie de la map si partie multi
-					 */
-
-					//Joueur
-					Joueur = new Joueur(colors[0], names[0], Content);
-					var hutte = new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, Joueur);
-					Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
-					Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
-					Joueur.Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, hutte, false));
-					Joueur.Buildings.Add(hutte);
-					_camera.Position = Matrice2Xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - _screenSize / 2;
-					_units.AddRange(Joueur.Units);
-					_buildings.AddRange(Joueur.Buildings);
-
-					// Ennemis
-					_enemies = new Joueur[_foes];
-					for (int i = 0; i < _foes; i++)
-					{
-						_enemies[i] = new Joueur(colors[i + 1], names[i + 1], Content);
-						hutte = new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, _enemies[i]);
-						_enemies[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemies[i], false));
-						_enemies[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemies[i], false));
-						_enemies[i].Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemies[i], hutte, false));
-						_enemies[i].Buildings.Add(hutte);
-						_units.AddRange(_enemies[i].Units);
-						_buildings.AddRange(_enemies[i].Buildings);
-					}
+					Generate();
+					_minimap.Dimensions = new Vector2(_matrice.GetLength(0), _matrice.GetLength(1));
 
 					//Le reste
 					_techno.Reset();
@@ -703,7 +626,7 @@ namespace NNNA
 			var colors = new List<Color> { _playersColors[0] };
 			for (int i = 1; i < _players.Length; i++)
 			{
-				if (_players[i] > 0)
+				if (_players[i] > 0 || i <= internetPlayers)
 				{
 					colors.Add(_playersColors[i]);
 					_foes++;
@@ -715,7 +638,6 @@ namespace NNNA
 			{
 				// Génération
 				_matrice = GenerateMap(_quickType, sizes[_quickSize], sizes[_quickSize]);
-				_minimap.Dimensions = new Vector2(sizes[_quickSize], sizes[_quickSize]);
 
 				// Spawns
 				heights.Clear();
@@ -753,7 +675,7 @@ namespace NNNA
 			}
 
 			//Joueur
-			Joueur = new JoueurHuman(colors[0], names[0], Content);
+			Joueurs[_position] = new JoueurHuman(colors[0], names[0], Content);
 			var hutte = new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, Joueur);
 			Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
 			Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
@@ -768,7 +690,9 @@ namespace NNNA
 			_enemiesInternet = new List<JoueurInternet>();
 			for (int i = 0; i < internetPlayers; i++)
 			{
-				_enemiesInternet.Add(new JoueurInternet(colors[i + 1], names[i + 1], Content));
+				var foe = new JoueurInternet(colors[i + 1], names[i + 1], Content);
+				_enemiesInternet.Add(foe);
+				Joueurs[i + 1] = foe;
 				hutte = new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, _enemiesInternet[i]);
 				_enemiesInternet[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesInternet[i], false));
 				_enemiesInternet[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesInternet[i], false));
@@ -780,7 +704,9 @@ namespace NNNA
 			for (int i = internetPlayers; i < _foes; i++)
 			{
 				int u = i - internetPlayers;
-				_enemiesAI.Add(new JoueurAI(colors[i + 1], names[i + 1], Content));
+				var foe = new JoueurAI(colors[i + 1], names[i + 1], Content);
+				_enemiesAI.Add(foe);
+				Joueurs[i + 1] = foe;
 				hutte = new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y, Content, _enemiesAI[u]);
 				_enemiesAI[u].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesAI[u], false));
 				_enemiesAI[u].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesAI[u], false));
@@ -827,7 +753,8 @@ namespace NNNA
 					_units.Clear();
 					_toDraw.Clear();
 
-					Generate();
+					Generate(2);
+					_minimap.Dimensions = new Vector2(_matrice.GetLength(0), _matrice.GetLength(1));
 
 					Send(Joueur.Name);
 
@@ -835,20 +762,16 @@ namespace NNNA
 					for (int x = 0; x < _matrice.GetLength(0); x++)
 					{
 						for (int y = 0; y < _matrice.GetLength(1); y++)
-						{ matrice += "," + _matrice[x, y]; }
+						{ matrice += "," + _matrice[y, x].Name; }
 					}
 					Send(Serialize(matrice));
 
-					var p = new List<Joueur> { Joueur };
-					p.AddRange(_enemiesInternet);
-					p.AddRange(_enemiesAI);
-					Send(Serialize(p));
-
+					Send(Serialize(Joueurs));
 					Send(Serialize(_resources));
 
-					/*_receivedPackets = 4;
+					_receivedPackets = 4;
 					_threadListen = new Thread(Listen);
-					_threadListen.Start();*/
+					_threadListen.Start();
 
 					_techno.Reset();
 					MessagesManager.Clear();
@@ -938,7 +861,7 @@ namespace NNNA
 
 				Clavier.Get().GetText = false;
 			}
-			else
+			else if (s == Screen.PlayMultiplayer)
 			{ _currentScreen = s; }
 		}
 		private void Listen()
@@ -948,9 +871,14 @@ namespace NNNA
 			while (_isInternet)
 			{
 				String data = "";
-				int bit;
-				while ((bit = stream.ReadByte()) != 0)
-				{ data += (char)bit; }
+				try
+				{
+					int bit;
+					while ((bit = stream.ReadByte()) != 0)
+					{ data += (char)bit; }
+				}
+				catch (IOException)
+				{ _currentScreen = Screen.Title; }
 
 				switch (_receivedPackets)
 				{
@@ -963,31 +891,51 @@ namespace NNNA
 
 						_matrice = new Sprite[length, mat.Count / length];
 						for (int x = 0; x < mat.Count; x++)
-						{ _matrice[x % length, (int)Math.Floor((float)x / length)] = new Sprite(mat[x].ToCharArray()[0]); }
+						{
+							int mx = x % length, my = (int)Math.Floor((float)x / length);
+							Sprite sp = _h;
+							switch (mat[x].ToCharArray()[0])
+							{
+								case 'h': sp = _h; break;
+								case 'e': sp = _e; break;
+								case 't': sp = _t; break;
+								case 'p': sp = _p; break;
+								case 's': sp = _s; break;
+								case 'i': sp = _i; break;
+							}
+							_matrice[mx, my] = sp;
+						}
+						_minimap.Dimensions = new Vector2(_matrice.GetLength(0), _matrice.GetLength(1));
 						break;
 
 					case 1:
-						_position = Unserialize<int>(data);
+						_position = Convert.ToInt32(data);
 						break;
 
 					case 2:
-						var joueurs = Unserialize<List<Joueur>>(data);
-						Joueur = joueurs[_position];
-						foreach (Joueur j in joueurs)
+						Joueurs = Unserialize<Joueur[]>(data);
+						_enemiesAI = new List<JoueurAI>();
+						_enemiesInternet = new List<JoueurInternet>();
+						foreach (Joueur j in Joueurs)
 						{
-							if (j != Joueur)
+							if (j != null)
 							{
-								switch (j.Type)
+								if (j != Joueur)
 								{
-									case "ai":
-										_enemiesAI.Add((JoueurAI)j);
-										break;
+									switch (j.Type)
+									{
+										case "ai":
+											_enemiesAI.Add(new JoueurAI(j, Content));
+											break;
 
-									case "human":
-									case "internet":
-										_enemiesInternet.Add((JoueurInternet)j);
-										break;
+										case "human":
+										case "internet":
+											_enemiesInternet.Add(new JoueurInternet(j, Content));
+											break;
+									}
 								}
+								_buildings.AddRange(j.Buildings);
+								_units.AddRange(j.Units);
 							}
 						}
 						break;
@@ -1008,7 +956,18 @@ namespace NNNA
 						break;
 
 					default:
-						// action
+						int start = data.IndexOf(' ');
+						string action = data.Substring(0, start);
+						data = data.Substring(start + 1);
+						start = data.IndexOf(' ');
+						Joueur user = Joueurs[Convert.ToInt32(data.Substring(0, start))];
+						data = data.Substring(start + 1);
+						switch (action)
+						{
+							case "chat":
+								Chat.Add(new ChatMessage { Author = user.Name, Color = user.Color, Text = data });
+								break;
+						}
 						break;
 				}
 
@@ -1187,9 +1146,10 @@ namespace NNNA
 			}
 			if (Clavier.Get().NewPress(Keys.Enter) && _showTextBox)
 			{
-				// Envoi du message via le réseau
+				if (_isInternet)
+				{ Send("chat " + _position + " " + Clavier.Get().Text); }
 
-				Chat.Add(new ChatMessage { Author = Joueur.Name, Color = _playersColors[0], Text = Clavier.Get().Text });
+				Chat.Add(new ChatMessage { Author = Joueur.Name, Color = Joueur.Color, Text = Clavier.Get().Text });
 				_showTextBox = false;
 				Clavier.Get().GetText = false;
 			}
@@ -1889,7 +1849,7 @@ namespace NNNA
 
                                 /* Ere 2 
                             case "build_ferme":
-                                if (joueur.Has(new Ferme().Prix))
+                                if (Joueur.Has(new Ferme().Prix))
                                 {
                                     m_pointer = "Batiments/ferme";
                                     isbuilding = true;
@@ -2238,7 +2198,10 @@ namespace NNNA
 		private void DrawMultiplayer()
 		{
 			DrawCommon();
-			MakeMenu("Créer un partie", "Rejoindre une partie", "Retour");
+			if (_isInternet)
+			{ MakeMenu("Chargement..."); }
+			else
+			{ MakeMenu("Créer un partie", "Rejoindre une partie", "Retour"); }
 		}
 		private void DrawPlayMultiplayerHost()
 		{
@@ -2342,7 +2305,7 @@ namespace NNNA
                         var distance = (chemin).Length();
                         var angle = Math.Atan2(chemin.Y, chemin.X);
                         for (int i = 0; i < distance; i += 4)
-                        { _spriteBatch.Draw(unit.Dots, unit.Moving[j] - _camera.Position - new Vector2((float)(i * Math.Cos(angle)), (float)(i * Math.Sin(angle))), Color.White); }
+						{ unit.Dots.Draw(_spriteBatch, unit.Moving[j] - _camera.Position - new Vector2((float)(i * Math.Cos(angle)), (float)(i * Math.Sin(angle))), Color.White); }
                     }
                     if (unit.Go != null && unit.DestinationUnit == null && unit.DestinationResource == null && (unit.DestinationBuilding == null || unit.Will != "poches"))
                     { unit.Go.Draw(_spriteBatch, unit.Moving[unit.Moving.Count - 1] - _camera.Position - new Vector2(unit.Go.Width, unit.Go.Height) / 2.0f, Color.White); }
