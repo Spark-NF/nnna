@@ -1414,7 +1414,7 @@ namespace NNNA
                             if (ValidSpawn(pos, _dimensions))
                             {
                                 var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                                b = new Ferme((int)position.X, (int)position.Y, Content, Joueur);
+                                ResourceMine r = new Ferme((int)position.X, (int)position.Y, Content, Joueur);
                                 if (!Joueur.Ferme)
                                 {
                                     MessagesManager.Messages.Add(new Msg(_("Votre niveau technologique ne vous \npermet pas de construire ce batiment."), Color.Red, 5000));
@@ -1424,13 +1424,13 @@ namespace NNNA
                                 }
                                 else
                                 {
-                                    if (Joueur.Pay(b.Prix))
+                                	var price = new Dictionary<string, int> { {"Bois", 60} };
+                                	if (Joueur.Pay(price))
                                     {
-                                        _selectedList[0].Build(b);
-                                        _buildings.Add(b);
-                                        _toDraw.Add(b);
+                                        _resources.Add(r);
+                                        _toDraw.Add(r);
 										MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"), Color.White, 5000));
-										Send("build", _selectedList[0].ID + " " + Serialize(b));
+										Send("resource", Serialize(r));
                                         _pointer = "pointer";
                                         _currentAction = "";
                                     }
