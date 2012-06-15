@@ -144,7 +144,17 @@ namespace NNNA
                                 if (DestinationResource != null)
                                 {
                                     Will = "mine";
-                                    Move(new List<Vector2> { DestinationResource.Position + new Vector2((float)Math.Round((double)DestinationResource.Texture.Width / 2), (float)Math.Round((double)DestinationResource.Texture.Height * 0.95f)) - new Vector2((float)Math.Round(Texture.Width / 2.0f), Texture.Height) });
+                                    Moving = new List<Vector2>
+                                                 {
+                                                     DestinationResource.Position +
+                                                     new Vector2(
+                                                         (float)
+                                                         Math.Round((double) DestinationResource.Texture.Width/2),
+                                                         (float)
+                                                         Math.Round((double) DestinationResource.Texture.Height*0.95f)) -
+                                                     new Vector2((float) Math.Round(Texture.Width/2.0f), Texture.Height)
+                                                 };
+                                    Move(Moving);
                                 }                                
 							}
 						}
@@ -167,7 +177,13 @@ namespace NNNA
 								{
 									Will = "poches";
 									DestinationBuilding = Affiliate;
-									Move(new List<Vector2> { DestinationBuilding.Position + new Vector2((float)Math.Round((double)DestinationBuilding.Texture.Width / 2), 0) }); //, sprites, buildings, matrice);
+								    Moving =
+								        new List<Vector2>
+								             {
+								                 DestinationBuilding.Position +
+								                 new Vector2((float) Math.Round((double) DestinationBuilding.Texture.Width/2), 0)
+								             };
+									Move(Moving);
 								}
 							}
 						}
