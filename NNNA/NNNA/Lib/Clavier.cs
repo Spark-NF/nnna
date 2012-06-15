@@ -173,7 +173,7 @@ namespace NNNA
 		/// <param name="button">Le bouton à tester.</param>
 		/// <returns>Si le est appuyé.</returns>
 		public bool Pressed(Keys button)
-		{ return _newState.IsKeyDown(button); }
+		{ return Static.Game.IsActive && _newState.IsKeyDown(button); }
 
 		/// <summary>
 		/// Si un bouton vient d'être relaché.
@@ -181,7 +181,7 @@ namespace NNNA
 		/// <param name="button">Le bouton à tester.</param>
 		/// <returns>Si le bouton vient d'être relaché.</returns>
 		public bool Released(Keys button)
-		{ return _newState.IsKeyUp(button); }
+		{ return Static.Game.IsActive && _newState.IsKeyUp(button); }
 
 		/// <summary>
 		/// Si un bouton vient d'être appuyé.
@@ -189,42 +189,42 @@ namespace NNNA
 		/// <param name="button">Le bouton à tester.</param>
 		/// <returns>Si le bouton vient d'être appuyé.</returns>
 		public bool NewPress(Keys button)
-		{ return _oldState.IsKeyUp(button) && _newState.IsKeyDown(button); }
+		{ return Static.Game.IsActive && _oldState.IsKeyUp(button) && _newState.IsKeyDown(button); }
 
 		/// <summary>
 		/// Si un bouton vient d'être appuyé.
 		/// </summary>
 		/// <returns>Si un bouton vient d'être appuyé.</returns>
 		public bool NewPress()
-		{ return _newState.GetPressedKeys().Count() > _oldState.GetPressedKeys().Count(); }
+		{ return Static.Game.IsActive && _newState.GetPressedKeys().Count() > _oldState.GetPressedKeys().Count(); }
 
 		/// <summary>
 		/// Si un bouton vient d'être relaché.
 		/// </summary>
 		/// <returns>Si un bouton vient d'être relaché.</returns>
 		public bool NewRelease(Keys button)
-		{ return _oldState.IsKeyDown(button) && _newState.IsKeyUp(button); }
+		{ return Static.Game.IsActive && _oldState.IsKeyDown(button) && _newState.IsKeyUp(button); }
 
 		/// <summary>
 		/// Si un bouton vient d'être relaché.
 		/// </summary>
 		/// <returns>Si un bouton vient d'être relaché.</returns>
 		public bool NewRelease()
-		{ return _newState.GetPressedKeys().Count() < _oldState.GetPressedKeys().Count(); }
+		{ return Static.Game.IsActive && _newState.GetPressedKeys().Count() < _oldState.GetPressedKeys().Count(); }
 
 		/// <summary>
 		/// Si un bouton est actuellement appuyé.
 		/// </summary>
 		/// <returns>Si un bouton est actuellement appuyé.</returns>
 		public bool Press()
-		{ return _newState.GetPressedKeys().Count() != 0; }
+		{ return Static.Game.IsActive && _newState.GetPressedKeys().Count() != 0; }
 
 		/// <summary>
 		/// Si aucun bouton n'est actuellement appuyé.
 		/// </summary>
 		/// <returns>Si aucun bouton n'est actuellement appuyé.</returns>
 		public bool NoPress()
-		{ return !_newState.GetPressedKeys().Any(); }
+		{ return Static.Game.IsActive && !_newState.GetPressedKeys().Any(); }
 
 		public override string ToString()
 		{ return _newState.ToString(); }

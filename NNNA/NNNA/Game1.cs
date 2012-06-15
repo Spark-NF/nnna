@@ -1955,7 +1955,7 @@ namespace NNNA
                     }
                 }
             }
-			foreach (Unit sprite in Joueur.Units)
+			foreach (Unit sprite in _units)
 			{ sprite.ClickMouvement(gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, Content); }
 			if (_selectedList.Count != 0 && Souris.Get().Clicked(MouseButton.Right))
 			{ Send("move", string.Join(" ", _selectedList.Select(unit => unit.ID + "," + Serialize(unit.Moving)).ToArray())); }

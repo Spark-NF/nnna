@@ -26,8 +26,8 @@ namespace NNNA
 
 		private MouseState _oldState, _newState;
 		private Rectangle _selection;
-		public int X { get { return _newState.X; } }
-		public int Y { get { return _newState.Y; } }
+		public int X { get { return Static.Game.IsActive ? _newState.X : -1; } }
+		public int Y { get { return Static.Game.IsActive ? _newState.Y : -1; } }
 		public Point Position { get { return new Point(X, Y); } }
 		public Rectangle Selection { get { return _selection; } }
 
@@ -60,6 +60,8 @@ namespace NNNA
 		/// <returns>Si le est appuyé.</returns>
 		public bool Pressed(MouseButton button)
 		{
+			if (!Static.Game.IsActive)
+			{ return false;  }
 			switch (button)
 			{
 				case MouseButton.Left:
@@ -83,6 +85,8 @@ namespace NNNA
 		/// <returns>Si le bouton vient d'être appuyé.</returns>
 		public bool Clicked(MouseButton button)
 		{
+			if (!Static.Game.IsActive)
+			{ return false; }
 			switch (button)
 			{
 				case MouseButton.Left:
@@ -106,6 +110,8 @@ namespace NNNA
 		/// <returns>Si le bouton vient d'être relaché.</returns>
 		public bool Released(MouseButton button)
 		{
+			if (!Static.Game.IsActive)
+			{ return false; }
 			switch (button)
 			{
 				case MouseButton.Left:
@@ -130,6 +136,8 @@ namespace NNNA
 		/// <returns>Si le bouton est resté dans un certain état.</returns>
 		public bool Hold(MouseButton button, ButtonState status = ButtonState.Pressed)
 		{
+			if (!Static.Game.IsActive)
+			{ return false; }
 			switch (button)
 			{
 				case MouseButton.Left:
