@@ -110,6 +110,35 @@ namespace NNNA
 		}
 
 		public void OnDeserialization(object sender)
-		{ _texture = Static.Game.getContent().Load<Texture2D>(AssetName); }
+		{
+			_texture = Static.Game.getContent().Load<Texture2D>(AssetName);
+
+			// Retrait du rectangle de collision (déjà calculé et sérialisé)
+			var data = new Color[Width * Height];
+			_texture.GetData(0, new Rectangle(0, 0, Width, Height), data, 0, Width * Height);
+			var coll = new Color(254, 0, 254, 254);
+			bool origin = false, dest = false;
+			for (int y = 0; y < Height; y++)
+			{
+				for (int x = 0; x < Width; x++)
+				{
+					if (!origin && x < Width - 1 && y < Height - 1 && data[y * Width + x] == coll && data[y * Width + x + 1] == coll && data[(y + 1) * Width + x] == coll)
+					{
+						data[y * Width + x] = Color.Transparent;
+						data[y * Width + x + 1] = Color.Transparent;
+						data[(y + 1) * Width + x] = Color.Transparent;
+						origin = true;
+					}
+					else if (origin && !dest && x > Collision.X && y > Collision.Y && data[y * Width + x] == coll && data[y * Width + x - 1] == coll && data[(y - 1) * Width + x] == coll)
+					{
+						data[y * Width + x] = Color.Transparent;
+						data[y * Width + x - 1] = Color.Transparent;
+						data[(y - 1) * Width + x] = Color.Transparent;
+						dest = true;
+					}
+				}
+			}
+			_texture.SetData(0, new Rectangle(0, 0, Width, Height), data, 0, Width * Height);
+		}
 	}
 }

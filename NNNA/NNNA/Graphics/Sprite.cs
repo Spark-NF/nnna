@@ -12,6 +12,7 @@ namespace NNNA
 	{
 		protected bool _decouvert;
 		protected string _assetName;
+		public int ID { get; set; }
 
 		public Image Go;
 
@@ -61,6 +62,7 @@ namespace NNNA
 		{
 			_crossable = true;
 			_decouvert = false;
+			ID = ++Static.ID;
 		}
 		public Sprite(Char name)
 			: this()

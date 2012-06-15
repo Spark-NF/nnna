@@ -21,7 +21,7 @@ namespace NNNA
 		public int Portee { private get; set; }
 		public int Regeneration { get; set; }
 		public int LineSight { get; protected set; }
-	    public List<Vector2> Moving { get; private set; }
+	    public List<Vector2> Moving { get; set; }
 
 	    private int _life;
 		public int Life

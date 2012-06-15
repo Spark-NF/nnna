@@ -143,6 +143,7 @@ namespace NNNA
             Components.Add(_fps);
 
         	Static.Game = this;
+        	Static.ID = 0;
         }
 
 		public ContentManager getContent()
@@ -956,16 +957,101 @@ namespace NNNA
 						break;
 
 					default:
+						if (!data.Contains(' '))
+						{ return; }
 						int start = data.IndexOf(' ');
 						string action = data.Substring(0, start);
 						data = data.Substring(start + 1);
 						start = data.IndexOf(' ');
 						Joueur user = Joueurs[Convert.ToInt32(data.Substring(0, start))];
 						data = data.Substring(start + 1);
+						int id, u1Id, u2Id;
+						Building b;
+						Unit u;
 						switch (action)
 						{
 							case "chat":
 								Chat.Add(new ChatMessage { Author = user.Name, Color = user.Color, Text = data });
+								break;
+
+							case "build":
+								start = data.IndexOf(' ');
+								id = Convert.ToInt32(data.Substring(0, start));
+								b = Unserialize<Building>(data.Substring(start + 1));
+								u = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == id);
+								if (u != null)
+								{
+									u.Build(b);
+									_buildings.Add(b);
+									_toDraw.Add(b);
+									user.Pay(b.Prix);
+								}
+								break;
+
+							case "unit":
+								start = data.IndexOf(' ');
+								id = Convert.ToInt32(data.Substring(0, start));
+								u = Unserialize<Unit>(data.Substring(start + 1));
+								b = _buildings.FirstOrDefault(unit => unit.ID == id);
+								if (u != null)
+								{
+									b.Iterator++;
+									user.Population++;
+									user.Units.Add(u);
+									_units.Add(u);
+									_toDraw.Add(u);
+									user.Pay(u.Prix);
+								}
+								break;
+
+							case "poches":
+								start = data.IndexOf(' ');
+								int uId = Convert.ToInt32(data.Substring(0, start));
+								int bId = Convert.ToInt32(data);
+								u = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == uId);
+								b = _buildings.FirstOrDefault(building => building.ID == bId);
+								if (u != null && b != null)
+								{
+									u.Will = "poches";
+									u.DestinationBuilding = b;
+									u.Move(new List<Vector2> { b.Position + new Vector2((float) Math.Round((double) b.Texture.Width/2), 0) }); //, sprites, buildings, matrice);
+								}
+								break;
+
+							case "attack":
+								start = data.IndexOf(' ');
+								u1Id = Convert.ToInt32(data.Substring(0, start));
+								u2Id = Convert.ToInt32(data);
+								Unit u1 = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u1Id);
+								Unit u2 = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u2Id);
+								if (u1 != null && u2 != null)
+								{ u1.Attack(u2); }
+								break;
+
+							case "mine":
+								start = data.IndexOf(' ');
+								u1Id = Convert.ToInt32(data.Substring(0, start));
+								u2Id = Convert.ToInt32(data);
+								u = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u1Id);
+								ResourceMine r = _resources.FirstOrDefault(unit => unit.ID == u2Id);
+								if (u != null && r != null)
+								{ u.Mine(r); }
+								break;
+
+							case "move":
+								string[] infos = data.Split(' ');
+								foreach (string info in infos)
+								{
+									string[] dta = info.Split(',');
+									if (dta.Length > 1)
+									{
+										id = Convert.ToInt32(dta[0]);
+										u = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == id);
+										u.Moving = Unserialize<List<Vector2>>(dta[1]);
+										u.Move(u.Moving);
+									}
+								}
+								_selectedList.Select(unit => unit.ID + "," + Serialize(unit.Moving)).ToArray();
 								break;
 						}
 						break;
@@ -976,11 +1062,16 @@ namespace NNNA
 		}
 		private void Send(String message)
 		{
-			Byte[] msg = System.Text.Encoding.ASCII.GetBytes(message);
-			Array.Resize(ref msg, msg.Length + 1);
-			NetworkStream stream = _internetConnection.GetStream();
-			stream.Write(msg, 0, msg.Length);
+			if (_isInternet)
+			{
+				Byte[] msg = System.Text.Encoding.ASCII.GetBytes(message);
+				Array.Resize(ref msg, msg.Length + 1);
+				NetworkStream stream = _internetConnection.GetStream();
+				stream.Write(msg, 0, msg.Length);
+			}
 		}
+		private void Send(String type, String message)
+		{ Send(type + " " + _position + " " + message); }
 		private void UpdateOptions()
 		{
 			_currentScreen = TestMenu(Screen.OptionsGeneral, Screen.OptionsGraphics, Screen.OptionsSound, Screen.Title);
@@ -1146,10 +1237,11 @@ namespace NNNA
 			}
 			if (Clavier.Get().NewPress(Keys.Enter) && _showTextBox)
 			{
-				if (_isInternet)
-				{ Send("chat " + _position + " " + Clavier.Get().Text); }
-
-				Chat.Add(new ChatMessage { Author = Joueur.Name, Color = Joueur.Color, Text = Clavier.Get().Text });
+				if (Clavier.Get().Text != "")
+				{
+					Send("chat", Clavier.Get().Text);
+					Chat.Add(new ChatMessage { Author = Joueur.Name, Color = Joueur.Color, Text = Clavier.Get().Text });
+				}
 				_showTextBox = false;
 				Clavier.Get().GetText = false;
 			}
@@ -1200,14 +1292,14 @@ namespace NNNA
                             if (ValidSpawn(pos, _dimensions))
                             {
                                 var position = new Vector2((pos.X - pos.Y)*32, (pos.X + pos.Y - _dimensions.Y)*16);
-                                b = new Hutte((int) position.X, (int) position.Y, Content, Joueur,
-                                              (byte) _random.Next(0, 2));
+                                b = new Hutte((int) position.X, (int) position.Y, Content, Joueur, (byte) _random.Next(0, 2));
                                 if (Joueur.Pay(b.Prix))
                                 {
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
                                     _toDraw.Add(b);
                                     MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte !"), Color.White, 5000));
+									Send("build", _selectedList[0].ID + " " + Serialize(b));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
@@ -1244,7 +1336,8 @@ namespace NNNA
                                         _selectedList[0].Build(b);
                                         _buildings.Add(b);
                                         _toDraw.Add(b);
-                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"), Color.White, 5000));
+										MessagesManager.Messages.Add(new Msg(_("Nouvelle hutte des chasseurs !"), Color.White, 5000));
+										Send("build", _selectedList[0].ID + " " + Serialize(b));
                                         _pointer = "pointer";
                                         _currentAction = "";
                                     }
@@ -1273,7 +1366,8 @@ namespace NNNA
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
                                     _toDraw.Add(b);
-                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle tour !"), Color.White, 5000));
+									MessagesManager.Messages.Add(new Msg(_("Nouvelle tour !"), Color.White, 5000));
+									Send("build", _selectedList[0].ID + " " + Serialize(b));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
@@ -1299,7 +1393,8 @@ namespace NNNA
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
                                     _toDraw.Add(b);
-                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle écurie !"), Color.White, 5000));
+									MessagesManager.Messages.Add(new Msg(_("Nouvelle écurie !"), Color.White, 5000));
+									Send("build", _selectedList[0].ID + " " + Serialize(b));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
@@ -1334,15 +1429,14 @@ namespace NNNA
                                         _selectedList[0].Build(b);
                                         _buildings.Add(b);
                                         _toDraw.Add(b);
-                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"),
-                                                                             Color.White, 5000));
+										MessagesManager.Messages.Add(new Msg(_("Nouvelle ferme !"), Color.White, 5000));
+										Send("build", _selectedList[0].ID + " " + Serialize(b));
                                         _pointer = "pointer";
                                         _currentAction = "";
                                     }
                                     else
                                     {
-                                        MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."),
-                                                                             Color.Red, 5000));
+                                        MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000));
                                         _pointer = "pointer";
                                         _currentAction = "";
                                     }
@@ -1364,7 +1458,8 @@ namespace NNNA
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
                                     _toDraw.Add(b);
-                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle archerie !"), Color.White, 5000));
+									MessagesManager.Messages.Add(new Msg(_("Nouvelle archerie !"), Color.White, 5000));
+									Send("build", _selectedList[0].ID + " " + Serialize(b));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
@@ -1398,7 +1493,8 @@ namespace NNNA
                                         _selectedList[0].Build(b);
                                         _buildings.Add(b);
                                         _toDraw.Add(b);
-                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle Forge !"), Color.White, 5000));
+										MessagesManager.Messages.Add(new Msg(_("Nouvelle forge !"), Color.White, 5000));
+										Send("build", _selectedList[0].ID + " " + Serialize(b));
                                         _pointer = "pointer";
                                         _currentAction = "";
                                     }
@@ -1424,7 +1520,8 @@ namespace NNNA
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
                                     _toDraw.Add(b);
-                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle Mine!"), Color.White, 5000));
+									MessagesManager.Messages.Add(new Msg(_("Nouvelle mine !"), Color.White, 5000));
+									Send("build", _selectedList[0].ID + " " + Serialize(b));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
@@ -1467,7 +1564,8 @@ namespace NNNA
                                             _selectedList[0].Build(b);
                                             _buildings.Add(b);
                                             _toDraw.Add(b);
-                                            MessagesManager.Messages.Add(new Msg(_("Nouvelle Scierie!"), Color.White, 5000));
+											MessagesManager.Messages.Add(new Msg(_("Nouvelle scierie!"), Color.White, 5000));
+											Send("build", _selectedList[0].ID + " " + Serialize(b));
                                             _pointer = "pointer";
                                             _currentAction = "";
                                         }
@@ -1494,7 +1592,8 @@ namespace NNNA
                                     _selectedList[0].Build(b);
                                     _buildings.Add(b);
                                     _toDraw.Add(b);
-                                    MessagesManager.Messages.Add(new Msg(_("Nouvelle Marche!"), Color.White, 5000));
+									MessagesManager.Messages.Add(new Msg(_("Nouvelle marche!"), Color.White, 5000));
+									Send("build", _selectedList[0].ID + " " + Serialize(b));
                                     _pointer = "pointer";
                                     _currentAction = "";
                                 }
@@ -1529,7 +1628,8 @@ namespace NNNA
                                         _selectedList[0].Build(b);
                                         _buildings.Add(b);
                                         _toDraw.Add(b);
-                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle Moulin!"), Color.White, 5000));
+										MessagesManager.Messages.Add(new Msg(_("Nouvelle moulin !"), Color.White, 5000));
+										Send("build", _selectedList[0].ID + " " + Serialize(b));
                                         _pointer = "pointer";
                                         _currentAction = "";
                                     }
@@ -1564,7 +1664,8 @@ namespace NNNA
                                         _selectedList[0].Build(b);
                                         _buildings.Add(b);
                                         _toDraw.Add(b);
-                                        MessagesManager.Messages.Add(new Msg(_("Nouvelle fabrique d'armes lourdes!"), Color.White, 5000));
+										MessagesManager.Messages.Add(new Msg(_("Nouvelle fabrique d'armes lourdes !"), Color.White, 5000));
+										Send("build", _selectedList[0].ID + " " + Serialize(b));
                                         _pointer = "pointer";
                                         _currentAction = "";
                                     }
@@ -1798,7 +1899,8 @@ namespace NNNA
                                             Joueur.Units.Add(u);
                                             _units.Add(u);
                                             _toDraw.Add(u);
-                                            MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
+											MessagesManager.Messages.Add(new Msg(_("Nouveau peon !"), Color.White, 5000));
+											Send("unit", _selectedBuilding.ID + " " + Serialize(u));
                                             _currentAction = "";
                                         }
                                         else
@@ -1821,7 +1923,8 @@ namespace NNNA
                                             Joueur.Units.Add(u1);
                                             _units.Add(u1);
                                             _toDraw.Add(u1);
-                                            MessagesManager.Messages.Add(new Msg(_("Nouveau chasseur !"), Color.White, 5000));
+											MessagesManager.Messages.Add(new Msg(_("Nouveau chasseur !"), Color.White, 5000));
+											Send("unit", _selectedBuilding.ID + " " + Serialize(u1));
                                             _currentAction = "";
                                         }
                                         else
@@ -1839,25 +1942,14 @@ namespace NNNA
                                             Joueur.Units.Add(u1);
                                             _units.Add(u1);
                                             _toDraw.Add(u1);
-                                            MessagesManager.Messages.Add(new Msg(_("Nouvel archer !"), Color.White, 5000));
+											MessagesManager.Messages.Add(new Msg(_("Nouvel archer !"), Color.White, 5000));
+											Send("unit", _selectedBuilding.ID + " " + Serialize(u1));
                                             _currentAction = "";
                                         }
                                         else
                                         { MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
                                     }
                                     break;
-
-                                /* Ere 2 
-                            case "build_ferme":
-                                if (Joueur.Has(new Ferme().Prix))
-                                {
-                                    m_pointer = "Batiments/ferme";
-                                    isbuilding = true;
-                                    m_currentAction = "build_ferme";
-                                }
-                                else
-                                { MessagesManager.Messages.Add(new Msg(_("Vous n'avez pas assez de ressources."), Color.Red, 5000)); }
-                                break;*/
                             }
                         }
                     }
@@ -1865,6 +1957,8 @@ namespace NNNA
             }
 			foreach (Unit sprite in Joueur.Units)
 			{ sprite.ClickMouvement(gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, Content); }
+			if (_selectedList.Count != 0 && Souris.Get().Clicked(MouseButton.Right))
+			{ Send("move", string.Join(" ", _selectedList.Select(unit => unit.ID + "," + Serialize(unit.Moving)).ToArray())); }
 
 			// Curseur de combat
 			Unit unitUnder = null;
@@ -1966,8 +2060,9 @@ namespace NNNA
 								if (_pointer != "poches")
 								{ _pointerOld = _pointer; }
                                 unit.Will = "poches";
-                                unit.DestinationBuilding = unit.Affiliate;
-                                unit.Move(new List<Vector2> {unit.DestinationBuilding.Position + new Vector2((float)Math.Round((double)unit.DestinationBuilding.Texture.Width / 2), 0)}); //, sprites, buildings, matrice);
+                                unit.DestinationBuilding = buildingUnder;
+								unit.Move(new List<Vector2> { unit.DestinationBuilding.Position + new Vector2((float)Math.Round((double)unit.DestinationBuilding.Texture.Width / 2), 0) }); //, sprites, buildings, matrice);
+								Send("poches", unit.ID + " " + buildingUnder.ID);
                             }
                         }
                     }
@@ -1979,13 +2074,19 @@ namespace NNNA
                 if (unitUnder != null && Souris.Get().Clicked(MouseButton.Right))
                 {
                     foreach (Unit unit in _selectedList)
-                    { unit.Attack(unitUnder); }
+                    {
+						unit.Attack(unitUnder);
+						Send("attack", unit.ID + " " + unitUnder.ID);
+                    }
                 }
                 // Minage
                 else if (resourceUnder != null && Souris.Get().Clicked(MouseButton.Right))
                 {
                     foreach (Unit unit in _selectedList)
-                    { unit.Mine(resourceUnder); }
+                    {
+						unit.Mine(resourceUnder);
+						Send("mine", unit.ID + " " + resourceUnder.ID);
+                    }
                 }
             }
             _toDraw.Sort(Sprite.CompareByY);
@@ -2538,13 +2639,13 @@ namespace NNNA
                 _spriteBatch.Draw(Color2Texture2D(Color.Blue), new Rectangle(tex.X + 1, tex.Y + 1, tex.Width - 2, tex.Height - 2), new Color(64, 64, 64, 64));
             }
             #endregion
-
+			
             #region CHAT
             Chat.Draw(_spriteBatch, _fontSmall, Color2Texture2D(new Color(0, 0, 0, 128)), (int)(_screenSize.Y / 2) + 26);
             if (_showTextBox)
             {
                 _spriteBatch.Draw(Color2Texture2D(new Color(0, 0, 0, 128)), new Rectangle(1, (int)(_screenSize.Y / 2) - 5, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).X + 10, (int)_fontSmall.MeasureString(Joueur.Name + " : " + Clavier.Get().Text).Y + 10), Color.White);
-                _spriteBatch.DrawString(_fontSmall, Joueur.Name + " : ", new Vector2(6, _screenSize.Y / 2.0f), _playersColors[0]);
+                _spriteBatch.DrawString(_fontSmall, Joueur.Name + " : ", new Vector2(6, _screenSize.Y / 2.0f), Joueur.Color);
                 _spriteBatch.DrawString(_fontSmall, Clavier.Get().Text, new Vector2((int)_fontSmall.MeasureString(Joueur.Name + " : ").X + 6, _screenSize.Y / 2.0f), Color.White);
             }
             #endregion
