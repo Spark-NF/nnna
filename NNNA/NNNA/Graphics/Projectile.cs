@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace NNNA
 {
     [Serializable]
-    class Projectile : Sprite
+    public class Projectile : Sprite
     {
         protected int _speed;
         protected Vector2 _direction, _distanceRestante, _textureCenter, _but, _lastPosition;

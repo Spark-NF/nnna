@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Content;
 namespace NNNA
 {
 	[Serializable]
-    class Fleche : Projectile
+    public class Fleche : Projectile
     {
         public Unit Cible { get; private set; }
         public Fleche(ContentManager content, int x, int y, int speed, ref Unit cible, string assetName = "Projectiles/fleche")

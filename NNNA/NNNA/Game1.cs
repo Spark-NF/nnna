@@ -495,15 +495,6 @@ namespace NNNA
 					break;
 			}
 
-         /*   // MediaPlayer
-            if (Clavier.Get().NewPress(Keys.Space))
-            {
-                if (MediaPlayer.State == MediaState.Playing)
-                    MediaPlayer.Pause();
-                else
-                    MediaPlayer.Resume();
-            }
-
 			base.Update(gameTime);
 
 
@@ -723,10 +714,14 @@ namespace NNNA
             //arbres
 			for (var i = 0; i < 20 * (_quickResources + _quickSize + 1); i++)
 			{
-                var pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
-				while (new Sprite(pos).Collides(new List<MovibleSprite>(), _buildings, _resources, _matrice))
+			    var x = _random.Next(_matrice.GetLength(0));
+			    var y = _random.Next(_matrice.GetLength(1));
+                var pos = Matrice2Xy(new Vector2(x, y));
+				while (new Sprite(pos).Collides(_units, _buildings, _resources, _matrice) || _matrice[y, x].Liquid)
 				{
-                    pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+                    x = _random.Next(_matrice.GetLength(0));
+                    y = _random.Next(_matrice.GetLength(1));
+                    pos = Matrice2Xy(new Vector2(x, y));
 				}
 				_resources.Add(new ResourceMine((int) pos.X - 30, (int) pos.Y - 72, Joueur.Resource("Bois"), 250, new Image(Content, "Resources/bois_1_sprite_small")));
 			}
@@ -734,33 +729,46 @@ namespace NNNA
             // mines or
             for (var i = 0; i < 2 * (_quickResources + _quickSize + 1); i++)
             {
-                var pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
-                while (new Sprite(pos).Collides(new List<MovibleSprite>(), _buildings, _resources, _matrice))
+                var x = _random.Next(_matrice.GetLength(0));
+                var y = _random.Next(_matrice.GetLength(1));
+                var pos = Matrice2Xy(new Vector2(x, y));
+                while (new Sprite(pos).Collides(_units, _buildings, _resources, _matrice) || _matrice[y, x].Liquid)
                 {
-                    pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+                    x = _random.Next(_matrice.GetLength(0));
+                    y = _random.Next(_matrice.GetLength(1));
+                    pos = Matrice2Xy(new Vector2(x, y));
                 }
-                _resources.Add(new ResourceMine((int)pos.X - 30, (int)pos.Y - 72, Joueur.Resource("Or"), 4000, new Image(Content, (_random.Next(100) > 49) ? "Resources/or_1_sprite0" : "Resources/or_1_sprite1")));
+                _resources.Add(new ResourceMine((int)pos.X - 28, (int)pos.Y - 20, Joueur.Resource("Or"), 4000, new Image(Content, (_random.Next(100) > 49) ? "Resources/or_1_sprite0" : "Resources/or_1_sprite1")));
             }
 
             // mines fer
             for (var i = 0; i < 2 * (_quickResources + _quickSize + 1); i++)
             {
-                var pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
-                while (new Sprite(pos).Collides(new List<MovibleSprite>(), _buildings, _resources, _matrice))
+                var x = _random.Next(_matrice.GetLength(0));
+                var y = _random.Next(_matrice.GetLength(1));
+                var pos = Matrice2Xy(new Vector2(x, y));
+                while (new Sprite(pos).Collides(_units, _buildings, _resources, _matrice) || _matrice[y, x].Liquid)
                 {
-                    pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+                    x = _random.Next(_matrice.GetLength(0));
+                    y = _random.Next(_matrice.GetLength(1));
+                    pos = Matrice2Xy(new Vector2(x, y));
                 }
-                _resources.Add(new ResourceMine((int)pos.X - 30, (int)pos.Y - 72, Joueur.Resource("Fer"), 4000, new Image(Content, (_random.Next(100) > 49) ? "Resources/fer_1_sprite0" : "Resources/fer_1_sprite1")));
+                _resources.Add(new ResourceMine((int)pos.X - 28, (int)pos.Y - 20, Joueur.Resource("Fer"), 4000, new Image(Content, (_random.Next(100) > 49) ? "Resources/fer_1_sprite0" : "Resources/fer_1_sprite1")));
             }
 
+            // mines de pierre
             for (var i = 0; i < (_quickResources + _quickSize + 1); i++)
             {
-                var pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
-                while (new Sprite(pos).Collides(new List<MovibleSprite>(), _buildings, _resources, _matrice))
+                var x = _random.Next(_matrice.GetLength(0));
+                var y = _random.Next(_matrice.GetLength(1));
+                var pos = Matrice2Xy(new Vector2(x, y));
+                while (new Sprite(pos).Collides(_units, _buildings, _resources, _matrice) || _matrice[y, x].Liquid)
                 {
-                    pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+                    x = _random.Next(_matrice.GetLength(0));
+                    y = _random.Next(_matrice.GetLength(1));
+                    pos = Matrice2Xy(new Vector2(x, y));
                 }
-                _resources.Add(new ResourceMine((int)pos.X - 30, (int)pos.Y - 72, Joueur.Resource("Pierre"), 4000, new Image(Content, "Resources/pierre_1_sprite")));
+                _resources.Add(new ResourceMine((int)pos.X - 18, (int)pos.Y - 16, Joueur.Resource("Pierre"), 4000, new Image(Content, "Resources/pierre_1_sprite")));
             }
 		}
 		private void UpdateMultiplayer()
@@ -2474,7 +2482,7 @@ namespace NNNA
                             mul = (m > 0 && m > mul) ? m : mul;
                         }
                         sprite.Visible = mul > 0;
-                        if (mul > 0f)
+                        if (mul > 0f || current._decouvert)
                         { current.Draw(_spriteBatch, 1, _camera, mul, _weather); }
                     }
                 }
@@ -2549,7 +2557,14 @@ namespace NNNA
                                 mul = (m > 0 && m > mul) ? m : mul;
                             }
                             sprite.Visible = mul > 0;
-                            if (mul > 0)
+                            if (_weather == 1)
+                            {
+                                if (mul > 0.25f)
+                                { current._decouvert = true; }
+                                mul = (current._decouvert && mul < 0.25f) ? 0.25f : mul;
+                                current.Draw(_spriteBatch, _camera, new Color((mul * current.Joueur.ColorMovable.R) / 255, (mul * current.Joueur.ColorMovable.G) / 255, (mul * current.Joueur.ColorMovable.B) / 255));
+                            }
+                            else if (mul > 0)
                             { current.Draw(_spriteBatch, _camera, new Color((mul * current.Joueur.ColorMovable.R) / 255, (mul * current.Joueur.ColorMovable.G) / 255, (mul * current.Joueur.ColorMovable.B) / 255)); }
                         }
                     }
