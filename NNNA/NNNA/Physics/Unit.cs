@@ -80,10 +80,10 @@ namespace NNNA
 				                                         new Vector2(Texture.Collision.X + Texture.Collision.Width/2,
 				                                                     Texture.Collision.Y + Texture.Collision.Height/2),
 				                                         Souris.Get().Position + camera.Position, buildings, resources, matrice,
-				                                         new Vector2(Texture.Collision.Width/2 + 11, Texture.Collision.Height/2 + 11))
+				                                         new Vector2(Texture.Collision.Width/2 + 10, Texture.Collision.Height/2 + 10))
 				                  : PathFinding.FindPath(Moving[Moving.Count - 1], Souris.Get().Position + camera.Position,
 				                                         buildings, resources, matrice,
-				                                         new Vector2(Texture.Collision.Width/2 + 11, Texture.Collision.Height/2 + 11));
+				                                         new Vector2(Texture.Collision.Width/2 + 10, Texture.Collision.Height/2 + 10));
 				    if (lol != null && lol.Count > 0)
 				        Moving.AddRange(lol);
 				    Move(Moving);

@@ -157,53 +157,53 @@ namespace NNNA
             { return false; }
 
             // On teste la collision avec la carte
-            diago_collision = new Vector2(65, 33);
+            var diago = new Vector2(65, 33);
             if (_texture != null)
             {
-                var coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X, _position.Y + _texture.Collision.Y) - diago_collision);
+                var coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X, _position.Y + _texture.Collision.Y) - diago);
                 if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
                 {
                     if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
                     { return false; }
                 }
-                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X + _texture.Collision.Width + diago_collision.X, _position.Y + _texture.Collision.Y - diago_collision.Y));
+                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X + _texture.Collision.Width + diago.X, _position.Y + _texture.Collision.Y - diago.Y));
                 if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
                 {
                     if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
                     { return false; }
                 }
-                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X + _texture.Collision.Width, _position.Y + _texture.Collision.Y + _texture.Collision.Height) + diago_collision);
+                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X + _texture.Collision.Width, _position.Y + _texture.Collision.Y + _texture.Collision.Height) + diago);
                 if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
                 {
                     if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
                     { return false; }
                 }
-                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X - diago_collision.X, _position.Y + _texture.Collision.Y + _texture.Collision.Height + diago_collision.Y));
+                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X - diago.X, _position.Y + _texture.Collision.Y + _texture.Collision.Height + diago.Y));
                 if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
                 {
                     if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
                     { return false; }
                 }
 
-                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X + Texture.Collision.Width / 2, _position.Y + _texture.Collision.Y + _texture.Collision.Height + diago_collision.Y));
+                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X + Texture.Collision.Width / 2, _position.Y + _texture.Collision.Y + _texture.Collision.Height + diago.Y));
                 if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
                 {
                     if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
                     { return false; }
                 }
-                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X + Texture.Collision.Width / 2, _position.Y + _texture.Collision.Y - diago_collision.Y));
+                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X + Texture.Collision.Width / 2, _position.Y + _texture.Collision.Y - diago.Y));
                 if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
                 {
                     if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
                     { return false; }
                 }
-                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X + Texture.Collision.Width + diago_collision.X, _position.Y + _texture.Collision.Y + _texture.Collision.Height/2));
+                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X + Texture.Collision.Width + diago.X, _position.Y + _texture.Collision.Y + _texture.Collision.Height/2));
                 if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
                 {
                     if (!matrice[(int)coos.Y, (int)coos.X].Crossable)
                     { return false; }
                 }
-                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X - diago_collision.X, _position.Y + _texture.Collision.Y + _texture.Collision.Height/2));
+                coos = Game1.Xy2Matrice(new Vector2(_position.X + _texture.Collision.X - diago.X, _position.Y + _texture.Collision.Y + _texture.Collision.Height/2));
                 if (coos.X >= 0 && coos.Y >= 0 && coos.X < matrice.GetLength(1) && coos.Y < matrice.GetLength(0))
                 {
                     if (!matrice[(int)coos.Y, (int)coos.X].Crossable)

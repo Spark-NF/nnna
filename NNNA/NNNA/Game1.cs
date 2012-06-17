@@ -238,26 +238,26 @@ namespace NNNA
 			{
 				case MapType.Island:
 
-					float[,] map = IslandGenerator.Generate(width, height);
+					var map = IslandGenerator.Generate(width, height);
 					_heightMap = map;
 					var heights = new List<float>();
 
 					// Calcul de la hauteur de l'eau
-					for (int x = 0; x < map.GetLength(0); x++)
+					for (var x = 0; x < map.GetLength(0); x++)
 					{
-						for (int y = 0; y < map.GetLength(1); y++)
+						for (var y = 0; y < map.GetLength(1); y++)
 						{ heights.Add(map[x, y] * 255); }
 					}
 			
 					heights.Sort();
-					float waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
+					var waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
 					// On transforme les hauteurs en sprites
-					for (int x = 0; x < width; x++)
+					for (var x = 0; x < width; x++)
 					{
-						for (int y = 0; y < height; y++)
+						for (var y = 0; y < height; y++)
 						{
-							Sprite sp = _h;
-							float m = map[x, y] * 255;
+							var sp = _h;
+							var m = map[x, y] * 255;
 							if (m < waterline - 40)
 							{ sp = _e; }
 							else if (m < waterline)
@@ -271,13 +271,13 @@ namespace NNNA
 					}
 
 					// On met du sable à côté de l'eau
-					for (int x = 0; x < width; x++)
+					for (var x = 0; x < width; x++)
 					{
-						for (int y = 0; y < height; y++)
+						for (var y = 0; y < height; y++)
 						{
 							if (matrice[x, y] == _h)
 							{
-								bool waternear = (x > 0 && matrice[x - 1, y] == _e) || (y > 0 && matrice[x, y - 1] == _e) || (x < matrice.GetLength(0) - 1 && matrice[x + 1, y] == _e) || (y < matrice.GetLength(1) - 1 && matrice[x, y + 1] == _e);
+								var waternear = (x > 0 && matrice[x - 1, y] == _e) || (y > 0 && matrice[x, y - 1] == _e) || (x < matrice.GetLength(0) - 1 && matrice[x + 1, y] == _e) || (y < matrice.GetLength(1) - 1 && matrice[x, y + 1] == _e);
 								matrice[x, y] = waternear ? _p : _h;
 							}
 						}
@@ -287,9 +287,9 @@ namespace NNNA
 				case MapType.Flat:
 					_heightMap = new float[width, height];
 					var rand = new Random();
-					for (int x = 0; x < width; x++)
+					for (var x = 0; x < width; x++)
 					{
-						for (int y = 0; y < height; y++)
+						for (var y = 0; y < height; y++)
 						{
 							_heightMap[x, y] = (float)rand.NextDouble() / 10.0f;
 							matrice[x, y] = _h;
@@ -520,12 +520,12 @@ namespace NNNA
         { _currentScreen = TestMenu(Screen.PlayQuick, Screen.PlayMultiplayer, Screen.Title); }
 		private void UpdatePlayQuick()
 		{
-			Screen s = TestMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick2, Screen.Play);
+			var s = TestMenu(Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick, Screen.PlayQuick2, Screen.Play);
 			if (s != Screen.PlayQuick)
 			{ _currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = Menu();
+				var m = Menu();
 				switch (m)
 				{
 					case 0: _quickType = (MapType)Variate(0, Enum.GetValues(typeof(MapType)).Length - 1, (int)_quickType); break;
@@ -551,6 +551,7 @@ namespace NNNA
 					_buildings.Clear();
 					_units.Clear();
                     _toDraw.Clear();
+                    _selectedList.Clear();
 
 					Generate();
 					_minimap.Dimensions = new Vector2(_matrice.GetLength(0), _matrice.GetLength(1));
@@ -615,7 +616,7 @@ namespace NNNA
 		}
 		private void Generate(int internetPlayers = 0)
 		{
-			bool ok = false;
+			var ok = false;
 			var spawns = new List<Point>();
 			var heights = new List<float>();
 			int[] sizes = { 50, 100, 200 };
@@ -647,21 +648,21 @@ namespace NNNA
 					for (int y = 0; y < _heightMap.GetLength(1); y++)
 					{ heights.Add(_heightMap[x, y] * 255); }
 				}
-				float waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
-				int last = heights.IndexOf(waterline) > 0 ? heights.IndexOf(waterline) : heights.Count;
+				var waterline = heights[(int)Math.Round((heights.Count - 1) * 0.6)];
+				var last = heights.IndexOf(waterline) > 0 ? heights.IndexOf(waterline) : heights.Count;
 				var heightsOr = new List<float>(heights);
 				heights.Sort((x, y) => (y.CompareTo(x)));
 				spawns.Clear();
-				int j = 0;
+				var j = 0;
 
 				// On génère autant de spawns qu'il y aura de joueurs, chacun espacés d'au moins $dist
 				while (spawns.Count < _foes + 1 && j < last)
 				{
-					int index = heightsOr.IndexOf(heights[j]);
+					var index = heightsOr.IndexOf(heights[j]);
 					heightsOr[index] = -1;
 					var point = new Point(index % _heightMap.GetLength(1), index / _heightMap.GetLength(1));
-					bool isNear = false;
-					foreach (Point p in spawns)
+					var isNear = false;
+					foreach (var p in spawns)
 					{
 						if (point.DistanceTo(p) <= dist)
 						{ isNear = true; }
@@ -689,7 +690,7 @@ namespace NNNA
 			// Ennemis
 			_enemiesAI = new List<JoueurAI>();
 			_enemiesInternet = new List<JoueurInternet>();
-			for (int i = 0; i < internetPlayers; i++)
+			for (var i = 0; i < internetPlayers; i++)
 			{
 				var foe = new JoueurInternet(colors[i + 1], names[i + 1], Content);
 				_enemiesInternet.Add(foe);
@@ -702,9 +703,9 @@ namespace NNNA
 				_units.AddRange(_enemiesInternet[i].Units);
 				_buildings.AddRange(_enemiesInternet[i].Buildings);
 			}
-			for (int i = internetPlayers; i < _foes; i++)
+			for (var i = internetPlayers; i < _foes; i++)
 			{
-				int u = i - internetPlayers;
+				var u = i - internetPlayers;
 				var foe = new JoueurAI(colors[i + 1], names[i + 1], Content);
 				_enemiesAI.Add(foe);
 				Joueurs[i + 1] = foe;
@@ -719,17 +720,48 @@ namespace NNNA
 
 			//Decor
 			_resources.Clear();
-			for (int i = 0; i < 20 * (_quickResources + _quickSize + 1); i++)
+            //arbres
+			for (var i = 0; i < 20 * (_quickResources + _quickSize + 1); i++)
 			{
-				int x = _random.Next(_matrice.GetLength(0));
-				int y = _random.Next(_matrice.GetLength(1));
-				while ((!_matrice[y, x].Crossable))
+                var pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+				while (new Sprite(pos).Collides(new List<MovibleSprite>(), _buildings, _resources, _matrice))
 				{
-					x = _random.Next(_matrice.GetLength(0));
-					y = _random.Next(_matrice.GetLength(1));
+                    pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
 				}
-				_resources.Add(new ResourceMine((int)(Matrice2Xy(new Vector2(x, y))).X - 44, (int)(Matrice2Xy(new Vector2(x, y))).Y - 152, Joueur.Resource("Bois"), 250, new Image(Content, "Resources/bois_1_sprite_small")));
+				_resources.Add(new ResourceMine((int) pos.X - 30, (int) pos.Y - 72, Joueur.Resource("Bois"), 250, new Image(Content, "Resources/bois_1_sprite_small")));
 			}
+
+            // mines or
+            for (var i = 0; i < 2 * (_quickResources + _quickSize + 1); i++)
+            {
+                var pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+                while (new Sprite(pos).Collides(new List<MovibleSprite>(), _buildings, _resources, _matrice))
+                {
+                    pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+                }
+                _resources.Add(new ResourceMine((int)pos.X - 30, (int)pos.Y - 72, Joueur.Resource("Or"), 4000, new Image(Content, (_random.Next(100) > 49) ? "Resources/or_1_sprite0" : "Resources/or_1_sprite1")));
+            }
+
+            // mines fer
+            for (var i = 0; i < 2 * (_quickResources + _quickSize + 1); i++)
+            {
+                var pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+                while (new Sprite(pos).Collides(new List<MovibleSprite>(), _buildings, _resources, _matrice))
+                {
+                    pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+                }
+                _resources.Add(new ResourceMine((int)pos.X - 30, (int)pos.Y - 72, Joueur.Resource("Fer"), 4000, new Image(Content, (_random.Next(100) > 49) ? "Resources/fer_1_sprite0" : "Resources/fer_1_sprite1")));
+            }
+
+            for (var i = 0; i < (_quickResources + _quickSize + 1); i++)
+            {
+                var pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+                while (new Sprite(pos).Collides(new List<MovibleSprite>(), _buildings, _resources, _matrice))
+                {
+                    pos = Matrice2Xy(new Vector2(_random.Next(_matrice.GetLength(0)), _random.Next(_matrice.GetLength(1))));
+                }
+                _resources.Add(new ResourceMine((int)pos.X - 30, (int)pos.Y - 72, Joueur.Resource("Pierre"), 4000, new Image(Content, "Resources/pierre_1_sprite")));
+            }
 		}
 		private void UpdateMultiplayer()
 		{
@@ -739,7 +771,7 @@ namespace NNNA
 		}
 		private void UpdatePlayMultiplayerHost()
 		{
-			Screen s = TestMenu(Screen.PlayMultiplayerHost, Screen.PlayMultiplayerHost, Screen.PlayMultiplayerHost, Screen.PlayMultiplayerHost, Screen.OptionsSound, Screen.PlayMultiplayer);
+			var s = TestMenu(Screen.PlayMultiplayerHost, Screen.PlayMultiplayerHost, Screen.PlayMultiplayerHost, Screen.PlayMultiplayerHost, Screen.OptionsSound, Screen.PlayMultiplayer);
 			if (s != Screen.PlayMultiplayerHost)
 			{
 				if (s == Screen.OptionsSound)
@@ -759,10 +791,10 @@ namespace NNNA
 
 					Send(Joueur.Name);
 
-					String matrice = _matrice.GetLength(0).ToString(CultureInfo.InvariantCulture);
-					for (int x = 0; x < _matrice.GetLength(0); x++)
+					var matrice = _matrice.GetLength(0).ToString(CultureInfo.InvariantCulture);
+					for (var x = 0; x < _matrice.GetLength(0); x++)
 					{
-						for (int y = 0; y < _matrice.GetLength(1); y++)
+                        for (var y = 0; y < _matrice.GetLength(1); y++)
 						{ matrice += "," + _matrice[y, x].Name; }
 					}
 					Send(Serialize(matrice));
@@ -799,7 +831,7 @@ namespace NNNA
 			}
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = Menu();
+                var m = Menu();
 				switch (m)
 				{
 					case 0: _quickType = (MapType)Variate(0, Enum.GetValues(typeof(MapType)).Length - 1, (int)_quickType); break;
@@ -829,7 +861,7 @@ namespace NNNA
 		}
 		public static T Unserialize<T>(string data)
 		{
-			byte[] b = Convert.FromBase64String(data);
+			var b = Convert.FromBase64String(data);
 			using (var stream = new MemoryStream(b))
 			{
 				var formatter = new BinaryFormatter();
@@ -843,7 +875,7 @@ namespace NNNA
 		}
 		private void UpdatePlayMultiplayerJoin()
 		{
-			Screen s = TestMenu(Screen.PlayMultiplayerJoin, Screen.OptionsSound, Screen.PlayMultiplayer);
+			var s = TestMenu(Screen.PlayMultiplayerJoin, Screen.OptionsSound, Screen.PlayMultiplayer);
 			if (s == Screen.OptionsSound && Clavier.Get().Text != "")
 			{
 				TcpClient client = new TcpClient(Clavier.Get().Text, 25666);
@@ -867,11 +899,11 @@ namespace NNNA
 		}
 		private void Listen()
 		{
-			NetworkStream stream = _internetConnection.GetStream();
+			var stream = _internetConnection.GetStream();
 
 			while (_isInternet)
 			{
-				String data = "";
+				var data = "";
 				try
 				{
 					int bit;
@@ -886,15 +918,15 @@ namespace NNNA
 					case 0:
 						var matrice = Unserialize<String>(data);
 
-						List<String> mat = matrice.Split(',').ToList();
-						int length = Convert.ToInt32(mat[0]);
+						var mat = matrice.Split(',').ToList();
+						var length = Convert.ToInt32(mat[0]);
 						mat.RemoveAt(0);
 
 						_matrice = new Sprite[length, mat.Count / length];
-						for (int x = 0; x < mat.Count; x++)
+						for (var x = 0; x < mat.Count; x++)
 						{
 							int mx = x % length, my = (int)Math.Floor((float)x / length);
-							Sprite sp = _h;
+							var sp = _h;
 							switch (mat[x].ToCharArray()[0])
 							{
 								case 'h': sp = _h; break;
@@ -959,11 +991,11 @@ namespace NNNA
 					default:
 						if (!data.Contains(' '))
 						{ return; }
-						int start = data.IndexOf(' ');
-						string action = data.Substring(0, start);
+						var start = data.IndexOf(' ');
+						var action = data.Substring(0, start);
 						data = data.Substring(start + 1);
 						start = data.IndexOf(' ');
-						Joueur user = Joueurs[Convert.ToInt32(data.Substring(0, start))];
+						var user = Joueurs[Convert.ToInt32(data.Substring(0, start))];
 						data = data.Substring(start + 1);
 						int id, u1Id, u2Id;
 						Building b;
@@ -1006,8 +1038,8 @@ namespace NNNA
 
 							case "poches":
 								start = data.IndexOf(' ');
-								int uId = Convert.ToInt32(data.Substring(0, start));
-								int bId = Convert.ToInt32(data);
+								var uId = Convert.ToInt32(data.Substring(0, start));
+								var bId = Convert.ToInt32(data);
 								u = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == uId);
 								b = _buildings.FirstOrDefault(building => building.ID == bId);
 								if (u != null && b != null)
@@ -1022,8 +1054,8 @@ namespace NNNA
 								start = data.IndexOf(' ');
 								u1Id = Convert.ToInt32(data.Substring(0, start));
 								u2Id = Convert.ToInt32(data);
-								Unit u1 = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u1Id);
-								Unit u2 = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u2Id);
+								var u1 = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u1Id);
+								var u2 = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u2Id);
 								if (u1 != null && u2 != null)
 								{ u1.Attack(u2); }
 								break;
@@ -1033,16 +1065,16 @@ namespace NNNA
 								u1Id = Convert.ToInt32(data.Substring(0, start));
 								u2Id = Convert.ToInt32(data);
 								u = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u1Id);
-								ResourceMine r = _resources.FirstOrDefault(unit => unit.ID == u2Id);
+								var r = _resources.FirstOrDefault(unit => unit.ID == u2Id);
 								if (u != null && r != null)
 								{ u.Mine(r); }
 								break;
 
 							case "move":
-								string[] infos = data.Split(' ');
-								foreach (string info in infos)
+								var infos = data.Split(' ');
+								foreach (var info in infos)
 								{
-									string[] dta = info.Split(',');
+									var dta = info.Split(',');
 									if (dta.Length > 1)
 									{
 										id = Convert.ToInt32(dta[0]);
@@ -1064,9 +1096,9 @@ namespace NNNA
 		{
 			if (_isInternet)
 			{
-				Byte[] msg = System.Text.Encoding.ASCII.GetBytes(message);
+				var msg = System.Text.Encoding.ASCII.GetBytes(message);
 				Array.Resize(ref msg, msg.Length + 1);
-				NetworkStream stream = _internetConnection.GetStream();
+				var stream = _internetConnection.GetStream();
 				stream.Write(msg, 0, msg.Length);
 			}
 		}
@@ -1080,12 +1112,12 @@ namespace NNNA
 		}
 		private void UpdateOptionsGeneral()
 		{
-			Screen s = TestMenu(Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.Options);
+			var s = TestMenu(Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.OptionsGeneral, Screen.Options);
 			if (s != Screen.OptionsGeneral)
 			{ _currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = Menu();
+				var m = Menu();
 				switch (m)
 				{
 					case 0: _language = (_language == "en" ? "es" : (_language == "es" ? "fr" : "en")); break;
@@ -1100,12 +1132,12 @@ namespace NNNA
 		}
 		private void UpdateOptionsGraphics()
 		{
-			Screen s = TestMenu(Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.Options);
+			var s = TestMenu(Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.OptionsGraphics, Screen.Options);
 			if (s != Screen.OptionsGraphics)
 			{ _currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = Menu();
+				var m = Menu();
 				switch (m)
 				{
 					case 0:
@@ -1130,12 +1162,12 @@ namespace NNNA
 		}
 		private void UpdateOptionsSound()
 		{
-			Screen s = TestMenu(Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.Options);
+			var s = TestMenu(Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.OptionsSound, Screen.Options);
 			if (s != Screen.OptionsSound)
 			{ _currentScreen = s; }
 			else if (Souris.Get().Clicked(MouseButton.Left) || Souris.Get().Clicked(MouseButton.Right))
 			{
-				int m = Menu();
+				var m = Menu();
 				switch (m)
 				{
 					case 0: _soundGeneral = Variate(0, 10, (int)_soundGeneral); break;
@@ -1167,7 +1199,7 @@ namespace NNNA
 				var allSame = true;
 				var type = "";
 				_currentActions.Add("attack");
-				foreach (Unit sprite in _selectedList)
+				foreach (var sprite in _selectedList)
 				{
 					if (sprite.Type != type)
 					{
@@ -1205,7 +1237,7 @@ namespace NNNA
 				}
 			}
 			_lastState.Clear();
-			foreach (string t in _currentActions)
+			foreach (var t in _currentActions)
 			{ _lastState.Add(t); }
 		}
 
@@ -1274,7 +1306,7 @@ namespace NNNA
             _toDraw.RemoveAll(res => res is ResourceMine && (res as ResourceMine).Quantity <= 0);
 
 			// Intelligence artificielle
-			foreach (JoueurAI foe in _enemiesAI)
+			foreach (var foe in _enemiesAI)
 			{ foe.Update(gameTime, _camera, _hud, _units, _buildings, _resources, _matrice, _toDraw); }
 
 			// Rectangle de séléction
@@ -2061,7 +2093,8 @@ namespace NNNA
 								{ _pointerOld = _pointer; }
                                 unit.Will = "poches";
                                 unit.DestinationBuilding = buildingUnder;
-								unit.Move(new List<Vector2> { unit.DestinationBuilding.Position + new Vector2((float)Math.Round((double)unit.DestinationBuilding.Texture.Width / 2), 0) }); //, sprites, buildings, matrice);
+                                unit.Moving = new List<Vector2> { unit.DestinationBuilding.Position + new Vector2((float)Math.Round((double)unit.DestinationBuilding.Texture.Width / 2), 0) };
+								unit.Move(unit.Moving);
 								Send("poches", unit.ID + " " + buildingUnder.ID);
                             }
                         }
@@ -2686,7 +2719,7 @@ namespace NNNA
             }
             #endregion
 
-            // Affichage les fps
+            // Affichage des fps
             //if (!double.IsInfinity(_fps.FPS))
             //{
             //    Debug(4, _fps.FPS);

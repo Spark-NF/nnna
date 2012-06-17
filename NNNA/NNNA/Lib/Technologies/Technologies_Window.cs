@@ -362,7 +362,7 @@ namespace NNNA
 			win.Visible = false;
 		}
 
-        private void chasse_MouseLeftButtonDown() // + 2 Attaque
+        private void chasse_MouseLeftButtonDown() // + 1 Attaque
 		{
 			if (!_chasse && Game1.Joueur.Pay(_prixChasse))
 			{
@@ -537,7 +537,7 @@ namespace NNNA
             }
 		}
 
-		private void fer_MouseLeftButtonDown() // + 15 Attaque
+		private void fer_MouseLeftButtonDown() // + 1 Attaque
 		{
 			if (!_fer && Game1.Joueur.Pay(_prixFer))
 			{

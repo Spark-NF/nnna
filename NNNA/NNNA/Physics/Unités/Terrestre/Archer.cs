@@ -14,7 +14,7 @@ namespace NNNA
         public List<Fleche> Tirs
         { get { return _tirs; }  set { _tirs = value; } }
 
-	    public int SpeedTirs { get; set; }
+	    private int SpeedTirs { get; set; }
 
 	    public Archer(int x = 0, int y = 0)
             : base(x, y)
