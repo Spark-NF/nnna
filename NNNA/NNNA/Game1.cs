@@ -92,12 +92,12 @@ namespace NNNA
 			"\"A ship without Marines is like a garment without buttons.\" - Admiral David D. Porter, USN", 
 			"\"Cluster bombing from B-52s are very, very, accurate. The bombs are guaranteed to always hit the ground.\" - USAF Ammo Troop", 
 			"\"Concentrated power has always been the enemy of liberty.\" - Ronald Reagan", 
-			"\"Cost of a single AC-130U Gunship: $190 million\"", 
+			/*"\"Cost of a single AC-130U Gunship: $190 million\"", 
 			"\"Cost of a single B-2 Bomber: $2.2 Billion\"", 
 			"\"Cost of a single F-117A Nighthawk: $122 Million\"", 
 			"\"Cost of a single F-22 Raptor: $135 million\"", 
 			"\"Cost of a single Javelin Missile: $80,000\"", 
-			"\"Cost of a single Tomahawk cruise Missile: $900,000\"", 
+			"\"Cost of a single Tomahawk cruise Missile: $900,000\"", */
 			"\"Diplomats are just as essential in starting a war as soldiers are for finishing it.\" - Will Rogers", 
 			"\"Every tyrant who has lived has believed in freedom - for himself.\" - Elbert Hubbard", 
 			"\"Five second fuses only last three seconds.\" - Infantry Journal", 
@@ -1452,9 +1452,10 @@ namespace NNNA
 			_curseur.Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 			_camera.Update(_curseur, Graphics);
 
-			// On vire les ressources vides
+			// On vire tout ce qui est vide
 			_resources.RemoveAll(res => res.Quantity <= 0);
-            _toDraw.RemoveAll(res => res is ResourceMine && (res as ResourceMine).Quantity <= 0);
+			_units.RemoveAll(unit => unit == null || unit.Life <= 0);
+            _toDraw.RemoveAll(res => res == null || (res is ResourceMine && (res as ResourceMine).Quantity <= 0));
 
 			// Intelligence artificielle
 			foreach (var foe in _enemiesAI)
@@ -2538,7 +2539,7 @@ namespace NNNA
 			base.Draw(gameTime);
 		}
 
-		private void DrawCommon(bool drawText = true)
+		private void DrawCommon(bool drawText = true, bool drawTitle = true)
 		{
 			// Le fond d'écran
 			var screenRectangle = new Rectangle(0, 0, (int)_screenSize.X, (int)_screenSize.Y);
@@ -2547,7 +2548,8 @@ namespace NNNA
 			if (drawText)
 			{
 				// Titre
-				DrawString(_spriteBatch, _fontMenuTitle, "NNNA", new Vector2((_screenSize.X - _fontMenuTitle.MeasureString("NNNA").X) / 2, _screenSize.Y / 13), new Color(200, 0, 0), Color.Black, 1);
+				if (drawTitle)
+				{ DrawString(_spriteBatch, _fontMenuTitle, "NNNA", new Vector2((_screenSize.X - _fontMenuTitle.MeasureString("NNNA").X) / 2, _screenSize.Y / 13), new Color(200, 0, 0), Color.Black, 1); }
 
 				// Version
 				_spriteBatch.DrawString(_fontSmall, GetType().Assembly.GetName().Version.ToString(), new Vector2((_screenSize.X - _fontSmall.MeasureString(GetType().Assembly.GetName().Version.ToString()).X) / 2, _screenSize.Y - 50), Color.GhostWhite);
@@ -2693,7 +2695,7 @@ namespace NNNA
 		}
 		private void DrawGameLost()
 		{
-			DrawString(_spriteBatch, _fontMenuTitle, "Perdu...", (_screenSize - _fontMenuTitle.MeasureString("Perdu...")) / 2 - new Vector2(0, 100), Color.Red, Color.White, 1, "", 1, false);
+			DrawString(_spriteBatch, _fontMenuTitle, "Perdu...", (_screenSize - _fontMenuTitle.MeasureString("Perdu...")) / 2 - new Vector2(0, 100), new Color(200, 0, 0), Color.White, 1, "", 1, false);
 			var lines = new List<String>();
 			String line = "";
 			String[] wordArray = Quote.Split(' ');
@@ -2716,12 +2718,12 @@ namespace NNNA
 		}
 		private void DrawGameWin()
 		{
-			DrawString(_spriteBatch, _fontMenuTitle, "Gagné !", (_screenSize - _fontMenuTitle.MeasureString("Gagné !")) / 2 - new Vector2(0, 100), Color.Red, Color.White, 1, "", 1, false);
+			DrawString(_spriteBatch, _fontMenuTitle, "Gagné !", (_screenSize - _fontMenuTitle.MeasureString("Gagné !")) / 2 - new Vector2(0, 100), new Color(200, 0, 0), Color.White, 1, "", 1, false);
 			DrawString(_spriteBatch, _fontCredits, "Bien joué !", (_screenSize - _fontCredits.MeasureString("Bien joué !")) / 2 + new Vector2(0, 50), Color.White, Color.Black, 2, "", 1, false);
 		}
 		private void DrawGameWait()
 		{
-			DrawString(_spriteBatch, _fontMenuTitle, "Attente...", (_screenSize - _fontMenuTitle.MeasureString("Attente...")) / 2 - new Vector2(0, 100), Color.Red, Color.White, 1, "", 1, false);
+			DrawString(_spriteBatch, _fontMenuTitle, "Attente...", (_screenSize - _fontMenuTitle.MeasureString("Attente...")) / 2 - new Vector2(0, 100), new Color(200, 0, 0), Color.White, 1, "", 1, false);
 			DrawString(_spriteBatch, _fontCredits, "En attente d'autres joueurs...", (_screenSize - _fontCredits.MeasureString("En attente d'autres joueurs...")) / 2 + new Vector2(0, 50), Color.White, Color.Black, 2, "", 1, false);
 		}
         private void DrawGame()
@@ -2942,7 +2944,7 @@ namespace NNNA
             foreach (Unit unit in Joueur.Units)
 			{
 				if (!_healthOver || unit.Selected)
-                {
+				{
 					DrawBar(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28, Color.Green, Color.Red);
 					if (unit.Poches > 0)
 					{ DrawBar(unit.Poches, unit.PochesMax, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 10) - _camera.Position, 28, Color.Cyan, Color.DarkBlue); }
@@ -2951,9 +2953,7 @@ namespace NNNA
 			foreach (Building build in Joueur.Buildings)
 			{
 				if (!_healthOver || build.Selected)
-				{
-				    DrawBar(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100, Color.Green, Color.Red);
-				}
+				{ DrawBar(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100, Color.Green, Color.Red); }
 			}
 			foreach (JoueurAI foe in _enemiesAI)
 			{
@@ -2978,9 +2978,7 @@ namespace NNNA
 					else
 					{ mul = 1.0f; }
 					if (mul > 0.25f)
-					{
-					    DrawBar(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28, Color.Green, Color.Red);
-					}
+					{ DrawBar(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28, Color.Green, Color.Red); }
 				}
 				foreach (Building build in foe.Buildings)
 				{

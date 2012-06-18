@@ -185,7 +185,10 @@ namespace NNNA
 							{
 								DestinationUnit.Life -= Attaque + Joueur.AdditionalAttack;
                                 if (DestinationUnit.Life + DestinationUnit.Joueur.AdditionalLife <= 0)
-								{ DestinationUnit = null; }
+                                {
+                                	DestinationUnit.Joueur.Units.Remove(DestinationUnit);
+                                	DestinationUnit = null;
+                                }
 							}
 							if (Collides(sprites, buildings, resources, matrice))
 							{
@@ -193,7 +196,7 @@ namespace NNNA
                                 {
                                     var pos = Position + Minimap.Rotate(translation, Vector2.Zero, Math.PI/2);
                                     if (!(new Sprite(pos).Collides(sprites, buildings, resources, matrice)))
-                                        Position = pos;
+									{ Position = pos; }
                                 }
 							    _position -= translation;
                                 Move(Moving);
@@ -220,6 +223,9 @@ namespace NNNA
 		
 		public virtual void Draw(SpriteBatch spriteBatch, Camera2D camera, Color col)
 		{
+			if (Life <= 0)
+			{ return; }
+
 			var tex = 1;
 
 			//MODE 8 ANGLES
