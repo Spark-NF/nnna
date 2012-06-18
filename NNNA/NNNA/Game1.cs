@@ -63,7 +63,7 @@ namespace NNNA
 		private HUD _hud;
 		private Camera2D _camera;
 		internal static Joueur[] Joueurs = new Joueur[4];
-		public static Joueur Joueur { get { return Joueurs[_position]; } }
+		public static Joueur Joueur { get { return Joueurs[Position]; } }
 		private List<JoueurAI> _enemiesAI;
 		private List<JoueurInternet> _enemiesInternet;
 		private Building _selectedBuilding;
@@ -178,7 +178,7 @@ namespace NNNA
 		private bool _isInternet;
 		private Thread _threadListen;
 		private int _receivedPackets;
-		public static int _position;
+		public static int Position;
 
 		#region Enums
 
@@ -197,6 +197,9 @@ namespace NNNA
 			OptionsGeneral,
 			Credits,
 			Game,
+			GameLost,
+			GameWin,
+			GameWait,
 			GameMenu
 		};
 
@@ -234,7 +237,7 @@ namespace NNNA
         	Static.ID = 0;
         }
 
-		public ContentManager getContent()
+		public ContentManager GetContent()
 		{ return Content; }
 
 		#region Settings
@@ -297,7 +300,7 @@ namespace NNNA
 			_map = new Map();
 			_camera = new Camera2D(0, 0);
 			_curseur = new Sprite(0, 0);
-			Joueurs[_position] = new JoueurHuman(Color.Red, Environment.UserName, Content);
+			Joueurs[Position] = new JoueurHuman(Color.Red, Environment.UserName, Content);
 			_players = new[] { 2, 1, 0, 0 };
 			_playersColors = new[] { Color.Blue, Color.Red, Color.Green, Color.Yellow };
 
@@ -579,6 +582,12 @@ namespace NNNA
 				case Screen.Game:
 					UpdateGame(gameTime);
 					break;
+				case Screen.GameLost:
+					UpdateGameLost(gameTime);
+					break;
+				case Screen.GameWin:
+					UpdateGameWin(gameTime);
+					break;
 				case Screen.GameMenu:
 					UpdateGameMenu();
 					break;
@@ -590,6 +599,13 @@ namespace NNNA
 		}
 		private void UpdateTitle()
 		{
+			if (_isInternet)
+			{
+				_threadListen.Abort();
+				_internetConnection.GetStream().Close();
+				_internetConnection.Close();
+			}
+
 			_currentScreen = TestMenu(Screen.Play, Screen.Options, Screen.Credits, Screen.OptionsSound);
 			if (_currentScreen == Screen.Credits)
 			{ _credits = 0; }
@@ -702,7 +718,7 @@ namespace NNNA
 			var heights = new List<float>();
 			int[] sizes = { 50, 100, 200 };
 			string[] names = { Environment.UserName, "Lord Lard", "Herr von Speck", "Monsieur Martin" };
-			var dist = (float)Math.Round((double)sizes[_quickSize] / 3);
+			var dist = (float)Math.Round((double)sizes[_quickSize] / 4);
 			//int users = _players.Count(t => t > 0);
 			_foes = 0;
 
@@ -758,7 +774,7 @@ namespace NNNA
 			}
 
 			//Joueur
-			Joueurs[_position] = new JoueurHuman(colors[0], names[0], Content);
+			Joueurs[Position] = new JoueurHuman(colors[0], names[0], Content);
 			var hutte = new GrandeHutte((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y, Content, Joueur);
 			Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 100, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
 			Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
@@ -932,7 +948,7 @@ namespace NNNA
 						_debutpartie.Play();
 					#endif
 
-					_currentScreen = Screen.Game;
+					_currentScreen = Screen.GameWait;
 
 					Chat.Add(new ChatMessage { Author = "", Color = Color.White, Text = "Vous êtes l'hôte de la partie." });
 				}
@@ -1052,7 +1068,7 @@ namespace NNNA
 						break;
 
 					case 1:
-						_position = Convert.ToInt32(data);
+						Position = Convert.ToInt32(data);
 						break;
 
 					case 2:
@@ -1200,12 +1216,14 @@ namespace NNNA
 										u.Move(u.Moving);
 									}
 								}
-								_selectedList.Select(unit => unit.ID + "," + Serialize(unit.Moving)).ToArray();
+								//_selectedList.Select(unit => unit.ID + "," + Serialize(unit.Moving)).ToArray();
 								break;
 
 							case "join":
 								user.Name = data;
 								Chat.Add(new ChatMessage { Author = "", Color = Color.White, Text = String.Format("Le joueur {0} a rejoint la partie.", user.Name) });
+								if (_currentScreen == Screen.GameWait)
+								{ _currentScreen = Screen.Game; }
 								break;
 						}
 						break;
@@ -1225,7 +1243,7 @@ namespace NNNA
 			}
 		}
 		private void Send(String type, String message)
-		{ Send(type + " " + _position + " " + message); }
+		{ Send(type + " " + Position + " " + message); }
 		private void UpdateOptions()
 		{
 			_currentScreen = TestMenu(Screen.OptionsGeneral, Screen.OptionsGraphics, Screen.OptionsSound, Screen.Title);
@@ -1365,9 +1383,18 @@ namespace NNNA
 			{ _lastState.Add(t); }
 		}
 
+		private void UpdateGameLost(GameTime gameTime)
+		{
+			if (Clavier.Get().NewPress(Keys.Escape))
+			{ _currentScreen = Screen.Title; }
+		}
+		private void UpdateGameWin(GameTime gameTime)
+		{
+			if (Clavier.Get().NewPress(Keys.Escape))
+			{ _currentScreen = Screen.Title; }
+		}
 		private void UpdateGame(GameTime gameTime)
 		{
-
 			// Code Konami
 			if (
 				(Clavier.Get().NewPress(Keys.Up) && _konami == 0) ||
@@ -2472,6 +2499,15 @@ namespace NNNA
 				case Screen.Game:
 					DrawGame();
 					break;
+				case Screen.GameLost:
+					DrawGameLost();
+					break;
+				case Screen.GameWin:
+					DrawGameWin();
+					break;
+				case Screen.GameWait:
+					DrawGameWait();
+					break;
 				case Screen.GameMenu:
 					DrawGameMenu();
 					break;
@@ -2655,37 +2691,52 @@ namespace NNNA
 			_spriteBatch.DrawString(_fontCredits, "Arnaud Weiss", new Vector2((_screenSize.X - _fontCredits.MeasureString("Arnaud Weiss").X) / 2, _screenSize.Y + 180 - y), Color.White);
 			_spriteBatch.DrawString(_fontCredits, _("Merci d'avoir joué !"), new Vector2((_screenSize.X - _fontCredits.MeasureString(_("Merci d'avoir joué !")).X) / 2, (_screenSize.Y * 3 + _fontCredits.MeasureString(_("Merci d'avoir joué !")).Y) / 2 + 180 - y), Color.White);
 		}
+		private void DrawGameLost()
+		{
+			DrawString(_spriteBatch, _fontMenuTitle, "Perdu...", (_screenSize - _fontMenuTitle.MeasureString("Perdu...")) / 2 - new Vector2(0, 100), Color.Red, Color.White, 1, "", 1, false);
+			var lines = new List<String>();
+			String line = "";
+			String[] wordArray = Quote.Split(' ');
+			foreach (String word in wordArray)
+			{
+				if (_fontMenu.MeasureString(line + word).Length() > _screenSize.X)
+				{
+					lines.Add(line);
+					line = String.Empty;
+				}
+				line += word + ' ';
+			}
+			lines.Add(line);
+			int i = 0;
+			foreach (String lin in lines)
+			{
+				DrawString(_spriteBatch, _fontCredits, lin, (_screenSize - _fontCredits.MeasureString(lin)) / 2 + new Vector2(0, 50 + i * 50), Color.White, Color.Black, 2, "", 1, false);
+				i++;
+			}
+		}
+		private void DrawGameWin()
+		{
+			DrawString(_spriteBatch, _fontMenuTitle, "Gagné !", (_screenSize - _fontMenuTitle.MeasureString("Gagné !")) / 2 - new Vector2(0, 100), Color.Red, Color.White, 1, "", 1, false);
+			DrawString(_spriteBatch, _fontCredits, "Bien joué !", (_screenSize - _fontCredits.MeasureString("Bien joué !")) / 2 + new Vector2(0, 50), Color.White, Color.Black, 2, "", 1, false);
+		}
+		private void DrawGameWait()
+		{
+			DrawString(_spriteBatch, _fontMenuTitle, "Attente...", (_screenSize - _fontMenuTitle.MeasureString("Attente...")) / 2 - new Vector2(0, 100), Color.Red, Color.White, 1, "", 1, false);
+			DrawString(_spriteBatch, _fontCredits, "En attente d'autres joueurs...", (_screenSize - _fontCredits.MeasureString("En attente d'autres joueurs...")) / 2 + new Vector2(0, 50), Color.White, Color.Black, 2, "", 1, false);
+		}
         private void DrawGame()
         {
 			if (Joueur.Lost)
 			{
-				DrawString(_spriteBatch, _fontMenuTitle, "Perdu...", (_screenSize - _fontMenuTitle.MeasureString("Perdu...")) / 2 - new Vector2(0, 100), Color.Red, Color.White, 1, "", 1, false);
-				var lines = new List<String>();
-				String line = "";
-				String[] wordArray = Quote.Split(' ');
-				foreach (String word in wordArray)
-				{
-					if (_fontMenu.MeasureString(line + word).Length() > _screenSize.X)
-					{
-						lines.Add(line);
-						line = String.Empty;
-					}
-					line += word + ' ';
-				}
-				lines.Add(line);
-				int i = 0;
-				foreach (String lin in lines)
-				{
-					DrawString(_spriteBatch, _fontCredits, lin, (_screenSize - _fontCredits.MeasureString(lin)) / 2 + new Vector2(0, 50 + i * 50), Color.White, Color.Black, 2, "", 1, false);
-					i++;
-				}
+				_currentScreen = Screen.GameLost;
+				_pointer = "pointer";
 				return;
 			}
 
 			if (Joueur.Alive && Joueurs.Where(j => j != null && j != Joueur).All(j => j.Lost))
 			{
-				DrawString(_spriteBatch, _fontMenuTitle, "Gagné !", (_screenSize - _fontMenuTitle.MeasureString("Gagné !")) / 2 - new Vector2(0, 100), Color.Red, Color.White, 1, "", 1, false);
-				DrawString(_spriteBatch, _fontCredits, "Bien joué !", (_screenSize - _fontCredits.MeasureString("Bien joué !")) / 2 + new Vector2(0, 50), Color.White, Color.Black, 2, "", 1, false);
+				_currentScreen = Screen.GameWin;
+				_pointer = "pointer";
 				return;
 			}
 

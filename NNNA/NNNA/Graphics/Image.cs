@@ -111,7 +111,7 @@ namespace NNNA
 
 		public void OnDeserialization(object sender)
 		{
-			_texture = Static.Game.getContent().Load<Texture2D>(AssetName);
+			_texture = Static.Game.GetContent().Load<Texture2D>(AssetName);
 
 			// Retrait du rectangle de collision (déjà calculé et sérialisé)
 			var data = new Color[Width * Height];
