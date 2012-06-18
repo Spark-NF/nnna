@@ -29,8 +29,10 @@ namespace NNNA
 		internal int Ere { get; set; }
 		public string Name { get; set; }
 		public List<MovibleSprite> Units { get; set; }
-		public List<Building> Buildings { get; set; }
+		public List<Building> Buildings{ get; set; }
 	    public List<Resource> _Resources { get; set; }
+		public Building MainBuilding { get; set; }
+		public Point Spawn { get; set; }
 
 		public string Type { protected set; get; }
 
@@ -70,6 +72,7 @@ namespace NNNA
             Forge = false;
             Moulin = false;
             ArmeDeSiege = false;
+			MainBuilding = null;
 
 			_Resources.Add(new Resource("Bois", new[] { "Bois", "Bois", "Bois", "Bois" }, 500));
 			_Resources.Add(new Resource("Pierre", new[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));
@@ -161,5 +164,10 @@ namespace NNNA
 				sprite.Draw(sb, camera, ColorMovable);
 			}
 		}
+
+		public bool Alive
+		{ get { return /*MainBuilding.Life > 0 ||*/ Units.Any(unit => unit.Life > 0); } }
+		public bool Lost
+		{ get { return !Alive; } }
 	}
 }

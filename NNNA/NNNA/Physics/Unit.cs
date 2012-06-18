@@ -15,25 +15,12 @@ namespace NNNA
 		public Building Affiliate { get; protected set; }
 		public int PochesMax { get; private set; }
 	    private string PochesContent { get; set; }
-		public int MaxLife { get; private set; }
 	    public int Attaque { get; set;  }
 		public int VitesseCombat { private get; set; }
 		public int Portee { private get; set; }
 		public int Regeneration { get; set; }
 		public int LineSight { get; protected set; }
 	    public List<Vector2> Moving { get; set; }
-
-	    private int _life;
-		public int Life
-		{
-			get { return _life; }
-		    set
-			{
-				_life = value;
-				if (value > MaxLife)
-				{ MaxLife = value; }
-			}
-		}
 
 	    private int _poches;
 		public int Poches

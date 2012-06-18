@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace NNNA
 {
+	[Serializable]
 	public class Point
 	{
 		public int X { get; set; }

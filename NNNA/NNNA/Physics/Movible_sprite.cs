@@ -33,6 +33,19 @@ namespace NNNA
 	    private Image _icon;
 		protected Image Selection;
 
+		public int MaxLife { get; private set; }
+		private int _life;
+		public int Life
+		{
+			get { return _life; }
+			set
+			{
+				_life = value;
+				if (value > MaxLife)
+				{ MaxLife = value; }
+			}
+		}
+
 	    public MovibleSprite(int x, int y)
 			: base(x, y)
 		{

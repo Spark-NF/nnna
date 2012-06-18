@@ -77,6 +77,93 @@ namespace NNNA
 		private int[] _players;
 		private Color[] _playersColors;
 
+		#region QUOTES
+
+		public static String Quote;
+		public static String[] Quotes = new [] {
+			"\"Aim towards the Enemy.\" - Instruction printed on US Rocket Launcher", 
+			"\"A leader leads by example, not by force.\" - Sun Tzu", 
+			"\"All that is necessary for evil to succeed is for good men to do nothing.\" - Edmund Burke", 
+			"\"All warfare is based on deception.\" - Sun Tzu", 
+			"\"A man may die, nations may rise and fall, but an idea lives on.\" - John F. Kennedy", 
+			"\"Any military commander who is honest will admit he makes mistakes in the application of military power.\" - Robert McNamara", 
+			"\"Anyone, who truly wants to go to war, has truly never been there before!\" - Larry Reeves", 
+			"\"Any soldier worth his salt should be anti-war. And still, there are things worth fighting for.\" - General Norman Schwarzkopf", 
+			"\"A ship without Marines is like a garment without buttons.\" - Admiral David D. Porter, USN", 
+			"\"Cluster bombing from B-52s are very, very, accurate. The bombs are guaranteed to always hit the ground.\" - USAF Ammo Troop", 
+			"\"Concentrated power has always been the enemy of liberty.\" - Ronald Reagan", 
+			"\"Cost of a single AC-130U Gunship: $190 million\"", 
+			"\"Cost of a single B-2 Bomber: $2.2 Billion\"", 
+			"\"Cost of a single F-117A Nighthawk: $122 Million\"", 
+			"\"Cost of a single F-22 Raptor: $135 million\"", 
+			"\"Cost of a single Javelin Missile: $80,000\"", 
+			"\"Cost of a single Tomahawk cruise Missile: $900,000\"", 
+			"\"Diplomats are just as essential in starting a war as soldiers are for finishing it.\" - Will Rogers", 
+			"\"Every tyrant who has lived has believed in freedom - for himself.\" - Elbert Hubbard", 
+			"\"Five second fuses only last three seconds.\" - Infantry Journal", 
+			"\"Freedom is not free, but the U.S. Marine Corps will pay most of your share.\" - Ned Dolan", 
+			"\"Friendly fire - isn't.\" - Unknown", 
+			"\"Heroes may not be braver than anyone else. They're just brave five minutes longer.\" - Ronald Reagan", 
+			"\"If a man has done his best, what else is there?\" - General George S. Patton", 
+			"\"If at first you don't succeed, call an air strike.\" - Unknown", 
+			"\"If the enemy is in range, so are you.\" - Infantry Journal", 
+			"\"If the wings are traveling faster than the fuselage, it's probably a helicopter - and therefore, unsafe.\" - Unknown", 
+			"\"If we can't persuade nations with comparable values of the merits of our cause, we'd better reexamine our reasoning.\" - Robert McNamara", 
+			"\"If you can't remember, the claymore is pointed toward you.\" - Unknown", 
+			"\"If you know the enemy and know yourself you need not fear the results of a hundred battles.\" - Sun Tzu", 
+			"\"If your attack is going too well, you're walking into an ambush.\" - Infantry Journal", 
+			"\"I know not with what weapons World War III will be fought, but World War IV will be fought with sticks and stones.\" - Albert Einstein", 
+			"\"Incoming fire has the right of way.\" - Unknown", 
+			"\"In the end, it was luck. We were this close to nuclear war, and luck prevented it.\" - Robert McNamara", 
+			"\"In war, truth is the first casualty\" - Aeschylus", 
+			"\"In war, you win or lose, live or die - and the difference is just an eyelash.\" - General Douglas MacArthur", 
+			"\"It doesn't take a hero to order men into battle. It takes a hero to be one of those men who goes into battle.\" - General Norman Schwarzkopf", 
+			"\"I think that technologies are morally neutral until we apply them. It's only when we use them for good or evil that they become good or evil.\" - William Gibson", 
+			"\"I think the human race needs to think about killing. How much evil must we do to do good?\" - Robert McNamara", 
+			"\"It is fatal to enter any war without the will to win it.\" - General Douglas MacArthur", 
+			"\"It is generally inadvisable to eject directly over the area you just bombed.\" - U.S. Air Force Marshal", 
+			"\"Keep looking below surface appearances. Don't shrink from doing so just because you might not like what you find.\" - Colin Powell", 
+			"\"Let your plans be as dark and impenetrable as night, and when you move, fall like a thunderbolt.\" - Sun Tzu", 
+			"\"Mankind must put an end to war, or war will put an end to mankind.\" - John F. Kennedy", 
+			"\"My first wish is to see this plague of mankind, war, banished from the earth.\" - George Washington", 
+			"\"Nearly all men can stand adversity, but if you want to test a man's character, give him power.\" - Abraham Lincoln", 
+			"\"Never forget that your weapon was made by the lowest bidder.\" - Unknown", 
+			"\"No battle plan survives contact with the enemy.\" - Colin Powell", 
+			"\"Nothing in life is so exhilarating as to be shot at without result.\" - Winston Churchill", 
+			"\"Older men declare war. But it is the youth that must fight and die.\" - Herbert Hoover", 
+			"\"So long as there are men, there will be wars.\" - Albert Einstein", 
+			"\"Some people live an entire lifetime and wonder if they have ever made a difference in the world, but the Marines don't have that problem.\" - Ronald Reagan", 
+			"\"Teamwork is essential, it gives them other people to shoot at.\" - Unknown", 
+			"\"The bursting radius of a hand-grenade is always one foot greater than your jumping range.\" - Unknown", 
+			"\"The commander in the field is always right and the rear echelon is wrong, unless proved otherwise.\" - Colin Powell", 
+			"\"The deadliest weapon in the world is a Marine and his rifle!\" - General John J. Pershing", 
+			"\"The indefinite combination of human infallibility and nuclear weapons will lead to the destruction of nations.\" - Robert McNamara", 
+			"\"The more marines I have around, the better I like it.\" - General Clark, U.S. Army", 
+			"\"The press is our chief ideological weapon.\" - Nikita Khrushchev", 
+			"\"The real and lasting victories are those of peace, and not of war.\" - Ralph Waldo Emmerson", 
+			"\"There are only two kinds of people that understand Marines: Marines and the enemy. Everyone else has a second-hand opinion.\" - General William Thornson", 
+			"\"The tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.\" - Thomas Jefferson", 
+			"\"The truth of the matter is that you always know the right thing to do. The hard part is doing it.\" - Norman Schwarzkopf", 
+			"\"The tyrant always talks as if he's preserving the best interests of his people when he actually acts to undermine them.\" - Ramman Kenoun", 
+			"\"The world will not accept dictatorship or domination.\" - Mikhail Gorbachev", 
+			"\"They'll be no learning period with nuclear weapons. Make one mistake and you're going to destroy nations.\" - Robert McNamara", 
+			"\"Tracers work both ways.\" - U.S. Army Ordinance", 
+			"\"Try to look unimportant; they may be low on ammo.\" - Infantry Journal", 
+			"\"Tyrants have always some slight shade of virtue; they support the laws before destroying them.\" - Voltaire", 
+			"\"War does not determine who is right - only who is left\" - Bertrand Russell", 
+			"\"War is delightful to those who have not yet experienced it.\" - Erasmus", 
+			"\"We're in a world in which the possibility of terrorism, married up with technology, could make us very, very sorry we didn't act.\" - Condoleeza Rice", 
+			"\"We sleep safely in our beds because rough men stand ready in the night to visit violence on those who would harm us.\" - George Orwell", 
+			"\"When the pin is pulled, Mr. Grenade is not our friend.\" - U.S. Army Training Notice", 
+			"\"Whether you like it or not, history is on our side. We will bury you!\" - Nikita Khrushchev", 
+			"\"Whoever does not miss the Soviet Union has no heart. Whoever wants it back has no brain.\" - Vladimir Putin", 
+			"\"Whoever said the pen is mightier than the sword obviously never encountered automatic weapons.\" - General Douglas MacArthur", 
+			"\"Whoever stands by a just cause cannot possibly be called a terrorist.\" - Yassar Arafat", 
+			"\"You can make a throne of bayonets, but you cant sit on it for long.\" - Boris Yeltsin", 
+			"\"You cant say civilization dont advance - for in every war, they kill you in a new way.\" - Will Rogers"
+		};
+		#endregion
+
 		// Audio objects		
 		#if SOUND
 			private const float MusicVolume = 2.0f;
@@ -549,6 +636,7 @@ namespace NNNA
 
 					Generate();
 					_minimap.Dimensions = new Vector2(_matrice.GetLength(0), _matrice.GetLength(1));
+					Quote = Quotes[_random.Next(Quotes.Length)];
 
 					//Le reste
 					_techno.Reset();
@@ -677,7 +765,8 @@ namespace NNNA
 			Joueur.Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, false));
 			Joueur.Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[0].X - 1, spawns[0].Y - 1)).Y + 155, Content, Joueur, hutte, false));
 			Joueur.Buildings.Add(hutte);
-			_camera.Position = Matrice2Xy(new Vector2(spawns[0].X + 7, spawns[0].Y + 5)) - _screenSize / 2;
+			Joueur.MainBuilding = hutte;
+			Joueur.Spawn = spawns[0];
 			_units.AddRange(Joueur.Units);
 			_buildings.AddRange(Joueur.Buildings);
 
@@ -694,6 +783,8 @@ namespace NNNA
 				_enemiesInternet[i].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesInternet[i], false));
 				_enemiesInternet[i].Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesInternet[i], hutte, false));
 				_enemiesInternet[i].Buildings.Add(hutte);
+				_enemiesInternet[i].MainBuilding = hutte;
+				_enemiesInternet[i].Spawn = spawns[i + 1];
 				_units.AddRange(_enemiesInternet[i].Units);
 				_buildings.AddRange(_enemiesInternet[i].Buildings);
 			}
@@ -708,6 +799,8 @@ namespace NNNA
 				_enemiesAI[u].Units.Add(new Guerrier((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 0, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesAI[u], false));
 				_enemiesAI[u].Units.Add(new Peon((int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).X + 50, (int)Matrice2Xy(new Vector2(spawns[i + 1].X - 1, spawns[i + 1].Y - 1)).Y + 155, Content, _enemiesAI[u], hutte, false));
 				_enemiesAI[u].Buildings.Add(hutte);
+				_enemiesAI[u].MainBuilding = hutte;
+				_enemiesAI[u].Spawn = spawns[i + 1];
 				_units.AddRange(_enemiesAI[u].Units);
 				_buildings.AddRange(_enemiesAI[u].Buildings);
 			}
@@ -787,7 +880,9 @@ namespace NNNA
 			{
 				if (s == Screen.OptionsSound)
 				{
-					Process.Start("server.exe");
+					var startInfo = new ProcessStartInfo { FileName = "server.exe", WindowStyle = ProcessWindowStyle.Minimized };
+					var process = new Process { StartInfo = startInfo };
+					process.Start();
 					Thread.Sleep(1000);
 
 					_isInternet = true;
@@ -797,8 +892,10 @@ namespace NNNA
 					_units.Clear();
 					_toDraw.Clear();
 
-					Generate(2);
+					Generate(1);
 					_minimap.Dimensions = new Vector2(_matrice.GetLength(0), _matrice.GetLength(1));
+					Quote = Quotes[_random.Next(Quotes.Length)];
+					_camera.Position = Matrice2Xy(new Vector2(Joueur.Spawn.X + 7, Joueur.Spawn.Y + 5)) - _screenSize / 2;
 
 					Send(Joueur.Name);
 
@@ -959,7 +1056,9 @@ namespace NNNA
 						break;
 
 					case 2:
+						string pseudo = Joueur == null ? Environment.UserName : Joueur.Name;
 						Joueurs = Unserialize<Joueur[]>(data);
+						Joueur.Name = pseudo;
 						_enemiesAI = new List<JoueurAI>();
 						_enemiesInternet = new List<JoueurInternet>();
 						foreach (Joueur j in Joueurs)
@@ -988,6 +1087,8 @@ namespace NNNA
 
 					case 3:
 						_resources = Unserialize<List<ResourceMine>>(data);
+
+						_camera.Position = Matrice2Xy(new Vector2(Joueur.Spawn.X + 7, Joueur.Spawn.Y + 5)) - _screenSize / 2;
 						
 						_map.LoadContent(_matrice, Content, _minimap, Graphics.GraphicsDevice);
 						_hud.LoadContent(Content, "HUD/hud2");
@@ -2541,6 +2642,38 @@ namespace NNNA
 		}
         private void DrawGame()
         {
+			if (Joueur.Lost)
+			{
+				DrawString(_spriteBatch, _fontMenuTitle, "Perdu...", (_screenSize - _fontMenuTitle.MeasureString("Perdu...")) / 2 - new Vector2(0, 100), Color.Red, Color.White, 1, "", 1, false);
+				var lines = new List<String>();
+				String line = "";
+				String[] wordArray = Quote.Split(' ');
+				foreach (String word in wordArray)
+				{
+					if (_fontMenu.MeasureString(line + word).Length() > _screenSize.X)
+					{
+						lines.Add(line);
+						line = String.Empty;
+					}
+					line += word + ' ';
+				}
+				lines.Add(line);
+				int i = 0;
+				foreach (String lin in lines)
+				{
+					DrawString(_spriteBatch, _fontCredits, lin, (_screenSize - _fontCredits.MeasureString(lin)) / 2 + new Vector2(0, 50 + i * 50), Color.White, Color.Black, 2, "", 1, false);
+					i++;
+				}
+				return;
+			}
+
+			if (Joueur.Alive && Joueurs.Where(j => j != null && j != Joueur).All(j => j.Lost))
+			{
+				DrawString(_spriteBatch, _fontMenuTitle, "Gagné !", (_screenSize - _fontMenuTitle.MeasureString("Gagné !")) / 2 - new Vector2(0, 100), Color.Red, Color.White, 1, "", 1, false);
+				DrawString(_spriteBatch, _fontCredits, "Bien joué !", (_screenSize - _fontCredits.MeasureString("Bien joué !")) / 2 + new Vector2(0, 50), Color.White, Color.Black, 2, "", 1, false);
+				return;
+			}
+
             var bui = _currentAction.StartsWith("build_");
 
             #region CARTE
@@ -2979,9 +3112,9 @@ namespace NNNA
 		/// <param name="spec">L'alignement du text. Valeurs possibles : "Left", "Right", "Center". Laissez vide pour ne rien changer.</param>
 		/// <param name="scale">La déformation en taille du texte.</param>
 		/// <param name="origin">Origine pour l'alignement à droite et à gauche.</param>
-		private void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border, string spec, float scale, Vector2 origin)
+		private void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border, string spec, float scale, Vector2 origin, bool scle = true)
 		{
-			while (font.MeasureString(text).X * scale > _screenSize.X * 0.36)
+			while (font.MeasureString(text).X * scale > _screenSize.X * 0.36 && scle)
 			{ font.Spacing--; }
 
 			switch (spec)
@@ -3011,8 +3144,8 @@ namespace NNNA
 
 			font.Spacing = 0;
 		}
-		private void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border = 0, string spec = "", float scale = 1)
-		{ DrawString(spriteBatch, font, text, coos, color, borderCol, border, spec, scale, Vector2.Zero); }
+		private void DrawString(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 coos, Color color, Color borderCol, int border = 0, string spec = "", float scale = 1, bool scle = true)
+		{ DrawString(spriteBatch, font, text, coos, color, borderCol, border, spec, scale, Vector2.Zero, scle); }
 
 		/// <summary>
 		/// Affiche un menu à l'écran.
