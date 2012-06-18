@@ -74,9 +74,9 @@ namespace NNNA
 			_Resources.Add(new Resource("Bois", new[] { "Bois", "Bois", "Bois", "Bois" }, 500));
 			_Resources.Add(new Resource("Pierre", new[] { "Pierre", "Pierre", "Beton", "Metonite" }, 500));
 			_Resources.Add(new Resource("Nourriture", new[] { "Nourriture", "Nourriture", "Nourriture", "Oxygene" }, 500));
-			_Resources.Add(new Resource("Or", new[] { "", "Or", "Or", "Cristaux" }));
-			_Resources.Add(new Resource("Fer", new[] { "", "Fer", "Titane", "Tritonite" }));
-			_Resources.Add(new Resource("Petrole", new[] { "", "", "Petrole", "Tritium" }));
+			_Resources.Add(new Resource("Or", new[] { "", "Or", "Or", "Cristaux" }, 500));
+			_Resources.Add(new Resource("Fer", new[] { "", "Fer", "Titane", "Tritonite" }, 500));
+			_Resources.Add(new Resource("Petrole", new[] { "", "", "Petrole", "Tritium" }, 500));
 
 			PopTexture = new Image(content, "Resources/Pop");
 

@@ -55,5 +55,8 @@ namespace NNNA
 			Quantity -= qtty;
 			return qtty;
 		}
+
+		public bool IsMinable(Joueur joueur)
+		{ return Resource.Name(joueur.Ere) != ""; }
 	}
 }

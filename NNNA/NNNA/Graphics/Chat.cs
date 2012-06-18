@@ -35,8 +35,13 @@ namespace NNNA
 				for (int i = Messages.Count - 1; i >= Math.Max(0, Messages.Count - 6); i--)
 				{
 					ChatMessage msg = Messages[i];
-					spriteBatch.DrawString(font, msg.Author + " : ", new Vector2(6, y + j * 20 + 5), msg.Color);
-					spriteBatch.DrawString(font, msg.Text, new Vector2((int)font.MeasureString(msg.Author + " : ").X + 6, y + j * 20 + 5), Color.White);
+					int decay = 0;
+					if (msg.Author != "")
+					{
+						spriteBatch.DrawString(font, msg.Author + " : ", new Vector2(6, y + j * 20 + 5), msg.Color);
+						decay = (int)font.MeasureString(msg.Author + " : ").X;
+					}
+					spriteBatch.DrawString(font, msg.Text, new Vector2(decay + 6, y + j * 20 + 5), Color.White);
 					j++;
 				}
 				Timeout--;

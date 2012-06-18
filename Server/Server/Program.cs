@@ -104,12 +104,18 @@ namespace Server
 					Console.WriteLine("Received from user {0}: {1} ({2})", Pseudos[u], data.GetType(), data.Length);
 
 					// Si le joueur vient d'arriver, on lui envoie les informations du serveur
-					if (ReceivedPackets[u] == 0 && u > 0)
+					if (ReceivedPackets[u] == 0)
 					{
-						SendToUser(stream, u, Minimap);
-						SendToUser(stream, u, u.ToString(CultureInfo.InvariantCulture));
-						SendToUser(stream, u, Players);
-						SendToUser(stream, u, Resources);
+						Console.WriteLine("Received pseudo from user {0}", Pseudos[u]);
+						if (u > 0)
+						{
+							Console.WriteLine("Sending terrain data to user {0}", Pseudos[u]);
+							SendToUser(stream, u, Minimap);
+							SendToUser(stream, u, u.ToString(CultureInfo.InvariantCulture));
+							SendToUser(stream, u, Players);
+							SendToUser(stream, u, Resources);
+							SendToAllButOne(user, "join "+u+" "+Pseudos[u]);
+						}
 					}
 					// Réception des informations du serveur depuis l'hôte
 					else if (u == 0 && ReceivedPackets[u] == 1)
@@ -129,17 +135,7 @@ namespace Server
 					}
 					// Sinon c'est une action que l'on renvoie le message à tous les autres utilisateurs
 					else
-					{
-						for (int j = 0; j < Users.Count; j++)
-						{
-							var other = Users[j];
-							if (other != user)
-							{
-								NetworkStream send = other.GetStream();
-								SendToUser(send, j, data);
-							}
-						}
-					}
+					{ SendToAllButOne(user, data); }
 
 					// En cas de déconnexion du joueur
 					if (data == "close")
@@ -160,7 +156,25 @@ namespace Server
 			Byte[] msg = System.Text.Encoding.ASCII.GetBytes(message);
 			Array.Resize(ref msg, msg.Length + 1);
 			stream.Write(msg, 0, msg.Length);
-			Console.WriteLine("Sent to user #{0} {1}: {2} ({3})", u, Pseudos[u], message.GetType(), message.Length);    
+			Console.WriteLine("Sent to user #{0} {1}: {2} ({3})", u, Pseudos[u], message.GetType(), message.Length);
+		}
+
+		/// <summary>
+		/// Envoie un message à tous les autres joueurs sauf un.
+		/// </summary>
+		/// <param name="user">Le joueur à qui ne pas envoyer le message.</param>
+		/// <param name="message">Le message à envoyer.</param>
+		public static void SendToAllButOne(TcpClient user, String message)
+		{
+			for (int j = 0; j < Users.Count; j++)
+			{
+				var other = Users[j];
+				if (other != user)
+				{
+					NetworkStream send = other.GetStream();
+					SendToUser(send, j, message);
+				}
+			}
 		}
 	}
 }

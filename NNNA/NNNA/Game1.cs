@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -738,7 +739,7 @@ namespace NNNA
                     y = _random.Next(_matrice.GetLength(1));
                     pos = Matrice2Xy(new Vector2(x, y));
                 }
-                _resources.Add(new ResourceMine((int)pos.X - 28, (int)pos.Y - 20, Joueur.Resource("Or"), 4000, new Image(Content, (_random.Next(100) > 49) ? "Resources/or_1_sprite0" : "Resources/or_1_sprite1")));
+                _resources.Add(new ResourceMine((int)pos.X - 28, (int)pos.Y - 20, Joueur.Resource("Or"), 4000, new Image(Content, (_random.Next(2) == 1) ? "Resources/or_1_sprite0" : "Resources/or_1_sprite1")));
             }
 
             // mines fer
@@ -753,7 +754,7 @@ namespace NNNA
                     y = _random.Next(_matrice.GetLength(1));
                     pos = Matrice2Xy(new Vector2(x, y));
                 }
-                _resources.Add(new ResourceMine((int)pos.X - 28, (int)pos.Y - 20, Joueur.Resource("Fer"), 4000, new Image(Content, (_random.Next(100) > 49) ? "Resources/fer_1_sprite0" : "Resources/fer_1_sprite1")));
+				_resources.Add(new ResourceMine((int)pos.X - 28, (int)pos.Y - 20, Joueur.Resource("Fer"), 4000, new Image(Content, (_random.Next(2) == 1) ? "Resources/fer_1_sprite0" : "Resources/fer_1_sprite1")));
             }
 
             // mines de pierre
@@ -784,8 +785,8 @@ namespace NNNA
 			{
 				if (s == Screen.OptionsSound)
 				{
-					/*Process.Start("server.exe");
-					Thread.Sleep(1000);*/
+					Process.Start("server.exe");
+					Thread.Sleep(1000);
 
 					_isInternet = true;
 					_internetConnection = new TcpClient("localhost", 25666);
@@ -833,6 +834,8 @@ namespace NNNA
 					#endif
 
 					_currentScreen = Screen.Game;
+
+					Chat.Add(new ChatMessage { Author = "", Color = Color.White, Text = "Vous êtes l'hôte de la partie." });
 				}
 				else
 				{ _currentScreen = s; }
@@ -1047,6 +1050,7 @@ namespace NNNA
 							case "poches":
 								start = data.IndexOf(' ');
 								var uId = Convert.ToInt32(data.Substring(0, start));
+								data = data.Substring(start + 1);
 								var bId = Convert.ToInt32(data);
 								u = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == uId);
 								b = _buildings.FirstOrDefault(building => building.ID == bId);
@@ -1061,6 +1065,7 @@ namespace NNNA
 							case "attack":
 								start = data.IndexOf(' ');
 								u1Id = Convert.ToInt32(data.Substring(0, start));
+								data = data.Substring(start + 1);
 								u2Id = Convert.ToInt32(data);
 								var u1 = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u1Id);
 								var u2 = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u2Id);
@@ -1071,6 +1076,7 @@ namespace NNNA
 							case "mine":
 								start = data.IndexOf(' ');
 								u1Id = Convert.ToInt32(data.Substring(0, start));
+								data = data.Substring(start + 1);
 								u2Id = Convert.ToInt32(data);
 								u = _units.Cast<Unit>().FirstOrDefault(unit => unit.ID == u1Id);
 								var r = _resources.FirstOrDefault(unit => unit.ID == u2Id);
@@ -1092,6 +1098,11 @@ namespace NNNA
 									}
 								}
 								_selectedList.Select(unit => unit.ID + "," + Serialize(unit.Moving)).ToArray();
+								break;
+
+							case "join":
+								user.Name = data;
+								Chat.Add(new ChatMessage { Author = "", Color = Color.White, Text = String.Format("Le joueur {0} a rejoint la partie.", user.Name) });
 								break;
 						}
 						break;
@@ -2006,38 +2017,41 @@ namespace NNNA
             {
                 if (_selectedList.Count > 0)
                 {
-					foreach (JoueurAI foe in _enemiesAI)
-                    {
-                        foreach (Unit unit in foe.Units)
-                        {
-                            // Si une unité ennemie se trouve sous le curseur
-                            if (unit.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
-                            {
-                                var mul = 0.0f;
-                                if (_weather > 0)
-                                {
-                                    foreach (Unit uni in Joueur.Units)
-                                    {
-                                        var m = (uni.PositionCenter - unit.Position).Length();
-                                        m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalUnitLineSight));
-                                        mul = (m > 0 && m > mul) ? m : mul;
-                                    }
-                                    foreach (Building building in Joueur.Buildings)
-                                    {
-                                        var m = (building.PositionCenter - unit.Position).Length();
-                                        m = 1.0f - (m / (building.LineSight + Joueur.AdditionalBuildingLineSight));
-                                        mul = (m > 0 && m > mul) ? m : mul;
-                                    }
-                                }
-                                else
-                                { mul = 1.0f; }
-                                if (mul > 0.25f)
-                                {
-                                    _pointer = "fight";
-                                    unitUnder = unit;
-                                }
-                            }
-                        }
+					foreach (Joueur foe in Joueurs)
+					{
+						if (foe != null && foe != Joueur)
+						{
+							foreach (Unit unit in foe.Units)
+							{
+								// Si une unité ennemie se trouve sous le curseur
+								if (unit.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
+								{
+									var mul = 0.0f;
+									if (_weather > 0)
+									{
+										foreach (Unit uni in Joueur.Units)
+										{
+											var m = (uni.PositionCenter - unit.Position).Length();
+											m = 1.0f - (m / (uni.LineSight + Joueur.AdditionalUnitLineSight));
+											mul = (m > 0 && m > mul) ? m : mul;
+										}
+										foreach (Building building in Joueur.Buildings)
+										{
+											var m = (building.PositionCenter - unit.Position).Length();
+											m = 1.0f - (m / (building.LineSight + Joueur.AdditionalBuildingLineSight));
+											mul = (m > 0 && m > mul) ? m : mul;
+										}
+									}
+									else
+									{ mul = 1.0f; }
+									if (mul > 0.25f)
+									{
+										_pointer = "fight";
+										unitUnder = unit;
+									}
+								}
+							}
+						}
                     }
                 }
                 if (_pointer == "fight" && unitUnder == null)
@@ -2050,7 +2064,7 @@ namespace NNNA
                     foreach (ResourceMine resource in _resources)
                     {
                         // Si une unité ennemie se trouve sous le curseur
-                        if (resource.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
+                        if (resource.IsMinable(Joueur) && resource.Rectangle(_camera).Intersects(new Rectangle(Souris.Get().X, Souris.Get().Y, 1, 1)))
                         {
                             var mul = 0.0f;
                             if (_weather > 0)
