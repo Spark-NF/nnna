@@ -431,6 +431,8 @@ namespace NNNA
             _actions.Add("build_marche", Content.Load<Texture2D>("Actions/build_marche"));
             _actions.Add("build_bucheron", Content.Load<Texture2D>("Actions/build_bucheron"));
             _actions.Add("build_hopital", Content.Load<Texture2D>("Actions/build_hopital"));
+            _actions.Add("build_universite", Content.Load<Texture2D>("Actions/build_universite"));
+            _actions.Add("build_fort", Content.Load<Texture2D>("Actions/build_fort"));
 
 			#endregion Actions Unités
 
@@ -819,7 +821,7 @@ namespace NNNA
                     y = _random.Next(_matrice.GetLength(1));
                     pos = Matrice2Xy(new Vector2(x, y));
 				}
-				_resources.Add(new ResourceMine((int) pos.X - 30, (int) pos.Y - 72, Joueur.Resource("Bois"), 250, new Image(Content, "Resources/bois_1_sprite_small")));
+				_resources.Add(new ResourceMine((int) pos.X - 30, (int) pos.Y - 72, Joueur.Resource("Bois"), 500, new Image(Content, "Resources/bois_1_sprite_small")));
 			}
 
             // mines or
@@ -1696,7 +1698,7 @@ namespace NNNA
                             if (ValidSpawn(pos, _dimensions))
                             {
                                 var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                                b = new Mineur((int)position.X, (int)position.Y, Content, Joueur, gameTime);
+                                b = new Bucheron((int)position.X, (int)position.Y, Content, Joueur, gameTime);
                                 if (!Joueur.Scierie)
                                 {
                                     MessagesManager.Messages.Add(new Msg(_("Votre niveau technologique ne vous \npermet pas de construire ce batiment."), Color.Red, 5000));
@@ -1742,7 +1744,7 @@ namespace NNNA
                             if (ValidSpawn(pos, _dimensions))
                             {
                                 var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                                b = new Mineur((int)position.X, (int)position.Y, Content, Joueur, gameTime);
+                                b = new Marche((int)position.X, (int)position.Y, Content, Joueur, gameTime);
                                 if (Joueur.Pay(b.Prix))
                                 {
                                     _selectedList[0].Build(b);
@@ -1769,7 +1771,7 @@ namespace NNNA
                             {
 
                                 var position = new Vector2((pos.X - pos.Y) * 32, (pos.X + pos.Y - _dimensions.Y) * 16);
-                                b = new Mineur((int)position.X, (int)position.Y, Content, Joueur, gameTime);
+                                b = new Moulin((int)position.X, (int)position.Y, Content, Joueur, gameTime);
                                 if (!Joueur.Moulin)
                                 {
                                     MessagesManager.Messages.Add(new Msg(_("Votre niveau technologique ne vous \npermet pas de construire ce batiment."), Color.Red, 5000));
@@ -2070,8 +2072,13 @@ namespace NNNA
                                         _currentActions.Add("build_marche");
                                         _currentActions.Add("build_bucheron");
                                         _currentActions.Add("build_moulin");
-                                        _currentActions.Add("build_hopital");
 
+                                        if (Joueur.Ere > 2)
+                                        {
+                                            _currentActions.Add("build_hopital");
+                                            _currentActions.Add("build_universite");
+                                            _currentActions.Add("build_fort");
+                                        }
                                     }
                                     _currentActions.Add("retour");
                                     break;
@@ -2156,6 +2163,16 @@ namespace NNNA
                                 case "build_hopital":
                                     _pointer = "Batiments/hopital" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
                                     _currentAction = "build_hopital";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+                                case "build_universite":
+                                    _pointer = "Batiments/universite" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
+                                    _currentAction = "build_universite";
+                                    _dimensions = new Vector2(2, 2);
+                                    break;
+                                case "build_fort":
+                                    _pointer = "Batiments/fort" + Joueur.Ere.ToString(CultureInfo.CurrentCulture);
+                                    _currentAction = "build_fort";
                                     _dimensions = new Vector2(2, 2);
                                     break;
 

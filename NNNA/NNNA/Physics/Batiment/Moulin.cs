@@ -19,7 +19,7 @@ namespace NNNA
             : base(x, y)
         {
             Joueur = joueur;
-			LoadContent(content, "Batiments/siege");
+			LoadContent(content, "Batiments/moulin");
             Life = 200;
             LineSight = 128;
 
