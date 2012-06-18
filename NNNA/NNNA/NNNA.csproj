@@ -135,6 +135,8 @@
     <Compile Include="Physics\Batiment\Ecurie.cs" />
     <Compile Include="Physics\Batiment\Ferme.cs" />
     <Compile Include="Physics\Batiment\Forge.cs" />
+    <Compile Include="Physics\Batiment\Fort.cs" />
+    <Compile Include="Physics\Batiment\Hopital.cs" />
     <Compile Include="Physics\Batiment\Maison.cs" />
     <Compile Include="Physics\Batiment\Marche.cs" />
     <Compile Include="Physics\Batiment\Mineur.cs" />

@@ -19,7 +19,7 @@ namespace NNNA
         {
             Joueur = joueur;
             LoadContent(content, "Batiments/universite");
-            Life = 200;
+            Life = 125;
             LineSight = 128;
 
             Prix.Add("Or", 1500);
