@@ -327,6 +327,7 @@ namespace NNNA
 
 			#region Actions Unités
 			_actions.Add("attack", Content.Load<Texture2D>("Actions/attack"));
+            _actions.Add("ronde", Content.Load<Texture2D>("Actions/ronde"));
 			_actions.Add("mine", Content.Load<Texture2D>("Actions/gather"));
 			_actions.Add("poches", Content.Load<Texture2D>("Actions/poches"));
 			_actions.Add("build", Content.Load<Texture2D>("Actions/build"));
@@ -530,7 +531,7 @@ namespace NNNA
 		}
 		private void UpdatePlayQuick2()
 		{
-			Screen s = TestMenu(Screen.PlayQuick2, Screen.PlayQuick2, Screen.PlayQuick2, Screen.PlayQuick2, Screen.Game, Screen.PlayQuick);
+			var s = TestMenu(Screen.PlayQuick2, Screen.PlayQuick2, Screen.PlayQuick2, Screen.PlayQuick2, Screen.Game, Screen.PlayQuick);
 			if (s != Screen.PlayQuick2)
 			{
 				if (s == Screen.Game)
@@ -614,7 +615,7 @@ namespace NNNA
 			var heights = new List<float>();
 			int[] sizes = { 50, 100, 200 };
 			string[] names = { Environment.UserName, "Lord Lard", "Herr von Speck", "Monsieur Martin" };
-			var dist = (float)Math.Round((double)sizes[_quickSize] / 2);
+			var dist = (float)Math.Round((double)sizes[_quickSize] / 3);
 			//int users = _players.Count(t => t > 0);
 			_foes = 0;
 
@@ -652,7 +653,6 @@ namespace NNNA
 				while (spawns.Count < _foes + 1 && j < last)
 				{
 					var index = heightsOr.IndexOf(heights[j]);
-					heightsOr[index] = -1;
 					var point = new Point(index % _heightMap.GetLength(1), index / _heightMap.GetLength(1));
 					var isNear = false;
 					foreach (var p in spawns)
@@ -660,9 +660,10 @@ namespace NNNA
 						if (point.DistanceTo(p) <= dist)
 						{ isNear = true; }
 					}
-					if (!isNear)
+					if (!isNear && heightsOr[index] > waterline + 0.25f)
 					{ spawns.Add(point); }
 					j++;
+                    heightsOr[index] = -1;
 				}
 
 				if (spawns.Count == _foes + 1)
@@ -714,7 +715,7 @@ namespace NNNA
 			//Decor
 			_resources.Clear();
             //arbres
-			for (var i = 0; i < 20 * (_quickResources + _quickSize + 1); i++)
+			for (var i = 0; i < 40 * (_quickResources + _quickSize + 1); i++)
 			{
 			    var x = _random.Next(_matrice.GetLength(0));
 			    var y = _random.Next(_matrice.GetLength(1));
@@ -1232,6 +1233,8 @@ namespace NNNA
 							_currentActions.Add("build");
 							_currentActions.Add("poches");
 						}
+                        else if((type == "guerrier" || type == "archer") && !_currentActions.Contains("ronde"))
+                            _currentActions.Add("ronde");
 					}
 				}
 				if (!allSame)
@@ -1282,7 +1285,7 @@ namespace NNNA
 			{ _konami = 0; }
 
 			// Chat
-            if (Clavier.Get().NewPress(Keys.T) && !_showTextBox && (!Clavier.Get().Pressed(Keys.LeftControl) || !Clavier.Get().Pressed(Keys.RightControl)))
+            if (!Clavier.Get().Pressed(Keys.LeftControl) && !Clavier.Get().Pressed(Keys.RightControl) && Clavier.Get().NewPress(Keys.T) && !_showTextBox && (!Clavier.Get().Pressed(Keys.LeftControl) || !Clavier.Get().Pressed(Keys.RightControl)))
 			{
 				_showTextBox = true;
 				Clavier.Get().GetText = true;
@@ -1944,16 +1947,21 @@ namespace NNNA
                                 case "attack":
                                     break;
 
+                                case "ronde" :
+                                    break;
+
                                 case "build":
                                     _currentActions.Clear();
                                     _currentActions.Add("build_hutte");
                                     _currentActions.Add("build_hutteDesChasseurs");
-                                    _currentActions.Add("build_ferme");
+                                    if (Joueur.Ferme)
+                                    {
+                                        _currentActions.Add("build_ferme");
+                                    }
                                     if (Joueur.Ere > 1)
                                     {
                                         _currentActions.Add("build_archerie");
                                         _currentActions.Add("build_tour");
-                                        _currentActions.Add("build_ferme");
                                         _currentActions.Add("build_ecurie");
                                         _currentActions.Add("build_mine");
                                         _currentActions.Add("build_forge");
@@ -2735,7 +2743,7 @@ namespace NNNA
             foreach (Unit unit in Joueur.Units)
 			{
 				if (!_healthOver || unit.Selected)
-				{
+                {
 					DrawBar(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28, Color.Green, Color.Red);
 					if (unit.Poches > 0)
 					{ DrawBar(unit.Poches, unit.PochesMax, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 10) - _camera.Position, 28, Color.Cyan, Color.DarkBlue); }
@@ -2744,7 +2752,9 @@ namespace NNNA
 			foreach (Building build in Joueur.Buildings)
 			{
 				if (!_healthOver || build.Selected)
-				{ DrawBar(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100, Color.Green, Color.Red); }
+				{
+				    DrawBar(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100, Color.Green, Color.Red);
+				}
 			}
 			foreach (JoueurAI foe in _enemiesAI)
 			{
@@ -2769,7 +2779,9 @@ namespace NNNA
 					else
 					{ mul = 1.0f; }
 					if (mul > 0.25f)
-					{ DrawBar(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28, Color.Green, Color.Red); }
+					{
+					    DrawBar(unit.Life, unit.MaxLife, unit.Position - new Vector2(13 - (float)Math.Round((double)unit.Texture.Width / 2), 6) - _camera.Position, 28, Color.Green, Color.Red);
+					}
 				}
 				foreach (Building build in foe.Buildings)
 				{
@@ -2792,7 +2804,9 @@ namespace NNNA
 					else
 					{ mul = 1.0f; }
 					if (mul > 0.25f)
-					{ DrawBar(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100, Color.Green, Color.Red); }
+					{
+					    DrawBar(build.Life, build.MaxLife, build.Position - new Vector2(49 - (float)Math.Round((double)build.Texture.Width / 2), 10) - _camera.Position, 100, Color.Green, Color.Red);
+					}
 				}
             }
             #endregion

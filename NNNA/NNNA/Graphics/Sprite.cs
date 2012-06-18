@@ -227,10 +227,12 @@ namespace NNNA
 		// Comparateur de Sprite selon leur coordonnées en Y
 		public static int CompareByY(Sprite s1, Sprite s2)
 		{
-            if (s1 is ResourceMine && (s1 as ResourceMine).Type == "Ferme")
-                    return 1;
-            if (s2 is ResourceMine && (s2 as ResourceMine).Type == "Ferme")
+            if (s1 is ResourceMine && (s1 as ResourceMine).Type == "Ferme" && s2 is ResourceMine && (s2 as ResourceMine).Type == "Ferme")
                 return 0;
+            if (s1 is ResourceMine && (s1 as ResourceMine).Type == "Ferme")
+                return -1;
+            if (s2 is ResourceMine && (s2 as ResourceMine).Type == "Ferme")
+                return 1;
 		    return ((s1.Position.Y + (s1.Texture == null ? 0 : s1.Texture.Height) == s2.Position.Y + (s2.Texture == null ? 0 : (s2.Texture.Height))) ? 0 : (s1.Position.Y + (s1.Texture == null ? 0 : s1.Texture.Height) > s2.Position.Y + (s2.Texture == null ? 0 : s2.Texture.Height)) ? 1 : -1);
 		}
 

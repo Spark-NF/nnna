@@ -46,9 +46,9 @@ namespace NNNA
                 !new Rectangle(_reducedMap.X - _reducedMap.Width/2, _reducedMap.Y + decay, _reducedMap.Width,
                                _reducedMap.Height).Intersects(new Rectangle(s.X, s.Y, 1, 1))) return;
             // C'est ça qui est foireux !
-            var pos = new Vector2(s.X - _reducedMap.X + _texture.Width / 2, s.Y - _reducedMap.Y + decay);
+            var pos = new Vector2(s.X - _reducedMap.X + _reducedMap.Width /2, s.Y - _reducedMap.Y);
             // A partir de là, ça le fait normalement.
-            Rotate(pos, Dimensions / 2, - (Math.PI / 2));
+            Rotate(pos, new Vector2(_reducedMap.Width, 0) , -(Math.PI / 4));
             camera.Position = Game1.Matrice2Xy(pos) - screenSize / 2;
         }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace NNNA
 {
@@ -16,7 +17,6 @@ namespace NNNA
                 var current = openList[0];
                 openList.RemoveAt(0);
                 closedList.Add(current);
-
                 if ((current.Position - destination).LengthSquared() < 200)
                 {
                     var sol = new List<Vector2> { destination };
@@ -58,6 +58,8 @@ namespace NNNA
                 return null;
             }
 
+            var time = new Stopwatch();
+            time.Start();
 		    var closedList = new NodeList<Node>();
 			var startNode = new Node(start, null, destination);
             var openList = new NodeList<Node> {startNode};
@@ -67,6 +69,11 @@ namespace NNNA
 				var current = openList[0];
 				openList.RemoveAt(0);
 				closedList.Add(current);
+
+                if (time.ElapsedMilliseconds > 1500)
+                {
+                    return null;
+                }
 
 				if ((current.Position - destination).LengthSquared() < 200)
 				{
