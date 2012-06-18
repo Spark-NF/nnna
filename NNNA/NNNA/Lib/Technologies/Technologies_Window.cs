@@ -21,7 +21,6 @@ namespace NNNA
         private readonly TabItem tabItem1;
         private readonly TabItem tabItem2;
         private readonly TabItem tabItem3;
-        private readonly TabItem tabItem4;
         #region BUTTONS
         private readonly Button close;
         private readonly Button chasse;
@@ -36,8 +35,6 @@ namespace NNNA
         private readonly Button fer;
         private readonly Button evolution1;
         private readonly Button evolution2;
-        private readonly Button evolution3;
-        private readonly Button evolution4;
         private readonly Button engrenage;
         private readonly Button forge;
         private readonly Button scierie;
@@ -57,7 +54,6 @@ namespace NNNA
         private bool _pierrePolie;
         private bool _ere1;
         private bool _ere2;
-        private bool _ere3;
         private bool _bronze;
         private bool _outils;
         private bool _agri;
@@ -153,17 +149,41 @@ namespace NNNA
             fer.Background = content.Load<Texture2D>(@"Technologies/fer");
             evolution1.Background = content.Load<Texture2D>(@"Technologies/evolution");
 
-            engrenage = new Button(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4, zone.Height / 15, zone.Height / 15), "engrenage", engrenage_MouseLeftButtonDown);
-            forge = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "forge", forge_MouseLeftButtonDown);
-            navigation = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "navigation", navigation_MouseLeftButtonDown);
-            scierie = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "scierie", scierie_MouseLeftButtonDown);
-            gouvernail = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "gouvernail", gouvernail_MouseLeftButtonDown);
-            arme_de_siege = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "arme_de_siege", arme_de_siege_MouseLeftButtonDown);
-            alchimie = new Button(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 + zone.Height / 24, zone.Height / 15, zone.Height / 15), "alchimie", alchimie_MouseLeftButtonDown);
-            bucheron = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "bucheron", bucheron_MouseLeftButtonDown);
-            charpente = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "charpente", charpente_MouseLeftButtonDown);
-            route = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "route", route_MouseLeftButtonDown);
-            evolution2 = new Button(new Rectangle(zone.X + (zone.Width * 5 / 12), zone.Y + (zone.Height * 4) / 5, zone.Height / 15, zone.Height / 15), "evolution", evolution_MouseLeftButtonDown);
+            var iengrenage = new InfoBulle(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "engrenage");
+            var iforge = new InfoBulle(new Rectangle(zone.X + zone.Width / 4, zone.Y, (int)(zone.Width / 2.085f), zone.Height / 3), "forge");
+            var inavigation = new InfoBulle(new Rectangle(zone.X + zone.Width / 2, zone.Y, (int)(zone.Width / 2.085f), zone.Height / 3), "navigation");
+            var iscierie = new InfoBulle(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 12, (int)(zone.Width / 2.085f), zone.Height / 3), "scierie");
+            var igouvernail = new InfoBulle(new Rectangle(zone.X + zone.Width / 2, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "gouvernail");
+            var iarmeDeSiege = new InfoBulle(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 2 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "arme_de_siege");
+            var ialchimie = new InfoBulle(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "alchimie");
+            var ibucheron = new InfoBulle(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y, (int)(zone.Width / 2.085f), zone.Height / 3), "bucheron");
+            var icharpente = new InfoBulle(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3 + zone.Height / 12 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "fer");
+            var iroute = new InfoBulle(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "fer");
+            var ievolution2 = new InfoBulle(new Rectangle(zone.X + (zone.Width * 5 / 12), zone.Y + (zone.Height * 4) / 5 - zone.Height / 3, (int)(zone.Width / 2.085f), zone.Height / 3), "evolution2");
+
+            iengrenage.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/engrenage");
+            iforge.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/forge");
+            inavigation.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/navigation");
+            iscierie.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/scierie");
+            igouvernail.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/gouvernail");
+            iarmeDeSiege.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/armes_de_siege");
+            ialchimie.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/alchimie");
+            ibucheron.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/bucheron");
+            icharpente.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/charpente");
+            iroute.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/route");
+            ievolution2.Background = content.Load<Texture2D>(@"Technologies/Info Bulles/evolution2");
+
+            engrenage = new Button(new Rectangle(zone.X + (zone.Width * 3 / 8), zone.Y + zone.Height / 4, zone.Height / 15, zone.Height / 15), "engrenage", engrenage_MouseLeftButtonDown, false, iengrenage);
+            forge = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "forge", forge_MouseLeftButtonDown, false, iforge);
+            navigation = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + zone.Height / 4 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "navigation", navigation_MouseLeftButtonDown, false, inavigation);
+            scierie = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "scierie", scierie_MouseLeftButtonDown, false, iscierie);
+            gouvernail = new Button(new Rectangle(zone.X + zone.Width / 2, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "gouvernail", gouvernail_MouseLeftButtonDown, false, igouvernail);
+            arme_de_siege = new Button(new Rectangle(zone.X + zone.Width / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "arme_de_siege", arme_de_siege_MouseLeftButtonDown, false, iarmeDeSiege);
+            alchimie = new Button(new Rectangle(zone.X + zone.Width / 3, zone.Y + (zone.Height * 3) / 5 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "alchimie", alchimie_MouseLeftButtonDown, false, ialchimie);
+            bucheron = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3, zone.Height / 15, zone.Height / 15), "bucheron", bucheron_MouseLeftButtonDown, false, ibucheron);
+            charpente = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 3 + zone.Height / 12, zone.Height / 15, zone.Height / 15), "charpente", charpente_MouseLeftButtonDown, false, icharpente);
+            route = new Button(new Rectangle(zone.X + (zone.Width * 3) / 4, zone.Y + zone.Height / 2, zone.Height / 15, zone.Height / 15), "route", route_MouseLeftButtonDown, false, iroute);
+            evolution2 = new Button(new Rectangle(zone.X + (zone.Width * 5 / 12), zone.Y + (zone.Height * 4) / 5, zone.Height / 15, zone.Height / 15), "evolution", evolution_MouseLeftButtonDown, false, ievolution2);
 
             engrenage.Background = content.Load<Texture2D>(@"Technologies/engrenage");
             forge.Background = content.Load<Texture2D>(@"Technologies/forge");
@@ -190,7 +210,7 @@ namespace NNNA
                                                   torche,
                                                   fer,
                                                   evolution1
-                                                  }, new Rectangle(zone.X + zone.Width / 14, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 4, zone.Height / 10), "ERE 1");
+                                                  }, new Rectangle(zone.X + zone.Width / 14, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 3, zone.Height / 10), "ERE 1");
 
             tabItem2 = new TabItem(new Control[] {
                                                   engrenage,
@@ -204,25 +224,20 @@ namespace NNNA
                                                   charpente,
                                                   route,
                                                   evolution2
-                                                  }, new Rectangle(zone.X + zone.Width / 14 + (zone.Width - zone.Width / 7) / 4, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 4, zone.Height / 10), "ERE 2");
+                                                  }, new Rectangle(zone.X + zone.Width / 14 + (zone.Width - zone.Width / 7) / 3, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 3, zone.Height / 10), "ERE 2");
 
             tabItem3 = new TabItem(new Control[] {
-                                                  }, new Rectangle(zone.X + zone.Width / 14 + (zone.Width - zone.Width / 7) / 2, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 4, zone.Height / 10), "ERE 3");
-
-            tabItem4 = new TabItem(new Control[] {
-                                                  }, new Rectangle(zone.X + zone.Width / 14 + ((zone.Width - zone.Width / 7) * 3) / 4, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 4, zone.Height / 10), "ERE 4");
+                                                  }, new Rectangle(zone.X + zone.Width / 14 + (zone.Width - zone.Width / 7)*2 / 3, zone.Y + zone.Height / 8, (zone.Width - zone.Width / 7) / 3, zone.Height / 10), "ERE 3");
 
             tabItem1.Background = content.Load<Texture2D>(@"Technologies/onglet");
             tabItem2.Background = content.Load<Texture2D>(@"Technologies/onglet");
             tabItem3.Background = content.Load<Texture2D>(@"Technologies/onglet");
-            tabItem4.Background = content.Load<Texture2D>(@"Technologies/onglet");
 
-            tabcontrol = new TabControl(new TabItem[] {
-                                                        tabItem1,
-                                                        tabItem2,
-                                                        tabItem3,
-                                                        tabItem4
-                                                        }, new Rectangle(zone.X + zone.Width/26, zone.Y + zone.Height / 10, zone.Width - zone.Width/13, zone.Height - zone.Height/10 - zone.Height/26),"tab Control");
+            tabcontrol = new TabControl(new[] {
+                                                    tabItem1,
+                                                    tabItem2,
+                                                    tabItem3,
+                                                    }, new Rectangle(zone.X + zone.Width/26, zone.Y + zone.Height / 10, zone.Width - zone.Width/13, zone.Height - zone.Height/10 - zone.Height/26),"tab Control");
 
             tabcontrol.Background = content.Load<Texture2D>(@"Technologies/TabControl");
 
@@ -302,7 +317,6 @@ namespace NNNA
         {
             _ere1 = false;
             _ere2 = false;
-            _ere3 = false;
 
             _fer = false;
             _chasse = false;
@@ -353,8 +367,6 @@ namespace NNNA
             route.Visible = false;
 
             tabItem3.Visible = false;
-
-            tabItem4.Visible = false;
         }
 
 		private void button_Close_Click()
@@ -699,11 +711,12 @@ namespace NNNA
             }
         }
 
-        private void bucheron_MouseLeftButtonDown() // BULLSHIT
+        private void bucheron_MouseLeftButtonDown() // augmente les poches
         {
             if (!_bucheron && Game1.Joueur.Pay(_prixBucheron))
             {
                 charpente.Visible = true;
+                Game1.Joueur.AdditionalPoches += 20;
                 _bucheron = true;
                 MessagesManager.Messages.Add(new Msg("Technologie « Bucheron » aquise !", Color.White, 5000));
             }
@@ -717,11 +730,12 @@ namespace NNNA
             }
         }
 
-        private void charpente_MouseLeftButtonDown() // BULLSHIT
+        private void charpente_MouseLeftButtonDown() // augmente les pv des batiments
         {
             if (!_charpente && Game1.Joueur.Pay(_prixCharpente))
             {
                 route.Visible = true;
+                Game1.Joueur.AdditionalBuildingLife += 100;
                 _charpente = true;
                 MessagesManager.Messages.Add(new Msg("Technologie « Charpente » aquise !", Color.White, 5000));
             }
@@ -772,19 +786,8 @@ namespace NNNA
             {
                 _ere2 = true;
                 Game1.Joueur.Ere = 3;
-                tabItem4.Visible = true;
                 Game1.FlashBool = true;
                 MessagesManager.Messages.Add(new Msg("ERE IMPERIALE ATTEINTE !!", Color.Red, 5000));
-
-                // Modif des sprites a faire içi
-            }
-            else if (_ere2 && !_ere3)
-            {
-                _ere3 = true;
-                Game1.Joueur.Ere = 4;
-                Game1.FlashBool = true;
-                MessagesManager.Messages.Add(new Msg("ERE MODERNE ATTEINTE !!", Color.Red, 5000));
-                // Modif des sprites a faire içi
             }
 		}
     }

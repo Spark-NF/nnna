@@ -19,6 +19,8 @@ namespace NNNA
         public bool Moulin { get; set; }
         public bool ArmeDeSiege { get; set; }
 		public int AdditionalAttack { get; set; }
+        public int AdditionalPoches { get; set; }
+        public int AdditionalBuildingLife { get; set; }
 		public float AdditionalSpeed { get; set; }
 		public int AdditionalLife { get; set; }
 		public int AdditionalUnitLineSight { get; set; }
@@ -63,6 +65,8 @@ namespace NNNA
 			PopulationMax = 5;
 			AdditionalUnitLineSight = 0;
             AdditionalBuildingLineSight = 0;
+		    AdditionalBuildingLife = 0;
+		    AdditionalPoches = 0;
 		    AdditionalAttack = 0;
             AdditionalLife = 0;
 		    Caserne = false;

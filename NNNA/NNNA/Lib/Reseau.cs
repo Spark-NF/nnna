@@ -18,39 +18,26 @@ namespace NNNA
             get { return jeuMulti; }
             set { jeuMulti = value; }
         }
-        private List<Socket> connexions = new List<Socket>();
-    	public static string IP { get; set; }
+        private static string _ip = "";
+    	public static string IP { get
+    	{
+    	    if (_ip == "")
+    	    {
+    	        _ip = GetIPaddresses();
+    	    }
+    	    return _ip;
+    	}
+    	}
 
         /// <summary>
         /// Fonction qui donne l'adresse ip d'un ordinateur d'on le nom est placé en parametre
         /// </summary>
         /// <param name="computername">Nom du PC.</param>
         /// <returns>L'IP du PC.</returns>
-        public static string GetIPaddresses(string computername)
+        public static string GetIPaddresses()
         {
-            IPHostEntry iphe =Dns.Resolve(computername);
-            string ip = iphe.AddressList[0].ToString();
-            return ip;
-            
+            return Dns.Resolve(Environment.MachineName).AddressList[0].ToString();
         }
-        public static void GetIP()
-        {
-        	var myThread = new Thread(ParseIP);
-        	myThread.Start();
-        }
-		public static void ParseIP()
-		{
-			/*try
-            {
-                var uri = new Uri("http://www.whatismyip.fr/raw/");
-                var request = (HttpWebRequest)WebRequest.Create(uri);
-                WebResponse response = request.GetResponse();
-                var read = new StreamReader(response.GetResponseStream());
-                IP = read.ReadToEnd();
-            }
-            catch
-			{ IP = GetIPaddresses(Environment.MachineName); }*/
-         }
 
         /// <summary>
         /// Fonction qui verifie si l'ordinateur est connecté a internet.

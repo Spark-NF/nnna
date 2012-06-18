@@ -84,11 +84,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Batiments\forge4.png">
-      <Name>forge4</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Batiments\forum_1.png">
       <Name>forum_1</Name>
       <Importer>TextureImporter</Importer>
@@ -121,11 +116,6 @@
     </Compile>
     <Compile Include="Batiments\maison2_2.png">
       <Name>maison2_2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Batiments\maison_3.png">
-      <Name>maison_3</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1195,27 +1185,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batiments\maison_4.png">
-      <Name>maison_4</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\universite4.png">
-      <Name>universite4</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Batiments\caserne4.png">
-      <Name>caserne4</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Actions\build_siege.png">
       <Name>build_siege</Name>
       <Importer>TextureImporter</Importer>
@@ -1383,8 +1352,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batiments\hopital4.png">
-      <Name>hopital4</Name>
+    <Compile Include="Technologies\Info Bulles\armes_de_siege.png">
+      <Name>armes_de_siege</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1415,6 +1384,74 @@
       <Name>soundInGame</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SongProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Technologies\Info Bulles\engrenage.png">
+      <Name>engrenage</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Technologies\Info Bulles\forge.png">
+      <Name>forge</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Technologies\Info Bulles\scierie.png">
+      <Name>scierie</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Batiments\ferme3.png">
+      <Name>ferme3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Batiments\maison2_3.png">
+      <Name>maison2_3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Technologies\Info Bulles\alchimie.png">
+      <Name>alchimie</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Technologies\Info Bulles\bucheron.png">
+      <Name>bucheron</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Technologies\Info Bulles\charpente.png">
+      <Name>charpente</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Technologies\Info Bulles\evolution2.png">
+      <Name>evolution2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Technologies\Info Bulles\gouvernail.png">
+      <Name>gouvernail</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Technologies\Info Bulles\navigation.png">
+      <Name>navigation</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Technologies\Info Bulles\route.png">
+      <Name>route</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

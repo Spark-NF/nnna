@@ -301,9 +301,6 @@ namespace NNNA
 			_players = new[] { 2, 1, 0, 0 };
 			_playersColors = new[] { Color.Blue, Color.Red, Color.Green, Color.Yellow };
 
-            // réseau
-            Réseau.GetIP();
-
             //son
             #if SOUND
                 _son.Initializesons(MusicVolume, _soundMusic, _soundGeneral);
@@ -771,6 +768,7 @@ namespace NNNA
 			Joueur.Spawn = spawns[0];
 			_units.AddRange(Joueur.Units);
 			_buildings.AddRange(Joueur.Buildings);
+            _camera.Position = Matrice2Xy(new Vector2(Joueur.Spawn.X + 7, Joueur.Spawn.Y + 5)) - _screenSize / 2;
 
 			// Ennemis
 			_enemiesAI = new List<JoueurAI>();

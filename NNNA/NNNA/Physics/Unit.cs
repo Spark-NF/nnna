@@ -13,7 +13,8 @@ namespace NNNA
 	{
         public Joueur Joueur { get; protected set;  }
 		public Building Affiliate { get; protected set; }
-		public int PochesMax { get; private set; }
+	    private int _pochesMax;
+        public int PochesMax { get { return Joueur != null ? _pochesMax + Joueur.AdditionalPoches : _pochesMax; } }
 	    private string PochesContent { get; set; }
 	    public int Attaque { get; set;  }
 		public int VitesseCombat { private get; set; }
@@ -32,7 +33,7 @@ namespace NNNA
 	    protected Unit(int x, int y)
 			: base(x, y)
 		{
-			PochesMax = 50;
+			_pochesMax = 50;
             Moving = new List<Vector2>();
 			Poches = 0;
 		}

@@ -13,16 +13,17 @@ namespace NNNA
 	    protected int _life;
 		public int Life
 		{
-			get { return _life; }
-			set
+			get { return _life + Joueur.AdditionalBuildingLife; }
+		    protected set
 			{
 				_life = value;
-				if (value > MaxLife)
-				{ MaxLife = value; }
+                if (value > MaxLife + Joueur.AdditionalBuildingLife)
+				{ MaxLife = value - Joueur.AdditionalBuildingLife; }
 			}
 		}
 
-	    public int MaxLife { get; set; }
+	    private int _maxLife;
+        public int MaxLife { get { return (Joueur != null) ? _maxLife + Joueur.AdditionalBuildingLife : _maxLife; } private set { _maxLife = value; } }
 
 	    public int Iterator { get; set; }
 
