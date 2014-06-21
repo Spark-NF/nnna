@@ -1,6 +1,0 @@
-C:\Users\Phoenix78\Desktop\RTS\WindowsGameLibrary1\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\Phoenix78\Desktop\RTS\WindowsGameLibrary1\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-C:\Users\Phoenix78\Desktop\RTS\WindowsGameLibrary1\bin\x86\Debug\WindowsGameLibrary1.dll
-C:\Users\Phoenix78\Desktop\RTS\WindowsGameLibrary1\bin\x86\Debug\WindowsGameLibrary1.pdb
-C:\Users\Phoenix78\Desktop\RTS\WindowsGameLibrary1\obj\x86\Debug\WindowsGameLibrary1.dll
-C:\Users\Phoenix78\Desktop\RTS\WindowsGameLibrary1\obj\x86\Debug\WindowsGameLibrary1.pdb
