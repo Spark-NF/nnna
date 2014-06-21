@@ -1,49 +1,14 @@
-
-# /
-/NNNA.suo
-/_ReSharper.NNNA
-/NNNA.sln.docstates.suo
-
-# /NNNA/NNNA/
-/NNNA/NNNA/NNNA.csproj.Debug.cachefile
-/NNNA/NNNA/NNNA.csproj.Release.cachefile
+*.cachefile
+*.user
+*.db
+*.suo
+*.xnb
+*.pdb
+*.exe
+*.iso
+/WindowsGameLibrary1/bin
+/WindowsGameLibrary1/obj
 /NNNA/NNNA/bin
 /NNNA/NNNA/obj
-/NNNA/NNNA/Game.old.ico
-/NNNA/NNNA/app.config
-
-# /NNNA/NNNA/bin/x86/
-/NNNA/NNNA/bin/x86/Debug
-/NNNA/NNNA/bin/x86/Iso
-/NNNA/NNNA/bin/x86/Release
-
-# /NNNA/NNNAContent/
 /NNNA/NNNAContent/bin
 /NNNA/NNNAContent/obj
-
-# /Server/
-/Server/_ReSharper.Server
-
-# /Server/Server/
-/Server/Server/bin
-/Server/Server/obj
-
-# /WindowsGameLibrary1/
-
-# /WindowsGameLibrary1/Properties/
-
-# /WindowsGameLibrary1/bin/
-
-# /WindowsGameLibrary1/bin/x86/
-
-# /WindowsGameLibrary1/bin/x86/Debug/
-
-# /WindowsGameLibrary1/bin/x86/Release/
-
-# /WindowsGameLibrary1/obj/
-
-# /WindowsGameLibrary1/obj/x86/
-
-# /WindowsGameLibrary1/obj/x86/Debug/
-
-# /WindowsGameLibrary1/obj/x86/Debug/TempPE/
